@@ -1,0 +1,103 @@
+{
+    "mx": {
+        "es": "México",
+        "en": "Mexico"
+    },
+    "MX-CMX": {
+        "es": "Ciudad de México",
+        "en": "Mexico city"
+    },
+    "MX-AGU": {
+        "es": "Aguascalientes"
+    },
+    "MX-BCN": {
+        "es": "Baja California"
+    },
+    "MX-BCS": {
+        "es": "Baja California Sur"
+    },
+    "MX-CAM": {
+        "es": "Campeche"
+    },
+    "MX-COA": {
+        "es": "Coahuila de Zaragoza"
+    },
+    "MX-COL": {
+        "es": "Colima"
+    },
+    "MX-CHP": {
+        "es": "Chiapas"
+    },
+    "MX-CHH": {
+        "es": "Chihuahua"
+    },
+    "MX-DUR": {
+        "es": "Durango"
+    },
+    "MX-GUA": {
+        "es": "Guanajuato"
+    },
+    "MX-GRO": {
+        "es": "Guerrero"
+    },
+    "MX-HID": {
+        "es": "Hidalgo"
+    },
+    "MX-JAL": {
+        "es": "Jalisco"
+    },
+    "MX-MEX": {
+        "es": "México"
+    },
+    "MX-MIC": {
+        "es": "Michoacán de Ocampo"
+    },
+    "MX-MOR": {
+        "es": "Morelos"
+    },
+    "MX-NAY": {
+        "es": "Nayarit"
+    },
+    "MX-NLE": {
+        "es": "Nuevo León"
+    },
+    "MX-OAX": {
+        "es": "Oaxaca"
+    },
+    "MX-PUE": {
+        "es": "Puebla"
+    },
+    "MX-QUE": {
+        "es": "Querétaro"
+    },
+    "MX-ROO": {
+        "es": "Quintana Roo"
+    },
+    "MX-SLP": {
+        "es": "San Luis Potosí"
+    },
+    "MX-SIN": {
+        "es": "Sinaloa"
+    },
+    "MX-SON": {
+        "es": "Sonora"
+    },
+    "MX-TAB": {
+        "es": "Tabasco"
+    },
+    "MX-TAM": {
+        "es": "Tamaulipas"
+    },
+    "MX-TLA": {
+        "es": "Tlaxcala"
+    },
+    "MX-VER": {
+        "es": "Veracruz de Ignacio de la Llave"
+    },
+    "MX-YUC": {
+        "es": "Yucatán"
+    },
+    "MX-ZAC": {
+        "es": "Zacatecas"
+    }
+}

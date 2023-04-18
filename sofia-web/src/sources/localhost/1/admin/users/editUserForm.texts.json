@@ -1,0 +1,10 @@
+{
+    "userDeleteButton": {
+        "es": "Borrar",
+        "en": "Delete"
+    },
+    "userSaveButton": {
+        "es": "Guardar",
+        "en": "Save"
+    }
+}

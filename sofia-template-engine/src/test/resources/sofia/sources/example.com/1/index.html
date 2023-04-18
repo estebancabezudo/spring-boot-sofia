@@ -1,0 +1,60 @@
+<html>
+  <head>
+    <title>This is the page title</title>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <script file="scriptInHead.js"></script>
+    <style file="cssInHead.css"></style>
+    <script>
+      const firstScript = () => {
+        // Nothing to do
+      };
+    </script>
+    <style>
+      .firstStyle {
+        border: 0;
+      }
+    </style>
+    <script>
+      const secondScript = () => {
+        // Nothing to do
+      }
+    </script>
+    <style>
+      .secondStyle {
+        border: 0;
+      }
+    </style>
+  </head>
+  <body groups="all">
+    <section id="application">
+      <!-- This is a comment to ignore in prod -->
+      <div>
+        <text>TODO write content</text>
+      </div>
+      <div>
+        <text id="a"></text>
+      </div>
+      <div>
+        <text id="s1">This text is for repeat an id in nextId</text>
+      </div>
+      <div>
+        <text>#{textFromConfiguration}</text>
+      </div>
+      <div>
+        <text id="" language="es">Este es un ejemplo de texto en español</text>
+      </div>
+      <texts>
+        <text language="es">Estos textos no tienen un id</text>
+        <text language="en">This texts don't have an id</text>
+      </texts>
+      <texts id="idDeTexto">
+        <text language="es">Estos textos tienen un id</text>
+        <text language="en">This texts have an id</text>
+      </texts>
+    </section>
+    <section file="fileCalledInSection.html"></section>
+    <section configurationFile="configurationFile.json" file="fileCalledInSection.html"></section>
+    <section file="/fileWithoutConfiguration.html"></section>
+  </body>
+</html>

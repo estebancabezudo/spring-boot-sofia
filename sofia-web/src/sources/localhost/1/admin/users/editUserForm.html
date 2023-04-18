@@ -1,0 +1,42 @@
+<link lib="mx:places:1.00" />
+
+<style file="../commons.css"></style>
+
+<style>
+    #userDeleteButton {
+        grid-column: 1;
+    }
+
+    #userSaveButton {
+        grid-column: 5;
+    }
+</style>
+
+<script>
+    let userSaveButton;
+
+    const createButtons = userFormContainer => {
+        const userDeleteButton = document.createElement('button');
+        userDeleteButton.id = 'userDeleteButton';
+        userDeleteButton.className = 'button redButton';
+        userFormContainer.appendChild(userDeleteButton);
+
+        userSaveButton = document.createElement('button');
+        userSaveButton.id = 'userSaveButton';
+        userSaveButton.className = 'button greenButton';
+        userFormContainer.appendChild(userSaveButton);
+        userSaveButton.disabled = true;
+    };
+
+    const changeButtons = dataChange => {
+        console.log(`Data change: ${dataChange}`);
+        userSaveButton.disabled = !dataChange;
+    };
+</script>
+
+<body id="content">
+    <div class="contentTitle">
+        <texts><text language="es">Editar usuario</text><text language="en">Edit user</text></texts>
+    </div>
+    <div file="userForm.html"></div>
+</body>

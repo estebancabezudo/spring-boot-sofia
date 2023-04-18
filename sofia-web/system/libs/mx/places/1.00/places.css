@@ -1,0 +1,155 @@
+    .placeHide {
+        display: none;
+    }
+
+    #placeFormContainer {
+        display: grid;
+        grid-gap: 8px;
+        margin: 0 auto;
+        max-width: 750px;
+    }
+
+    #placeNameInput {
+        font-size: 36px;
+        font-weight: bold;
+        padding: 5px 20px;
+        border: 0;
+    }
+
+    #placeNameInput::placeholder {
+        font-weight: 300;
+        font-size: 16px;
+    }
+
+    @media all and (min-width: 750px) {
+        #placeFormContainer {
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+        #placeNameInput {
+            grid-row: 1;
+            grid-column: 1 / 6;
+            font-size: 26px;
+        }
+
+        #placeCountryLabel {
+            grid-row: 2;
+            grid-column: 1 / 3;
+        }
+
+        #placeCountryInput {
+            grid-row: 3;
+            grid-column: 1 / 3;
+        }
+
+        #placeStateLabel {
+            grid-row: 2;
+            grid-column: 3 / 6;
+        }
+
+        #placeStateSelector {
+            grid-row: 3;
+            grid-column: 3 / 6;
+        }
+
+        #placeStreetLabel {
+            grid-row: 4;
+            grid-column: 1 / 4;
+        }
+
+        #placeStreetInput {
+            grid-row: 5;
+            grid-column: 1 / 4;
+        }
+
+        #placeNumberLabel {
+            grid-row: 4;
+            grid-column: 4;
+        }
+
+        #placeNumberInput {
+            grid-row: 5;
+            grid-column: 4;
+        }
+
+        #placeInteriorNumberLabel {
+            grid-row: 4;
+            grid-column: 5;
+        }
+
+        #placeInteriorNumberInput {
+            grid-row: 5;
+            grid-column: 5;
+        }
+
+        #placeReferencesLabel {
+            grid-row: 6;
+            grid-column: 1 / 6;
+        }
+
+        #placeReferencesInput {
+            grid-row: 7;
+            grid-column: 1 / 6;
+        }
+
+        #placeColonyLabel {
+            grid-row: 8;
+            grid-column: 1 / 3;
+        }
+
+        #placeColonyInput {
+            grid-row: 9;
+            grid-column: 1 / 3;
+        }
+
+        #placeDelegationLabel {
+            grid-row: 8;
+            grid-column: 3 / 6;
+        }
+
+        #placeDelegationInput {
+            grid-row: 9;
+            grid-column: 3 / 6;
+        }
+
+        #placeMunicipalityLabel {
+            grid-row: 8;
+            grid-column: 3 / 6;
+        }
+
+        #placeMunicipalityInput {
+            grid-row: 9;
+            grid-column: 3 / 6;
+        }
+
+        #placeCityLabel {
+            grid-row: 10;
+            grid-column: 1 / 5;
+        }
+
+        #placeCityInput {
+            grid-row: 11;
+            grid-column: 1 / 5;
+        }
+
+
+        #placePostalCodeLabel {
+            grid-row: 10;
+            grid-column: 5;
+        }
+
+        #placepostalCodeInput {
+            grid-row: 11;
+            grid-column: 5;
+        }
+
+        #placeSaveInput {
+            grid-row: 14;
+            grid-column: 5 / 6;
+        }
+
+        #placeDeleteInput {
+            grid-row: 14;
+            grid-column: 1;
+        }
+    }

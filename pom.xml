@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.7.6</version>
+    <relativePath/>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>net.cabezudo.sofia</groupId>
+  <artifactId>spring-boot-sofia</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0.0</version>
+
+  <name>spring-boot-sofia</name>
+  <description>Sofia for spring boot</description>
+
+  <properties>
+    <java.version>17</java.version>
+  </properties>
+
+  <modules>
+    <module>html-lib</module>
+    <module>json-lib</module>
+    <module>sofia-calendar</module>
+    <module>sofia-items</module>
+    <module>sofia-people</module>
+    <module>sofia-template-engine</module>
+    <module>sofia-web</module>
+    <module>sofia-security</module>
+    <module>sofia-places</module>
+  </modules>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+</project>

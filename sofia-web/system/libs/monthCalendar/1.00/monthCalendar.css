@@ -1,0 +1,46 @@
+.monthCalendarContainer {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: 1fr;
+    padding: 12px;
+}
+
+.monthCalendarCell {
+    padding: 4px 0;
+    font-size: 12px;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.monthCalendarHeaderTitle {
+    grid-column-start: 1;
+    grid-column-end: 6;
+    font-size: 14px;
+}
+
+.monthCalendarPreviousMonthButton,
+.monthCalendarNextMonthButton {
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.monthCalendarDayName {
+    text-align: center;
+}
+
+.monthCalendarDayNumber {
+    text-align: center;
+}
+
+.monthCalendarNotThisMonth {
+    color: gray;
+}
+
+.monthCalendarToday {
+    background-color: blue;
+    color: white;
+    font-weight: bold;
+    border-radius: 10px;
+}

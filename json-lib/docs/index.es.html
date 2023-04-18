@@ -1,0 +1,306 @@
+<html>
+  <head>
+    <title>JSONLib</title>
+  </head>
+  <body>
+    <h1>JSONLib</h1>
+    <h2>Introducción</h2>
+    <p>JSONLib es una librería que permite convertir cadenas JSON en estructuras JSON, crear estructuras de datos JSON para convertirlas a cadenas o transformar POJO en estructuras JSON.</p>
+    <p>Con JSONLib podemos tomar una cadena JSON y convertirla en una estructura formada por elementos JSON en la que se pueden localizar propiedades de diferentes formas, puede ser manipulada para modificar estas propiedades, agregar, quitar o cambiar valores.</p>
+    <p>Estos elementos JSON pueden ser convertidos a una gran cantidad de datos o inclusive extraerlos bajo un determinado tipo de dato Java.</p>
+    <p>Podemos tomar la estructura resultante y convertirla a una cadena JSON luego de modificarla. Esta conversión puede realizarse utilizando referencias. O sea que podemos convertir un objeto JSON haciendo referencia a otros objetos JSON mediante una propiedad sin agregar la totalidad del objeto en una propiedad.</p>
+    <p>También podemos tomar un objeto POJO y convertirlo a una estructura JSON que puede ser manipulada y luego convertida a cadena JSON.</p>
+    <p>Una gran ventaja de la librería es que trabaja con cualquier estructura JSON. No importa si es un objeto o array, es posible trabajar con todos los elementos JSON por separado.</p>
+    <h2>Bajar la librería</h2>
+    <p>La librería se encuentra en https://github.com/Cabezudo/JSONLib, entonces podemos bajar un jar para usar en nuestros proyectos o los fuentes de la librería completos para colaborar o ver cómo funciona. Para bajar el jar podemos usar el siguiente comando en sistemas Linux.</p>
+    <pre>wget https://github.com/Cabezudo/JSONLib/raw/master/JSONLib-0.9.0.jar</pre>
+    <p>El enlace https://github.com/Cabezudo/JSONLib/raw/master/JSONLib-0.9.0.jar o directamente descargarlo de Github. Esta última opción sería la mejor ya que la versión sel jar en este documento puede no estar actualizada con la versión en el repositorio.</p>
+    <p>Para bajar los fuentes completos podemos descargarlo del sitio de Github o usar el siguiente comando sobre Linux:</p>
+    <pre>git clone https://github.com/Cabezudo/JSONLib.git</pre>
+    <p>Luego de descargarlo podemos crear un proyecto en nuestro IDE preferido. Si decidimos descargar el JAR simplemente lo agregamos a un proyecto nuevo. Supongamos que es una aplicación Java para facilitar las cosas.</p>
+    <h2>Maven</h2>
+    <p>Para agregar el jar a el repositoria maven simplemente ejecutamos en una consola lo siguiente:</p>
+    <pre>mvn install:install-file -Dfile=\users\esteban\download\JSONLib-0.9.0.jar -DgroupId=net.cabezudo.json -DartifactId=JSONLib -Dversion=0.9.0 -Dpackaging=jar</pre>
+    <h2>Mi primer estructura JSON</h2>
+    <p>Para crear una estructura JSON solo necesitamos crear un objeto con un elemento. Las operaciones que vamos a poder ejecutar con este depende del tipo de objeto. Vamos al más simple.</p>
+    <pre>JSONObject jsonObject = new JSONObject();</pre>
+    <p>De esta forma creamos un objeto JSON. Vamos a convertir ese objeto a una cadena JSON.</p>
+    <pre>String jsonStringObject = jsonObject.toJSON();</pre>
+    <p>Luego podemos imprimir la cadena resultante.</p>
+    <pre>System.out.println(jsonStringObject);</pre>
+    <p>Ahora nuestro programa hace algo. La salida sería la siguiente.</p>
+    <pre>{  }</pre>
+    <p>Esto es la representación de un objeto JSON en una cadena.</p>
+    <h2>Crear un objeto JSON</h2>
+    <p>Vamos por algo más complicado. Podemos agregarle a este objeto un par de propiedades. Los objetos JSON solo pueden contener pares por lo tanto vamos a agregar algunos pares y mostrar el ejemplo completo.</p>
+    <pre>JSONObject jsonObject = new JSONObject();
+jsonObject.add(new JSONPair("name", "Esteban"));
+jsonObject.add(new JSONPair("lastName", "Cabezudo"));
+jsonObject.add(new JSONPair("height", 1.84));
+
+String jsonStringObject = jsonObject.toJSON();
+System.out.println(jsonStringObject);</pre>
+    <p>La salida luego de ejecutar el ejemplo es la siguiente:</p>
+    <pre>{ "name": "Esteban", "lastName": "Cabezudo", "height": 1.84 }</pre>
+    <p>Podemos usar un método para que todo se vea mejor.</p>
+
+    <pre>System.out.println(Formatter.indent(jsonStringObject));</pre>
+
+    <p>Con el cual nuestra salida se vería de la siguiente forma.</p>
+
+    <pre>{
+  "name": "Esteban",
+  "lastName": "Cabezudo",
+  "height": 1.84
+}</pre>
+
+    <p>Un JSONPair está formado por un nombre y un valor. El valor es un JSONValue. Los métodos utilizados para el ejemplo son algunos de los muchos constructores que permiten tomar valores y automáticamente convertirlos en elementos JSON.</p>
+    <p>La estructura de objetos que queda para este ejemplo es la siguiente.</p>
+
+    <pre>JSONObject
+|_______JSONPair(String, JSONString)
+|_______JSONPair(String, JSONString)
+|_______JSONPair(String, JSONNumber)</pre>
+
+    <p>Los elementos de JSON que podemos utilizar son JSONObject y JSONArray, utilizados para crear estructuras más complejas. Estos objetos son valores, por lo tanto, se pueden utilizar en cualquier lugar que acepte un valor. Además de estos valores tenemos otros valores. Estos son: JSONBoolean, JSONNull, JSONNumber, JSONString. Además de los valores tenemos JSONPair que es utilizado para armar objetos. Los objetos solamente pueden contener pares de valores.</p>
+    <p>Convertir una cadena a una estructura JSON</p>
+    <p>Supongamos que tenemos una cadena JSON y queremos utilizar la información contenida en ella. Podemos crear una estructura JSON a partir de una cadena JSON.</p>
+
+    <pre>String jsonStringData = "{ \"name\": \"Jorge Méndez\", \"age\": 34, \"maritalStatus\": { \"id\": 8, \"name\": \"married\", \"happy\": true }, \"childs\": [ { \"id\": 6, \"name\": \"Huey\", \"age\": 5 }, { \"id\": 15, \"name\": \"Dewey\", \"age\": 6 }, { \"id\": 9, \"name\": \"Louie\", \"age\": 7 } ] }";
+JSONValue jsonValue = JSON.parse(jsonStringData);</pre>
+
+    <p>La estructura de datos creada en este caso sería la siguiente:</p>
+
+    <pre>JSONObject
+|_________ JSONString (name)
+|_________ JSONNumber (age)
+|_________ JSONObject (maritalStatus)
+  |_________ JSONNumber (id)
+  |_________ JSONString (name)
+  |_________ JSONBoolean (happy)
+|_________ JSONArray (childs)
+  |_________ JSONObject (0)
+    |_________ JSONNumber (id)
+    |_________ JSONString (name)
+    |_________ JSONNumber (age)
+  |_________ JSONObject (1)
+    |_________ JSONNumber (id)
+    |_________ JSONString (name)
+    |_________ JSONNumber (age)
+  |_________ JSONObject (2)
+    |_________ JSONNumber (id)
+    |_________ JSONString (name)
+    |_________ JSONNumber (age)</pre>
+
+    <p>El análisis gramatical lanza una exception que hay que capturar. El código que escribí para esto es el siguiente. No es lindo pero funciona. Podemos, con el hacer pruebas para ver los errores de análisis.</p>
+
+    <pre>JSONValue jsonValue;
+try {
+  jsonValue = JSON.parse(jsonStringData);
+} catch (JSONParseException e) {
+  System.out.println(e.getMessage());
+  System.out.println(jsonStringData);
+  for (int i = 1; i &lt; e.getPosition().getRow(); i++) {
+    System.out.print(" ");
+  }
+  System.out.println("^");
+  return;
+}</pre>
+
+    <p>Cuando un problema de análisis gramatical se encuentra, la excepción JSONParseException contiene la posición donde se encuentra el problema. Luego de analizar la cadena podemos hacer consultas a los datos.</p>
+    <p>Sabemos que el dato es un objeto, por lo tanto podemos convertirlo en uno.</p>
+
+    <pre>JSONObject jsonObject = jsonValue.toObject();</pre>
+
+    <p>Pero si no sabemos que la estructura es un objeto JSON podemos usar un método para saberlo.</p>
+
+    <pre>jsonValue.isObject()</pre>
+
+    <p>Para todos los elementos existen métodos para verificar si es o no un determinado elemento.</p>
+    <p>Obtener propiedades de un objeto</p>
+    <p>Una vez que tenemos el objeto JSON podemos acceder a sus propiedades.</p>
+
+    <pre>JSONValue jsonNameValue = jsonObject.getValue("name");</pre>
+
+    <p>Si la propiedad no existe el método lanza una PropertyNotExistException para indicar que no existe. La excepción es verificable. Para evitar controlar el flujo con excepciones y para esos momentos en que la falta de la propiedad es un error de programación hay, por cada método get existe un método getNullValue que entrega un null si la propiedad no existe en lugar de lanzar una excepción.</p>
+
+    <pre>JSONValue jsonNameValue = jsonObject.getNullValue("nonExistingProperty");</pre>
+
+    <p>También podemos hacer referencia a propiedades de objetos dentro de objetos separando las propiedades utilizando puntos de la siguiente forma.</p>
+
+    <pre>JSONValue jsonMaritalStatusValue = jsonObject.digNullValue("maritalStatus.name");</pre>
+
+    <p>También podemos usar el camino largo.</p>
+
+    <pre>JSONValue jsonMaritalStatusValue = jsonObject.getNullValue("maritalStatus");
+JSONObject jsonMaritalStatusObject = jsonMaritalStatusValue.toObject();
+JSONValue jsonHappyValue = jsonMaritalStatusObject.getNullValue("happy");
+boolean happy = jsonHappyValue.toBoolean();</pre>
+
+    <p>Eso fué mucho código. Por eso es posible tomar un valor y convertirlo en el mismo método de la siguiente forma:</p>
+
+    <pre>JSONObject jsonMaritalStatusObject = jsonObject.getNullObject("maritalStatus");
+Boolean happy = jsonMaritalStatusObject.getNullBoolean("happy");</pre>
+
+    <p>También podemos hacerlo en una sola línea.</p>
+
+    <pre>Boolean happy = jsonObject.digNullBoolean("maritalStatus.happy");</pre>
+
+    <p>Podemos obtener el valor de la propiedad con un índice. Los índices comienzan con el 0 y el orden está determinado por el orden en que se agrega la propiedad o que se encuentra en la cadena JSON.</p>
+
+    <pre>int age = jsonObject.getNullInteger(1);</pre>
+
+    <p>Hay una gran cantidad de funciones para obtener diferentes tipos de datos, utilizando get, dig o índices y sus variantes para obtener valores nulos. Encontramos funciones para recuperar valores del tipo BigDecimal, BigInteger, Boolean, Byte, Calendar, Character, Double, Float, Long, Integer, Short y String dependiendo del tipo de la propiedad. La librería tratará de convertirlos según las reglas explicadas en la documentación de los métodos toXXX. Si no puede convertir se lanza una excepción de conversión.</p>
+    <p>También podemos recuperar un array y recorrerlo ya que implemente Iterable.</p>
+
+    <pre>JSONArray jsonArray = jsonObject.getNullJSONArray("childs");
+for (JSONValue jsonItemValue : jsonArray) {
+  JSONObject child = jsonItemValue.toObject();
+  String name = child.getNullString("name");
+  int age = child.getNullInteger("age");
+  System.out.println(name + " as " + age + " years old.");
+}</pre>
+
+    <p>El número de propiedades de un objeto o el largo de un arreglo lo podemos obtener utilizando el método size().</p>
+
+    <pre>int objectSize = jsonObject.size();
+System.out.println("Object size: " + objectSize);
+JSONArray jsonArray = jsonObject.getNullJSONArray("childs");
+int arraySize = jsonArray.size();
+System.out.println("Array size: " + arraySize);</pre>
+
+    <p>Agregar y quitar propiedades de un objeto</p>
+    <p>Es posible agregar más propiedades a una estructura JSON. Para esto usamos el método add().</p>
+
+    <pre>JSONPair jsonHairColorPair = new JSONPair("hairColor", "black");
+jsonObject.add(jsonHairColorPair);
+System.out.println(Formatter.indent(jsonObject.toJSON()));</pre>
+
+    <p>O borrar.</p>
+
+    <pre>jsonObject.remove("hairColor");</pre>
+
+    <p>Los elementos hijos de un objeto pueden ser obtenidos y colocados en una lista de objetos. Para esto utilizamos el método getChilds() que devuelve una lista de objetos JSONPair.</p>
+
+    <pre>List&lt;JSONPair> childs = jsonObject.getChilds();</pre>
+
+    <p>Podemos obtener un solo par de un objeto haciendo referencia a el nombre de la propiedad con el método getElement que toma una cadena con el nombre de la propiedad y devuelve el par correspondiente.</p>
+
+    <pre>JSONPair jsonPair = jsonObject.getElement("age");</pre>
+
+    <h2>Objetos referenciados</h2>
+    <p>Podemos obtener un objeto resumido utilizando las referencias a otros objetos que fueron declaradas usando el método:</p>
+
+    <pre>JSONValue jsonReferencedElement = jsonObject.toReferencedObject();</pre>
+
+    <p>Este método no se debe de confundir con toReferencedElement(). toReferencedObject() regresa un JSONObject referenciado y el segundo entrega un JSONValue del elemento referenciado. La diferencia entre estos dos solamente se da para los JSONObject. Si llamamos a toReferencedObject() el objeto entregado es el mismo objeto con las mismas propiedades en donde los objetos internos han sido substituidos por sus referencias. Cuando llamamos a toReferencedElement() se regresa un JSONValue que es el propio objeto referenciado, esto es, el valor de su campo referencia.</p>
+    <p>Al imprimir el resultado de toReferencedObject() tenemos:</p>
+
+    <pre>{ "name": "Jorge Méndez", "age": 34, "maritalStatus": "married", "childs": [ 6, 15, 9 ] }</pre>
+
+    <p>Mientras que si imprimimos el resultado de toReferencedElement() obtenemos:<p>
+
+    <pre>Jorge Méndez</pre>
+
+    <p>Por defecto un objeto tiene una propiedad utilizada como referencia la propiedad llamada id. el método sustituye el objeto valor de una propiedad por el valor de la propiedad indicada como referencia. Si no existe esa propiedad el objeto se coloca completo. Si se desea utilizar otra propiedad podemos cambiar la propiedad utilizada como referencia usando el método setReferenceFieldName(). Esto es útil cuando se desea reducir el tamaño de la información, por ejemplo, para pasar por una línea con un ancho de banda muy reducido.</p>
+    <p>Solo los objetos JSON pueden convertirse en referencias. Cuando se genera una estructura JSON a partir de un POJO la propiedad utilizada como referencia puede ser indicada con una anotación.</p>
+    <p>Crear objetos a partir de un POJO</p>
+    <p>Primero vamos a ver como convertir un POJO en una estructura JSON. Para que esto sea posible las propiedades que queremos que sean utilizadas para la estructuras deben estar anotadas con @JSONProperty. Además, todas deben tener un método de acceso a la propiedad con el formato de un Bean de Java, un getter. De esta forma la librería puede obtener el dato. La idea de utilizar el getter es que el estado interno del objeto sea oculto y que se acceda a los valores del estado interno del objeto a través de los getters. Se evita la reflección para no acceder directamente a una propiedad privada que pueda ser manipulada al entregarse en el método de acceso. Un objeto podría ser el siguiente:</p>
+
+    <pre>public class Person {
+
+  @JSONProperty
+  private final String name;
+
+  @JSONProperty
+  private final String lastName;
+
+  @JSONProperty
+  private final int age;
+
+  @JSONProperty(field = "name")
+  private final List&lt;Person> childs = new ArrayList&lt;>();
+
+  public Person(String name, String lastName, int age, Person... persons) {
+    this.name = name;
+    this.lastName = lastName;
+    this.age = age;
+    for (Person child : persons) {
+      childs.add(child);
+    }
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public String getLastName() {
+    return lastName;
+  }
+
+  public List&lt;Person> getChilds() {
+    return childs;
+  }
+
+  public int getAge() {
+    return age;
+  }
+}</pre>
+
+    <p>La anotación marca la propiedad del objeto como una propiedad para generar el JSON. Creamos la estructura JSON de la siguiente forma:</p>
+
+    <pre>Person son = new Person("Julio", "Perez", 12);
+Person person = new Person("Juan", "Perez", 34, son);
+JSONObject jsonPersonObject = JSON.toJSONObject(person);</pre>
+
+    <p>Si imprimimos el objeto JSON la salida es la siguiente:</p>
+
+    <pre>{ "name": "Juan", "lastName": "Perez", "age": 34, "childs": [ { "name": "Julio", "lastName": "Perez", "age": 12, "childs": [  ] } ] }</pre>
+
+    <p>Con esta anotación también podemos cambiar el nombre de una propiedad JSON que se va a utilizar para crear la estructura. Primero especificamos el nombre con el que vamos a utilizar la propiedad y luego agregamos el getter correspondiente.</p>
+
+    <pre>@JSONProperty(name = "anotherName")
+private final String name = "Juan";
+
+public String getAnotherName() {
+  return name;
+}</pre>
+
+    <p>La salida entonces se vería de esta forma:</p>
+
+    <pre>{ "anotherName": "Juan", "lastName": "Perez", "age": 34 }</pre>
+
+    <p>Y si quisiéramos obtener el valor de esa propiedad deberíamos de utilizar anotherName como nombre para realizar la búsqueda.</p>
+    <p>También podemos indicar el campo que se va a utilizar como referencia. Para hacer esto debemos de tomar la propiedad que contiene el objeto e indicar el campo que va a ser utilizado como referencia. Esto es en el objeto que contiene el objeto que se va a referenciar.</p>
+
+    <pre>@JSONProperty(field = "name")
+private final List&lt;Person> childs = new ArrayList&lt;>();</pre>
+
+    <p>De esta forma, se va a utilizar como campo referencia, para los objetos de childs, la propiedad name.</p>
+    <p>Si creamos un objeto referenciado y lo imprimimos la salida es la siguiente:</p>
+
+    <pre>{ "name": "Juan", "lastName": "Perez", "age": 34, "childs": [ "Julio" ] }</pre>
+
+    <p>Como podemos ver en el hijo, el campo name, con el valor Julio es utilizado como referencia para el único hijo que contiene la persona Juan Perez.</p>
+
+    <h2>Arreglos</h2>
+    <p>Al igual que con los objetos JSON, podemos obtener información de los arreglos, al igual que con los objetos, en los tipos de datos más comunes: BigDecimal, BigInteger, Boolean, Byte, Calendar, Character, Double, Float, Long, Integer, Short y String.</p>
+    <p>Podemos tomar un arreglo y solicitar un dato usando su índice:</p>
+
+    <pre>JSONObject jsonFirstChild = jsonArray.getNullObject(0);</pre>
+
+    <p>O podemos escarbar en el array a través de varias propiedades.</p>
+
+    <pre>JSONObject jsonChild = jsonObject.digNullObject("childs.[0]");</pre>
+
+    <p>Usando un método digXXX podemos atravesar varios objetos para recuperar un objeto o un valor específico. Los índices de los arreglos se especifican entre corchetes. De esta forma es muy fácil y visual determinar que se está recorriendo un arreglo.</p>
+    <p>Luego de especificar el índice del arreglo podemos especificar más propiedades de objetos.</p>
+
+    <pre>String name = jsonObject.digNullString("childs.[0].name");</pre>
+
+    <h2>Calendario</h2>
+    <p>Por último podemos hacer uso de calendario para manejar fechas. JSON no tiene elementos para representar fechas. Estas son cadenas con un formato determinado. Para facilitar la conversión entre JavaScript, JSON y Java se especifica el patrón de formato de fecha JSON.SIMPLE_DATE_FORMAT_PATTERN que es el que se utiliza para las conversiones. Usando este podemos crear cadenas con fechas para colocar en objetos.</p>
+
+    <pre>JSONString jsonDateString = new JSONString(calendar);</pre>
+  </body>
+</html>

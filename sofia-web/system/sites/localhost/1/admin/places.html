@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <link href="/images/favicon.png" rel="shortcut icon" type="image/png"/>
+    <link lib="core:1.00"/>
+
+<style>/* CSS import from /admin/menu.html called by style tag on admin/menu.html:1:2 */
+
+/* CSS import from /admin/profileContent.html called by style tag on admin/profileContent.html:1:2 */
+
+/* CSS import from /commons.css called by sofia */
+
+/* CSS import from /footer.html called by style tag on footer.html:1:2 */
+
+/* CSS import from /header.html called by style tag on header.html:48:2 */
+
+/* CSS import from /burguerMenu.css called by file libraryburgerMenu:1.00 on header.html */
+
+/* CSS import from /linkTo.css called by file librarylinkTo:1.00 on header.html */
+
+/* CSS import from /twoLanguageFlag.css called by file librarytwoLanguageFlag:1.00 on header.html */
+
+/* CSS code from /admin/menu.html called by style tag on admin/menu.html:1:2 */
+
+    .adminMenuItem {
+        font-family: 'Montserrat';
+        font-size: 16px;
+        margin: 10px 20px;
+    }
+
+    .adminMenuItem>span {
+        cursor: pointer;
+    }
+
+    .adminMenuContainer>.hide {
+        display: none;
+        cursor: pointer;
+    }
+
+    .adminMenuContainer>.marked {
+        font-weight: bold;
+    }
+
+    .adminMenuSeparator {
+        border-bottom: 1px solid rgb(240, 240, 240);
+    }
+
+    @media all and (min-width: 750px) {}
+
+/* CSS code from /admin/profileContent.html called by style tag on admin/profileContent.html:1:2 */
+
+    #content {
+        padding-top: var(--headerHeight);
+    }
+
+/* CSS code from /commons.css called by sofia */
+@font-face {
+  font-family: Montserrat;
+  src: url('/fonts/montserrat/Montserrat-Light.ttf');
+  font-display: fallback;
+  font-weight: 100;
+}
+
+@font-face {
+  font-family: Montserrat;
+  src: url('/fonts/montserrat/Montserrat-Regular.ttf');
+  font-display: fallback;
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: Montserrat;
+  src: url('/fonts/montserrat/Montserrat-Bold.ttf');
+  font-weight: 800;
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: Montserrat;
+  src: url('/fonts/montserrat/Montserrat-Black.ttf');
+  font-weight: 900;
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: Gotham;
+  src: url('/fonts/gotham-book.otf');
+  font-display: fallback;
+}
+
+:root {
+  --primaryColor: #001e3a;
+  --secundaryColor: #f8b133;
+  --terciaryColor: #253443
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: Montserrat;
+}
+
+h1 {
+  text-align: center;
+}
+
+input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  font-family: Montserrat;
+  font-weight: 300;
+  font-size: 12px;
+  box-sizing: border-box;
+  border: 1px solid lightgrey;
+}
+
+input::placeholder {
+  font-size: 12px;
+  font-family: Montserrat;
+  color: rgb(211, 211, 211);
+}
+
+input:focus {
+  outline: none;
+}
+
+.blueButton {
+  width: 100%;
+  font-size: 12px;
+  font-weight: 900;
+  color: white;
+  background-color: #007d9c;
+  padding: 10px;
+  text-align: center;
+  box-sizing: border-box;
+  border: 0;
+  cursor: pointer;
+}
+
+#application {
+  padding-top: var(--headerHeight);
+  min-width: 280px;
+}
+
+#content {
+  padding-top: var(--headerHeight);
+  display: flex;
+}
+
+.contentTitle {
+  color: var(--primaryColor);
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.adminContainer {
+  display: flex;
+  width: 100%;
+  padding: 20px 0;
+}
+
+.adminMenuContainer {}
+
+.adminMenu {}
+
+.adminContentContainer {
+  margin: auto;
+  max-width: 900px;
+  width: 100%;
+}
+
+.adminContent {}
+
+.adminTitle {
+  color: var(--primaryColor);
+  font-weight: 900;
+  font-size: 18px;
+  padding: 10px 20px;
+}
+
+@media all and (min-width: 750px) {
+  .adminMenuContainer {
+    position: relative;
+    width: 200px;
+    height: auto;
+  }
+}
+
+/* CSS code from /footer.html called by style tag on footer.html:1:2 */
+
+    :root {
+        --footerMinWidth: 270px;
+        --headerHeight: 40px;
+        --footerMenuColor: #253443;
+        --footerLinksColor: #3b5064;
+    }
+
+    footer {
+        min-width: var(--footerMinWidth);
+    }
+
+    #footerMenu {
+        background-color: var(--footerMenuColor);
+    }
+
+    #footerMenuContainer {
+        padding: 30px 20px;
+        max-width: 1140px;
+        margin: auto;
+    }
+
+    #footerLogo {
+        width: auto;
+        height: 28px;
+        aspect-ratio: 614/452;
+        background-image: url(/images/logo.png);
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    #footerItems {
+        display: flex;
+        flex-direction: column;
+        padding: 20px 0;
+    }
+
+    .footerItemsGroup {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .footerItem {
+        font-family: Gotham;
+        font-weight: 300;
+        color: #efefef;
+        padding: 5px 0px;
+        cursor: pointer;
+    }
+
+    .footerItem:hover {
+        color: #aaa;
+        transition-duration: .2s;
+    }
+
+    #footerInformation {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: var(--footerLinksColor);
+        text-align: center;
+        padding: 20px;
+        font-family: Gotham;
+    }
+
+    #footerInformationContainer {
+        display: flex;
+        flex-direction: column;
+        padding: 0 15px;
+        align-items: center;
+    }
+
+    #footerInformationLinks>a {
+        display: inline-block;
+        padding: 0px 10px;
+        font-size: 14px;
+        font-weight: 300;
+        color: #efefef;
+        text-decoration: none;
+        transition-duration: .2s;
+        line-height: 1.5;
+    }
+
+    #footerInformationLinks>a:hover {
+        color: #aaa;
+        transition-duration: .2s;
+    }
+
+    #footerInformationNetworks {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 15px;
+        width: 150px;
+    }
+
+    .footerIcon {
+        width: 22px;
+        height: 22px;
+        background-size: cover;
+    }
+
+    .footerTwitter {
+        background-image: url(/images/media/twitter.svg);
+    }
+
+    .footerInstagram {
+        background-image: url(/images/media/instagram.svg);
+    }
+
+    .footerFacebook {
+        background-image: url(/images/media/facebook.svg);
+    }
+
+    .footerYoutube {
+        background-image: url(/images/media/youtube.svg);
+    }
+
+    .footerLinkedin {
+        background-image: url(/images/media/linkedin.svg);
+    }
+
+    #footerCopyright {
+        margin: 10px 0;
+        font-size: 10px;
+        color: #aaa;
+        font-weight: 100;
+    }
+
+
+    @media all and (min-width: 750px) {
+        #footerItems {
+            flex-direction: row;
+        }
+
+        .footerItemsGroup {
+            width: 40%;
+        }
+    }
+
+    @media all and (min-width: 750px) {
+        #footerInformationContainer {
+            flex-direction: row;
+        }
+    }
+
+/* CSS code from /header.html called by style tag on header.html:48:2 */
+
+    :root {
+        --headerMinWidth: 270px;
+        --headerHeight: 40px;
+    }
+
+    #headerContainer {
+        display: flex;
+        position: fixed;
+        box-sizing: border-box;
+        width: 100%;
+        min-width: var(--headerMinWidth);
+        height: var(--headerHeight);
+        background-color: #3a75b0;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #headerLogoContainer {
+        display: flex;
+        position: fixed;
+        align-items: center;
+        justify-content: space-between;
+        min-width: var(--headerMinWidth);
+        width: 100%;
+    }
+
+    #headerLogo {
+        width: auto;
+        height: 20px;
+        aspect-ratio: 614/452;
+        background-image: url(/images/logo.png);
+        background-size: cover;
+        background-repeat: no-repeat;
+        margin-left: 20px;
+    }
+
+    .logoBackground {
+        width: 100%;
+        height: var(--headerHeight);
+        position: fixed;
+        right: 0;
+        top: 0;
+    }
+
+    .burguerMenuContainer {
+        position: fixed;
+        color: white;
+        width: 100%;
+        top: -169px;
+        align-items: center;
+        justify-content: space-between;
+        transition: top .2s ease-out;
+        background-color: #3a75b0;
+    }
+
+    .burguerMenuContainerActive {
+        display: flex;
+        top: var(--headerHeight);
+    }
+
+    .menuItems {
+        display: flex;
+        flex-direction: column;
+        padding: 0 20px;
+    }
+
+    .menuItem {
+        padding: 10px 0;
+        font-size: 16px;
+        font-family: 'Gotham';
+    }
+
+    .menuItem>span {
+        cursor: pointer;
+    }
+
+    .headerIcon {
+        width: 20px;
+        height: 20px;
+        background-repeat: no-repeat;
+        background-position: center;
+        cursor: pointer;
+    }
+
+    .headerBurgerMenuActivator {
+        background-image: url(/images/burgerMenu/burger.svg);
+        margin-right: 20px;
+    }
+
+    .headerMenuClose {
+        background-image: url(/images/burgerMenu/close.svg);
+    }
+
+    @media all and (min-width: 750px) {
+
+        .burguerMenuContainer {
+            position: relative;
+            display: flex;
+            top: 0;
+            justify-content: flex-end;
+            transition: none;
+        }
+
+        .logoBackground {
+            display: none;
+        }
+
+        #headerLogoContainer {
+            width: auto;
+        }
+
+        #headerBurgerMenuActivator {
+            display: none;
+        }
+
+        .twoLanguageFlagContainer {
+            margin: 0 20px;
+        }
+
+        .menuItems {
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .menuItem {
+            padding: 0 10px;
+            font-size: 12px;
+            font-family: Montserrat;
+            font-weight: 100;
+        }
+
+    }
+
+/* CSS code from /burguerMenu.css called by file libraryburgerMenu:1.00 on header.html */
+.burgerMenuHiddenMenuItem {
+    display: none;
+}
+
+/* CSS code from /linkTo.css called by file librarylinkTo:1.00 on header.html */
+.linkTo {}
+
+.hide {
+    display: none;
+}
+
+.visible {
+    display: block;
+}
+
+.disabled {
+    cursor: auto;
+    pointer-events: none;
+}
+
+.enabled {
+    cursor: pointer;
+}
+
+/* CSS code from /twoLanguageFlag.css called by file librarytwoLanguageFlag:1.00 on header.html */
+.twoLanguageFlagContainer {
+    margin: 0 0 0 10px;
+    cursor: pointer;
+}
+
+.twoLanguageFlagFlag {
+    width: 16px;
+    height: 11px;
+    display: none;
+}
+
+.twoLanguageFlagVisible {
+    display: block;
+}
+
+.twoLanguageFlagContainer>.en {
+    background-image: url(/images/flags/en.png);
+}
+
+.twoLanguageFlagContainer>.es {
+    background-image: url(/images/flags/es.png);
+}
+
+</style>
+<script>const siteLanguages = ['en', 'es'];
+
+const templateVariables = { "application": { "minWidth": "270px", "colors": { "terciary": "#253443" } }, "header": { "minWidth": "270px", "height": "40px" }, "footer": { "minWidth": "270px" } };
+// Code from library core:1.00 on admin/places.html
+// core:setTexts
+// core:webClientDataChange
+// core:showMessage
+// core:showErrorMessage
+
+'use strict';
+
+class User {
+    constructor(data) {
+        this.username = data.username;
+        console.log(`Core::User: data.groups:`, data.groups, Core.isArray(data.groups));
+        if (Core.isArray(data.groups)) {
+            this.groups = data.groups;
+        } else {
+            this.groups = [];
+            console.log(`Groups not found in user data.`, data);
+        }
+
+    };
+}
+
+const Core = {
+    PLACEHOLDER: 1,
+    VALUE: 2,
+    texts: {},
+    actualLanguage: null,
+    user: null,
+    requestId: 0,
+    topics: [],
+    reportSystemErrorFunction: null,
+
+    queryParameters: new URLSearchParams(location.search),
+
+    getActualWebClientDetails: () => {
+        console.log(`core::getActualWebClientDetails`);
+        fetch('/v1/web/clients/actual/details', {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(jsonData => {
+                const user = jsonData.user;
+                if (user === undefined || user === null) {
+                    Core.user = null;
+                } else {
+                    Core.user = new User(user);
+                }
+
+                console.log(`commons.js::getActualWebClientDetails: `, jsonData);
+                Core.publish('core:webClientDataChange', jsonData);
+            });
+    },
+
+    getPreferredLanguage: () => {
+        const defaultFromSiteLanguages = () => {
+            if (siteLanguages.includes("en") || siteLanguages.length == 0) {
+                return 'en';
+            }
+            return siteLanguages[0];
+        };
+
+        const browserLocale = window.navigator.userLanguage || window.navigator.language;
+        if (siteLanguages.includes(browserLocale)) {
+            return browserLocale;
+        }
+        if (siteLanguages.includes(browserLocale.substring(0, 2))) {
+            return browserLocale;
+        }
+        if (browserLocale.length < 2) {
+            return defaultFromSiteLanguages();
+        }
+        const browserLanguage = browserLocale.substring(1, 2).toLowerCase();
+        if (siteLanguages.includes(browserLanguage)) {
+            return browserLanguage;
+        }
+        return defaultFromSiteLanguages();
+    },
+
+    getGeoLocation: async () => {
+        if (navigator.geolocation) {
+            try {
+                const getCurrentPositionPromiseFunction = (resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject);
+                };
+                const locationData = await new Promise(getCurrentPositionPromiseFunction);
+                return {
+                    status: "OK",
+                    message: "OK",
+                    code: 0,
+                    data: locationData
+                };
+            } catch (error) {
+                return {
+                    status: "ERROR",
+                    message: error.message,
+                    code: error.code,
+                    data: null
+                };
+            }
+        } else {
+            console.log("*** get end without support");
+            return {
+                status: "NOT_SUPPORTED",
+                message: "Geolocation is not supported by this browser.",
+                code: 0,
+                data: null
+            }
+                ;
+        }
+    },
+    getCookie: name => {
+        const stringToFind = `${name}=`;
+        const uriDecoded = decodeURIComponent(document.cookie);
+        const cookieArray = uriDecoded.split(';');
+        cookieArray.forEach(cookie => {
+            while (cookie.charAt(0) == ' ') {
+                cookie = cookie.substring(1);
+            }
+            if (cookie.indexOf(stringToFind) === 0) {
+                return cookie.substring(stringToFind.length);
+            }
+        })
+    },
+    getNextRequestId: () => {
+        return Core.requestId++;
+    },
+
+    getText: (key, values) => {
+        if (!key) {
+            console.trace();
+            throw new Error(`Missing parameter key: ${key}`);
+        }
+        let text = texts[key];
+        if (!text) {
+            console.log(`No text for key: ${key}`);
+            text = `[${key}]`;
+        }
+        if (values) {
+            if (Core.isArray(values)) {
+                let i = 0;
+                values.forEach(value => {
+                    const RegExpText = "\\{" + i + "\\}";
+                    const searchRegExp = new RegExp(RegExpText, 'g');
+                    text = text.replace(searchRegExp, value);
+                    i++;
+                });
+            } else {
+                throw new Error('The second parameter MUST be an array');
+            }
+        }
+        return text;
+    },
+
+    getTimezoneOffset: () => {
+        return (new Date()).getTimezoneOffset();
+    },
+
+    isArray: v => {
+        console.log('Core::isArray: ', Object.prototype.toString.call(v), v);
+        return Object.prototype.toString.call(v) === '[object Array]';
+    },
+
+    isFunction: v => {
+        return Object.prototype.toString.call(v) === '[object Function]';
+    },
+
+    isLogged: () => {
+        const user = Core.user;
+        if (user === undefined || user === null) {
+            return false;
+        }
+        const username = user.username;
+        return username !== undefined && username !== null;
+    },
+    isNotLogged: () => {
+        return !Core.isLogged();
+    },
+    isString: v => {
+        return Object.prototype.toString.call(v) === '[object String]';
+    },
+
+    isHTMLDivElement: v => {
+        try {
+            return v instanceof HTMLElement;
+        } catch (e) {
+            return Object.prototype.toString.call(v) === '[object HTMLDivElement]';
+        }
+    },
+
+    isValid: list => {
+        if (!list || list === null) {
+            return false;
+        }
+        for (let i = 0; i < list.length; i++) {
+            const value = list[i];
+            console.log(`Core::isValid: Value to check: ${value}`);
+            if (value === 'status:logged' && Core.isLogged()) {
+                console.log(`Core::isValid: The user is logged`);
+                return true;
+            }
+            if (value === 'status:notLogged' && Core.isNotLogged()) {
+                console.log(`Core::isValid: The user is not logged`);
+                return true;
+            }
+            if (value.startsWith("page:")) {
+                const page = value.substr(5);
+                if (page.endsWith('**')) {
+                    console.log(`${window.location.pathname} start with ${page.substring(0, page.length - 2)}: ${window.location.pathname === page.substring(0, -2)}`);
+                    if (window.location.pathname.startsWith(page.substring(0, page.length - 2))) {
+                        console.log(`Core::isValid: The page is correct: ${page}`);
+                        return true;
+                    }
+                } else {
+                    console.log(`${window.location.pathname} === ${page}: ${window.location.pathname === page}`);
+                    if (window.location.pathname === page) {
+                        console.log(`Core::isValid: The page is correct: ${page}`);
+                        return true;
+                    }
+                }
+            }
+            if (value.startsWith("group:")) {
+                const group = value.substr(6);
+                console.log(`Core::isValid: search for group: ${group}`);
+                if (Core.user === null) {
+                    return false;
+                }
+                console.log('Core::isValid: user: ', Core.user);
+                const groups = Core.user.groups;
+                console.log('Core::isValid: groups: ', groups);
+                for (g of groups) {
+                    if (group === g.name) {
+                        return true;
+                    }
+                };
+                return false;
+            }
+            if (value === 'default') {
+                console.log(`It is true by default`);
+                return true;
+            }
+        };
+        console.log(`   false`);
+        return false;
+    },
+
+    loadLanguage: languageCode => {
+        let fetchLanguage;
+        if (siteLanguages.includes(languageCode)) {
+            fetchLanguage = languageCode;
+        }
+        if (siteLanguages.includes(languageCode.substring(0, 2))) {
+            fetchLanguage = languageCode.substring(0, 2);
+        }
+        const page = window.location.pathname;
+        if (fetchLanguage) {
+            fetch(`/v1/pages/actual/texts?language=${fetchLanguage}&page=${page}`, {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+                .then(response => response.json())
+                .then(jsonData => {
+                    console.log(jsonData.data);
+                    texts = JSON.parse(jsonData.data);
+                    console.log(jsonData);
+                    console.log(texts);
+                    Core.actualLanguage = fetchLanguage;
+                    Core.setTexts(texts);
+                })
+
+                ;
+        } else {
+            throw Error(`Invalid language: ${languageCode}`);
+        }
+    },
+
+    publish: (topicsName, data) => {
+        console.log(`Publish on ${topicsName}`, data);
+        const functions = Core.topics[topicsName];
+        if (functions && Core.isArray(functions)) {
+            functions.forEach(func => {
+                func(data);
+            });
+        }
+    },
+    reportSystemError: error => {
+        if (Core.isFunction(Core.reportSystemErrorFunction)) {
+            Core.reportSystemErrorFunction(error);
+        }
+    },
+    setReportSystemErrorFunction: reportSystemErrorFunction => {
+        Core.reportSystemErrorFunction = reportSystemErrorFunction;
+    },
+    // This function avoid the race condition if the asignation of the text 
+    // to the element is before the text web service is called
+    setText: (element, key, options) => {
+        console.log(`Core::setText:`, element, key);
+
+        Core.subscribeTo('core:setTexts', () => {
+            Core.setTextToElement(element, Core.texts[key], options);
+        });
+        if (Core.texts[key]) {
+            Core.setTextToElement(element, Core.texts[key], options);
+        };
+    },
+    setTexts: ts => {
+        texts = Object.assign(Core.texts, ts);
+        Core.setTextsById();
+        Core.publish('core:setTexts', { language: Core.actualLanguage });
+    },
+    showErrorMessage: errorMessage => {
+        let jsonMessage;
+        if (Core.isString(errorMessage)) {
+            jsonMessage = { errorMessage };
+        } else {
+            jsonMessage = errorMessage;
+        }
+        console.log(`Core::showErrorMessage:`, jsonMessage);
+        Core.publish('core:showErrorMessage', jsonMessage);
+    },
+    showMessage: message => {
+        let jsonMessage;
+        if (Core.isString(message)) {
+            jsonMessage = { message };
+        } else {
+            jsonMessage = errorMessage;
+        }
+        console.log(`Core::showMessage: ${jsonMessage}`, jsonMessage);
+        Core.publish('core:showMessage', jsonMessage);
+    },
+    setTextsById: () => {
+        console.log(`Core::setTextsById: Set text by id`);
+        for (const [key, value] of Object.entries(Core.texts)) {
+            const element = document.getElementById(key);
+            Core.setTextToElement(element, value);
+        }
+    },
+    setTextToElement: (element, text, options) => {
+        if (Core.isHTMLDivElement(element)) {
+            console.log(`Core::setTextToElement: Trying to set text to ${element.id} (${element.constructor.name})`);
+            if (element instanceof HTMLSpanElement || element instanceof HTMLDivElement || element instanceof HTMLButtonElement || element instanceof HTMLOptionElement) {
+                console.log(`Core::setTextToElement: Set text ${text} to element with id ${element.id}`);
+                const childNodes = element.childNodes;
+                const write = childNodes.length === 0 || (childNodes.length === 1 && childNodes[0].nodeType === Node.TEXT_NODE && element.textContent !== text);
+                if (write) {
+                    element.innerHTML = text;
+                } else {
+                    console.log(`Core::setTextToElement: WARNING. The element with the id ${element.id} is not empty.`, element);
+                }
+            }
+            if (element instanceof HTMLInputElement) {
+                console.log(`Core::setTextToElement: element type: ${element.type}`);
+                switch (element.type) {
+                    case 'submit':
+                        element.value = text;
+                        break;
+                    case 'text':
+                        if (options === undefined || options === null || options & Core.PLACEHOLDER === Core.PLACEHOLDER) {
+                            element.placeholder = text;
+                        }
+                        if ((options & Core.VALUE) === Core.VALUE) {
+                            element.value = text;
+                        }
+                        break;
+                    case 'password':
+                        element.placeholder = text;
+                        break;
+                    default:
+                        console.log(`Core::setTextsById: WARNING. Can't manage the type for the input element ${key}.`, element);
+                }
+            }
+        }
+    },
+
+    subscribeTo: (topicsName, functionToExecute) => {
+        let functions = Core.topics[topicsName];
+        if (!functions) {
+            functions = [];
+            Core.topics[topicsName] = functions;
+        }
+        functions.push(functionToExecute);
+    }
+}
+
+const pageLoaded = async () => {
+    console.log(`Core::pageLoaded::templateVariables: `, templateVariables);
+    Core.getActualWebClientDetails();
+    Core.subscribeTo('core:webClientDataChange', data => {
+        console.log('Data from core:webClientDataChange topic: ', data);
+        if (data.language === null) {
+            Core.loadLanguage(Core.getPreferredLanguage());
+        } else {
+            Core.loadLanguage(data.language);
+        }
+    })
+}
+
+window.addEventListener('load', pageLoaded, false);
+
+// Code from library burgerMenu:1.00 on header.html called by file attribute on header on header.html:13:6
+class BurgerMenu {
+    constructor(configuration) {
+        this.beforeShow = configuration.beforeShow;
+        this.beforeHide = configuration.beforeHide;
+        const validateElements = (menuContainerId, openMenuButtonId, closeMenuButtonId) => {
+            this.menuContainer = document.getElementById(menuContainerId);
+            if (!this.menuContainer) {
+                throw new Error(`Can't find the element with the id ${menuContainerId}`);
+            }
+            this.openMenuButton = document.getElementById(openMenuButtonId);
+            if (!this.openMenuButton) {
+                throw new Error(`Can't find the element with the id ${openMenuButtonId}`);
+            }
+            this.closeMenuButton = document.getElementById(closeMenuButtonId);
+            if (!this.closeMenuButton) {
+                throw new Error(`Can't find the element with the id ${closeMenuButtonId}`);
+            }
+        }
+        const createGUI = (items) => {
+            this.subMenus = new Array();
+            this.menuVisible = false;
+
+            this.openMenuButton.addEventListener('click', event => {
+                console.log(`BurguerMenu::constructor::createGUI: Click on ${event.target.id}`);
+                if (this.menuVisible) {
+                    this.hide();
+                    event.stopPropagation();
+
+                } else {
+                    this.show();
+                    event.stopPropagation();
+                }
+            });
+            if (openMenuButtonId != closeMenuButtonId) {
+                this.closeMenuButton.addEventListener('click', event => {
+                    console.log(`BurguerMenu::constructor::createGUI: Click on ${event.target.id}`);
+                    this.hide();
+                    event.stopPropagation();
+                });
+            }
+            document.addEventListener('click', event => {
+                console.log(`BurguerMenu::constructor::createGUI: Click on ${event.target.id}`);
+                this.hide();
+                event.stopPropagation();
+            });
+            const showItem = item => {
+                console.log(`BurguerMenu::constructor::createGUI::showItem: Show item`);
+                const element = document.getElementById(item.id);
+                element.addEventListener('click', event => {
+                    console.log(`BurguerMenu::constructor::createGUI::showItem: Click on ${event.target.id}`);
+                    if (Core.isString(item.onclick)) {
+                        window.location.replace(item.onclick);
+                    }
+                })
+                element.classList.remove('burgerMenuHiddenMenuItem');
+            }
+            const hideItem = item => {
+                console.log(`BurguerMenu::constructor::createGUI::hideItem: Hide item`);
+                const element = document.getElementById(item.id);
+                element.classList.add('burgerMenuHiddenMenuItem');
+            }
+            items.forEach(item => {
+                if (item.hide || item.show) {
+                    hideItem(item);
+                }
+            });
+
+            Core.subscribeTo('core:webClientDataChange', () => {
+                items.forEach(item => {
+                    console.log('item: ', item);
+                    console.log('burguerMenu::constructor::createGUI::subscribeTo: item.show ', item.show);
+                    console.log('burguerMenu::constructor::createGUI::subscribeTo: item.show is valid', Core.isValid(item.show));
+                    console.log('burguerMenu::constructor::createGUI::subscribeTo: item.hide ', item.show);
+                    console.log('burguerMenu::constructor::createGUI::subscribeTo: item.hide is valid', Core.isValid(item.hide));
+
+                    if (item.hide && Core.isValid(item.hide)) {
+                        console.log('burguerMenu::constructor::createGUI::subscribeTo: Configured to show item ');
+                        hideItem(item);
+                        return;
+                    }
+
+                    if (item.show && Core.isValid(item.show)) {
+                        console.log('burguerMenu::constructor::createGUI::subscribeTo: Configured to hide item');
+                        showItem(item);
+                        return;
+                    }
+
+                    console.log('burguerMenu::constructor::createGUI::subscribeTo: Nothing match. Show item');
+                    showItem(item);
+
+                });
+            });
+        };
+        const menuContainerId = configuration.menuContainerId;
+        const openMenuButtonId = configuration.openMenuElementId;
+        const closeMenuButtonId = configuration.closeMenuElementId;
+        const items = configuration.items;
+
+        validateElements(menuContainerId, openMenuButtonId, closeMenuButtonId);
+        createGUI(items);
+    };
+    show() {
+        if (Core.isFunction(this.beforeShow)) {
+            this.beforeShow();
+        }
+        if (!this.menuVisible) {
+            this.menuVisible = true;
+            this.menuContainer.classList.add('burguerMenuContainerActive');
+        }
+    };
+    hide() {
+        if (Core.isFunction(this.beforeHide)) {
+            this.beforeHide();
+        }
+        if (this.menuVisible) {
+            this.menuVisible = false;
+            this.menuContainer.classList.remove('burguerMenuContainerActive');
+        }
+    };
+}
+
+// Code from library linkTo:1.00 on header.html called by file attribute on header on header.html:13:6
+/**
+ * Configuration
+ * id - The element to link to.
+ * onclick - A string with the url to link or a function to execute when the link is clicked
+ * disabled - true if the link is disabled
+ * enable - enable when is login, or not login or in a certain page
+ * disable - disable when is login, or not login, or in a certain page
+ * show - show when is login, or not login, or in a certain page
+ * hide - hide when is login, or not login or in a certain page
+ * 
+ *  */
+
+class LinkTo {
+    constructor(configuration) {
+        const getElement = (id, element) => {
+            if (id === undefined && element === undefined) {
+                throw new Error('You MUST specify an id or element to apply the link to.');
+            }
+            if (Core.isString(id)) {
+                console.log(`Linking the id ${id}`);
+                return document.getElementById(id);
+            }
+            if (Core.isHTMLDivElement(element)) {
+                console.log(`Linking the element `, element);
+                return element;
+            }
+        };
+        this.element = getElement(configuration.id, configuration.element);
+        this.element.classList.add('linkTo');
+        this.element.addEventListener('click', event => {
+            if (this.enable && Core.isString(configuration.onclick)) {
+                window.location.replace(configuration.onclick);
+                return;
+            }
+            if (Core.isFunction(configuration.onclick)) {
+                configuration.onclick(event);
+                return;
+            }
+        });
+        if (configuration.disabled) {
+            configuration.disabled ? this.disable() : this.enable();
+        } else {
+            this.enable();
+        }
+        Core.subscribeTo('core:webClientDataChange', () => {
+            console.log(`linkTo::webClientDataChange: Change the status of the link ${this.element.id}`);
+
+            do {
+                if (configuration.show && Core.isValid(configuration.show)) {
+                    this.show();
+                    break;
+                }
+
+                if (configuration.hide && Core.isValid(configuration.hide)) {
+                    this.hide();
+                    break;
+                }
+            } while (false);
+
+            do {
+                if (configuration.enable && Core.isValid(configuration.enable)) {
+                    this.enable();
+                    break;
+                }
+
+                if (configuration.disable && Core.isValid(configuration.disable)) {
+                    this.disable();
+                    break;
+                }
+            } while (false);
+
+            if (configuration.mark && Core.isValid(configuration.mark)) {
+                this.mark();
+                return;
+            }
+        });
+    }
+
+    mark() {
+        console.log('linkTo::marked');
+        this.element.classList.add('marked')
+    }
+
+    show() {
+        console.log('linkTo::show');
+        this.element.classList.add('visible')
+        this.element.classList.remove('hide')
+    }
+
+    hide() {
+        console.log('linkTo::hide');
+        this.element.classList.add('hide')
+        this.element.classList.remove('visible')
+    }
+
+    disable() {
+        console.log('linkTo::disable');
+        this.isDisable = true;
+        this.element.classList.add('disabled')
+        this.element.classList.remove('enabled')
+    }
+
+    enable() {
+        console.log('linkTo::enable');
+        this.isDisable = false;
+        this.element.classList.add('enabled')
+        this.element.classList.remove('disabled')
+    }
+}
+
+// Code from library twoLanguageFlag:1.00 on header.html called by file attribute on header on header.html:13:6
+/*
+ * Created on: 11/05/2021
+ * Author:     Esteban Cabezudo
+ */
+
+class TwoLanguageFlag {
+    constructor(configuration) {
+        this.languages = configuration.languages;
+        this.onchange = configuration.onchange;
+        const validateOptions = () => {
+            this.container = document.getElementById(configuration.id);
+            if (!this.container) {
+                throw new Error(`Can't find the element with the id ${configuration.id}`);
+            }
+        }
+        const setFlagToShow = () => {
+            if (Core.actualLanguage === this.languages[0].code) {
+                this.languages[1].element.classList.add('twoLanguageFlagVisible');
+                this.languages[0].element.classList.remove('twoLanguageFlagVisible');
+            } else {
+                this.languages[0].element.classList.add('twoLanguageFlagVisible');
+                this.languages[1].element.classList.remove('twoLanguageFlagVisible');
+            }
+        };
+        const createGUI = () => {
+            this.container.className = 'twoLanguageFlagContainer';
+            const setLanguageFlag = (languageToSet) => {
+                languageToSet.element.className = 'twoLanguageFlagFlag';
+                languageToSet.element.classList.add(languageToSet.code);
+                languageToSet.element.addEventListener('click', event => {
+                    Core.loadLanguage(languageToSet.code);
+                    if (Core.isFunction(this.onchange)) {
+                        this.onchange(languageToSet.code);
+                    }
+                    event.stopPropagation();
+                });
+                this.container.appendChild(languageToSet.element);
+            }
+            this.languages[0].element = document.createElement('DIV');
+            this.languages[1].element = document.createElement('DIV');
+            setLanguageFlag(this.languages[0]);
+            setLanguageFlag(this.languages[1]);
+            Core.subscribeTo('core:setTexts', setFlagToShow);
+        };
+        validateOptions();
+        createGUI();
+    };
+    getActualLanguage = () => {
+        return Core.actualLanguage;
+    };
+}
+
+// Code from script tag on header.html:4:2 called by file attribute on header on header.html:13:6
+
+    const initHeader = () => {
+        console.log(`header.html::initHeader`);
+        const burgerMenu = new BurgerMenu(
+            {
+                menuContainerId: 'headerMenuContainer',
+                openMenuElementId: 'headerBurgerMenuActivator',
+                closeMenuElementId: 'headerBurgerMenuActivator',
+                items: [
+                    {
+                        id: 'menuAdministration',
+                        hide: ['status:notLogged', 'page:/admin/**'],
+                        show: ['status:logged'],
+                        onclick: '/admin/index.html'
+                    },
+                    {
+                        id: 'menuLogin',
+                        hide: ['status:logged', 'page:/login.html'],
+                        show: ['status:notLogged'],
+                        onclick: '/login.html'
+                    },
+                    {
+                        id: 'menuLogout',
+                        hide: ['status:notLogged'],
+                        show: ['status:logged'],
+                        onclick: '/logout'
+                    }
+                ]
+            }
+        );
+        new LinkTo({
+            id: 'headerLogo',
+            onclick: '/',
+            disableWhen: ['page:/'],
+        });
+        new TwoLanguageFlag({
+            id: 'twoLanguageFlag',
+            languages: [{ code: 'en' }, { code: 'es' }]
+        });
+    }
+
+    window.addEventListener('load', initHeader);
+
+// Code from script tag on admin/menu.html:29:2 called by file attribute on div on admin/menu.html:9:10
+
+    const initAdminMenu = () => {
+        new LinkTo({
+            id: 'adminTitle',
+            onclick: '/admin/index.html',
+            disable: ['page:/admin/', 'page:/admin/index.html'],
+        });
+        new LinkTo({
+            id: 'adminProfileMenuItem',
+            show: ['group:user'],
+            mark: ['page:/admin/profile.html'],
+            disable: ['page:/admin/profile.html'],
+            onclick: '/admin/profile.html',
+            hide: ['default']
+        });
+        new LinkTo({
+            id: 'adminUsersMenuItem',
+            show: ['group:admin'],
+            hide: ['default'],
+            mark: ['page:/admin/users.html'],
+            disable: ['page:/admin/users.html'],
+            onclick: '/admin/users.html'
+        });
+        new LinkTo({
+            id: 'adminPlacesMenuItem',
+            show: ['group:admin'],
+            hide: ['default'],
+            mark: ['page:/admin/places.html'],
+            disable: ['page:/admin/places.html'],
+            onclick: '/admin/places.html'
+        });
+        new LinkTo({
+            id: 'adminScheduleMenuItem',
+            show: ['group:doctor', 'group:admin'],
+            hide: ['default']
+        });
+    }
+
+    window.addEventListener('load', initAdminMenu);
+
+// Code from script tag on footer.html:149:2 called by file attribute on footer on footer.html:15:6
+
+    const initFooter = () => {
+        new LinkTo({
+            id: 'footerItemLogin',
+            onclick: '/login.html',
+            hideWhen: ['status:logged', 'page:/login.html']
+        });
+    }
+
+    window.addEventListener('load', initFooter);
+
+// Code from :commons.js: called by system 
+
+</script>
+</head>
+
+<body groups="admin">
+    <header>
+    <div id="headerContainer">
+        <div class="burguerMenuContainer" id="headerMenuContainer">
+            <div class="menuItems">
+                <div class="menuItem" id="menuSearch">
+                    <span id="s1"></span>
+                </div>
+                <div class="menuItem" id="menuAdministration">
+                    <span id="s2"></span>
+                </div>
+                <div class="menuItem" id="menuLogin">
+                    <span id="s3"></span>
+                </div>
+                <div class="menuItem" id="menuLogout">
+                    <span id="s4"></span>
+                </div>
+                <div class="menuItem" id="twoLanguageFlag"></div>
+            </div>
+        </div>
+        <div class="logoBackground"></div>
+        <div id="headerLogoContainer">
+            <div id="headerLogo"></div>
+            <div class="headerIcon headerBurgerMenuActivator" id="headerBurgerMenuActivator"></div>
+        </div>
+    </div>
+</header>
+    <div id="content">
+    <div class="adminContainer">
+        <div class="adminMenuContainer">
+    <div class="adminTitle" id="adminTitle">
+        <span id="s5"></span>
+    </div>
+    <div class="adminMenuSeparator"></div>
+    <div class="adminMenuItem" id="adminProfileMenuItem">
+        <span id="s6"></span>
+    </div>
+    <div class="adminMenuItem" id="adminUsersMenuItem">
+        <span id="s7"></span>
+    </div>
+    <div class="adminMenuItem" id="adminPlacesMenuItem">
+        <span id="s8"></span>
+    </div>
+    <div class="adminMenuItem" id="adminScheduleMenuItem">
+        <span id="s9"></span>
+    </div>
+</div>
+        <div class="adminContentContainer">
+        </div>
+    </div>
+</div>
+    <footer>
+    <div id="footerMenu">
+        <div id="footerMenuContainer">
+
+            <div id="footerLogo"></div>
+            <div id="footerItems">
+                <div class="footerItemsGroup">
+                    <div class="footerItem">
+                        <span id="s10"></span>
+                    </div>
+                    <div class="footerItem">
+                        <span id="s11"></span>
+                    </div>
+                </div>
+                <div class="footerItemsGroup">
+                    <div class="footerItem">
+                        <span id="s12"></span>
+                    </div>
+                    <div class="footerItem" id="footerItemLogin">
+                        <span id="s13"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="footerInformation">
+        <div id="footerInformationContainer">
+            <div id="footerInformationLinks">
+                <a href="">
+                    <span id="s14"></span>
+                </a>
+                <a href="">
+                    <span id="s15"></span>
+                </a>
+            </div>
+            <div id="footerInformationNetworks">
+                <div class="footerIcon footerTwitter" href="https://twitter.com/" target="_blank"></div>
+                <a class="footerIcon footerInstagram" href="https://www.instagram.com/" target="_blank"></a>
+                <div class="footerIcon footerFacebook" href="https://www.facebook.com/" target="_blank"></div>
+                <a class="footerIcon footerYoutube" href="https://www.youtube.com/" target="_blank"></a>
+                <a class="footerIcon footerLinkedin" href="https://www.linkedin.com/" target="_blank"></a>
+            </div>
+        </div>
+        <div id="footerCopyright">
+            <span id="s16"></span>
+        </div>
+    </div>
+</footer>
+</body>
+
+</html>

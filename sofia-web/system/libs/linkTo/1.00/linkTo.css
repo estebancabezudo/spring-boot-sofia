@@ -1,0 +1,18 @@
+.linkTo {}
+
+.hide {
+    display: none;
+}
+
+.visible {
+    display: block;
+}
+
+.disabled {
+    cursor: auto;
+    pointer-events: none;
+}
+
+.enabled {
+    cursor: pointer;
+}

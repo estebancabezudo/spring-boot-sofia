@@ -1,0 +1,87 @@
+#listContainer {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: auto;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.cell {
+    width: 245px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 6px;
+    aspect-ratio: 1.2;
+    box-sizing: border-box;
+}
+
+.cellToAdd {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px #D5D9D9 dashed;
+}
+
+.dataCell {
+    border: 1px #D5D9D9 solid;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.formContainer input,
+.formContainer select {
+    background-color: rgba(0, 165, 8, 0.06);
+}
+
+.textInput {
+    padding: 5px 20px;
+    border: 0;
+}
+
+.deleteGroupContainer {
+    width: 20px;
+    height: 20px;
+}
+
+.deleteGroup {
+    cursor: pointer;
+}
+
+@media all and (min-width: 554px) {
+    #content {
+        grid-template-columns: auto auto;
+    }
+}
+
+@media all and (min-width: 799px) {
+    #content {
+        width: 759px;
+    }
+
+    #listContainer {
+        grid-template-columns: auto auto auto;
+        justify-content: flex-start;
+    }
+}
+
+@media all and (min-width: 1056px) {
+    #content {
+        width: 1016px;
+    }
+
+    #listContainer {
+        grid-template-columns: auto auto auto auto;
+    }
+}
+
+@media all and (min-width: 1301px) {
+    #content {
+        width: 1261px;
+    }
+
+    #listContainer {
+        grid-template-columns: auto auto auto auto auto;
+    }
+}

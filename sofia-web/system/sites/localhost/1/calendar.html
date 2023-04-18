@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <link href="/images/favicon.png" rel="shortcut icon" type="image/png"/>
+    <link lib="core:1.00"/>
+
+<style>/* CSS import from /calendar.css called by sofia */
+
+/* CSS import from /commons.css called by sofia */
+
+/* CSS import from /footer.html called by style tag on footer.html:1:2 */
+
+/* CSS import from /header.html called by style tag on header.html:36:2 */
+
+/* CSS import from /monthCalendar.html called by style tag on monthCalendar.html:1:2 */
+
+/* CSS import from /weekCalendar.html called by style tag on weekCalendar.html:1:2 */
+
+/* CSS import from /burguerMenu.css called by file libraryburgerMenu:1.00 on header.html */
+
+/* CSS import from /linkTo.css called by file librarylinkTo:1.00 on header.html */
+
+/* CSS import from /monthCalendar.css called by file librarymonthCalendar:1.00 on monthCalendar.html */
+
+/* CSS import from /weekCalendar.css called by file libraryweekCalendar:1.00 on weekCalendar.html */
+
+/* CSS code from /calendar.css called by sofia */
+.applicationContainer {
+    display: flex;
+}
+
+.leftPanel {
+    flex: 0 0 200px;
+}
+
+.rightPanel {
+    flex-grow: 1;
+}
+
+/* CSS code from /commons.css called by sofia */
+@font-face {
+  font-family: Gotham;
+  src: url('/fonts/gotham-light.otf');
+  font-weight: 100;
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: Gotham;
+  src: url('/fonts/gotham-book.otf');
+  font-weight: 300;
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: Gotham;
+  src: url('/fonts/gotham-medium.otf');
+  font-weight: 600;
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: Gotham;
+  src: url('/fonts/gotham-bold.otf');
+  font-weight: 800;
+  font-display: fallback;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: Ubuntu;
+}
+
+h1 {
+  text-align: center;
+}
+
+input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  font-size: 20px;
+  box-sizing: border-box;
+  border: 1px solid lightgrey;
+}
+
+input:focus {
+  outline: none;
+}
+
+.blueButton {
+  width: 100%;
+  font-size: 18px;
+  color: white;
+  background-color: #007BFF;
+  padding: 14px;
+  text-align: center;
+  box-sizing: border-box;
+  border: 0;
+  cursor: pointer;
+}
+
+#application {
+  padding-top: var(--headerHeight);
+  min-width: 280px;
+}
+
+/* CSS code from /footer.html called by style tag on footer.html:1:2 */
+
+    #footerMenu {
+        background-color: #1b1e21;
+    }
+
+    #footerMenuContainer {
+        padding: 30px 20px;
+        max-width: 1140px;
+        margin: auto;
+    }
+
+    #footerLogo {
+        width: 80px;
+        height: auto;
+        aspect-ratio: 399/124;
+        background-image: url(/images/logoSofia.png);
+        background-size: contain;
+    }
+
+    #footerItems {
+        display: flex;
+        flex-direction: column;
+        padding: 20px 0;
+    }
+
+    .footerItemsGroup {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .footerItem {
+        font-family: Gotham;
+        font-weight: 300;
+        color: #efefef;
+        padding: 5px 0px;
+        cursor: pointer;
+    }
+
+    .footerItem:hover {
+        color: #aaa;
+        transition-duration: .2s;
+    }
+
+    #footerInformation {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #282a2d;
+        text-align: center;
+        padding: 20px;
+        font-family: Gotham;
+    }
+
+    #footerInformationContainer {
+        display: flex;
+        flex-direction: column;
+        padding: 0 15px;
+        align-items: center;
+    }
+
+    #footerInformationLinks>a {
+        display: inline-block;
+        padding: 0px 10px;
+        font-size: 14px;
+        font-weight: 300;
+        color: #efefef;
+        text-decoration: none;
+        transition-duration: .2s;
+        line-height: 1.5;
+    }
+
+    #footerInformationLinks>a:hover {
+        color: #aaa;
+        transition-duration: .2s;
+    }
+
+    #footerInformationNetworks {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 15px;
+        width: 150px;
+    }
+
+    .footerIcon {
+        width: 22px;
+        height: 22px;
+        background-size: cover;
+    }
+
+    .footerTwitter {
+        background-image: url(/images/media/twitter.svg);
+    }
+
+    .footerInstagram {
+        background-image: url(/images/media/instagram.svg);
+    }
+
+    .footerFacebook {
+        background-image: url(/images/media/facebook.svg);
+    }
+
+    .footerYoutube {
+        background-image: url(/images/media/youtube.svg);
+    }
+
+    .footerLinkedin {
+        background-image: url(/images/media/linkedin.svg);
+    }
+
+    #footerCopyright {
+        margin: 10px 0;
+        font-size: 10px;
+        color: #aaa;
+        font-weight: 100;
+    }
+
+
+    @media all and (min-width: 750px) {
+        #footerItems {
+            flex-direction: row;
+        }
+
+        .footerItemsGroup {
+            width: 40%;
+        }
+    }
+
+    @media all and (min-width: 750px) {
+        #footerInformationContainer {
+            flex-direction: row;
+        }
+    }
+
+/* CSS code from /header.html called by style tag on header.html:36:2 */
+
+    :root {
+        --headerHeight: 60px;
+        --primaryColor: #116223;
+    }
+
+    #headerContainer {
+        display: flex;
+        position: fixed;
+        box-sizing: border-box;
+        width: 100%;
+        height: var(--headerHeight);
+        background-color: var(--primaryColor);
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #headerLogoContainer {
+        display: flex;
+        position: fixed;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    #headerLogo {
+        width: 100px;
+        height: auto;
+        aspect-ratio: 399/124;
+        background-image: url(/images/logoSofia.png);
+        background-size: contain;
+        background-repeat: no-repeat;
+        margin-left: 20px;
+        margin-top: 6px;
+    }
+
+    .logoBackground {
+        background-color: var(--primaryColor);
+        width: 100%;
+        height: var(--headerHeight);
+        position: fixed;
+        right: 0;
+        top: 0;
+    }
+
+    #headerMenuContainer {
+        position: fixed;
+        font-weight: bold;
+        color: white;
+        width: 100%;
+        background-color: var(--primaryColor);
+        right: 0;
+    }
+
+    .burguerMenuContainer {
+        top: -59px;
+        align-items: center;
+        justify-content: space-between;
+        transition: top .2s ease-out;
+    }
+
+    .burguerMenuContainerActive {
+        display: flex;
+        top: var(--headerHeight);
+    }
+
+    .menuItems {
+        padding: 20px;
+    }
+
+    .menuItem>span {
+        cursor: pointer;
+    }
+
+    .headerIcon {
+        width: 28px;
+        height: 28px;
+        background-repeat: no-repeat;
+        background-position: center;
+        cursor: pointer;
+    }
+
+    .headerBurgerMenuActivator {
+        background-image: url(/images/burgerMenu/1.00/burger.svg);
+        margin-right: 20px;
+    }
+
+    .headerMenuClose {
+        background-image: url(/images/burgerMenu/1.00/close.svg);
+    }
+
+    @media all and (min-width: 750px) {
+
+        .burguerMenuContainer {
+            position: relative;
+            display: flex;
+            top: 0;
+            justify-content: flex-end;
+            transition: none;
+        }
+
+        .logoBackground {
+            display: none;
+        }
+
+        #headerBurgerMenuActivator {
+            display: none;
+        }
+    }
+
+/* CSS code from /monthCalendar.html called by style tag on monthCalendar.html:1:2 */
+
+
+/* CSS code from /weekCalendar.html called by style tag on weekCalendar.html:1:2 */
+
+
+/* CSS code from /burguerMenu.css called by file libraryburgerMenu:1.00 on header.html */
+.burgerMenuHiddenMenuItem {
+    display: none;
+}
+
+/* CSS code from /linkTo.css called by file librarylinkTo:1.00 on header.html */
+.linkTo {}
+
+.hide {
+    display: none;
+}
+
+.visible {
+    display: block;
+}
+
+.disabled {
+    cursor: auto;
+    pointer-events: none;
+}
+
+.enabled {
+    cursor: pointer;
+}
+
+/* CSS code from /monthCalendar.css called by file librarymonthCalendar:1.00 on monthCalendar.html */
+.monthCalendarContainer {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: 1fr;
+    padding: 12px;
+}
+
+.monthCalendarCell {
+    padding: 4px 0;
+    font-size: 12px;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.monthCalendarHeaderTitle {
+    grid-column-start: 1;
+    grid-column-end: 6;
+    font-size: 14px;
+}
+
+.monthCalendarPreviousMonthButton,
+.monthCalendarNextMonthButton {
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.monthCalendarDayName {
+    text-align: center;
+}
+
+.monthCalendarDayNumber {
+    text-align: center;
+}
+
+.monthCalendarNotThisMonth {
+    color: gray;
+}
+
+.monthCalendarToday {
+    background-color: blue;
+    color: white;
+    font-weight: bold;
+    border-radius: 10px;
+}
+
+/* CSS code from /weekCalendar.css called by file libraryweekCalendar:1.00 on weekCalendar.html */
+.calendarParent {
+    display: grid;
+    grid-template-columns: 1fr repeat(7, 3fr);
+    grid-template-rows: 1fr repeat(24, 1fr);
+    background-color: lightgray;
+    grid-gap: 1px;
+}
+
+.calendarHeader {
+    margin: 20px;
+}
+
+.calendarMoveWeekButton,
+.calendarToTodayButton {
+    display: inline-block;
+    margin: 0 10px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.calendarTitle {
+    display: inline-block;
+    margin: 0 10px;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.hourCell {
+    display: flex;
+    height: 40px;
+    background-color: white;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.dayTitleCell {
+    align-items: center;
+    justify-content: center;
+}
+
+.hourCellHour {
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.hourLabel {
+    color: #111;
+    display: inline-block;
+    font-size: 12px;
+    padding: 0 6px;
+}
+
+.calendarToday {
+    background-color: mistyrose;
+}
+
+</style>
+<script>const sofiaAuthenticationEnabled = false;
+const siteLanguages = ['en', 'es'];
+
+const templateVariables = { "header": { "height": "60px" } };
+// Code from script tag on footer.html:137:2 called by file attribute on footer on footer.html:20:6
+
+    const initFooter = () => {
+        new LinkTo({
+            id: 'footerItemLogin',
+            onclick: '/login.html',
+            hideWhen: ['status:logged', 'page:/login.html']
+        });
+    }
+
+    window.addEventListener('load', initFooter);
+
+// Code from script tag on header.html:3:2 called by file attribute on header on header.html:13:6
+
+    const initHeader = () => {
+        const burgerMenu = new BurgerMenu(
+            {
+                menuContainerId: 'headerMenuContainer',
+                openMenuElementId: 'headerBurgerMenuActivator',
+                closeMenuElementId: 'headerBurgerMenuActivator',
+                items: [
+                    {
+                        id: 'login',
+                        notShow: ['status:logged', 'page:/login.html'],
+                        show: ['status:notLogged'],
+                        onclick: '/login.html'
+                    },
+                    {
+                        id: 'logout',
+                        notShow: ['status:notLogged'],
+                        show: ['status:logged'],
+                        onclick: '/logout'
+                    }
+                ]
+            }
+        );
+        new LinkTo({
+            id: 'headerLogo',
+            onclick: '/',
+            disableWhen: ['page:/'],
+        });
+    }
+
+    window.addEventListener('load', initHeader);
+
+// Code from script tag on monthCalendar.html:5:2 called by file attribute on div on monthCalendar.html:16:14
+
+    const initMonthCalendar = async () => {
+        const monthCalendar = new MonthCalendar({ id: 'monthCalendar' });
+    }
+
+    window.addEventListener('load', initMonthCalendar);
+
+// Code from script tag on weekCalendar.html:5:2 called by file attribute on div on weekCalendar.html:17:14
+
+    const initCalendar = async () => {
+        const weekCalendar = new WeekCalendar({ id: 'weekCalendar' });
+    }
+
+    window.addEventListener('load', initCalendar);
+
+// Code from library burgerMenu:1.00 on header.html called by file attribute on header on header.html:13:6
+class BurgerMenu {
+    constructor(configuration) {
+        this.beforeShow = configuration.beforeShow;
+        this.beforeHide = configuration.beforeHide;
+        const validateElements = (menuContainerId, openMenuButtonId, closeMenuButtonId) => {
+            this.menuContainer = document.getElementById(menuContainerId);
+            if (!this.menuContainer) {
+                throw new Error(`Can't find the element with the id ${menuContainerId}`);
+            }
+            this.openMenuButton = document.getElementById(openMenuButtonId);
+            if (!this.openMenuButton) {
+                throw new Error(`Can't find the element with the id ${openMenuButtonId}`);
+            }
+            this.closeMenuButton = document.getElementById(closeMenuButtonId);
+            if (!this.closeMenuButton) {
+                throw new Error(`Can't find the element with the id ${closeMenuButtonId}`);
+            }
+        }
+        const createGUI = (items) => {
+            this.subMenus = new Array();
+            this.menuVisible = false;
+
+            this.openMenuButton.addEventListener('click', event => {
+                console.log(`BurguerMenu::constructor::createGUI: Click on ${event.target.id}`);
+                if (this.menuVisible) {
+                    this.hide();
+                    event.stopPropagation();
+
+                } else {
+                    this.show();
+                    event.stopPropagation();
+                }
+            });
+            if (openMenuButtonId != closeMenuButtonId) {
+                this.closeMenuButton.addEventListener('click', event => {
+                    console.log(`BurguerMenu::constructor::createGUI: Click on ${event.target.id}`);
+                    this.hide();
+                    event.stopPropagation();
+                });
+            }
+            document.addEventListener('click', event => {
+                console.log(`BurguerMenu::constructor::createGUI: Click on ${event.target.id}`);
+                this.hide();
+                event.stopPropagation();
+            });
+            const showItem = item => {
+                console.log(`BurguerMenu::constructor::createGUI::showItem: Show item`);
+                const element = document.getElementById(item.id);
+                element.addEventListener('click', event => {
+                    console.log(`BurguerMenu::constructor::createGUI::showItem: Click on ${event.target.id}`);
+                    if (Core.isString(item.onclick)) {
+                        window.location.replace(item.onclick);
+                    }
+                })
+                element.classList.remove('burgerMenuHiddenMenuItem');
+            }
+            const hideItem = item => {
+                console.log(`BurguerMenu::constructor::createGUI::hideItem: Hide item`);
+                const element = document.getElementById(item.id);
+                element.classList.add('burgerMenuHiddenMenuItem');
+            }
+            items.forEach(item => {
+                if (item.notShow || item.show) {
+                    hideItem(item);
+                }
+            });
+
+            Core.subscribeTo('userDataChange', () => {
+                items.forEach(item => {
+                    console.log(item);
+                    console.log(item.show + " " + Core.isValidAccess(item.show));
+
+                    if (item.show && Core.isValidAccess(item.show)) {
+                        showItem(item);
+                    }
+
+                    console.log(item.notShow + " " + Core.isValidAccess(item.notShow));
+                    if (item.notShow && Core.isValidAccess(item.notShow)) {
+                        hideItem(item);
+                    }
+                });
+            });
+        };
+        const menuContainerId = configuration.menuContainerId;
+        const openMenuButtonId = configuration.openMenuElementId;
+        const closeMenuButtonId = configuration.closeMenuElementId;
+        const items = configuration.items;
+
+        validateElements(menuContainerId, openMenuButtonId, closeMenuButtonId);
+        createGUI(items);
+    };
+    show() {
+        if (Core.isFunction(this.beforeShow)) {
+            this.beforeShow();
+        }
+        if (!this.menuVisible) {
+            this.menuVisible = true;
+            this.menuContainer.classList.add('burguerMenuContainerActive');
+        }
+    };
+    hide() {
+        if (Core.isFunction(this.beforeHide)) {
+            this.beforeHide();
+        }
+        if (this.menuVisible) {
+            this.menuVisible = false;
+            this.menuContainer.classList.remove('burguerMenuContainerActive');
+        }
+    };
+}
+
+// Code from :commons.js: called by system 
+
+// Code from library core:1.00 on calendar.html
+'use strict';
+
+class User {
+    constructor(data) {
+        this.username = data.username;
+        if (Core.isArray(data.groups)) {
+            this.groups = data.groups;
+        } else {
+            this.groups = [];
+            console.log(`Groups not found in user data.`, data);
+        }
+
+    };
+    isLogged() {
+        return this.username !== null;
+    };
+    isNotLogged() {
+        return !this.isLogged();
+    };
+}
+
+const Core = {
+    texts: {},
+    actualLanguage: null,
+    user: null,
+    requestId: 0,
+    topics: [],
+
+    queryParameters: new URLSearchParams(location.search),
+
+    getActualUserStatus: () => {
+        console.log(`core::getActualUserStatus`);
+        fetch('/v1/users/actual/status', {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(jsonData => {
+                Core.user = new User(jsonData);
+                console.log(`commons.js::getActualUserStatus`, jsonData);
+                Core.publish('userDataChange', jsonData);
+            });
+    },
+
+    getBrowserPreferredLanguage: () => {
+        const browserLocale = window.navigator.userLanguage || window.navigator.language;
+        if (siteLanguages.includes(browserLocale)) {
+            return browserLocale;
+        }
+        if (siteLanguages.includes(browserLocale.substring(0, 2))) {
+            return browserLocale;
+        }
+        const defaultFromSiteLanguages = () => {
+            if (siteLanguages.includes("en") || siteLanguages.length == 0) {
+                return 'en';
+            }
+            return siteLanguages[0];
+        };
+        if (browserLocale.length < 2) {
+            return defaultFromSiteLanguages();
+        }
+        const browserLanguage = browserLocale.substring(1, 2).toLowerCase();
+        if (siteLanguages.includes(browserLanguage)) {
+            return browserLanguage;
+        }
+        return defaultFromSiteLanguages();
+    },
+
+    getGeoLocation: async () => {
+        if (navigator.geolocation) {
+            try {
+                const getCurrentPositionPromiseFunction = (resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject);
+                };
+                const locationData = await new Promise(getCurrentPositionPromiseFunction);
+                return {
+                    status: "OK",
+                    message: "OK",
+                    code: 0,
+                    data: locationData
+                };
+            } catch (error) {
+                return {
+                    status: "ERROR",
+                    message: error.message,
+                    code: error.code,
+                    data: null
+                };
+            }
+        } else {
+            console.log("*** get end without support");
+            return {
+                status: "NOT_SUPPORTED",
+                message: "Geolocation is not supported by this browser.",
+                code: 0,
+                data: null
+            }
+                ;
+        }
+    },
+    getCookie: name => {
+        const stringToFind = `${name}=`;
+        const uriDecoded = decodeURIComponent(document.cookie);
+        const cookieArray = uriDecoded.split(';');
+        cookieArray.forEach(cookie => {
+            while (cookie.charAt(0) == ' ') {
+                cookie = cookie.substring(1);
+            }
+            if (cookie.indexOf(stringToFind) === 0) {
+                return cookie.substring(stringToFind.length);
+            }
+        })
+    },
+    getNextRequestId: () => {
+        return Core.requestId++;
+    },
+
+    getText: (key, values) => {
+        if (!key) {
+            console.trace();
+            throw new Error(`Missing parameter key: ${key}`);
+        }
+        let text = texts[key];
+        if (!text) {
+            console.log(`No text for key: ${key}`);
+            text = `[${key}]`;
+        }
+        if (values) {
+            if (Core.isArray(values)) {
+                let i = 0;
+                values.forEach(value => {
+                    const RegExpText = "\\{" + i + "\\}";
+                    const searchRegExp = new RegExp(RegExpText, 'g');
+                    text = text.replace(searchRegExp, value);
+                    i++;
+                });
+            } else {
+                throw new Error('The second parameter MUST be an array');
+            }
+        }
+        return text;
+    },
+
+    getTimezoneOffset: () => {
+        return (new Date()).getTimezoneOffset();
+    },
+
+    getURLForLanguage: language => {
+        let pathname = window.location.pathname;
+        if (pathname.endsWith('/')) {
+            pathname += 'index.html';
+        }
+        const textsDir = pathname.replace('.html', '/');
+        return `/texts${textsDir}${language}.json`;
+    },
+
+    isArray: v => {
+        return Object.prototype.toString.call(v) === '[object Array]';
+    },
+
+    isFunction: v => {
+        return Object.prototype.toString.call(v) === '[object Function]';
+    },
+
+    isString: v => {
+        return Object.prototype.toString.call(v) === '[object String]';
+    },
+
+    isValidAccess: list => {
+        if (!list || list === null) {
+            return false;
+        }
+        for (let i = 0; i < list.length; i++) {
+            const value = list[i];
+            if (value === 'status:logged' && Core.user.isLogged()) {
+                return true;
+            }
+            if (value === 'status:notLogged' && Core.user.isNotLogged()) {
+                return true;
+            }
+            if (value.startsWith("page:")) {
+                const page = value.substr(5);
+                return window.location.pathname === page;
+            }
+            if (value.startsWith("group:")) {
+                const group = value.substr(6);
+                return Core.user !== null && Core.user.groups.includes(group);
+            }
+            if (value === 'default') {
+                return true;
+            }
+        };
+        return false;
+    },
+
+    loadLanguage: languageCode => {
+        let fetchLanguage;
+        if (siteLanguages.includes(languageCode)) {
+            fetchLanguage = languageCode;
+        }
+        if (siteLanguages.includes(languageCode.substring(0, 2))) {
+            fetchLanguage = languageCode.substring(0, 2);
+        }
+        if (fetchLanguage) {
+            fetch(Core.getURLForLanguage(fetchLanguage), {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+                .then(response => response.json())
+                .then(jsonData => {
+                    Core.actualLanguage = fetchLanguage;
+                    Core.setTexts(jsonData);
+                })
+
+                ;
+        } else {
+            throw Error(`Invalid language: ${languageCode}`);
+        }
+    },
+
+    publish: (topicsName, data) => {
+        console.log(`Publish on ${topicsName}`, data);
+        const functions = Core.topics[topicsName];
+        if (functions && Core.isArray(functions)) {
+            functions.forEach(func => {
+                func(data);
+            });
+        }
+    },
+
+    setTexts: ts => {
+        texts = Object.assign(Core.texts, ts);
+        Core.setTextsById();
+        Core.publish('core:language:set', { language: Core.actualLanguage });
+    },
+
+    setTextsById: () => {
+        console.log(`Core :: setTextsById: Set text by id`);
+        for (const [key, value] of Object.entries(texts)) {
+            const element = document.getElementById(key);
+            if (element) {
+                console.log(`Core :: setTextsById: Trying to set text to ${element.constructor.name}`);
+                if (element instanceof HTMLSpanElement) {
+                    console.log(`Core :: setTextsById: Set text ${value} to id ${key}`);
+                    const childNodes = element.childNodes;
+                    const write = childNodes.length === 0 || (childNodes.length === 1 && childNodes[0].nodeType === Node.TEXT_NODE && element.textContent !== value);
+                    if (write) {
+                        element.innerHTML = value;
+                    } else {
+                        console.log(`Core :: setTextsById: WARNING. The element with the id ${key} is not empty.`, element);
+                    }
+                }
+                if (element instanceof HTMLInputElement) {
+                    switch (element.type) {
+                        case 'submit':
+                            element.value = value;
+                            break;
+                        default:
+                            console.log(`Core :: setTextsById: WARNING. Can't manage the type for the input element ${key}.`, element);
+                    }
+
+
+                }
+            }
+        }
+    },
+
+    subscribeTo: (topicsName, functionToExecute) => {
+        let functions = Core.topics[topicsName];
+        if (!functions) {
+            functions = [];
+            Core.topics[topicsName] = functions;
+        }
+        functions.push(functionToExecute);
+    }
+}
+
+const pageLoaded = async () => {
+    console.log(`Core :: pageLoaded :: templateVariables: `, templateVariables);
+    Core.loadLanguage(Core.getBrowserPreferredLanguage());
+    Core.getActualUserStatus();
+}
+
+window.addEventListener('load', pageLoaded, false);
+
+// Code from library linkTo:1.00 on header.html called by file attribute on header on header.html:13:6
+/**
+ * Configuration
+ * id - The element to link to.
+ * onclick - A string with the url to link or a function to execute when the link is clicked
+ * disabled - true if the link is disabled
+ * enable - enable when is login, or not login or in a certain page
+ * disable - disable when is login, or not login, or in a certain page
+ * show - show when is login, or not login, or in a certain page
+ * hide - hide when is login, or not login or in a certain page
+ * 
+ *  */
+
+class LinkTo {
+    constructor(configuration) {
+        this.element = document.getElementById(configuration.id);
+        this.element.classList.add('linkTo');
+        this.element.addEventListener('click', event => {
+            if (this.enable && Core.isString(configuration.onclick)) {
+                window.location.replace(configuration.onclick);
+                return;
+            }
+            if (Core.isFunction(configuration.onclick)) {
+                configuration.onclick(event);
+                return;
+            }
+        });
+        if (configuration.disabled) {
+            configuration.disabled ? this.disable() : this.enable();
+        } else {
+            this.enable();
+        }
+        Core.subscribeTo('userDataChange', () => {
+            console.log(`linkTo::userDataChange: Change the status of the link ${this.element.id}`);
+
+            if (configuration.show && Core.isValidAccess(configuration.show)) {
+                this.show();
+            }
+
+            if (configuration.hide && Core.isValidAccess(configuration.hide)) {
+                this.hide();
+            }
+
+            if (configuration.enable && Core.isValidAccess(configuration.enable)) {
+                this.enable();
+            }
+
+            if (configuration.disable && Core.isValidAccess(configuration.disable)) {
+                this.disable();
+            }
+        });
+    }
+
+    show() {
+        console.log('linkTo::show');
+        this.element.classList.add('visible')
+        this.element.classList.remove('hide')
+    }
+
+    hide() {
+        console.log('linkTo::hide');
+        this.element.classList.add('hide')
+        this.element.classList.remove('visible')
+    }
+
+    disable() {
+        console.log('linkTo::disable');
+        this.isDisable = true;
+        this.element.classList.add('disabled')
+        this.element.classList.remove('enabled')
+    }
+
+    enable() {
+        console.log('linkTo::enable');
+        this.isDisable = false;
+        this.element.classList.add('enabled')
+        this.element.classList.remove('disabled')
+    }
+}
+
+// Code from library monthCalendar:1.00 on monthCalendar.html called by file attribute on div on monthCalendar.html:16:14
+class MonthCalendar {
+    createCalendar() {
+        const firstMonthDay = new Date(this.year, this.month, 1);
+        const firstDay = new Date(this.year, this.month, 1);
+        const firstDayOffset = firstDay.getDay();
+        firstDay.setDate(firstDay.getDate() - firstDayOffset);
+        if (firstDay.getDate() === 1) {
+            firstDay.setDate(firstDay.getDate() - 7);
+        }
+        firstDay.setDate(firstDay.getDate() - 7);
+
+        const lastDay = new Date(this.year, this.month + 1, 1);
+        const lastDayOffset = 7 - firstDay.getDay();
+        lastDay.setDate(lastDay.getDate() + lastDayOffset);
+
+        let day = new Date(firstDay);
+        this.container.innerHTML = '';
+        const calendarContainer = document.createElement('div');
+        calendarContainer.className = 'monthCalendarContainer';
+        this.container.appendChild(calendarContainer);
+        const title = document.createElement('div');
+        title.className = 'monthCalendarCell monthCalendarHeaderTitle';
+        title.innerText = firstMonthDay.toLocaleString(this.locale, { month: 'long' }) + ' ' + this.year;
+        calendarContainer.appendChild(title);
+
+        const previousMonth = document.createElement('div');
+        previousMonth.className = 'monthCalendarCell monthCalendarPreviousMonthButton';
+        previousMonth.innerHTML = '<';
+        previousMonth.addEventListener('click', () => {
+            this.selectPreviousMonth();
+        });
+        calendarContainer.appendChild(previousMonth);
+        const nextMonth = document.createElement('div');
+        nextMonth.className = 'monthCalendarCell monthCalendarNextMonthButton';
+        nextMonth.innerHTML = '>';
+        nextMonth.addEventListener('click', () => {
+            this.selectNextMonth();
+        });
+        calendarContainer.appendChild(nextMonth);
+
+        for (let i = 0; i < 10; i++) {
+            if (i == 0) {
+                for (let j = 0; j < 7; j++) {
+                    const dayLetter = day.toLocaleDateString(this.locale, { weekday: 'narrow' })
+                    const dayName = document.createElement('div');
+                    dayName.className = "monthCalendarCell monthCalendarDayName"
+                    dayName.innerText = dayLetter;
+                    calendarContainer.appendChild(dayName);
+                    day.setDate(day.getDate() + 1);
+                }
+            } else {
+                let month = day.getMonth();
+                for (let j = 0; j < 7; j++) {
+                    month = day.getMonth();
+                    const dayNumber = document.createElement('div');
+                    dayNumber.className = "monthCalendarCell monthCalendarDayNumber"
+                    if (month !== this.month) {
+                        dayNumber.classList.add('monthCalendarNotThisMonth');
+                    }
+                    if (day.getTime() === this.today.getTime()) {
+                        dayNumber.classList.add('monthCalendarToday');
+                    }
+                    dayNumber.innerText = day.getDate();
+                    calendarContainer.appendChild(dayNumber);
+                    day.setDate(day.getDate() + 1);
+                }
+                if (month != firstDay.getMonth() && month != this.month && day.getDay() !== 1) {
+                    break;
+                }
+            }
+        }
+        Core.subscribeTo('core:language:set', () => {
+            this.locale = language;
+            this.createCalendar();
+        });
+    };
+    constructor(configuration) {
+        const validateElements = () => {
+            this.container = document.getElementById(configuration.id);
+            if (!this.container) {
+                throw new Error(`Can't find the element with the id ${configuration.id}`);
+            }
+        }
+        const createGUI = () => {
+            this.locale = navigator.language;
+            this.today = new Date();
+            this.today.setHours(0, 0, 0, 0);
+            this.month = this.today.getMonth();
+            this.year = this.today.getFullYear();
+            this.createCalendar();
+        }
+        validateElements();
+        createGUI();
+    };
+
+    selectTodayMonth() {
+        this.selectedDay = new Date(this.today);
+        this.createCalendar();
+    };
+
+    selectPreviousMonth() {
+        this.month--;
+        if (this.month < 0) {
+            this.month = 11;
+            this.year--;
+        }
+        this.createCalendar();
+    };
+
+    selectNextMonth() {
+        this.month++;
+        if (this.month > 11) {
+            this.month = 0;
+            this.year++;
+        }
+        this.createCalendar();
+    };
+}
+
+// Code from library weekCalendar:1.00 on weekCalendar.html called by file attribute on div on weekCalendar.html:17:14
+class WeekCalendar {
+    createCalendar() {
+        const day = this.selectedDay.getDay();
+        const firstDay = new Date(this.selectedDay);
+        firstDay.setHours(0, 0, 0, 0);
+        const offset = firstDay.getDate() - day;
+        firstDay.setDate(offset);
+
+        const lastDay = new Date(firstDay);
+        lastDay.setDate(firstDay.getDate() + 6)
+
+        const date = new Date(firstDay);
+
+        // const response = fetch(`/v1/calendars/data`, {
+        //     method: 'GET'
+        // })
+        //     .then(response => response.json())
+        //     .then(jsonData => {
+        //         console.log(`calendar.js::createGUI::fetch response: `, jsonData);
+        //     });
+        // ;
+        this.container.innerHTML = "";
+        const calendarHeader = document.createElement('div');
+        calendarHeader.className = 'calendarHeader';
+        this.container.appendChild(calendarHeader);
+
+        const calendarTitleContainer = document.createElement('div');
+        calendarTitleContainer.className = 'calendarTitleContainer';
+        calendarHeader.appendChild(calendarTitleContainer);
+
+        const calendarMoveToToday = document.createElement('div');
+        calendarMoveToToday.className = 'calendarToTodayButton';
+        calendarMoveToToday.id = "calendarMoveToTodayButton";
+        calendarMoveToToday.innerText = Core.getText('today');
+        calendarTitleContainer.appendChild(calendarMoveToToday);
+        calendarMoveToToday.addEventListener('click', () => {
+            this.selectTodayWeek();
+        });
+
+        const calendarMoveToLastWeek = document.createElement('div');
+        calendarMoveToLastWeek.className = 'calendarMoveWeekButton';
+        calendarMoveToLastWeek.id = "calendarMoveToLastWeekButton";
+        calendarMoveToLastWeek.innerText = "<"
+        calendarTitleContainer.appendChild(calendarMoveToLastWeek);
+        calendarMoveToLastWeek.addEventListener('click', () => {
+            this.selectLastWeek();
+        });
+
+        const calendarMoveToNextWeek = document.createElement('div');
+        calendarMoveToNextWeek.className = 'calendarMoveWeekButton';
+        calendarMoveToNextWeek.id = "calendarMoveNextWeekButton";
+        calendarMoveToNextWeek.innerText = ">"
+        calendarTitleContainer.appendChild(calendarMoveToNextWeek);
+        calendarMoveToNextWeek.addEventListener('click', () => {
+            this.selectNextWeek();
+        });
+
+        const calendarTitle = document.createElement('div');
+        calendarTitle.className = 'calendarTitle';
+        let textForFirstMonth;
+        let textForFirstYear;
+        let textForLastMonth;
+        let textForLastYear;
+
+        textForLastMonth = lastDay.toLocaleString(this.locale, { month: 'long' }) + ' ';
+        textForLastYear = lastDay.getFullYear();
+        if (firstDay.getMonth() === lastDay.getMonth()) {
+            textForFirstMonth = textForFirstYear = '';
+        } else {
+            textForFirstMonth = firstDay.toLocaleString(this.locale, { month: 'long' });
+            if (firstDay.getFullYear() === lastDay.getFullYear()) {
+                textForFirstYear = ' - ';
+            } else {
+                textForFirstYear = ' ' + firstDay.getFullYear() + ' - ';
+            }
+        }
+        calendarTitle.innerText = textForFirstMonth + textForFirstYear + textForLastMonth + textForLastYear;
+
+        calendarTitleContainer.appendChild(calendarTitle);
+
+        const calendarParent = document.createElement('div');
+        calendarParent.className = 'calendarParent';
+        this.container.appendChild(calendarParent);
+
+        for (let hour = -1; hour < 24; hour++) {
+            for (let weekDay = 0; weekDay < 8; weekDay++) {
+                const hourCell = document.createElement('div');
+                hourCell.className = 'hourCell';
+                calendarParent.appendChild(hourCell);
+                if (hour === -1 && weekDay > 0) {
+                    const dayOfMonth = date.getDate();
+                    const name = date.toLocaleDateString(this.locale, { weekday: 'long' })
+                    hourCell.innerText = `${name} ${dayOfMonth}`;
+                    hourCell.classList.add('dayTitleCell');
+                    if (this.today.getTime() === date.getTime()) {
+                        hourCell.classList.add('calendarToday');
+                    }
+                    date.setDate(dayOfMonth + 1);
+                }
+                if (weekDay === 0 && hour !== -1) {
+                    const hourLabel = document.createElement('div');
+                    hourLabel.innerText = `${hour}:00`;
+                    hourCell.classList.add('hourCellHour');
+                    hourLabel.className = `hourLabel`;
+                    hourCell.appendChild(hourLabel);
+                }
+            }
+        }
+
+        Core.subscribeTo('core:language:set', () => {
+            calendarMoveToToday.innerText = Core.getText('today');
+            this.locale = language;
+            this.createCalendar();
+        });
+    };
+    constructor(configuration) {
+        const validateElements = () => {
+            this.container = document.getElementById(configuration.id);
+            if (!this.container) {
+                throw new Error(`Can't find the element with the id ${configuration.id}`);
+            }
+        }
+        const createGUI = () => {
+            this.locale = navigator.language;
+            this.today = new Date();
+            this.today.setHours(0, 0, 0, 0);
+            this.selectedDay = new Date(this.today);
+            this.createCalendar();
+        }
+        validateElements();
+        createGUI();
+    };
+
+    selectTodayWeek() {
+        this.selectedDay = new Date(this.today);
+        this.createCalendar();
+    };
+
+    selectLastWeek() {
+        this.selectedDay.setDate(this.selectedDay.getDate() - 6)
+        this.createCalendar();
+    };
+
+    selectNextWeek() {
+        this.selectedDay.setDate(this.selectedDay.getDate() + 6)
+        this.createCalendar();
+    };
+}
+
+</script>
+</head>
+
+<body groups="user">
+    <header>
+    <div id="headerContainer">
+        <div class="burguerMenuContainer" id="headerMenuContainer">
+            <div class="menuItems">
+                <div class="menuItem" id="login">
+                    <span id="s1"></span>
+                </div>
+                <div class="menuItem" id="logout">
+                    <span id="s2"></span>
+                </div>
+            </div>
+        </div>
+        <div class="logoBackground"></div>
+        <div id="headerLogoContainer">
+            <div id="headerLogo"></div>
+            <div class="headerIcon headerBurgerMenuActivator" id="headerBurgerMenuActivator"></div>
+        </div>
+    </div>
+</header>
+    <div id="application">
+        <div class="applicationContainer">
+            <div class="leftPanel">
+    <div id="monthCalendar">
+    </div>
+</div>
+            <div class="rightPanel">
+    <div id="weekCalendar">
+    </div>
+</div>
+        </div>
+    </div>
+    <footer>
+    <div id="footerMenu">
+        <div id="footerMenuContainer">
+
+            <div id="footerLogo"></div>
+            <div id="footerItems">
+                <div class="footerItemsGroup">
+                    <div class="footerItem">
+                        <span id="s3"></span>
+                    </div>
+                    <div class="footerItem">
+                        <span id="s4"></span>
+                    </div>
+                </div>
+                <div class="footerItemsGroup">
+                    <div class="footerItem">
+                        <span id="s5"></span>
+                    </div>
+                    <div class="footerItem" id="footerItemLogin">
+                        <span id="s6"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="footerInformation">
+        <div id="footerInformationContainer">
+            <div id="footerInformationLinks">
+                <a href="">
+                    <span id="s7"></span>
+                </a>
+                <a href="">
+                    <span id="s8"></span>
+                </a>
+            </div>
+            <div id="footerInformationNetworks">
+                <div class="footerIcon footerTwitter" href="https://twitter.com/" target="_blank"></div>
+                <a class="footerIcon footerInstagram" href="https://www.instagram.com/" target="_blank"></a>
+                <div class="footerIcon footerFacebook" href="https://www.facebook.com/" target="_blank"></div>
+                <a class="footerIcon footerYoutube" href="https://www.youtube.com/" target="_blank"></a>
+                <a class="footerIcon footerLinkedin" href="https://www.linkedin.com/" target="_blank"></a>
+            </div>
+        </div>
+        <div id="footerCopyright">
+            <span id="s9"></span>
+        </div>
+    </div>
+</footer>
+</body>
+
+</html>

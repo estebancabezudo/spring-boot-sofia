@@ -1,0 +1,14 @@
+{
+    "invalidCredentials": {
+        "es": "Credenciales inválidas",
+        "en": "Invalid credentials"
+    },
+    "loginUsernameInput": {
+        "es": "Escriba una direccion de correo",
+        "en": "Enter an email address"
+    },
+    "loginPasswordInput": {
+        "es": "Escriba la contraseña",
+        "en": "Enter the password"
+    }
+}

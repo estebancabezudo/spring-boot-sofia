@@ -1,0 +1,22 @@
+.twoLanguageFlagContainer {
+    margin: 0 0 0 10px;
+    cursor: pointer;
+}
+
+.twoLanguageFlagFlag {
+    width: 16px;
+    height: 11px;
+    display: none;
+}
+
+.twoLanguageFlagVisible {
+    display: block;
+}
+
+.twoLanguageFlagContainer>.en {
+    background-image: url(/images/flags/en.png);
+}
+
+.twoLanguageFlagContainer>.es {
+    background-image: url(/images/flags/es.png);
+}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link href="/images/favicon.png" rel="shortcut icon" type="image/png" />
+    <link lib="core:1.00" />
+    <style file="/admin/commons.css"></style>
+</head>
+
+<script>
+    const initMenuPath = () => {
+        new LinkTo({
+            id: 'menuPathItem',
+            show: ['group:doctor', 'group:admin'],
+            onclick: '/admin/'
+        });
+        new LinkTo({
+            id: 'placesPathItem',
+            show: ['group:admin'],
+            onclick: '/admin/places/list.html'
+        });
+    };
+    window.addEventListener('load', initMenuPath);
+</script>
+
+<body groups="admin">
+    <header file="/header.html"></header>
+    <div id="adminContent">
+        <div id="adminPath">
+            <div id="menuPathItem">
+                <texts><text language="es">Menú</text><text language="en">Menu</text></texts>
+            </div>
+            <div class="adminPathItemSeparator">&gt;</div>
+            <div id="placesPathItem">
+                <texts><text language="es">Consultorios</text><text language="en">Doctor's offices</text></texts>
+            </div>
+            <div class="adminPathItemSeparator">&gt;</div>
+            <div id="addPlacesPathItem" class="endPathItem">
+                <texts><text language="es">Agregar</text><text language="en">Add</text></texts>
+            </div>
+        </div>
+        <div file="addPlaceForm.html"></div>
+    </div>
+    <footer file="/footer.html"></footer>
+</body>
+
+</html>

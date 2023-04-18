@@ -1,0 +1,14 @@
+{
+    "delete": {
+        "es": "Borrar",
+        "en": "Delete"
+    },
+    "edit": {
+        "es": "Editar",
+        "en": "Edit"
+    },
+    "textForAddPlace": {
+        "es": "Agregar lugar",
+        "en": "Add place"
+    }
+}

@@ -1,0 +1,102 @@
+{
+    "placeCountryLabel": {
+        "es": "País",
+        "en": "Country"
+    },
+    "placeCountryInput": {
+        "es": "Selecciona un país",
+        "en": "Select a country"
+    },
+    "placeStateLabel": {
+        "es": "Estado",
+        "en": "State"
+    },
+    "placeStateInput": {
+        "es": "Selecciona un estado",
+        "en": "Select a state"
+    },
+    "placeStreetLabel": {
+        "es": "Calle",
+        "en": "Street"
+    },
+    "placeStreetInput": {
+        "es": "",
+        "en": ""
+    },
+    "placeNumberLabel": {
+        "es": "Número",
+        "en": "Number"
+    },
+    "placeNumberInput": {
+        "es": "",
+        "en": ""
+    },
+    "placeInteriorNumberLabel": {
+        "es": "Número interior",
+        "en": "Interior Number"
+    },
+    "placeInteriorNumberInput": {
+        "es": "Especifique si tiene un número interior",
+        "en": "Specify if exist an interior number"
+    },
+    "placeReferencesLabel": {
+        "es": "Referencias",
+        "en": "References"
+    },
+    "placeReferencesInput": {
+        "es": "",
+        "en": ""
+    },
+    "placeColonyLabel": {
+        "es": "Colonia",
+        "en": "Colony"
+    },
+    "placeColonyInput": {
+        "es": "",
+        "en": ""
+    },
+    "placeMunicipalityLabel": {
+        "es": "Municipalidad",
+        "en": "Municipality"
+    },
+    "placeMunicipalityInput": {
+        "es": "",
+        "en": ""
+    },
+    "placeDelegationLabel": {
+        "es": "Delegación",
+        "en": "Delegation"
+    },
+    "placeDelegationInput": {
+        "es": "",
+        "en": ""
+    },
+    "placeCityLabel": {
+        "es": "Ciudad",
+        "en": "City"
+    },
+    "placeCityInput": {
+        "es": "",
+        "en": ""
+    },
+    "placePostalCodeLabel": {
+        "es": "Código postal",
+        "en": "Postal code"
+    },
+    "placepostalCodeInput": {
+        "es": "",
+        "en": ""
+    },
+    "placeSaveInput": {
+        "es": "Guardar",
+        "en": "Save"
+    },
+    "registryModifiedSuccessfully": {
+        "es": "Cambios guardados en el servidor",
+        "en": "Changes saved on the server"
+    },
+    "placeDeleteInput": {
+        "es": "Borrar",
+        "en": "Delete"
+    }
+}

@@ -1,0 +1,59 @@
+.calendarParent {
+    display: grid;
+    grid-template-columns: 1fr repeat(7, 3fr);
+    grid-template-rows: 1fr repeat(24, 1fr);
+    background-color: lightgray;
+    grid-gap: 1px;
+}
+
+.calendarHeader {
+    margin: 20px;
+}
+
+.calendarMoveWeekButton,
+.calendarToTodayButton {
+    display: inline-block;
+    margin: 0 10px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.calendarTitle {
+    display: inline-block;
+    margin: 0 10px;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.hourCell {
+    display: flex;
+    height: 40px;
+    background-color: white;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.dayTitleCell {
+    align-items: center;
+    justify-content: center;
+}
+
+.hourCellHour {
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.hourLabel {
+    color: #111;
+    display: inline-block;
+    font-size: 12px;
+    padding: 0 6px;
+}
+
+.calendarToday {
+    background-color: mistyrose;
+}

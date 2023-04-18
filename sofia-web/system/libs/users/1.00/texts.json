@@ -1,0 +1,14 @@
+{
+    "delete": {
+        "es": "Borrar",
+        "en": "Delete"
+    },
+    "edit": {
+        "es": "Editar",
+        "en": "Edit"
+    },
+    "textForAddUser": {
+        "es": "Agregar usuario",
+        "en": "Add user"
+    }
+}

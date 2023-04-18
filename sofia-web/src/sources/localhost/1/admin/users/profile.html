@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link href="/images/favicon.png" rel="shortcut icon" type="image/png" />
+    <link lib="core:1.00" />
+    <style file="/admin/commons.css"></style>
+</head>
+
+<script>
+    const initMenuPath = () => {
+        new LinkTo({
+            id: 'menuPathItem',
+            show: ['group:doctor', 'group:admin'],
+            onclick: '/admin/'
+        });
+    };
+    window.addEventListener('load', initMenuPath);
+</script>
+
+<body groups="admin">
+    <header file="/header.html"></header>
+    <div id="adminContent">
+        <div id="adminPath">
+            <div id="menuPathItem">
+                <texts><text language="es">Menú</text><text language="en">Menu</text></texts>
+            </div>
+            <div class="adminPathItemSeparator">&gt;</div>
+            <div id="profilePathItem" class="endPathItem">
+                <texts><text language="es">Perfil</text><text language="en">Profile</text></texts>
+            </div>
+        </div>
+        <div file="profileForm.html"></div>
+    </div>
+    <footer file="/footer.html"></footer>
+</body>
+
+</html>

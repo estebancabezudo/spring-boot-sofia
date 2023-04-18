@@ -1,0 +1,41 @@
+<link lib="mx:places:1.00" />
+<link lib="mx:states:1.00" />
+<script>
+    const createForm = () => {
+        const data = {
+            name: '',
+            countryCode: 'mx',
+            street: '',
+            number: '',
+            interiorNumber: '',
+            references: '',
+            postalCode: '',
+            administrativeDivisions: [
+                {
+                    name: 'MX-NLE',
+                    administrativeDivisionType: {
+                        name: 'state'
+                    }
+                }
+
+            ]
+        };
+        const countryCode = data.countryCode.toUpperCase();
+        const className = `place${countryCode}`;
+        const global = (window || this);
+        const dataDriver = new window[className](data);
+        dataDriver.createGUIForAdd();
+        dataDriver.loadData(data);
+    };
+    window.addEventListener('load', createForm, false);
+</script>
+<style file="../commons.css" />
+
+
+<body id="content">
+    <div class="contentTitle">
+        <texts><text language="es">Agregar consultorio</text><text language="en">Add doctor's office</text></texts>
+    </div>
+    <div id="formContainer">
+    </div>
+</body>
