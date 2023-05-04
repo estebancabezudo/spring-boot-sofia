@@ -46,7 +46,7 @@
     <dependency>
       <groupId>com.google.javascript</groupId>
       <artifactId>closure-compiler</artifactId>
-      <version>v20230103</version>
+      <version>v20230228</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -55,7 +55,7 @@
     <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>annotations</artifactId>
-      <version>23.1.0</version>
+      <version>24.0.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -93,10 +93,17 @@
       <artifactId>spring-security-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>net.cabezudo.sofia</groupId>
-      <artifactId>sofia-core</artifactId>
-      <version>1.0.0</version>
-      <scope>compile</scope>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

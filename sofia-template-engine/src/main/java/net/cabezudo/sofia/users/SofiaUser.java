@@ -8,6 +8,7 @@ import java.util.Collection;
 
 public class SofiaUser implements UserDetails {
   private final int id;
+  private final Site site;
   private final String username;
   private final String password;
   private final Groups groups;
@@ -23,8 +24,9 @@ public class SofiaUser implements UserDetails {
     this.enabled = enabled;
   }
 
-  public SofiaUser(int id, String username, String password, Collection<GrantedAuthority> authorities, boolean enabled) {
+  public SofiaUser(int id, Site site, String username, String password, Collection<GrantedAuthority> authorities, boolean enabled) {
     this.id = id;
+    this.site = site;
     this.username = username;
     this.password = password;
     this.groups = new Groups(authorities);
@@ -63,7 +65,7 @@ public class SofiaUser implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    return true;
+    return enabled;
   }
 
   public boolean hasPermission(String groupName) {

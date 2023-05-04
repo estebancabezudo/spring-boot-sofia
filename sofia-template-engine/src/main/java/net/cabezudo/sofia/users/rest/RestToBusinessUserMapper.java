@@ -11,6 +11,6 @@ public class RestToBusinessUserMapper {
   RestToBusinessGroupsMapper restToBusinessGroupsMapper;
 
   public SofiaUser map(RestUser u) {
-    return new SofiaUser(u.getId(), u.getUsername(), null, restToBusinessGroupsMapper.map(u.getGroups()), u.isEnabled());
+    return new SofiaUser(u.getId(), u.getSite(), u.getUsername(), null, restToBusinessGroupsMapper.map(u.getGroups()), u.isEnabled());
   }
 }

@@ -41,11 +41,5 @@
       <artifactId>sofia-places</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>net.cabezudo.sofia</groupId>
-      <artifactId>sofia-core</artifactId>
-      <version>1.0.0</version>
-      <scope>compile</scope>
-    </dependency>
   </dependencies>
 </project>
