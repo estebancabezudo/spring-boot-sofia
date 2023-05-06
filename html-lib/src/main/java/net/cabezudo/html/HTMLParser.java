@@ -105,9 +105,9 @@ public class HTMLParser {
   public static final char LATIN_SMALL_LETTER_Z_WITH_CARON = 0x017E;
   public static final char LATIN_CAPITAL_LETTER_Y_WITH_DIAERESIS = 0x0178;
   static final String EMPTY_STRING = "";
+  private static final Logger log = LoggerFactory.getLogger(HTMLParser.class);
   private final StackOfOpenElements stackOfOpenElements = new StackOfOpenElements();
   private final ParseErrors parseErrors = new ParseErrors();
-  Logger log = LoggerFactory.getLogger(HTMLParser.class);
   private boolean endParse = false;
   private boolean reconsume = false;
   private Token currentToken = null;

@@ -9,12 +9,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PermissionManager {
-
-  @Autowired
-  private SofiaEnvironment sofiaEnvironment;
-
-  @Autowired
-  private AccountManager accountManager;
+  private @Autowired SofiaEnvironment sofiaEnvironment;
+  private @Autowired AccountManager accountManager;
 
   public boolean hasPermission(Account account, SofiaUser user, String group) {
     if (sofiaEnvironment.isSecurityNotActive()) {

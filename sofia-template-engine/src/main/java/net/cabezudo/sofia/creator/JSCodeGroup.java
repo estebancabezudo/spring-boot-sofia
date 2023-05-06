@@ -14,7 +14,7 @@ import java.util.TreeMap;
  */
 class JSCodeGroup {
 
-  private final Logger log = LoggerFactory.getLogger(JSCodeGroup.class);
+  private static final Logger log = LoggerFactory.getLogger(JSCodeGroup.class);
 
   private final List<JSSourceCode> list = new ArrayList<>();
   private final Map<String, JSSourceCode> map = new TreeMap<>();

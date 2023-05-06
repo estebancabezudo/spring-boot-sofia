@@ -18,14 +18,10 @@ import javax.transaction.Transactional;
 @Service
 @Transactional
 public class AdministrativeDivisionManager {
-  @Resource
-  private AdministrativeDivisionRepository administrativeDivisionRepository;
-  @Autowired
-  private EntityToBusinessAdministrativeDivisionListMapper entityToBusinessAdministrativeDivisionListMapper;
-  @Autowired
-  private EntityToBusinessAdministrativeDivisionMapper entityToBusinessAdministrativeDivisionEntityMapper;
-  @Autowired
-  private AdministrativeDivisionTypeRepository administrativeDivisionTypeRepository;
+  private @Resource AdministrativeDivisionRepository administrativeDivisionRepository;
+  private @Autowired EntityToBusinessAdministrativeDivisionListMapper entityToBusinessAdministrativeDivisionListMapper;
+  private @Autowired EntityToBusinessAdministrativeDivisionMapper entityToBusinessAdministrativeDivisionEntityMapper;
+  private @Autowired AdministrativeDivisionTypeRepository administrativeDivisionTypeRepository;
 
   public AdministrativeDivisionList findAll(int siteId, int id) {
     final AdministrativeDivisionEntityList administrativeDivisionEntityList = administrativeDivisionRepository.findAll(siteId, id);

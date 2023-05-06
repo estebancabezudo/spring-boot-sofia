@@ -22,14 +22,11 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public abstract class SofiaAuthorizedController extends SofiaController {
+  private static final Logger log = LoggerFactory.getLogger(SofiaAuthorizedController.class);
 
-  private final Logger log = LoggerFactory.getLogger(SofiaAuthorizedController.class);
-  @Autowired
-  AccountManager accountManager;
-  @Autowired
-  PermissionManager permissionManager;
-  @Autowired
-  private SofiaEnvironment sofiaEnvironment;
+  private @Autowired AccountManager accountManager;
+  private @Autowired PermissionManager permissionManager;
+  private @Autowired SofiaEnvironment sofiaEnvironment;
 
   public SofiaAuthorizedController(HttpServletRequest request) {
     super(request);

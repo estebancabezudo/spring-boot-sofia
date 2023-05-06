@@ -18,11 +18,11 @@ import java.util.Scanner;
  * @version 0.01.00, 2022.03.16
  */
 class JSSourceCode extends CodeSource {
-
+  private static final Logger log = LoggerFactory.getLogger(JSSourceCode.class);
+  
   private final StringBuilder code = new StringBuilder();
   private final String sourceId;
   private final Caller caller;
-  private final Logger log = LoggerFactory.getLogger(JSSourceCode.class);
 
   JSSourceCode(Path basePath, Path filePath, String id, TemplateVariables templateVariables, Caller caller) throws IOException, UndefinedLiteralException {
     Path fullFilePath = getPath(basePath, filePath, caller);

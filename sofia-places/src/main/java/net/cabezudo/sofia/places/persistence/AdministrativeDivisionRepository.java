@@ -18,9 +18,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class AdministrativeDivisionRepository {
-  Logger log = LoggerFactory.getLogger(AdministrativeDivisionRepository.class);
-  @Autowired
-  private JdbcTemplate jdbcTemplate;
+  private static final Logger log = LoggerFactory.getLogger(AdministrativeDivisionRepository.class);
+  private @Autowired JdbcTemplate jdbcTemplate;
 
   @Transactional
   public AdministrativeDivisionEntityList findAll(int siteIdToSearch, int placeIdToSearch) {

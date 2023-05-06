@@ -26,22 +26,15 @@ import java.util.List;
 @Service
 @Transactional
 public class PlaceManager {
-  @Autowired
-  private BusinessToEntityPlaceMapper businessToEntityPlaceMapper;
-  @Autowired
-  private EntityToBusinessPlaceMapper entityToBusinessPlaceMapper;
-  @Resource
-  private AdministrativeDivisionRepository administrativeDivisionRepository;
-  @Autowired
-  private EntityToBusinessPlaceListMapper entityToBusinessPlaceListMapper;
-  @Resource
-  private PlacesRepository placesRepository;
-  @Resource
-  private CountryManager countryManager;
-  @Resource
-  private AdministrativeDivisionNameRepository administrativeDivisionNameRepository;
-  @Resource
-  private AdministrativeDivisionTypeRepository administrativeDivisionTypeRepository;
+  private @Autowired BusinessToEntityPlaceMapper businessToEntityPlaceMapper;
+  private @Autowired EntityToBusinessPlaceMapper entityToBusinessPlaceMapper;
+  private @Resource AdministrativeDivisionRepository administrativeDivisionRepository;
+  private @Autowired EntityToBusinessPlaceListMapper entityToBusinessPlaceListMapper;
+
+  private @Resource PlacesRepository placesRepository;
+  private @Resource CountryManager countryManager;
+  private @Resource AdministrativeDivisionNameRepository administrativeDivisionNameRepository;
+  private @Resource AdministrativeDivisionTypeRepository administrativeDivisionTypeRepository;
 
   public PlaceList findAll(Account account, boolean includeAdministrativeDivisions) {
     final EntityList<PlaceEntity> entityList = placesRepository.findAll(account.id());

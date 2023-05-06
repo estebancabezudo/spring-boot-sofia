@@ -31,21 +31,13 @@ import java.util.Collection;
 @Transactional
 public class UserManager {
 
-  @Autowired
-  BusinessToEntityGroupsMapper businessToEntityGroupsMapper;
-  @Autowired
-  EntityToBusinessUserListMapper entityToBusinessUserListMapper;
-  @Autowired
-  EntityToBusinessUserMapper entityToBusinessUserMapper;
-  @Resource
-  EMailRepository eMailRepository;
-  @Resource
-  UserRepository userRepository;
-
-  @Autowired
-  GroupsRepository groupsRepository;
-  @Autowired
-  HttpServletRequest request;
+  private @Autowired BusinessToEntityGroupsMapper businessToEntityGroupsMapper;
+  private @Autowired EntityToBusinessUserListMapper entityToBusinessUserListMapper;
+  private @Autowired EntityToBusinessUserMapper entityToBusinessUserMapper;
+  private @Resource EMailRepository eMailRepository;
+  private @Resource UserRepository userRepository;
+  private @Autowired GroupsRepository groupsRepository;
+  private @Autowired HttpServletRequest request;
 
   public SofiaUser loadUserByUsername(String email) throws UsernameNotFoundException {
     Site site = (Site) request.getSession().getAttribute("site");

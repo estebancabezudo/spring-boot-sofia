@@ -10,10 +10,9 @@ import javax.annotation.PostConstruct;
 
 @Component
 public class ModuleManager {
-  private final Logger log = LoggerFactory.getLogger(ModuleManager.class);
+  private static final Logger log = LoggerFactory.getLogger(ModuleManager.class);
   private SofiaSecurityModule securityModule;
-  @Autowired
-  private ApplicationContext applicationContext;
+  private @Autowired ApplicationContext applicationContext;
 
   @PostConstruct
   public void init() {

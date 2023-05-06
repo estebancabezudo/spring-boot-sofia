@@ -14,7 +14,7 @@ import java.util.TreeMap;
  */
 class CSSCodeGroup {
 
-  private final Logger log = LoggerFactory.getLogger(CSSCodeGroup.class);
+  private static final Logger log = LoggerFactory.getLogger(CSSCodeGroup.class);
   private final Map<String, CSSCodeSource> map = new TreeMap<>();
 
   void add(CSSCodeSource code) throws SourceAlreadyAdded {

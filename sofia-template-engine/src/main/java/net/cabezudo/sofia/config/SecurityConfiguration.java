@@ -4,6 +4,7 @@ import net.cabezudo.sofia.security.SofiaAuthenticationFailureHandler;
 import net.cabezudo.sofia.security.SofiaAuthenticationSuccessHandler;
 import net.cabezudo.sofia.security.SofiaAuthorizationManager;
 import net.cabezudo.sofia.security.SofiaSecurityEnvironment;
+import net.cabezudo.sofia.users.SofiaAuthenticationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +17,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import net.cabezudo.sofia.users.SofiaAuthenticationProvider;
 
 /**
  * @author <a href="http://cabezudo.net">Esteban Cabezudo</a>
@@ -27,7 +27,7 @@ import net.cabezudo.sofia.users.SofiaAuthenticationProvider;
 @EnableGlobalMethodSecurity(securedEnabled = true)
 @ComponentScan
 public class SecurityConfiguration {
-  private final Logger log = LoggerFactory.getLogger(SecurityConfiguration.class);
+  private static final Logger log = LoggerFactory.getLogger(SecurityConfiguration.class);
 
   @Bean
   public SofiaAuthenticationProvider authProvider() {

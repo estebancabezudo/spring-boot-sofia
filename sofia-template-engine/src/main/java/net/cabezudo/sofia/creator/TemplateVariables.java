@@ -24,11 +24,10 @@ import java.util.List;
  */
 @Component
 public class TemplateVariables {
-
+  private static final Logger log = LoggerFactory.getLogger(TemplateVariables.class);
+  
   private final JSONObject jsonObject;
-  private final Logger log = LoggerFactory.getLogger(TemplateVariables.class);
-  @Autowired
-  SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
+  private @Autowired SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
 
   public TemplateVariables() {
     jsonObject = new JSONObject();

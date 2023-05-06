@@ -14,11 +14,8 @@ public class PathManager {
   public static final String IMAGES_FOLDER_NAME = "images";
   public static final String TEXTS_FOLDER_NAME = "texts";
   public static final String LIBS_DIRECTORY_NAME = "libs";
-
-  @Autowired
-  SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
-
-  Map<String, Path> sourcePaths = new TreeMap<>();
+  private final Map<String, Path> sourcePaths = new TreeMap<>();
+  private @Autowired SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
 
   public Path getSourcesPath(Site site) throws SourceNotFoundException {
     Path sourcePath = sourcePaths.get(site.getName());

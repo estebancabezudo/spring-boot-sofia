@@ -56,8 +56,8 @@ import java.util.stream.Stream;
  * @version 0.01.00, 2022.02.25
  */
 public class SofiaFile {
-
-  private final Logger log = LoggerFactory.getLogger(SofiaFile.class);
+  private static final Logger log = LoggerFactory.getLogger(SofiaFile.class);
+  
   private final Site site;
   private final Path requestFilePath;
   private final Path voidRootFilePath;

@@ -16,7 +16,7 @@ import java.util.Locale;
 @RestController
 public class CalendarsController extends SofiaController {
 
-  private final Logger log = LoggerFactory.getLogger(CalendarsController.class);
+  private static final Logger log = LoggerFactory.getLogger(CalendarsController.class);
 
   @GetMapping("/v1/calendars/weeks")
   public ResponseEntity<?> actual(ServletWebRequest webRequest, Authentication authentication, @RequestParam(defaultValue = "0") int offset) {

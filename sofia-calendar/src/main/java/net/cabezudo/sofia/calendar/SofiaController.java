@@ -1,7 +1,7 @@
 package net.cabezudo.sofia.calendar;
 
-import net.cabezudo.sofia.users.UserPreferences;
 import net.cabezudo.sofia.sites.Site;
+import net.cabezudo.sofia.users.UserPreferences;
 import net.cabezudo.sofia.users.UserPreferencesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +15,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class SofiaController {
-
-  private final Logger log = LoggerFactory.getLogger(CalendarsController.class);
+  private static final Logger log = LoggerFactory.getLogger(SofiaController.class);
 
   private Locale getLocale(HttpServletRequest request) {
     String header = request.getHeader(HttpHeaders.ACCEPT_LANGUAGE);

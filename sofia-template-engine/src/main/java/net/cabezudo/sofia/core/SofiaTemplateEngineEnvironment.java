@@ -45,20 +45,17 @@ public class SofiaTemplateEngineEnvironment {
   public static final String SOURCES_DIRECTORY_NAME = "sources";
   public static final String IMAGES_FOLDER_NAME = "images";
   public static final String TEXTS_FOLDER_NAME = "texts";
-  private static final Logger log = LoggerFactory.getLogger(SofiaTemplateEngineEnvironment.class);
   private static final String SOFIA_CONFIGURATION_FILENAME = "sofia.yml";
+  private static final Logger log = LoggerFactory.getLogger(SofiaTemplateEngineEnvironment.class);
   private final List<Path> sourcePaths = new ArrayList<>();
-  @Autowired
-  SofiaEnvironment sofiaEnvironment;
-  @Autowired
-  private SiteManager siteManager;
+  private @Autowired SofiaEnvironment sofiaEnvironment;
+  private @Autowired SiteManager siteManager;
   private String name;
   private ConfigurationFileYAMLData configurationFileYAMLData;
   private Path basePath;
   private Path sitesPath;
   private Path systemLibraryPath;
-  @Autowired
-  private ModuleManager moduleManager;
+  private @Autowired ModuleManager moduleManager;
 
   private Path checkForDirectoryAndCreate(String identifier, Path path) throws ConfigurationException, IOException {
     if (!Files.exists(path)) {

@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 class StackOfOpenElements {
 
-  Logger log = LoggerFactory.getLogger(HTMLParser.class);
+  private static final Logger log = LoggerFactory.getLogger(StackOfOpenElements.class);
 
   private Node currentNode;
   private Node lastNode;

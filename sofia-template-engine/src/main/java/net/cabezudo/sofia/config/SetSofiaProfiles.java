@@ -16,11 +16,9 @@ import javax.annotation.PostConstruct;
 @Component
 public class SetSofiaProfiles {
 
-  Logger log = LoggerFactory.getLogger(SetSofiaProfiles.class);
-  @Autowired
-  SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
-  @Autowired
-  private Environment environment;
+  private static final Logger log = LoggerFactory.getLogger(SetSofiaProfiles.class);
+  private @Autowired SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
+  private @Autowired Environment environment;
 
   @PostConstruct
   public void init() throws ConfigurationException {

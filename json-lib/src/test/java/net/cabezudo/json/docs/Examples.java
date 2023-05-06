@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class Examples {
 
-  private final Logger log = LoggerFactory.getLogger(Examples.class);
+  private static final Logger log = LoggerFactory.getLogger(Examples.class);
 
   private final String jsonStringData = "{ \"name\": \"Jorge Méndez\", \"age\": 34, \"maritalStatus\": { \"id\": 8, \"name\": \"married\", \"happy\": true }, \"childs\": [ { \"id\": 6, \"name\": \"Huey\", \"age\": 5 }, { \"id\": 15, \"name\": \"Dewey\", \"age\": 6 }, { \"id\": 9, \"name\": \"Louie\", \"age\": 7 } ] }";
 

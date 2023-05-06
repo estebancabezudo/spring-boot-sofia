@@ -13,8 +13,7 @@ import java.util.TreeMap;
 
 @Component
 public class EntityToBusinessPlaceListMapper {
-  @Autowired
-  private EntityToBusinessPlaceMapper entityToBusinessPlaceMapper;
+  private @Autowired EntityToBusinessPlaceMapper entityToBusinessPlaceMapper;
 
   public PlaceList map(EntityList<PlaceEntity> entityList, AdministrativeDivisionEntityList administrativeDivisionEntityList) {
     int total = entityList.getTotal();

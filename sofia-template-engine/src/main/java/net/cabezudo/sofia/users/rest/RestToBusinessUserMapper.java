@@ -7,8 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RestToBusinessUserMapper {
 
-  @Autowired
-  RestToBusinessGroupsMapper restToBusinessGroupsMapper;
+  private @Autowired RestToBusinessGroupsMapper restToBusinessGroupsMapper;
 
   public SofiaUser map(RestUser u) {
     return new SofiaUser(u.getId(), u.getSite(), u.getUsername(), null, restToBusinessGroupsMapper.map(u.getGroups()), u.isEnabled());

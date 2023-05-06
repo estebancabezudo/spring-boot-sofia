@@ -33,17 +33,12 @@ import javax.servlet.http.HttpServletRequest;
 @ResponseBody
 public class PlacesController extends SofiaAuthorizedController {
 
-  private final Logger log = LoggerFactory.getLogger(PlacesController.class);
-  @Autowired
-  BusinessToRestPlaceListMapper businessToRestPlaceListMapper;
-  @Autowired
-  BusinessToRestPlaceMapper businessToRestPlaceMapper;
-  @Autowired
-  private PlaceManager placesManager;
-  @Autowired
-  private CountryManager countryManager;
-  @Autowired
-  private RestToBusinessPlaceMapper restToBusinessPlaceMapper;
+  private static final Logger log = LoggerFactory.getLogger(PlacesController.class);
+  private @Autowired BusinessToRestPlaceListMapper businessToRestPlaceListMapper;
+  private @Autowired BusinessToRestPlaceMapper businessToRestPlaceMapper;
+  private @Autowired PlaceManager placesManager;
+  private @Autowired CountryManager countryManager;
+  private @Autowired RestToBusinessPlaceMapper restToBusinessPlaceMapper;
 
   public PlacesController(HttpServletRequest request) {
     super(request);

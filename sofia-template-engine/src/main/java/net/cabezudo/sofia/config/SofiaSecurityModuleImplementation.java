@@ -31,12 +31,8 @@ import java.util.List;
 @Component
 public class SofiaSecurityModuleImplementation implements SofiaSecurityModule {
   private static final Logger log = LoggerFactory.getLogger(SofiaSecurityModuleImplementation.class);
-
-  @Autowired
-  ContentManager contentManager;
-
-  @Autowired
-  BusinessToRestUserMapper businessToRestUserMapper;
+  private @Autowired ContentManager contentManager;
+  private @Autowired BusinessToRestUserMapper businessToRestUserMapper;
 
   @Override
   public void config(ConfigurationFileYAMLData configurationFileYAMLData, SiteManager siteManager) throws ConfigurationException {

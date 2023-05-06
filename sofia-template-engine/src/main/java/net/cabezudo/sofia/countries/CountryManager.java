@@ -10,7 +10,7 @@ import javax.transaction.Transactional;
 @Transactional
 public class CountryManager {
 
-  private final Logger log = LoggerFactory.getLogger(CountryManager.class);
+  private static final Logger log = LoggerFactory.getLogger(CountryManager.class);
 
   public Country get(int id) {
     return new Country(1, "mx");

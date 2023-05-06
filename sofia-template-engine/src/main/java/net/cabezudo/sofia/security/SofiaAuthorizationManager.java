@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.function.Supplier;
 
 public class SofiaAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
-  private static final Logger log = LoggerFactory.getLogger(SofiaAuthorizationManager.class);
   private static final SofiaAuthorizationManager INSTANCE = new SofiaAuthorizationManager();
+  private static final Logger log = LoggerFactory.getLogger(SofiaAuthorizationManager.class);
 
   public static SofiaAuthorizationManager getInstance() {
     return INSTANCE;

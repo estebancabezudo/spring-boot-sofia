@@ -13,15 +13,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class TemplateEngineConfiguration implements WebMvcConfigurer {
-
-  @Autowired
-  SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
-  @Autowired
-  SiteManager siteManager;
-  @Autowired
-  PathManager pathManager;
-
-
+  private @Autowired SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
+  private @Autowired SiteManager siteManager;
+  private @Autowired PathManager pathManager;
+  
   @EventListener(ApplicationReadyEvent.class)
   public void loadData() throws ConfigurationException {
     sofiaTemplateEngineEnvironment.loadConfiguration();

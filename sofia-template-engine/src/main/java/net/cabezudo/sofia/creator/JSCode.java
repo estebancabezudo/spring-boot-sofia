@@ -15,7 +15,7 @@ import java.util.Scanner;
  */
 class JSCode {
 
-  private final Logger log = LoggerFactory.getLogger(JSCode.class);
+  private static final Logger log = LoggerFactory.getLogger(JSCode.class);
 
   SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
 

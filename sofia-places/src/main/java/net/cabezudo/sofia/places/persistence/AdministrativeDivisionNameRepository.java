@@ -15,9 +15,8 @@ import java.util.List;
 
 @Repository
 public class AdministrativeDivisionNameRepository {
-  Logger log = LoggerFactory.getLogger(AdministrativeDivisionNameRepository.class);
-  @Autowired
-  private JdbcTemplate jdbcTemplate;
+  private static final Logger log = LoggerFactory.getLogger(AdministrativeDivisionNameRepository.class);
+  private @Autowired JdbcTemplate jdbcTemplate;
 
   public AdministrativeDivisionNameEntity findByName(String name) {
     log.debug("Search administrative division name " + name);

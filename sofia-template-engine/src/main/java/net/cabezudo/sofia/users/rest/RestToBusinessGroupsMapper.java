@@ -8,8 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RestToBusinessGroupsMapper {
 
-  @Autowired
-  RestToBusinessGroupMapper restToBusinessGroupMapper;
+  private @Autowired RestToBusinessGroupMapper restToBusinessGroupMapper;
 
   public Groups map(RestGroups gs) {
     Groups groups = new Groups();

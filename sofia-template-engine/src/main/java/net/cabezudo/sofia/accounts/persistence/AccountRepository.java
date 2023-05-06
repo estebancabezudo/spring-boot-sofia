@@ -10,10 +10,8 @@ import java.util.List;
 
 @Component
 public class AccountRepository {
-  Logger log = LoggerFactory.getLogger(AccountRepository.class);
-
-  @Autowired
-  private JdbcTemplate jdbcTemplate;
+  private static final Logger log = LoggerFactory.getLogger(AccountRepository.class);
+  private @Autowired JdbcTemplate jdbcTemplate;
 
 
   public List<AccountUserRelation> find(int accountId, int userId) {

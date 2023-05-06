@@ -38,16 +38,11 @@ import java.io.IOException;
 @Sql({"/test_schema.sql"})
 public class SofiaFileTest {
 
-  @Autowired
-  SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
-  @Autowired
-  SiteManager siteManager;
-  @Autowired
-  PathManager pathManager;
-  @Autowired
-  TemplateVariables templateVariables;
-  @Autowired
-  ModuleManager moduleManager;
+  private @Autowired SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
+  private @Autowired SiteManager siteManager;
+  private @Autowired PathManager pathManager;
+  private @Autowired TemplateVariables templateVariables;
+  private @Autowired ModuleManager moduleManager;
 
   @Test
   public void testSofiaFile() throws ConfigurationException, SiteCreationException, IOException, SiteNotFoundException, HostNotFoundException {

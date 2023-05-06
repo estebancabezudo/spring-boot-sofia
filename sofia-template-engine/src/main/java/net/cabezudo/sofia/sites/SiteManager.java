@@ -15,15 +15,12 @@ import java.util.TreeMap;
  */
 @Service
 public class SiteManager {
-
   private final Map<String, Site> siteByName = new TreeMap<>();
   private final Map<String, Site> siteByHostname = new TreeMap<>();
   private final Map<String, Host> hostByHostname = new TreeMap<>();
   private Boolean databaseManaged;
-  @Autowired
-  private ApplicationContext applicationContext;
-  @Autowired
-  private SiteRepository siteRepository;
+  private @Autowired ApplicationContext applicationContext;
+  private @Autowired SiteRepository siteRepository;
 
   public void add(String siteName, @NotNull Host host) {
     Site siteFound = siteByName.get(siteName);

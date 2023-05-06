@@ -8,9 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BusinessToRestPlaceMapper {
-
-  @Autowired
-  private BusinessToRestAdminitrativeDivisionListMapper businessToRestAdminitrativeDivisionListMapper;
+  private @Autowired BusinessToRestAdminitrativeDivisionListMapper businessToRestAdminitrativeDivisionListMapper;
 
   public RestPlace map(Place p) {
     int id = p.id();

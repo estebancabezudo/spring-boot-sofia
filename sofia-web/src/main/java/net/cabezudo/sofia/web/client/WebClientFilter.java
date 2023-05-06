@@ -20,11 +20,9 @@ import java.util.Arrays;
 
 @Component
 public class WebClientFilter implements Filter {
+  private static final Logger log = LoggerFactory.getLogger(WebClientFilter.class);
 
-  private final Logger log = LoggerFactory.getLogger(WebClientFilter.class);
-
-  @Autowired
-  WebClientManager webClientManager;
+  private @Autowired WebClientManager webClientManager;
 
   @Override
   public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)

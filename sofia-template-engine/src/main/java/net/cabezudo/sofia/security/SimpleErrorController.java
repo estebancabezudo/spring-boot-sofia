@@ -14,10 +14,7 @@ import java.util.Map;
 
 @RestController
 public class SimpleErrorController implements ErrorController {
-
-  @Autowired
-  private ErrorAttributes errorAttributes;
-
+  private @Autowired ErrorAttributes errorAttributes;
 
   @RequestMapping("/error")
   public void error(WebRequest request, HttpServletResponse response) {

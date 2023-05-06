@@ -22,12 +22,11 @@ import javax.servlet.http.HttpServletRequest;
 @ResponseBody
 public class PeopleController extends SofiaAuthorizedController {
 
-  private final Logger log = LoggerFactory.getLogger(PeopleController.class);
+  private static final Logger log = LoggerFactory.getLogger(PeopleController.class);
 
-  @Autowired
-  private PeopleManager peopleManager;
-  @Autowired
-  private PermissionManager permissionManager;
+  private @Autowired PeopleManager peopleManager;
+
+  private @Autowired PermissionManager permissionManager;
 
   public PeopleController(HttpServletRequest request) {
     super(request);

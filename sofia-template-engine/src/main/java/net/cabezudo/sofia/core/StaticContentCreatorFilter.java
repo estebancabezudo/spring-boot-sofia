@@ -37,21 +37,15 @@ import java.nio.file.StandardCopyOption;
 @Component
 @Order(SecurityProperties.DEFAULT_FILTER_ORDER - 1)
 public class StaticContentCreatorFilter implements Filter {
-  private final Logger log = LoggerFactory.getLogger(StaticContentCreatorFilter.class);
+  private static final Logger log = LoggerFactory.getLogger(StaticContentCreatorFilter.class);
 
-  @Autowired
-  SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
-  @Autowired
-  ContentManager contentManager;
-  @Autowired
-  SiteManager siteManager;
-  @Autowired
-  PathManager pathManager;
-  @Autowired
-  IdStorage idStorage;
   TemplateVariables templateVariables;
-  @Autowired
-  ModuleManager moduleManager;
+  private @Autowired IdStorage idStorage;
+  private @Autowired ModuleManager moduleManager;
+  private @Autowired SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
+  private @Autowired ContentManager contentManager;
+  private @Autowired SiteManager siteManager;
+  private @Autowired PathManager pathManager;
 
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {

@@ -30,11 +30,9 @@ import java.nio.file.Path;
 @Controller
 @ResponseBody
 public class TextsController extends SofiaController {
+  private static final Logger log = LoggerFactory.getLogger(TextsController.class);
 
-  private final Logger log = LoggerFactory.getLogger(TextsController.class);
-
-  @Autowired
-  PathManager pathManager;
+  private @Autowired PathManager pathManager;
 
   public TextsController(HttpServletRequest request) {
     super(request);

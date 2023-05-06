@@ -11,10 +11,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class EntityToBusinessPlaceMapper {
-  @Autowired
-  EntityToBusinessAdministrativeDivisionListMapper entityToBusinessAdministrativeDivisionListMapper;
-  @Autowired
-  private CountryManager countryManager;
+  private @Autowired EntityToBusinessAdministrativeDivisionListMapper entityToBusinessAdministrativeDivisionListMapper;
+  private @Autowired CountryManager countryManager;
 
   public Place map(PlaceEntity p, AdministrativeDivisionEntityList administrativeDivisionEntityList) {
     int id = p.getId();

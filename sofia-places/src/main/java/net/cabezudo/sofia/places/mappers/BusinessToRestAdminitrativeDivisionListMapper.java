@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BusinessToRestAdminitrativeDivisionListMapper {
-  @Autowired
-  BusinessToRestAdminitrativeDivisionMapper businessToRestAdminitrativeDivisionMapper;
+  private @Autowired BusinessToRestAdminitrativeDivisionMapper businessToRestAdminitrativeDivisionMapper;
 
   public AdministrativeDivisionsRestList map(AdministrativeDivisionList administrativeDivisionList) {
     AdministrativeDivisionsRestList administrativeDivisionsRestList = new AdministrativeDivisionsRestList();

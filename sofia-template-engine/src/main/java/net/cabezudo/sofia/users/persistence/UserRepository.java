@@ -21,16 +21,11 @@ import java.util.TreeMap;
 
 @Repository
 public class UserRepository {
-  private final Logger log = LoggerFactory.getLogger(UserRepository.class);
+  private static final Logger log = LoggerFactory.getLogger(UserRepository.class);
 
-  @Autowired
-  JdbcTemplate jdbcTemplate;
-
-  @Autowired
-  EMailRepository eMailRepository;
-
-  @Autowired
-  PasswordEncoder passwordEncoder;
+  private @Autowired JdbcTemplate jdbcTemplate;
+  private @Autowired EMailRepository eMailRepository;
+  private @Autowired PasswordEncoder passwordEncoder;
 
   @Transactional
   public UserEntity findByEmail(int siteId, String email) {
@@ -62,7 +57,7 @@ public class UserRepository {
     Map<Integer, UserEntity> map = new TreeMap<>();
     UserEntityList list = new UserEntityList();
 
-    log.debug("Search users for " + siteId);
+    log.debug("Search users for " + siteId + " and account " + accountId);
     jdbcTemplate.queryForList(
         "SELECT u.id AS id, u.site_id, email AS username, password, enabled, authority " +
             "FROM users AS u, emails AS e, authorities AS a, accounts AS c " +
@@ -74,6 +69,7 @@ public class UserRepository {
       if (userEntityFromMap == null) {
         newUserEntity = new UserEntity((int) rs.get("id"), (Integer) rs.get("site_id"), (String) rs.get("username"), (String) rs.get("password"), (boolean) rs.get("enabled"));
         map.put(id, newUserEntity);
+        list.add(newUserEntity);
         newUserEntity.add(new GroupEntity(newUserEntity.getId(), (String) rs.get("authority")));
       } else {
         userEntityFromMap.add(new GroupEntity(userEntityFromMap.getId(), (String) rs.get("authority")));

@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 @ResponseBody
 public class CountriesController extends SofiaAuthorizedController {
-  private final Logger log = LoggerFactory.getLogger(CountriesController.class);
+  private static final Logger log = LoggerFactory.getLogger(CountriesController.class);
 
   public CountriesController(HttpServletRequest request) {
     super(request);

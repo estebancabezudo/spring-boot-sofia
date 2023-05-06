@@ -10,12 +10,11 @@ import java.io.IOException;
  * @version 0.01.00, 2022.09.26
  */
 public class JavaScriptMinifier {
+  private static final Logger log = LoggerFactory.getLogger(JavaScriptMinifier.class);
 
-    private final Logger log = LoggerFactory.getLogger(SofiaFile.class);
-
-    public String get(String code) throws IOException {
-        log.debug("JavaScript minifier");
-        // TODO Minify code
-        return code;
-    }
+  public String get(String code) throws IOException {
+    log.debug("JavaScript minifier");
+    // TODO Minify code
+    return code;
+  }
 }

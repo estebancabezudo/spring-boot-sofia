@@ -5,13 +5,10 @@ import net.cabezudo.sofia.users.Groups;
 import net.cabezudo.sofia.users.persistence.GroupEntity;
 import net.cabezudo.sofia.users.persistence.GroupsEntity;
 import net.cabezudo.sofia.users.persistence.UserEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BusinessToEntityGroupsMapper {
-
-  private @Autowired BusinessToEntityGroupsMapper businessToEntityGroupsMapper;
 
   public GroupsEntity map(UserEntity user, Groups groups) {
     GroupsEntity groupsEntity = new GroupsEntity();

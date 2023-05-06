@@ -17,8 +17,7 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 public class H2TestDataSourceConfig {
 
-  @Autowired
-  private Environment env;
+  private @Autowired Environment env;
 
   @Bean
   public DataSource getDataSource() {

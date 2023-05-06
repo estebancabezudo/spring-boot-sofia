@@ -12,10 +12,9 @@ import java.sql.PreparedStatement;
 
 @Component
 public class EMailRepository {
-  Logger log = LoggerFactory.getLogger(EMailRepository.class);
+  private static final Logger log = LoggerFactory.getLogger(EMailRepository.class);
 
-  @Autowired
-  private JdbcTemplate jdbcTemplate;
+  private @Autowired JdbcTemplate jdbcTemplate;
 
   public EMailEntity get(String address) {
     log.debug("Search email with address " + address);

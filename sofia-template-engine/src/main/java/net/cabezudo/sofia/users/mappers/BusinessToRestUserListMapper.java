@@ -10,12 +10,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class BusinessToRestUserListMapper {
 
-  @Autowired
-  BusinessToRestUserMapper businessToRestUserMapper;
+  private @Autowired BusinessToRestUserMapper businessToRestUserMapper;
 
   public RestUserList map(UserList userList) {
-
-
     int total = userList.getTotal();
     int start = userList.getStart();
     int size = userList.getSize();

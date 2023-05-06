@@ -23,9 +23,9 @@ import java.util.List;
  */
 @Component
 class JSONConfigurationFile {
-
+  private static final Logger log = LoggerFactory.getLogger(JSONConfigurationFile.class);
+  
   private final StringBuilder sb = new StringBuilder();
-  private final Logger log = LoggerFactory.getLogger(JSONConfigurationFile.class);
   SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
   PathManager pathManager;
 

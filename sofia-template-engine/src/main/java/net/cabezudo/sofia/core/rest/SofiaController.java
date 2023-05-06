@@ -13,8 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public abstract class SofiaController {
   private final HttpServletRequest request;
-  @Autowired
-  SiteManager siteManager;
+  private @Autowired SiteManager siteManager;
   private Site site;
   private Host host;
 

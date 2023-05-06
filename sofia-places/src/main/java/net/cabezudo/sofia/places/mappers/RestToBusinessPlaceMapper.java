@@ -10,8 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RestToBusinessPlaceMapper {
-  @Autowired
-  private CountryManager countryManager;
+  private @Autowired CountryManager countryManager;
 
   public Place map(RestPlace p) {
     Country country = countryManager.get(p.getId());

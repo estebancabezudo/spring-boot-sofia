@@ -20,15 +20,11 @@ import javax.transaction.Transactional;
 @Service
 @Transactional
 public class WebClientManager {
+  private static final Logger log = LoggerFactory.getLogger(WebClientManager.class);
 
-  private final Logger log = LoggerFactory.getLogger(WebClientManager.class);
-
-  @Autowired
-  ModuleManager moduleManager;
-  @Resource
-  private UserRepository userRepository;
-  @Resource
-  private WebClientRepository webClientRepository;
+  private @Autowired ModuleManager moduleManager;
+  private @Resource UserRepository userRepository;
+  private @Resource WebClientRepository webClientRepository;
   private @Autowired HttpServletRequest request;
 
   public WebClient loadWebClientBySessionId(Long id) throws UsernameNotFoundException {

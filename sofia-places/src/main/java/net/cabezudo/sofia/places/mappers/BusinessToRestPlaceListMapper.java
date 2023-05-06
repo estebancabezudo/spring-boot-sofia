@@ -8,8 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BusinessToRestPlaceListMapper {
-  @Autowired
-  private BusinessToRestPlaceMapper businessToRestPlaceMapper;
+  private @Autowired BusinessToRestPlaceMapper businessToRestPlaceMapper;
 
   public RestPlaceList map(PlaceList placeList) {
     int total = placeList.getTotal();

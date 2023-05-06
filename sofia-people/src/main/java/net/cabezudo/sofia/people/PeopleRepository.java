@@ -13,9 +13,8 @@ import java.util.List;
 
 @Repository
 public class PeopleRepository {
-  Logger log = LoggerFactory.getLogger(PeopleRepository.class);
-  @Autowired
-  private JdbcTemplate jdbcTemplate;
+  private static final Logger log = LoggerFactory.getLogger(PeopleRepository.class);
+  private @Autowired JdbcTemplate jdbcTemplate;
 
   @Transactional
   public EntityList<PersonEntity> findAll(int accountId) {

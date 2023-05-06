@@ -9,9 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class SiteRepository {
-  Logger log = LoggerFactory.getLogger(SiteRepository.class);
-  @Autowired
-  private JdbcTemplate jdbcTemplate;
+  private static final Logger log = LoggerFactory.getLogger(SiteRepository.class);
+  private @Autowired JdbcTemplate jdbcTemplate;
 
   @Transactional
   public SiteEntity findByName(String siteName) {

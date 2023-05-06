@@ -8,8 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BusinessToRestAdminitrativeDivisionMapper {
-  @Autowired
-  BusinessToRestAdminitrativeDivisionTypeMapper businessToRestAdminitrativeDivisionTypeMapper;
+  private @Autowired BusinessToRestAdminitrativeDivisionTypeMapper businessToRestAdminitrativeDivisionTypeMapper;
 
   public RestAdministrativeDivision map(AdministrativeDivision administrativeDivision) {
     int id = administrativeDivision.id();

@@ -23,13 +23,10 @@ import javax.servlet.http.HttpSession;
 @RestController
 public class WebClientController extends SofiaController {
 
-  private final Logger log = LoggerFactory.getLogger(WebClientController.class);
+  private static final Logger log = LoggerFactory.getLogger(WebClientController.class);
 
-  @Autowired
-  ModuleManager moduleManager;
-
-  @Autowired
-  WebClientManager webClientManager;
+  private @Autowired ModuleManager moduleManager;
+  private @Autowired WebClientManager webClientManager;
 
   public WebClientController(HttpServletRequest request) {
     super(request);
@@ -62,7 +59,7 @@ public class WebClientController extends SofiaController {
     HttpSession session = super.getRequest().getSession();
     Object o = session.getAttribute(WebClient.OBJECT_NAME_IN_SESSION);
     WebClient webClient = (WebClient) o;
-    
+
     WebClient responseWebClient;
     if (restLanguage != null && !restLanguage.equals(webClient.getLanguage())) {
       WebClient newWebClient = new WebClient(webClient.getId(), new Language(restLanguage.getCode()));

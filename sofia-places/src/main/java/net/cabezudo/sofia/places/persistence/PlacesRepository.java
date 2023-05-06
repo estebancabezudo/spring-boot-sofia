@@ -16,10 +16,8 @@ import java.util.List;
 
 @Repository
 public class PlacesRepository {
-
-  Logger log = LoggerFactory.getLogger(PlacesRepository.class);
-  @Autowired
-  private JdbcTemplate jdbcTemplate;
+  private static final Logger log = LoggerFactory.getLogger(PlacesRepository.class);
+  private @Autowired JdbcTemplate jdbcTemplate;
 
   @Transactional
   public EntityList<PlaceEntity> findAll(int accountId) {

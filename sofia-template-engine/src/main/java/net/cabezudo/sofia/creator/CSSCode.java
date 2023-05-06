@@ -13,7 +13,7 @@ import java.nio.file.Path;
  */
 class CSSCode {
 
-  private final Logger log = LoggerFactory.getLogger(TemplateVariables.class);
+  private static final Logger log = LoggerFactory.getLogger(CSSCode.class);
 
   CSSCodeGroup group = new CSSCodeGroup();
 

@@ -30,15 +30,11 @@ import java.io.IOException;
 @ResponseBody
 public class UsersController extends SofiaAuthorizedController {
 
-  private final Logger log = LoggerFactory.getLogger(UsersController.class);
-  @Autowired
-  RestToBusinessUserMapper restToBusinessUserMapper;
-  @Autowired
-  BusinessToRestUserListMapper businessToRestUserListMapper;
-  @Autowired
-  BusinessToRestUserMapper businessToRestUserMapper;
-  @Autowired
-  private UserManager userManager;
+  private static final Logger log = LoggerFactory.getLogger(UsersController.class);
+  private @Autowired RestToBusinessUserMapper restToBusinessUserMapper;
+  private @Autowired BusinessToRestUserListMapper businessToRestUserListMapper;
+  private @Autowired BusinessToRestUserMapper businessToRestUserMapper;
+  private @Autowired UserManager userManager;
 
   public UsersController(HttpServletRequest request) {
     super(request);

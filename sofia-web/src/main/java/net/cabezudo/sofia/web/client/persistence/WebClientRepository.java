@@ -19,10 +19,9 @@ import java.sql.Statement;
 
 @Repository
 public class WebClientRepository {
-  private final Logger log = LoggerFactory.getLogger(WebClientRepository.class);
+  private static final Logger log = LoggerFactory.getLogger(WebClientRepository.class);
 
-  @Autowired
-  private JdbcTemplate jdbcTemplate;
+  private @Autowired JdbcTemplate jdbcTemplate;
 
   @Transactional
   public WebClientEntity findById(Long id) {

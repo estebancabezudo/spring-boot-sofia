@@ -17,7 +17,7 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 public class DatabaseConfiguration {
 
-  private final Logger log = LoggerFactory.getLogger(DatabaseConfiguration.class);
+  private static final Logger log = LoggerFactory.getLogger(DatabaseConfiguration.class);
 
   @Bean
   @ConfigurationProperties(prefix = "spring.datasource")
