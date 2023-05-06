@@ -1,4 +1,4 @@
-package users.persistence;
+package net.cabezudo.sofia.users.persistence;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,12 +1,11 @@
-package users;
+package net.cabezudo.sofia.users;
 
 import net.cabezudo.sofia.sites.Site;
-import net.cabezudo.sofia.users.SofiaUser;
-import users.mappers.EntityToBusinessUserMapper;
-import users.persistence.GroupEntity;
-import users.persistence.GroupsEntity;
-import users.persistence.UserEntity;
-import users.persistence.UserRepository;
+import net.cabezudo.sofia.users.mappers.EntityToBusinessUserMapper;
+import net.cabezudo.sofia.users.persistence.GroupEntity;
+import net.cabezudo.sofia.users.persistence.GroupsEntity;
+import net.cabezudo.sofia.users.persistence.UserEntity;
+import net.cabezudo.sofia.users.persistence.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

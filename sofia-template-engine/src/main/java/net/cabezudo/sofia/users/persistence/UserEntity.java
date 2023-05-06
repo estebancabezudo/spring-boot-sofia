@@ -1,4 +1,4 @@
-package users.persistence;
+package net.cabezudo.sofia.users.persistence;
 
 import javax.persistence.Column;
 
@@ -19,8 +19,19 @@ public class UserEntity {
     this.enabled = enabled;
   }
 
+  public UserEntity(int id, int siteId, String username, String password, GroupsEntity groupsEntity, boolean enabled) {
+    this(id, siteId, username, password, enabled);
+    for (GroupEntity group : groupsEntity) {
+
+    }
+  }
+
   public int getId() {
     return id;
+  }
+
+  public int getSiteId() {
+    return siteId;
   }
 
   public String getUsername() {

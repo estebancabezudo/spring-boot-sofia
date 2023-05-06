@@ -1,4 +1,4 @@
-package users;
+package net.cabezudo.sofia.users;
 
 public class UserPreferencesManager {
   private static final UserPreferencesManager INSTANCE = new UserPreferencesManager();

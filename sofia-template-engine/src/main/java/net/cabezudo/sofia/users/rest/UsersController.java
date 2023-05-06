@@ -1,4 +1,4 @@
-package users.rest;
+package net.cabezudo.sofia.users.rest;
 
 import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.core.rest.ListRestResponse;
@@ -7,12 +7,9 @@ import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.users.Group;
 import net.cabezudo.sofia.users.SofiaUser;
-import users.mappers.BusinessToRestUserListMapper;
-import net.cabezudo.sofia.users.rest.BusinessToRestUserMapper;
-import net.cabezudo.sofia.users.rest.RestToBusinessUserMapper;
-import net.cabezudo.sofia.users.rest.RestUser;
-import users.service.UserList;
-import users.service.UserManager;
+import net.cabezudo.sofia.users.mappers.BusinessToRestUserListMapper;
+import net.cabezudo.sofia.users.service.UserList;
+import net.cabezudo.sofia.users.service.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,7 +129,9 @@ public class UsersController extends SofiaAuthorizedController {
 
     SofiaUser newUser = restToBusinessUserMapper.map(restUserToSave);
 
-    SofiaUser user = userManager.create(account, newUser);
+    SofiaUser user = userManager.create(
+        account, newUser.getSite().getId(), newUser.getUsername(), newUser.getPassword(), newUser.getGroups(), newUser.isEnabled()
+    );
     RestUser restUser = businessToRestUserMapper.map(user);
 
     return ResponseEntity.ok(restUser);

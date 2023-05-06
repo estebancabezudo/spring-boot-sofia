@@ -16,7 +16,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import users.SofiaAuthenticationProvider;
+import net.cabezudo.sofia.users.SofiaAuthenticationProvider;
 
 /**
  * @author <a href="http://cabezudo.net">Esteban Cabezudo</a>

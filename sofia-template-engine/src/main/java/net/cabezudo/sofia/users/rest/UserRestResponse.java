@@ -1,4 +1,4 @@
-package users.rest;
+package net.cabezudo.sofia.users.rest;
 
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
 import net.cabezudo.sofia.users.rest.RestUser;

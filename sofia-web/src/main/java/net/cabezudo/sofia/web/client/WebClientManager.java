@@ -1,7 +1,7 @@
 package net.cabezudo.sofia.web.client;
 
 import net.cabezudo.sofia.core.modules.ModuleManager;
-import users.persistence.UserRepository;
+import net.cabezudo.sofia.users.persistence.UserRepository;
 import net.cabezudo.sofia.web.client.mappers.BusinessToEntityWebClientMapper;
 import net.cabezudo.sofia.web.client.mappers.EntityToBusinessWebClientMapper;
 import net.cabezudo.sofia.web.client.persistence.WebClientEntity;

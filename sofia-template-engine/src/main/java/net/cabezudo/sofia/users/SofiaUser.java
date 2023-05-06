@@ -8,15 +8,17 @@ import java.util.Collection;
 
 public class SofiaUser implements UserDetails {
   private final int id;
-  private final Site site;
+  private final int siteId;
   private final String username;
   private final String password;
   private final Groups groups;
   private final boolean enabled;
+  private Site site;
 
 
   public SofiaUser(int id, Site site, String username, String password, Groups groups, boolean enabled) {
     this.id = id;
+    this.siteId = site.getId();
     this.site = site;
     this.username = username;
     this.password = password;
@@ -26,10 +28,20 @@ public class SofiaUser implements UserDetails {
 
   public SofiaUser(int id, Site site, String username, String password, Collection<GrantedAuthority> authorities, boolean enabled) {
     this.id = id;
+    this.siteId = site.getId();
     this.site = site;
     this.username = username;
     this.password = password;
     this.groups = new Groups(authorities);
+    this.enabled = enabled;
+  }
+
+  public SofiaUser(int id, int siteId, String username, String password, Groups groups, boolean enabled) {
+    this.id = id;
+    this.siteId = siteId;
+    this.username = username;
+    this.password = password;
+    this.groups = groups;
     this.enabled = enabled;
   }
 

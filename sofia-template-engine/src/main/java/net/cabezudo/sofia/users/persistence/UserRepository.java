@@ -1,17 +1,19 @@
-package users.persistence;
+package net.cabezudo.sofia.users.persistence;
 
-import net.cabezudo.sofia.emails.persistence.EMailEntity;
 import net.cabezudo.sofia.emails.persistence.EMailRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +24,13 @@ public class UserRepository {
   private final Logger log = LoggerFactory.getLogger(UserRepository.class);
 
   @Autowired
-  private JdbcTemplate jdbcTemplate;
+  JdbcTemplate jdbcTemplate;
 
   @Autowired
-  private EMailRepository eMailRepository;
+  EMailRepository eMailRepository;
+
+  @Autowired
+  PasswordEncoder passwordEncoder;
 
   @Transactional
   public UserEntity findByEmail(int siteId, String email) {
@@ -47,7 +52,7 @@ public class UserRepository {
     Map<String, Object> firstRecord = list.get(0);
     UserEntity userEntity = new UserEntity((int) firstRecord.get("id"), (Integer) firstRecord.get("site_id"), (String) firstRecord.get("username"), (String) firstRecord.get("password"), (boolean) firstRecord.get("enabled"));
     for (Map<String, Object> rs : list) {
-      userEntity.add(new GroupEntity((String) rs.get("authority")));
+      userEntity.add(new GroupEntity((int) firstRecord.get("id"), (String) rs.get("authority")));
     }
     return userEntity;
   }
@@ -69,9 +74,9 @@ public class UserRepository {
       if (userEntityFromMap == null) {
         newUserEntity = new UserEntity((int) rs.get("id"), (Integer) rs.get("site_id"), (String) rs.get("username"), (String) rs.get("password"), (boolean) rs.get("enabled"));
         map.put(id, newUserEntity);
-        newUserEntity.add(new GroupEntity((String) rs.get("authority")));
+        newUserEntity.add(new GroupEntity(newUserEntity.getId(), (String) rs.get("authority")));
       } else {
-        userEntityFromMap.add(new GroupEntity((String) rs.get("authority")));
+        userEntityFromMap.add(new GroupEntity(userEntityFromMap.getId(), (String) rs.get("authority")));
       }
     });
     list.setTotal(list.size()); // The total is the same as the size because there isn't pagination.
@@ -97,33 +102,26 @@ public class UserRepository {
     Map<String, Object> firstRecord = list.get(0);
     UserEntity userEntity = new UserEntity((int) firstRecord.get("id"), (Integer) firstRecord.get("site_id"), (String) firstRecord.get("username"), (String) firstRecord.get("password"), (boolean) firstRecord.get("enabled"));
     for (Map<String, Object> rs : list) {
-      userEntity.add(new GroupEntity((String) rs.get("authority")));
+      userEntity.add(new GroupEntity(userEntity.getId(), (String) rs.get("authority")));
     }
     return userEntity;
   }
 
-  @Transactional
-  public UserEntity create(UserEntity entity) {
-    EMailEntity eMailEntity = eMailRepository.create(entity.getUsername());
-    // Add user
-    // Add authorities
-    String sqlQuery =
-        "INSERT INTO places (account_id, name, street, number, interior_number, `references`, postal_code, country_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+  public UserEntity create(int accountId, int siteId, String eMailAddress, String password, boolean enabled) {
+    String encodedPassword = passwordEncoder.encode(password);
     KeyHolder keyHolder = new GeneratedKeyHolder();
-    jdbcTemplate.update(connection -> {
-      PreparedStatement ps = connection.prepareStatement(sqlQuery, new String[]{"id"});
-      ps.setInt(1, placeEntityToSave.getAccountId());
-      ps.setString(2, placeEntityToSave.getName());
-      ps.setString(3, placeEntityToSave.getStreet());
-      ps.setString(4, placeEntityToSave.getNumber());
-      ps.setString(5, placeEntityToSave.getInteriorNumber());
-      ps.setString(6, placeEntityToSave.getReferences());
-      ps.setString(7, placeEntityToSave.getPostalCode());
-      ps.setInt(8, placeEntityToSave.getCountryId());
+    PreparedStatementCreator preparedStatementCreator = connection -> {
+      String query = "INSERT INTO users (site_id, email_id, password, enabled) values(?, ?, ?, ?)";
+      PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+      ps.setInt(1, accountId);
+      ps.setInt(2, siteId);
+      ps.setString(3, eMailAddress);
+      ps.setString(4, encodedPassword);
+      ps.setBoolean(5, enabled);
       return ps;
-    }, keyHolder);
-    int id = keyHolder.getKey().intValue();
-    placeEntityToSave.setId(id);
-    return new PlaceEntity(placeEntityToSave);
+    };
+    jdbcTemplate.update(preparedStatementCreator, keyHolder);
+
+    return new UserEntity(keyHolder.getKey().intValue(), siteId, eMailAddress, password, enabled);
   }
 }

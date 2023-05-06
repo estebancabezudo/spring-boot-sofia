@@ -1,8 +1,8 @@
-package users.mappers;
+package net.cabezudo.sofia.users.mappers;
 
 import net.cabezudo.sofia.core.persistence.EntityList;
-import users.persistence.UserEntity;
-import users.service.UserList;
+import net.cabezudo.sofia.users.persistence.UserEntity;
+import net.cabezudo.sofia.users.service.UserList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

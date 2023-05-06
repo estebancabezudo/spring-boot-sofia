@@ -1,4 +1,4 @@
-package users.service;
+package net.cabezudo.sofia.users.service;
 
 import net.cabezudo.sofia.core.service.BusinessList;
 import net.cabezudo.sofia.users.SofiaUser;

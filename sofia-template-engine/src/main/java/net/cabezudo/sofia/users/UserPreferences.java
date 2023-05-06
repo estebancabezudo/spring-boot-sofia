@@ -1,4 +1,4 @@
-package users;
+package net.cabezudo.sofia.users;
 
 import java.time.ZoneOffset;
 import java.util.Locale;

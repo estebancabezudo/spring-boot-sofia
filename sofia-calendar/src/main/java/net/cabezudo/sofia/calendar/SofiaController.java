@@ -1,8 +1,8 @@
 package net.cabezudo.sofia.calendar;
 
-import users.UserPreferences;
+import net.cabezudo.sofia.users.UserPreferences;
 import net.cabezudo.sofia.sites.Site;
-import users.UserPreferencesManager;
+import net.cabezudo.sofia.users.UserPreferencesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;

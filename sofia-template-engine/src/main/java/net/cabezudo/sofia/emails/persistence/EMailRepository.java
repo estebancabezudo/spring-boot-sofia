@@ -17,6 +17,21 @@ public class EMailRepository {
   @Autowired
   private JdbcTemplate jdbcTemplate;
 
+  public EMailEntity get(String address) {
+    log.debug("Search email with address " + address);
+
+    String query = "SELECT id, email FROM emails AS e WHERE email = ?";
+    return jdbcTemplate.query(query, new EMailMapper(), address).stream().findFirst().orElse(null);
+  }
+
+
+  public EMailEntity get(int id) {
+    log.debug("Search email with id " + id);
+
+    String query = "SELECT id, email FROM emails AS e WHERE id = ?";
+    return jdbcTemplate.query(query, new EMailMapper(), id).stream().findFirst().orElse(null);
+  }
+
   public EMailEntity create(String email) {
     String sqlQuery = "INSERT INTO emails (email) VALUES (?)";
     KeyHolder keyHolder = new GeneratedKeyHolder();

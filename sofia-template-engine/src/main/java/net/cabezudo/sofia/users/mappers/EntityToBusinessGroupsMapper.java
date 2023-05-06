@@ -1,9 +1,9 @@
-package users.mappers;
+package net.cabezudo.sofia.users.mappers;
 
 import net.cabezudo.sofia.users.Group;
 import net.cabezudo.sofia.users.Groups;
-import users.persistence.GroupEntity;
-import users.persistence.GroupsEntity;
+import net.cabezudo.sofia.users.persistence.GroupEntity;
+import net.cabezudo.sofia.users.persistence.GroupsEntity;
 
 public class EntityToBusinessGroupsMapper {
   public Groups map(GroupsEntity groupsEntity) {
