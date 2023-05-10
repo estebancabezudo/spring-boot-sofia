@@ -3,12 +3,15 @@ package net.cabezudo.sofia.emails.persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.sql.PreparedStatement;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @Component
 public class EMailRepository {
@@ -41,5 +44,24 @@ public class EMailRepository {
     }, keyHolder);
     int id = keyHolder.getKey().intValue();
     return new EMailEntity(id, email);
+  }
+
+  public void delete(int entityId) {
+    log.debug("Delete email with id " + entityId);
+    String sqlQuery = "DELETE FROM emails WHERE id = ?";
+    PreparedStatementCreator preparedStatementCreator = connection -> {
+      PreparedStatement ps = connection.prepareStatement(sqlQuery);
+      ps.setInt(1, entityId);
+      return ps;
+    };
+    try {
+      jdbcTemplate.update(preparedStatementCreator);
+    } catch (DataAccessException e) {
+      if (e.getCause() instanceof SQLIntegrityConstraintViolationException) {
+        log.debug("I can't delete the email because is used with another user in other account.");
+      } else {
+        throw e;
+      }
+    }
   }
 }

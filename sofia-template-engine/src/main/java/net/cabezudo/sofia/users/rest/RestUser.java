@@ -4,10 +4,10 @@ import net.cabezudo.sofia.sites.Site;
 
 public class RestUser {
   private final int id;
-  private final Site site;
   private final String username;
   private final RestGroups groups;
   private final boolean enabled;
+  private Site site;
 
   public RestUser(int id, Site site, String username, RestGroups groups, boolean enabled) {
     this.id = id;
@@ -34,7 +34,11 @@ public class RestUser {
     return enabled;
   }
 
-    public Site getSite() {
+  public Site getSite() {
     return site;
-    }
+  }
+
+  public void setSite(Site site) {
+    this.site = site;
+  }
 }

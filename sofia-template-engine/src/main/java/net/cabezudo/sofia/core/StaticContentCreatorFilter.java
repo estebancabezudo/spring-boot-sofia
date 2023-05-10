@@ -94,7 +94,7 @@ public class StaticContentCreatorFilter implements Filter {
               throw new RuntimeException(e);
             }
             log.debug("Search for " + sourcePath);
-            if (Files.exists(sourcePath)) {
+            if (Files.exists(sourcePath) && !Files.isDirectory(sourcePath)) {
               log.debug("Copy " + sourcePath + " to " + targetPath);
               Files.createDirectories(targetPath.getParent());
               Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);

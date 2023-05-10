@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.users.persistence;
 
+import net.cabezudo.sofia.emails.persistence.EMailEntity;
 import net.cabezudo.sofia.emails.persistence.EMailRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ public class UserRepository {
 
     List<Map<String, Object>> list = new ArrayList<>();
     jdbcTemplate.queryForList(
-        "SELECT u.id AS id, site_id, email AS username, password, enabled, authority " +
+        "SELECT u.id AS id, site_id, e.id AS eMailId, email AS email, password, enabled, authority " +
             "FROM users AS u, emails AS e, authorities AS a " +
             "WHERE u.email_id = e.id AND u.id = a.user_id AND site_id = ? AND e.email = ?",
         new Object[]{siteId, email}).forEach(rs -> {
@@ -45,7 +46,8 @@ public class UserRepository {
     }
 
     Map<String, Object> firstRecord = list.get(0);
-    UserEntity userEntity = new UserEntity((int) firstRecord.get("id"), (Integer) firstRecord.get("site_id"), (String) firstRecord.get("username"), (String) firstRecord.get("password"), (boolean) firstRecord.get("enabled"));
+    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
+    UserEntity userEntity = new UserEntity((int) firstRecord.get("id"), (Integer) firstRecord.get("site_id"), eMailEntity, (String) firstRecord.get("password"), (boolean) firstRecord.get("enabled"));
     for (Map<String, Object> rs : list) {
       userEntity.add(new GroupEntity((int) firstRecord.get("id"), (String) rs.get("authority")));
     }
@@ -59,20 +61,30 @@ public class UserRepository {
 
     log.debug("Search users for " + siteId + " and account " + accountId);
     jdbcTemplate.queryForList(
-        "SELECT u.id AS id, u.site_id, email AS username, password, enabled, authority " +
-            "FROM users AS u, emails AS e, authorities AS a, accounts AS c " +
-            "WHERE u.email_id = e.id AND u.id = a.user_id AND c.site_id = u.site_id AND u.site_id = ? AND c.id = ?",
+        "SELECT u.id AS id, u.site_id, e.id AS eMailId, email AS email, password, enabled, authority " +
+            "FROM users AS u " +
+            "LEFT JOIN emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN accounts AS c ON c.site_id = u.site_id " +
+            "LEFT JOIN authorities AS a ON u.id = a.user_id " +
+            "WHERE u.site_id = ? AND c.id = ?",
         new Object[]{siteId, accountId}).stream().forEach(rs -> {
       int id = (Integer) rs.get("id");
       UserEntity userEntityFromMap = map.get(id);
       UserEntity newUserEntity;
       if (userEntityFromMap == null) {
-        newUserEntity = new UserEntity((int) rs.get("id"), (Integer) rs.get("site_id"), (String) rs.get("username"), (String) rs.get("password"), (boolean) rs.get("enabled"));
+        EMailEntity eMailEntity = new EMailEntity((int) rs.get("eMailId"), (String) rs.get("email"));
+        newUserEntity = new UserEntity((int) rs.get("id"), (Integer) rs.get("site_id"), eMailEntity, (String) rs.get("password"), (boolean) rs.get("enabled"));
         map.put(id, newUserEntity);
         list.add(newUserEntity);
-        newUserEntity.add(new GroupEntity(newUserEntity.getId(), (String) rs.get("authority")));
+        String authority = (String) rs.get("authority");
+        if (authority != null) {
+          newUserEntity.add(new GroupEntity(newUserEntity.getId(), authority));
+        }
       } else {
-        userEntityFromMap.add(new GroupEntity(userEntityFromMap.getId(), (String) rs.get("authority")));
+        String authority = (String) rs.get("authority");
+        if (authority != null) {
+          userEntityFromMap.add(new GroupEntity(userEntityFromMap.getId(), authority));
+        }
       }
     });
     list.setTotal(list.size()); // The total is the same as the size because there isn't pagination.
@@ -84,9 +96,11 @@ public class UserRepository {
 
     List<Map<String, Object>> list = new ArrayList<>();
     jdbcTemplate.queryForList(
-        "SELECT u.id AS id, u.site_id, email AS username, password, enabled, authority " +
-            "FROM users AS u, emails AS e, authorities AS a " +
-            "WHERE u.email_id = e.id AND u.id = ?",
+        "SELECT u.id AS id, u.site_id, e.id AS eMailId, email AS email, password, enabled, authority " +
+            "FROM users AS u " +
+            "LEFT JOIN emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN authorities AS a ON u.id = a.user_id " +
+            "WHERE u.id = ?",
         new Object[]{id}).forEach(rs -> {
       list.add(rs);
     });
@@ -96,28 +110,52 @@ public class UserRepository {
     }
 
     Map<String, Object> firstRecord = list.get(0);
-    UserEntity userEntity = new UserEntity((int) firstRecord.get("id"), (Integer) firstRecord.get("site_id"), (String) firstRecord.get("username"), (String) firstRecord.get("password"), (boolean) firstRecord.get("enabled"));
+
+    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
+    UserEntity userEntity = new UserEntity((int) firstRecord.get("id"), (Integer) firstRecord.get("site_id"), eMailEntity, (String) firstRecord.get("password"), (boolean) firstRecord.get("enabled"));
     for (Map<String, Object> rs : list) {
-      userEntity.add(new GroupEntity(userEntity.getId(), (String) rs.get("authority")));
+      String authority = (String) rs.get("authority");
+      if (authority != null) {
+        userEntity.add(new GroupEntity(userEntity.getId(), authority));
+      }
     }
     return userEntity;
   }
 
-  public UserEntity create(int accountId, int siteId, String eMailAddress, String password, boolean enabled) {
-    String encodedPassword = passwordEncoder.encode(password);
+  public UserEntity create(int siteId, EMailEntity eMailEntity, String password, boolean enabled) {
+    String encodedPassword = password == null ? null : passwordEncoder.encode(password);
     KeyHolder keyHolder = new GeneratedKeyHolder();
     PreparedStatementCreator preparedStatementCreator = connection -> {
       String query = "INSERT INTO users (site_id, email_id, password, enabled) values(?, ?, ?, ?)";
       PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-      ps.setInt(1, accountId);
-      ps.setInt(2, siteId);
-      ps.setString(3, eMailAddress);
-      ps.setString(4, encodedPassword);
-      ps.setBoolean(5, enabled);
+      ps.setInt(1, siteId);
+      ps.setInt(2, eMailEntity.id());
+      ps.setString(3, encodedPassword);
+      ps.setBoolean(4, enabled);
       return ps;
     };
     jdbcTemplate.update(preparedStatementCreator, keyHolder);
 
-    return new UserEntity(keyHolder.getKey().intValue(), siteId, eMailAddress, password, enabled);
+    return new UserEntity(keyHolder.getKey().intValue(), siteId, eMailEntity, password, enabled);
+  }
+
+  public UserEntity update(UserEntity entity) {
+    int id = entity.getId();
+    int siteId = entity.getSiteId();
+    EMailEntity eMailEntity = entity.getEMailEntity();
+    String password = entity.getPassword();
+    boolean enabled = entity.isEnabled();
+
+    PreparedStatementCreator preparedStatementCreator = connection -> {
+      String query = "UPDATE users SET email_id = ?, enabled = ? WHERE id = ?";
+      PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+      ps.setInt(1, eMailEntity.id());
+      ps.setBoolean(2, enabled);
+      ps.setInt(3, id);
+      return ps;
+    };
+    jdbcTemplate.update(preparedStatementCreator);
+
+    return new UserEntity(id, siteId, eMailEntity, password, enabled);
   }
 }

@@ -1,41 +1,71 @@
-<link lib="mx:places:1.00" />
-<link lib="mx:states:1.00" />
+<style file="../commons.css"></style>
+
+<style>
+    #userSaveButton {
+        grid-column: 5;
+    }
+</style>
+
 <script>
-    const createForm = () => {
-        const data = {
-            name: '',
-            countryCode: 'mx',
-            street: '',
-            number: '',
-            interiorNumber: '',
-            references: '',
-            postalCode: '',
-            administrativeDivisions: [
-                {
-                    name: 'MX-NLE',
-                    administrativeDivisionType: {
-                        name: 'state'
-                    }
+    const init = () => {
+        formInit();
+
+        const groupContainer = createGroupContainer(null, false, NEW_GROUP_ID);
+        groupsContainer.appendChild(groupContainer);
+
+        userSaveButton = document.createElement('button');
+        userSaveButton.id = 'userSaveButton';
+        userSaveButton.className = 'button greenButton';
+        userSaveButton.addEventListener('click', () => {
+            userSaveButton.disabled = true;
+            const username = document.getElementById('usernameInput').value;
+            const groups = [];
+            const groupElements = document.querySelectorAll("#groupsContainer > div > input");
+            groupElements.forEach(groupElement => {
+                const value = groupElement.value.trim();
+                if (value.length > 2) {
+                    groups.push({ name: value });
                 }
+            });
 
-            ]
-        };
-        const countryCode = data.countryCode.toUpperCase();
-        const className = `place${countryCode}`;
-        const global = (window || this);
-        const dataDriver = new window[className](data);
-        dataDriver.createGUIForAdd();
-        dataDriver.loadData(data);
+            var data = {
+                username,
+                enabled: true,
+                groups
+            };
+
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json");
+
+            var requestOptions = {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(data),
+                redirect: 'follow'
+            };
+            fetch(`/v1/users`, requestOptions)
+                .then(response => {
+                    return response.json();
+                })
+                .then(jsonResponse => {
+                    window.location.replace('/admin/users/list.html');
+                })
+                .catch(error => {
+                    throw error;
+                    Core.showErrorMessage(error.message);
+                    Core.reportSystemError(error.message);
+                });
+        });
+        userFormContainer.appendChild(userSaveButton);
+        userSaveButton.disabled = true;
     };
-    window.addEventListener('load', createForm, false);
-</script>
-<style file="../commons.css" />
 
+    window.addEventListener('load', init, false);
+</script>
 
 <body id="content">
     <div class="contentTitle">
-        <texts><text language="es">Agregar consultorio</text><text language="en">Add doctor's office</text></texts>
+        <texts><text language="es">Agregar usuario</text><text language="en">Add user</text></texts>
     </div>
-    <div id="formContainer">
-    </div>
+    <div file="userForm.html"></div>
 </body>

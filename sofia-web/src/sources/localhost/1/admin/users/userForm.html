@@ -44,147 +44,113 @@
 
 <script>
     const NEW_GROUP_ID = 'newGroup';
-    let usenameBaseData, groupsBaseData = [], usernameInput;
+    let usernameBaseData, groupsBaseData, usernameInput, userSaveButton;
+    const createGroupContainer = (groupName, visible, newGroupId) => {
+        const groupContainer = document.createElement('DIV');
+        if (newGroupId && newGroupId.length > 0) {
+            groupContainer.id = newGroupId;
+        }
+        groupContainer.className = 'groupContainer';
 
-    const createGUIButtonsAndLoadData = () => {
-        const createBaseData = data => {
-            usernameBaseData = data.username;
-            const groups = data.groups;
-            groups.forEach(group => {
-                groupsBaseData.push(group.name);
-            });
-        };
-        const userFormContainer = document.getElementById('userFormContainer');
-        createButtons(userFormContainer);
+        const groupNameInput = document.createElement('INPUT');
+        groupNameInput.className = 'textInput';
+        groupNameInput.value = groupName;
+        groupNameInput.spellcheck = false;
+        groupNameInput.autocomplete = 'off';
+        groupContainer.appendChild(groupNameInput);
 
-        let params = new URLSearchParams(window.location.search);
-        const id = params.get('id');
-        fetch(`/v1/users/${id}`)
-            .then(response => {
-                return response.json();
-            })
-            .then(jsonResponse => {
-                showData(jsonResponse.data);
-                createBaseData(jsonResponse.data);
-            })
-            .catch(error => {
-                Core.reportSystemError(error);
-            });
-    };
-    const showData = data => {
-        const checkForChanges = () => {
-            const theDataChanged = () => {
-                if (usernameInput.value.trim() !== usernameBaseData) {
-                    console.log(`The username in base data is ${usernameBaseData} but in DOM is ${usernameInput.value}.`);
-                    return true;
+        const deleteGropIconContainer = document.createElement('div');
+        deleteGropIconContainer.setAttribute('class', 'deleteGroupContainer');
+        groupContainer.appendChild(deleteGropIconContainer);
+
+        const deleteGropIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        deleteGropIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        deleteGropIcon.setAttribute('width', '20');
+        deleteGropIcon.setAttribute('height', '20');
+        deleteGropIcon.setAttribute('class', 'deleteGroup');
+        deleteGropIconContainer.appendChild(deleteGropIcon);
+
+        const linea1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        linea1.setAttribute('x1', '5');
+        linea1.setAttribute('y1', '5');
+        linea1.setAttribute('x2', '15');
+        linea1.setAttribute('y2', '15');
+        linea1.setAttribute('stroke', 'gray');
+        linea1.setAttribute('stroke-width', '2');
+        const linea2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        linea2.setAttribute('x1', '15');
+        linea2.setAttribute('y1', '5');
+        linea2.setAttribute('x2', '5');
+        linea2.setAttribute('y2', '15');
+        linea2.setAttribute('stroke', 'gray');
+        linea2.setAttribute('stroke-width', '2');
+        deleteGropIcon.appendChild(linea1);
+        deleteGropIcon.appendChild(linea2);
+
+        deleteGropIconContainer.addEventListener('click', () => {
+            deleteGropIconContainer.parentElement.remove();
+            checkForChanges();
+        })
+        if (!visible) {
+            deleteGropIcon.style.display = 'none';
+        }
+
+        groupNameInput.addEventListener('keyup', () => {
+            if (groupNameInput.value.length > 2) {
+                deleteGropIcon.style.display = 'block';
+                if (groupNameInput.parentElement.id === NEW_GROUP_ID) {
+                    groupNameInput.parentElement.id = '';
+                    const groupContainer = createGroupContainer(null, false, NEW_GROUP_ID);
+                    groupsContainer.appendChild(groupContainer);
                 }
-                // I don't check the size of the groups before because the DOM groups can have +1 or +2 groups more than base data and I also need the bucle to check that.
-                let groupDOMSize = 0;
-                for (const groupInput of groupsContainer.getElementsByClassName('textInput')) {
-                    if (groupInput.value.trim().length > 2) {
-                        groupDOMSize++;
-                        if (!groupsBaseData.includes(groupInput.value.trim())) {
-                            return true;
-                        }
-                    }
-                };
-                if (groupsBaseData.length !== groupDOMSize) {
-                    return true;
-                }
-                return false;
-            };
-            changeButtons(theDataChanged());
-        };
-        const createGroupContainer = (groupName, visible, id) => {
-            const groupContainer = document.createElement('DIV');
-            if (id && id.length > 0) {
-                groupContainer.id = id;
-            }
-            groupContainer.className = 'groupContainer';
-
-            const groupNameInput = document.createElement('INPUT');
-            groupNameInput.className = 'textInput';
-            groupNameInput.value = groupName;
-            groupNameInput.spellcheck = false;
-            groupNameInput.autocomplete = 'off';
-            groupContainer.appendChild(groupNameInput);
-
-            const deleteGropIconContainer = document.createElement('div');
-            deleteGropIconContainer.setAttribute('class', 'deleteGroupContainer');
-            groupContainer.appendChild(deleteGropIconContainer);
-
-            const deleteGropIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            deleteGropIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-            deleteGropIcon.setAttribute('width', '20');
-            deleteGropIcon.setAttribute('height', '20');
-            deleteGropIcon.setAttribute('class', 'deleteGroup');
-            deleteGropIconContainer.appendChild(deleteGropIcon);
-
-            const linea1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            linea1.setAttribute('x1', '5');
-            linea1.setAttribute('y1', '5');
-            linea1.setAttribute('x2', '15');
-            linea1.setAttribute('y2', '15');
-            linea1.setAttribute('stroke', 'gray');
-            linea1.setAttribute('stroke-width', '2');
-            const linea2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            linea2.setAttribute('x1', '15');
-            linea2.setAttribute('y1', '5');
-            linea2.setAttribute('x2', '5');
-            linea2.setAttribute('y2', '15');
-            linea2.setAttribute('stroke', 'gray');
-            linea2.setAttribute('stroke-width', '2');
-            deleteGropIcon.appendChild(linea1);
-            deleteGropIcon.appendChild(linea2);
-
-            deleteGropIconContainer.addEventListener('click', () => {
-                deleteGropIconContainer.parentElement.remove();
-                checkForChanges();
-            })
-            if (!visible) {
+            } else {
                 deleteGropIcon.style.display = 'none';
             }
-
-            groupNameInput.addEventListener('keyup', () => {
-                if (groupNameInput.value.length > 2) {
-                    deleteGropIcon.style.display = 'block';
-                    if (groupNameInput.parentElement.id === NEW_GROUP_ID) {
-                        groupNameInput.parentElement.id = '';
-                        const groupContainer = createGroupContainer(null, false, NEW_GROUP_ID);
-                        groupsContainer.appendChild(groupContainer);
-                    }
-                } else {
-                    deleteGropIcon.style.display = 'none';
-                }
-                checkForChanges();
-            });
-
-            groupNameInput.addEventListener('focusout', () => {
-                if (groupNameInput.value.length < 3 && groupNameInput.parentElement.id !== NEW_GROUP_ID) {
-                    groupNameInput.parentElement.remove();
-                }
-                checkForChanges();
-            });
-
-            return groupContainer;
-        };
-        const username = data.username;
-        const groups = data.groups;
-        usernameInput = document.getElementById('usernameInput');
-        usernameInput.value = username;
-        usernameInput.addEventListener('keyup', () => {
             checkForChanges();
         });
 
-        const groupsContainer = document.getElementById('groupsContainer');
-        groups.forEach(group => {
-            const groupContainer = createGroupContainer(group.name, true);
-            groupsContainer.appendChild(groupContainer);
+        groupNameInput.addEventListener('focusout', () => {
+            if (groupNameInput.value.length < 3 && groupNameInput.parentElement.id !== NEW_GROUP_ID) {
+                groupNameInput.parentElement.remove();
+            }
+            checkForChanges();
         });
-        const groupContainer = createGroupContainer(null, false, NEW_GROUP_ID);
-        groupsContainer.appendChild(groupContainer);
+
+        return groupContainer;
+    };
+    const checkForChanges = () => {
+        const theDataChanged = () => {
+            if (usernameInput.value.trim() !== usernameBaseData) {
+                console.log(`The username in base data is ${usernameBaseData} but in DOM is ${usernameInput.value}.`);
+                return true;
+            }
+            // I don't check the size of the groups before because the DOM groups can have +1 or +2 groups more than base data and I also need the bucle to check that.
+            let groupDOMSize = 0;
+            for (const groupInput of groupsContainer.getElementsByClassName('textInput')) {
+                if (groupInput.value.trim().length > 2) {
+                    groupDOMSize++;
+                    if (!groupsBaseData.includes(groupInput.value.trim())) {
+                        return true;
+                    }
+                }
+            };
+            if (groupsBaseData.length !== groupDOMSize) {
+                return true;
+            }
+            return false;
+        };
+        changeButtons(theDataChanged());
+    };
+    const changeButtons = dataChange => {
+        console.log(`Data change: ${dataChange}`);
+        userSaveButton.disabled = !dataChange;
+    };
+    const formInit = () => {
+        usernameInput = document.getElementById('usernameInput');
+        usernameInput.addEventListener('keyup', () => {
+            checkForChanges();
+        });
     }
-    window.addEventListener('load', createGUIButtonsAndLoadData, false);
 </script>
 
 <body>

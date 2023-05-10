@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.stereotype.Component;
 
 import java.sql.PreparedStatement;
@@ -15,21 +16,26 @@ public class GroupsRepository {
 
   public GroupEntity create(int userId, String groupName) {
     String sqlQuery = "INSERT INTO authorities (user_id, authority) VALUES (?, ?)";
-    jdbcTemplate.update(connection -> {
+    PreparedStatementCreator preparedStatementCreator = connection -> {
       PreparedStatement ps = connection.prepareStatement(sqlQuery);
       ps.setInt(1, userId);
       ps.setString(2, groupName);
       return ps;
-    });
+    };
+    jdbcTemplate.update(preparedStatementCreator);
+
     return new GroupEntity(userId, groupName);
   }
 
   public void deleteGroupsFor(UserEntity userEntity) {
-    String sqlQuery = "DELETE FROM authorities WHERE user_id ?";
-    jdbcTemplate.update(connection -> {
+    int userId = userEntity.getId();
+    log.debug("Delete groups for user " + userId);
+    String sqlQuery = "DELETE FROM authorities WHERE user_id = ?";
+    PreparedStatementCreator preparedStatementCreator = connection -> {
       PreparedStatement ps = connection.prepareStatement(sqlQuery);
-      ps.setInt(1, userEntity.getId());
+      ps.setInt(1, userId);
       return ps;
-    });
+    };
+    jdbcTemplate.update(preparedStatementCreator);
   }
 }

@@ -39,14 +39,23 @@ CREATE TABLE `accounts` (
   CONSTRAINT `fk_site` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE `emails` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE `users` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `site_id` INT(11) NOT NULL,
   `email_id` INT(11) NOT NULL,
-  `password` VARCHAR(500) NOT NULL,
+  `password` VARCHAR(500),
   `enabled` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ix_site_id_email` (`site_id`,`email_id`)
+  UNIQUE KEY `ix_site_id_email` (`site_id`,`email_id`),
+  KEY `fk_email` (`email_id`),
+  CONSTRAINT `fk_email` FOREIGN KEY (`email_id`) REFERENCES `emails` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `accounts_users` (
@@ -55,13 +64,6 @@ CREATE TABLE `accounts_users` (
   PRIMARY KEY (`account_id`, `user_id`),
   CONSTRAINT `fk_accounts` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`),
   CONSTRAINT `fk_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `emails` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `email` VARCHAR(100) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `ix_email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `authorities` (

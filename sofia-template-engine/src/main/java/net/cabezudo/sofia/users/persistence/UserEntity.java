@@ -1,29 +1,24 @@
 package net.cabezudo.sofia.users.persistence;
 
+import net.cabezudo.sofia.emails.persistence.EMailEntity;
+
 import javax.persistence.Column;
 
 public class UserEntity {
   private final int id;
   @Column(name = "site_id")
   private final int siteId;
-  private final String username;
+  private final EMailEntity eMailEntity;
   private final String password;
   private final GroupsEntity groupsEntity = new GroupsEntity();
   private final boolean enabled;
 
-  public UserEntity(int id, int siteId, String username, String password, boolean enabled) {
+  public UserEntity(int id, int siteId, EMailEntity eMailEntity, String password, boolean enabled) {
     this.id = id;
     this.siteId = siteId;
-    this.username = username;
+    this.eMailEntity = eMailEntity;
     this.password = password;
     this.enabled = enabled;
-  }
-
-  public UserEntity(int id, int siteId, String username, String password, GroupsEntity groupsEntity, boolean enabled) {
-    this(id, siteId, username, password, enabled);
-    for (GroupEntity group : groupsEntity) {
-
-    }
   }
 
   public int getId() {
@@ -34,8 +29,8 @@ public class UserEntity {
     return siteId;
   }
 
-  public String getUsername() {
-    return username;
+  public EMailEntity getEMailEntity() {
+    return eMailEntity;
   }
 
   public String getPassword() {

@@ -10,39 +10,10 @@
     <style file="/admin/commons.css"></style>
 </head>
 
-<script>
-    const initMenuPath = () => {
-        new LinkTo({
-            id: 'menuPathItem',
-            show: ['group:doctor', 'group:admin'],
-            onclick: '/admin/'
-        });
-        new LinkTo({
-            id: 'placesPathItem',
-            show: ['group:admin'],
-            onclick: '/admin/places/list.html'
-        });
-    };
-    window.addEventListener('load', initMenuPath);
-</script>
-
 <body groups="admin">
     <header file="/header.html"></header>
-    <div id="adminContent">
-        <div id="adminPath">
-            <div id="menuPathItem">
-                <texts><text language="es">Menú</text><text language="en">Menu</text></texts>
-            </div>
-            <div class="adminPathItemSeparator">&gt;</div>
-            <div id="placesPathItem">
-                <texts><text language="es">Consultorios</text><text language="en">Doctor's offices</text></texts>
-            </div>
-            <div class="adminPathItemSeparator">&gt;</div>
-            <div id="addPlacesPathItem" class="endPathItem">
-                <texts><text language="es">Agregar</text><text language="en">Add</text></texts>
-            </div>
-        </div>
-        <div file="addPlaceForm.html"></div>
+    <div id="contentContainer">
+        <div file="addUserForm.html"></div>
     </div>
     <footer file="/footer.html"></footer>
 </body>

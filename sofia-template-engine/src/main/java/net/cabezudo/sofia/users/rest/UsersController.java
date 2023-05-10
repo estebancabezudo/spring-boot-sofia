@@ -18,12 +18,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Controller
@@ -41,7 +40,7 @@ public class UsersController extends SofiaAuthorizedController {
   }
 
   @PostMapping("/v1/login")
-  public ResponseEntity<?> login(ServletWebRequest request) {
+  public ResponseEntity<?> login() {
     log.debug("Run /v1/login");
     UserRestResponse userRestResponse;
     SofiaUser sofiaUser = super.getSofiaUser();
@@ -56,7 +55,7 @@ public class UsersController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/users/actual/status")
-  public ResponseEntity<?> status(ServletWebRequest request) {
+  public ResponseEntity<?> status() {
     log.debug("Run /v1/users/actual/status");
     UserRestResponse userRestResponse;
     SofiaUser sofiaUser = super.getSofiaUser();
@@ -71,7 +70,7 @@ public class UsersController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/users/{id}")
-  public ResponseEntity<?> getUser(ServletWebRequest request, @PathVariable Integer id) {
+  public ResponseEntity<?> getUser(@PathVariable Integer id) {
     log.debug("Run /v1/users/{id}");
 
     Account account = super.getAccount();
@@ -95,7 +94,7 @@ public class UsersController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/users")
-  public ResponseEntity<?> getUsers(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public ResponseEntity<?> getUsers() throws IOException {
     log.debug("Get list of users");
 
     Site site = super.getSite();
@@ -113,10 +112,11 @@ public class UsersController extends SofiaAuthorizedController {
   }
 
   @PostMapping("/v1/users")
-  public ResponseEntity<?> create(HttpServletRequest request, HttpServletResponse response, @RequestBody RestUser restUserToSave) throws IOException {
+  public ResponseEntity<?> create(@RequestBody RestUser restUserToSave) throws IOException {
     log.debug("Create a new user");
 
     Account account = super.getAccount();
+    restUserToSave.setSite(super.getSite());
 
     ResponseEntity result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -130,7 +130,30 @@ public class UsersController extends SofiaAuthorizedController {
     );
     RestUser restUser = businessToRestUserMapper.map(user);
 
-    return ResponseEntity.ok(restUser);
+    UserRestResponse userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Retrieve place " + restUser.getId(), restUser);
+    return ResponseEntity.ok(userRestResponse);
+  }
+
+  @PutMapping("/v1/users/{id}")
+  public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody RestUser restUserToUpdate) throws IOException {
+    log.debug("Update an existing user");
+
+    Account account = super.getAccount();
+
+    ResponseEntity result;
+    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
+      return result;
+    }
+
+    Site site = super.getSite();
+    restUserToUpdate.setSite(site);
+
+    SofiaUser user = restToBusinessUserMapper.map(restUserToUpdate);
+    SofiaUser updatedUser = userManager.update(id, user);
+    RestUser restUser = businessToRestUserMapper.map(updatedUser);
+    restUser.setSite(site);
+    UserRestResponse userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Retrieve place " + id, restUser);
+    return ResponseEntity.ok(userRestResponse);
   }
 }
 

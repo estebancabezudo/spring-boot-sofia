@@ -1,5 +1,3 @@
-<link lib="mx:places:1.00" />
-
 <style file="../commons.css"></style>
 
 <style>
@@ -13,9 +11,49 @@
 </style>
 
 <script>
-    let userSaveButton;
+    let id;
+    const init = () => {
+        formInit();
+        createButtons();
 
-    const createButtons = userFormContainer => {
+        let params = new URLSearchParams(window.location.search);
+        id = params.get('id');
+        fetch(`/v1/users/${id}`)
+            .then(response => {
+                return response.json();
+            })
+            .then(jsonResponse => {
+                createBaseData(jsonResponse.data);
+                showData(jsonResponse.data);
+            })
+            .catch(error => {
+                Core.reportSystemError(error);
+            });
+    };
+    const createBaseData = data => {
+        usernameBaseData = data.username;
+        const groups = data.groups;
+        groupsBaseData = [];
+        groups.forEach(group => {
+            groupsBaseData.push(group.name);
+        });
+    };
+    const showData = data => {
+        const username = data.username;
+        const groups = data.groups;
+        usernameInput.value = username;
+
+        const groupsContainer = document.getElementById('groupsContainer');
+        groupsContainer.innerHTML = '';
+        groups.forEach(group => {
+            const groupContainer = createGroupContainer(group.name, true);
+            groupsContainer.appendChild(groupContainer);
+        });
+        const groupContainer = createGroupContainer(null, false, NEW_GROUP_ID);
+        groupsContainer.appendChild(groupContainer);
+    }
+    const createButtons = () => {
+        const userFormContainer = document.getElementById('userFormContainer');
         const userDeleteButton = document.createElement('button');
         userDeleteButton.id = 'userDeleteButton';
         userDeleteButton.className = 'button redButton';
@@ -24,14 +62,52 @@
         userSaveButton = document.createElement('button');
         userSaveButton.id = 'userSaveButton';
         userSaveButton.className = 'button greenButton';
+        userSaveButton.addEventListener('click', () => {
+            userSaveButton.disabled = true;
+            const username = document.getElementById('usernameInput').value;
+            const groups = [];
+            const groupElements = document.querySelectorAll("#groupsContainer > div > input");
+            groupElements.forEach(groupElement => {
+                const value = groupElement.value.trim();
+                if (value.length > 2) {
+                    groups.push({ name: value });
+                }
+            });
+
+            var data = {
+                id,
+                username,
+                enabled: true,
+                groups
+            };
+
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json");
+
+            var requestOptions = {
+                method: 'PUT',
+                headers: headers,
+                body: JSON.stringify(data),
+                redirect: 'follow'
+            };
+            fetch(`/v1/users/${id}`, requestOptions)
+                .then(response => {
+                    return response.json();
+                })
+                .then(jsonResponse => {
+                    showData(jsonResponse.data);
+                    createBaseData(jsonResponse.data);
+                })
+                .catch(error => {
+                    throw error;
+                    Core.showErrorMessage(error.message);
+                    Core.reportSystemError(error.message);
+                });
+        });
         userFormContainer.appendChild(userSaveButton);
         userSaveButton.disabled = true;
     };
-
-    const changeButtons = dataChange => {
-        console.log(`Data change: ${dataChange}`);
-        userSaveButton.disabled = !dataChange;
-    };
+    window.addEventListener('load', init, false);
 </script>
 
 <body id="content">

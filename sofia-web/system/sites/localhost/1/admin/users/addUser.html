@@ -9,7 +9,11 @@
     <link lib="core:1.00"/>
     
 
-<style>/* CSS import from /admin/commons.css called by file attribute on style tag on admin/places/place.html:10:6 */
+<style>/* CSS import from /admin/commons.css called by file attribute on style tag on admin/users/addUser.html:10:6 */
+
+/* CSS import from /admin/users/addUserForm.html called by style tag on admin/users/addUserForm.html:3:2 */
+
+/* CSS import from /admin/users/userForm.html called by style tag on admin/users/userForm.html:1:2 */
 
 /* CSS import from /commons.css called by sofia */
 
@@ -21,11 +25,9 @@
 
 /* CSS import from /linkTo.css called by file librarylinkTo:1.00 on header.html */
 
-/* CSS import from /places.css called by file librarymx:places:1.00 on admin/places/editPlaceForm.html */
-
 /* CSS import from /twoLanguageFlag.css called by file librarytwoLanguageFlag:1.00 on header.html */
 
-/* CSS code from /admin/commons.css called by file attribute on style tag on admin/places/place.html:10:6 */
+/* CSS code from /admin/commons.css called by file attribute on style tag on admin/users/addUser.html:10:6 */
 #listContainer {
     display: grid;
     gap: 12px;
@@ -113,6 +115,56 @@
         grid-template-columns: auto auto auto auto auto;
     }
 }
+
+/* CSS code from /admin/users/addUserForm.html called by style tag on admin/users/addUserForm.html:3:2 */
+
+    #userSaveButton {
+        grid-column: 5;
+    }
+
+/* CSS code from /admin/users/userForm.html called by style tag on admin/users/userForm.html:1:2 */
+
+    #userFormContainer {
+        display: grid;
+        grid-gap: 8px;
+        grid-template-columns: repeat(5, 1fr);
+        margin: 0 auto;
+        max-width: 750px;
+    }
+
+    #groupsContainer {
+        border: 1px solid rgb(207, 207, 207);
+        border-radius: 5px;
+        padding: 8px;
+        display: grid;
+        grid-gap: 8px;
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .groupContainer {
+        display: flex;
+        align-items: center;
+    }
+
+    .groupName {
+        font-size: 20px;
+    }
+
+    #usernameLabel {
+        grid-column: 1/6;
+    }
+
+    #usernameInput {
+        grid-column: 1/6;
+    }
+
+    #userGroupsLabel {
+        grid-column: 1/6;
+    }
+
+    #groupsContainer {
+        grid-column: 1/6;
+    }
 
 /* CSS code from /commons.css called by sofia */
 @font-face {
@@ -555,163 +607,6 @@ select:focus {
     cursor: pointer;
 }
 
-/* CSS code from /places.css called by file librarymx:places:1.00 on admin/places/editPlaceForm.html */
-    .placeHide {
-        display: none;
-    }
-
-    #placeFormContainer {
-        display: grid;
-        grid-gap: 8px;
-        margin: 0 auto;
-        max-width: 750px;
-    }
-
-    #placeNameInput {
-        font-size: 36px;
-        font-weight: bold;
-        padding: 5px 20px;
-        border: 0;
-    }
-
-    #placeNameInput::placeholder {
-        font-weight: 300;
-        font-size: 16px;
-    }
-
-    @media all and (min-width: 750px) {
-        #placeFormContainer {
-            grid-template-columns: repeat(5, 1fr);
-        }
-
-        #placeNameInput {
-            grid-row: 1;
-            grid-column: 1 / 6;
-            font-size: 26px;
-        }
-
-        #placeCountryLabel {
-            grid-row: 2;
-            grid-column: 1 / 3;
-        }
-
-        #placeCountryInput {
-            grid-row: 3;
-            grid-column: 1 / 3;
-        }
-
-        #placeStateLabel {
-            grid-row: 2;
-            grid-column: 3 / 6;
-        }
-
-        #placeStateSelector {
-            grid-row: 3;
-            grid-column: 3 / 6;
-        }
-
-        #placeStreetLabel {
-            grid-row: 4;
-            grid-column: 1 / 4;
-        }
-
-        #placeStreetInput {
-            grid-row: 5;
-            grid-column: 1 / 4;
-        }
-
-        #placeNumberLabel {
-            grid-row: 4;
-            grid-column: 4;
-        }
-
-        #placeNumberInput {
-            grid-row: 5;
-            grid-column: 4;
-        }
-
-        #placeInteriorNumberLabel {
-            grid-row: 4;
-            grid-column: 5;
-        }
-
-        #placeInteriorNumberInput {
-            grid-row: 5;
-            grid-column: 5;
-        }
-
-        #placeReferencesLabel {
-            grid-row: 6;
-            grid-column: 1 / 6;
-        }
-
-        #placeReferencesInput {
-            grid-row: 7;
-            grid-column: 1 / 6;
-        }
-
-        #placeColonyLabel {
-            grid-row: 8;
-            grid-column: 1 / 3;
-        }
-
-        #placeColonyInput {
-            grid-row: 9;
-            grid-column: 1 / 3;
-        }
-
-        #placeDelegationLabel {
-            grid-row: 8;
-            grid-column: 3 / 6;
-        }
-
-        #placeDelegationInput {
-            grid-row: 9;
-            grid-column: 3 / 6;
-        }
-
-        #placeMunicipalityLabel {
-            grid-row: 8;
-            grid-column: 3 / 6;
-        }
-
-        #placeMunicipalityInput {
-            grid-row: 9;
-            grid-column: 3 / 6;
-        }
-
-        #placeCityLabel {
-            grid-row: 10;
-            grid-column: 1 / 5;
-        }
-
-        #placeCityInput {
-            grid-row: 11;
-            grid-column: 1 / 5;
-        }
-
-
-        #placePostalCodeLabel {
-            grid-row: 10;
-            grid-column: 5;
-        }
-
-        #placepostalCodeInput {
-            grid-row: 11;
-            grid-column: 5;
-        }
-
-        #placeSaveInput {
-            grid-row: 14;
-            grid-column: 5 / 6;
-        }
-
-        #placeDeleteInput {
-            grid-row: 14;
-            grid-column: 1;
-        }
-    }
-
 /* CSS code from /twoLanguageFlag.css called by file librarytwoLanguageFlag:1.00 on header.html */
 .twoLanguageFlagContainer {
     margin: 0 0 0 10px;
@@ -740,7 +635,7 @@ select:focus {
 <script>const siteLanguages = ['en', 'es'];
 
 const templateVariables = { "header": { "height": "60px" } };
-// Code from library core:1.00 on admin/places/place.html
+// Code from library core:1.00 on admin/users/addUser.html
 // core:setTexts
 // core:webClientDataChange
 // core:showMessage
@@ -1506,392 +1401,173 @@ class TwoLanguageFlag {
 
     window.addEventListener('load', initHeader);
 
-// Code from library mx:places:1.00 on admin/places/editPlaceForm.html called by file attribute on div on admin/places/editPlaceForm.html:16:10
-const LIST_PLACES_URL = '/admin/places/list.html';
+// Code from script tag on admin/users/addUserForm.html:9:2 called by file attribute on div on admin/users/addUserForm.html:16:10
 
-window.placeMX = class PlaceMX {
-    constructor(data) {
-        this.data = data;
-    }
-    setStateData(name) {
-        this.placeStateSelector.lastValue = name;
-        console.log(`lib::places::mx::1.00::index.js::setStateData::name: ${name}`);
-        if (name === 'MX-CMX') {
-            console.log(`lib::places::mx::1.00::index.js::setStateData::is MX-CMX`);
-            this.placeMunicipalityLabel.classList.add('hide');
-            this.placeMunicipalityInput.classList.add('hide');
-            this.placeDelegationLabel.classList.remove('hide');
-            this.placeDelegationInput.classList.remove('hide');
-        } else {
-            console.log(`lib::places::mx::1.00::index.js::setStateData::isn't MX-CMX`);
-            this.placeMunicipalityLabel.classList.remove('hide');
-            this.placeMunicipalityInput.classList.remove('hide');
-            this.placeDelegationLabel.classList.add('hide');
-            this.placeDelegationInput.classList.add('hide');
-        }
-    };
+    const init = () => {
+        formInit();
 
-    sendRequest(method) {
-        console.log('`lib::places::mx::1.00::index.js::sendRequest(${method})`');
-        var data = {
-            name: this.placeNameInput.value,
-            street: this.placeStreetInput.value,
-            number: this.placeNumberInput.value,
-            interiorNumber: this.placeInteriorNumberInput.value,
-            references: this.placeReferencesInput.value,
-            postalCode: this.placepostalCodeInput.value,
-            countryCode: this.placeCountrySelector.options[this.placeCountrySelector.selectedIndex].value,
-            administrativeDivisions: [
-                {
-                    "name": this.placeColonyInput.value,
-                    "administrativeDivisionType": {
-                        "name": "colony"
-                    }
-                },
-                {
-                    "name": this.placeCityInput.value,
-                    "administrativeDivisionType": {
-                        "name": "city"
-                    }
-                },
-                {
-                    "name": this.placeStateSelector.options[this.placeStateSelector.selectedIndex].value,
-                    "administrativeDivisionType": {
-                        "name": "state"
-                    }
+        const groupContainer = createGroupContainer(null, false, NEW_GROUP_ID);
+        groupsContainer.appendChild(groupContainer);
+
+        userSaveButton = document.createElement('button');
+        userSaveButton.id = 'userSaveButton';
+        userSaveButton.className = 'button greenButton';
+        userSaveButton.addEventListener('click', () => {
+            userSaveButton.disabled = true;
+            const username = document.getElementById('usernameInput').value;
+            const groups = [];
+            const groupElements = document.querySelectorAll("#groupsContainer > div > input");
+            groupElements.forEach(groupElement => {
+                const value = groupElement.value.trim();
+                if (value.length > 2) {
+                    groups.push({ name: value });
                 }
-            ]
-        };
-
-        if (this.placeStateSelector.options[this.placeStateSelector.selectedIndex].value === 'MX-CMX') {
-            data.administrativeDivisions.push({
-                "name": this.placeDelegationInput.value,
-                "administrativeDivisionType": {
-                    "name": "delegation"
-                }
-            }
-            );
-        } else {
-            data.administrativeDivisions.push(
-                {
-                    "name": this.placeMunicipalityInput.value,
-                    "administrativeDivisionType": {
-                        "name": "municipality"
-                    }
-                }
-            );
-        }
-
-        console.log(`lib::places::mx::1.00::index.js::createGUI: `, data);
-
-        const headers = new Headers();
-        headers.append("Content-Type", "application/json");
-
-        var requestOptions = {
-            method,
-            headers: headers,
-            body: JSON.stringify(data),
-            redirect: 'follow'
-        };
-
-        let url;
-        if (method === 'POST') {
-            url = `/v1/places`;
-        } else {
-            url = `/v1/places/${this.data.id}`
-        }
-
-        fetch(url, requestOptions)
-            .then(response => response.json())
-            .then(jsonResponse => {
-                location.href = LIST_PLACES_URL;
-            })
-            .catch(error => Core.showErrorMessage(error.message));
-    };
-
-    sendDelete(id) {
-        const headers = new Headers();
-        headers.append("Content-Type", "application/json");
-
-        var requestOptions = {
-            method: 'DELETE',
-            headers: headers,
-            redirect: 'follow'
-        };
-        const url = `/v1/places/${id}`
-
-        fetch(url, requestOptions)
-            .then(response => response.json())
-            .then(jsonResponse => {
-                location.href = LIST_PLACES_URL;
-            })
-            .catch(error => Core.showErrorMessage(error.message));
-    }
-
-    createGUI(data, afterCreateGUI) {
-        const setTextsInCountrySelectorsOptions = list => {
-            for (let countryName of list) {
-                const optionElement = document.createElement('option');
-                optionElement.value = countryName;
-                Core.setText(optionElement, countryName);
-                this.placeCountrySelector.appendChild(optionElement);
-            }
-        };
-
-        const setTextsInStateSelectorsOptions = list => {
-            for (let stateName of list) {
-                const optionElement = document.createElement('option');
-                optionElement.value = stateName;
-                Core.setText(optionElement, stateName);
-                this.placeStateSelector.appendChild(optionElement);
-            }
-            this.placeStateSelector.removeAttribute('disabled');
-        };
-
-        const checkForChanges = () => {
-            const checkInput = input => {
-                console.log(input);
-                console.log(input.lastValue, input.value);
-                return input.lastValue === input.value || input.classList.contains('hide');
-            }
-
-            const checkSelector = input => {
-                console.log(input);
-                console.log(input.lastValue, input.options[input.selectedIndex].value);
-                return input.lastValue === input.options[input.selectedIndex].value;
-            }
-
-            this.placeSaveInput.disabled =
-                checkInput(this.placeNameInput) &&
-                checkSelector(this.placeStateSelector) &&
-                checkSelector(this.placeCountrySelector) &&
-                checkInput(this.placeStreetInput) &&
-                checkInput(this.placeNumberInput) &&
-                checkInput(this.placeInteriorNumberInput) &&
-                checkInput(this.placeReferencesInput) &&
-                checkInput(this.placeColonyInput) &&
-                checkInput(this.placeMunicipalityInput) &&
-                checkInput(this.placeDelegationInput) &&
-                checkInput(this.placeCityInput) &&
-                checkInput(this.placepostalCodeInput)
-                ;
-        };
-
-        const createLabel = id => {
-            const input = document.createElement('div');
-            input.id = id;
-            input.className = 'adminLabel';
-            placeFormContainer.appendChild(input);
-            return input;
-        };
-
-        const createInput = id => {
-            const input = document.createElement('input');
-            input.id = id;
-            input.className = 'textInput';
-            input.addEventListener('keyup', () => checkForChanges());
-            placeFormContainer.appendChild(input);
-            return input;
-        }
-
-        const createCountrySelector = id => {
-            const input = document.createElement('select');
-            input.id = id;
-            input.className = 'textInput';
-            input.addEventListener('change', () => checkForChanges());
-            placeFormContainer.appendChild(input);
-            return input;
-        }
-
-        const createStateSelector = id => {
-            const input = document.createElement('select');
-            input.id = id;
-            input.className = 'textInput';
-            input.addEventListener('change', () => {
-                checkForChanges();
-                this.setStateData(this.placeStateSelector.options[this.placeStateSelector.selectedIndex].value);
             });
-            placeFormContainer.appendChild(input);
-            return input;
-        }
 
-        const createForm = () => {
-            this.placeFormContainer = document.getElementById('placeFormContainer');
+            var data = {
+                username,
+                enabled: true,
+                groups
+            };
 
-            this.placeNameInput = createInput('placeNameInput');
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json");
 
-            createLabel('placeCountryLabel');
-            this.placeCountrySelector = createCountrySelector('placeCountrySelector');
-            this.placeCountrySelector.disabled = true;
-
-            createLabel('placeStateLabel');
-            this.placeStateSelector = createStateSelector('placeStateSelector');
-
-            createLabel('placeStreetLabel');
-            this.placeStreetInput = createInput('placeStreetInput');
-
-            createLabel('placeNumberLabel');
-            this.placeNumberInput = createInput('placeNumberInput');
-
-            createLabel('placeInteriorNumberLabel');
-            this.placeInteriorNumberInput = createInput('placeInteriorNumberInput');
-
-            createLabel('placeReferencesLabel');
-            this.placeReferencesInput = createInput('placeReferencesInput');
-
-            createLabel('placeColonyLabel');
-            this.placeColonyInput = createInput('placeColonyInput');
-
-            this.placeMunicipalityLabel = createLabel('placeMunicipalityLabel');
-            this.placeMunicipalityInput = createInput('placeMunicipalityInput');
-
-            this.placeDelegationLabel = createLabel('placeDelegationLabel');
-            this.placeDelegationInput = createInput('placeDelegationInput');
-
-            createLabel('placeCityLabel');
-            this.placeCityInput = createInput('placeCityInput');
-
-            createLabel('placePostalCodeLabel');
-            this.placepostalCodeInput = createInput('placepostalCodeInput');
-
-            this.placeSaveInput = document.createElement('button');
-            this.placeSaveInput.id = 'placeSaveInput';
-            this.placeSaveInput.className = 'button greenButton';
-            this.placeFormContainer.appendChild(this.placeSaveInput);
-
-            if (this.data.id !== undefined) {
-                this.placeDeleteInput = document.createElement('button');
-                this.placeDeleteInput.id = 'placeDeleteInput';
-                this.placeDeleteInput.className = 'button redButton';
-                this.placeDeleteInput.addEventListener('click', () => {
-                    this.sendDelete(this.data.id)
+            var requestOptions = {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(data),
+                redirect: 'follow'
+            };
+            fetch(`/v1/users`, requestOptions)
+                .then(response => {
+                    return response.json();
+                })
+                .then(jsonResponse => {
+                    window.location.replace('/admin/users/list.html');
+                })
+                .catch(error => {
+                    throw error;
+                    Core.showErrorMessage(error.message);
+                    Core.reportSystemError(error.message);
                 });
-                this.placeFormContainer.appendChild(this.placeDeleteInput);
-            }
-        }
-
-        createForm();
-
-        setTextsInCountrySelectorsOptions(['mx']);
-        fetch(`/v1/countries/codes/mx/codes`)
-            .then(response => {
-                return response.json();
-            })
-            .then(jsonResponse => {
-                setTextsInStateSelectorsOptions(jsonResponse.data.list);
-                this.loadData(data);
-                if (Core.isFunction(afterCreateGUI)) {
-                    afterCreateGUI();
-                }
-            })
-            .catch(error => {
-                Core.showErrorMessage(error);
-            });
-        Core.setTextsById();
-    }
-
-    loadData(data) {
-        console.log(`place.js::loadData::data: `, data)
-        const setDataInForm = data => {
-            this.placeSaveInput.disabled = true;
-            let stateCode;
-            for (let administrativeDivision of data.administrativeDivisions) {
-                const typeName = administrativeDivision.administrativeDivisionType.name;
-                const name = administrativeDivision.name;
-
-                console.log(`lib::places::mx::1.00::index.js::typeName: ${typeName}`);
-                switch (typeName) {
-                    case 'state':
-                        stateCode = name;
-                        Core.setText(this.placeStateSelector, name, Core.VALUE);
-                        this.setStateData(name);
-                        break;
-                    case 'colony':
-                        this.placeColonyInput.value = name;
-                        this.placeColonyInput.lastValue = name;
-                        break;
-                    case 'delegation':
-                        this.placeDelegationInput.value = name;
-                        this.placeDelegationInput.lastValue = name;
-                        break;
-                    case 'municipality':
-                        this.placeMunicipalityInput.value = name;
-                        this.placeMunicipalityInput.lastValue = name;
-                        break;
-                    case 'city':
-                        this.placeCityInput.value = name;
-                        this.placeCityInput.lastValue = name;
-                        break;
-                }
-            }
-
-            this.placeNameInput.value = data.name;
-            this.placeNameInput.lastValue = data.name;
-
-            Core.setText(this.placeCountrySelector, data.countryCode, Core.VALUE);
-            this.placeCountrySelector.lastValue = data.countryCode;
-
-            for (let optionElement of this.placeStateSelector.options) {
-                if (optionElement.value === stateCode) {
-                    optionElement.setAttribute('selected', 'selected');
-                }
-            }
-
-            this.placeStreetInput.value = data.street;
-            this.placeStreetInput.lastValue = data.street;
-            this.placeNumberInput.value = data.number;
-            this.placeNumberInput.lastValue = data.number;
-            this.placeInteriorNumberInput.value = data.interiorNumber;
-            this.placeInteriorNumberInput.lastValue = data.interiorNumber;
-            this.placeReferencesInput.value = data.references;
-            this.placeReferencesInput.lastValue = data.references;
-            this.placepostalCodeInput.value = data.postalCode;
-            this.placepostalCodeInput.lastValue = data.postalCode;
-        }
-        setDataInForm(data);
+        });
+        userFormContainer.appendChild(userSaveButton);
+        userSaveButton.disabled = true;
     };
 
-    createGUIForAdd(callbackFunction) {
-        this.createGUI(callbackFunction);
-        this.placeSaveInput.addEventListener('click', () => {
-            this.sendRequest('POST')
+    window.addEventListener('load', init, false);
+
+// Code from script tag on admin/users/userForm.html:45:2 called by file attribute on div on admin/users/userForm.html:70:6
+
+    const NEW_GROUP_ID = 'newGroup';
+    let usernameBaseData, groupsBaseData, usernameInput, userSaveButton;
+    const createGroupContainer = (groupName, visible, newGroupId) => {
+        const groupContainer = document.createElement('DIV');
+        if (newGroupId && newGroupId.length > 0) {
+            groupContainer.id = newGroupId;
+        }
+        groupContainer.className = 'groupContainer';
+
+        const groupNameInput = document.createElement('INPUT');
+        groupNameInput.className = 'textInput';
+        groupNameInput.value = groupName;
+        groupNameInput.spellcheck = false;
+        groupNameInput.autocomplete = 'off';
+        groupContainer.appendChild(groupNameInput);
+
+        const deleteGropIconContainer = document.createElement('div');
+        deleteGropIconContainer.setAttribute('class', 'deleteGroupContainer');
+        groupContainer.appendChild(deleteGropIconContainer);
+
+        const deleteGropIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        deleteGropIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        deleteGropIcon.setAttribute('width', '20');
+        deleteGropIcon.setAttribute('height', '20');
+        deleteGropIcon.setAttribute('class', 'deleteGroup');
+        deleteGropIconContainer.appendChild(deleteGropIcon);
+
+        const linea1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        linea1.setAttribute('x1', '5');
+        linea1.setAttribute('y1', '5');
+        linea1.setAttribute('x2', '15');
+        linea1.setAttribute('y2', '15');
+        linea1.setAttribute('stroke', 'gray');
+        linea1.setAttribute('stroke-width', '2');
+        const linea2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        linea2.setAttribute('x1', '15');
+        linea2.setAttribute('y1', '5');
+        linea2.setAttribute('x2', '5');
+        linea2.setAttribute('y2', '15');
+        linea2.setAttribute('stroke', 'gray');
+        linea2.setAttribute('stroke-width', '2');
+        deleteGropIcon.appendChild(linea1);
+        deleteGropIcon.appendChild(linea2);
+
+        deleteGropIconContainer.addEventListener('click', () => {
+            deleteGropIconContainer.parentElement.remove();
+            checkForChanges();
+        })
+        if (!visible) {
+            deleteGropIcon.style.display = 'none';
+        }
+
+        groupNameInput.addEventListener('keyup', () => {
+            if (groupNameInput.value.length > 2) {
+                deleteGropIcon.style.display = 'block';
+                if (groupNameInput.parentElement.id === NEW_GROUP_ID) {
+                    groupNameInput.parentElement.id = '';
+                    const groupContainer = createGroupContainer(null, false, NEW_GROUP_ID);
+                    groupsContainer.appendChild(groupContainer);
+                }
+            } else {
+                deleteGropIcon.style.display = 'none';
+            }
+            checkForChanges();
         });
-    }
 
-    createGUIForModify(data, callbackFunction) {
-        this.createGUI(data, callbackFunction);
-        this.placeSaveInput.addEventListener('click', () => {
-            this.sendRequest('PUT')
+        groupNameInput.addEventListener('focusout', () => {
+            if (groupNameInput.value.length < 3 && groupNameInput.parentElement.id !== NEW_GROUP_ID) {
+                groupNameInput.parentElement.remove();
+            }
+            checkForChanges();
         });
-    }
-}
 
-
-
-// Code from script tag on admin/places/editPlaceForm.html:3:2 called by file attribute on div on admin/places/editPlaceForm.html:16:10
-
-    const loadPlacesList = () => {
-        let params = new URLSearchParams(window.location.search);
-        const id = params.get('id');
-        fetch(`/v1/places/${id}`)
-            .then(response => {
-                return response.json();
-            })
-            .then(jsonResponse => {
-                showData(jsonResponse.data);
-            })
-            .catch(error => {
-                Core.reportSystemError(error);
-            });
+        return groupContainer;
     };
-    const showData = data => {
-        const countryCode = data.countryCode.toUpperCase();
-        const className = `place${countryCode}`;
-        const global = (window || this);
-        const dataDriver = new window[className](data);
-        dataDriver.createGUIForModify(data);
+    const checkForChanges = () => {
+        const theDataChanged = () => {
+            if (usernameInput.value.trim() !== usernameBaseData) {
+                console.log(`The username in base data is ${usernameBaseData} but in DOM is ${usernameInput.value}.`);
+                return true;
+            }
+            // I don't check the size of the groups before because the DOM groups can have +1 or +2 groups more than base data and I also need the bucle to check that.
+            let groupDOMSize = 0;
+            for (const groupInput of groupsContainer.getElementsByClassName('textInput')) {
+                if (groupInput.value.trim().length > 2) {
+                    groupDOMSize++;
+                    if (!groupsBaseData.includes(groupInput.value.trim())) {
+                        return true;
+                    }
+                }
+            };
+            if (groupsBaseData.length !== groupDOMSize) {
+                return true;
+            }
+            return false;
+        };
+        changeButtons(theDataChanged());
+    };
+    const changeButtons = dataChange => {
+        console.log(`Data change: ${dataChange}`);
+        userSaveButton.disabled = !dataChange;
+    };
+    const formInit = () => {
+        usernameInput = document.getElementById('usernameInput');
+        usernameInput.addEventListener('keyup', () => {
+            checkForChanges();
+        });
     }
-    window.addEventListener('load', loadPlacesList, false);
 
 // Code from script tag on footer.html:138:2 called by file attribute on footer on footer.html:18:6
 
@@ -1944,8 +1620,22 @@ Core.setReportSystemErrorFunction(error => {
 </header>
     <div id="contentContainer">
         <div id="content">
-    <div class="formContainer" id="placeFormContainer">
+    <div class="contentTitle">
+        <span id="s5"></span>
     </div>
+    <div>
+    <div class="formContainer" id="userFormContainer">
+        <div class="adminLabel" id="usernameLabel">
+            <span id="s6"></span>
+        </div>
+        <input autocomplete="off" class="textInput" id="usernameInput" spellcheck="false">
+        <div class="adminLabel" id="userGroupsLabel">
+            <span id="s7"></span>
+        </div>
+        <div id="groupsContainer"></div>
+    </input>
+</div>
+</div>
 </div>
     </div>
     <footer>
@@ -1956,18 +1646,18 @@ Core.setReportSystemErrorFunction(error => {
             <div id="footerItems">
                 <div class="footerItemsGroup">
                     <div class="footerItem">
-                        <span id="s5"></span>
+                        <span id="s8"></span>
                     </div>
                     <div class="footerItem">
-                        <span id="s6"></span>
+                        <span id="s9"></span>
                     </div>
                 </div>
                 <div class="footerItemsGroup">
                     <div class="footerItem">
-                        <span id="s7"></span>
+                        <span id="s10"></span>
                     </div>
                     <div class="footerItem" id="footerItemLogin">
-                        <span id="s8"></span>
+                        <span id="s11"></span>
                     </div>
                 </div>
             </div>
@@ -1977,10 +1667,10 @@ Core.setReportSystemErrorFunction(error => {
         <div id="footerInformationContainer">
             <div id="footerInformationLinks">
                 <a href="">
-                    <span id="s9"></span>
+                    <span id="s12"></span>
                 </a>
                 <a href="">
-                    <span id="s10"></span>
+                    <span id="s13"></span>
                 </a>
             </div>
             <div id="footerInformationNetworks">
@@ -1992,7 +1682,7 @@ Core.setReportSystemErrorFunction(error => {
             </div>
         </div>
         <div id="footerCopyright">
-            <span id="s11"></span>
+            <span id="s14"></span>
         </div>
     </div>
 </footer>
