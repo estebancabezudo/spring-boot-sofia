@@ -68,9 +68,17 @@ public class UserManager {
     return entityToBusinessUserListMapper.map(entityList);
   }
 
-  public SofiaUser get(Account account, Integer id) {
-    final UserEntity placeEntity = userRepository.get(id);
-    return entityToBusinessUserMapper.map(placeEntity);
+  public SofiaUser get(Integer id) {
+    final UserEntity userEntity = userRepository.get(id);
+    return entityToBusinessUserMapper.map(userEntity);
+  }
+
+  public SofiaUser get(Account account, String username) {
+    final UserEntity userEntity = userRepository.get(account.id(), username);
+    if (userEntity == null) {
+      return null;
+    }
+    return entityToBusinessUserMapper.map(userEntity);
   }
 
   @Transactional

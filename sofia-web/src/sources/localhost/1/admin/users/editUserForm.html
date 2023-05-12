@@ -41,7 +41,7 @@
     const showData = data => {
         const username = data.username;
         const groups = data.groups;
-        usernameInput.value = username;
+        usernameInput.getElement().value = username;
 
         const groupsContainer = document.getElementById('groupsContainer');
         groupsContainer.innerHTML = '';
@@ -64,7 +64,7 @@
         userSaveButton.className = 'button greenButton';
         userSaveButton.addEventListener('click', () => {
             userSaveButton.disabled = true;
-            const username = document.getElementById('usernameInput').value;
+            username = usernameInput.getElement().value;
             const groups = [];
             const groupElements = document.querySelectorAll("#groupsContainer > div > input");
             groupElements.forEach(groupElement => {

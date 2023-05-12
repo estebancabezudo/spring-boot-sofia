@@ -1,3 +1,14 @@
+#waitingImage {
+    background-image: url(/images/waiting.gif);
+    background-size: cover;
+    width: 30px;
+    height: 30px;
+}
+
+.hideWaitingImage {
+    display: none;
+}
+
 #listContainer {
     display: grid;
     gap: 12px;
@@ -28,16 +39,6 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-}
-
-.formContainer input,
-.formContainer select {
-    background-color: rgba(0, 165, 8, 0.06);
-}
-
-.textInput {
-    padding: 5px 20px;
-    border: 0;
 }
 
 .deleteGroupContainer {

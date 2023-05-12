@@ -3,6 +3,7 @@ package net.cabezudo.sofia.users.rest;
 import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.core.rest.ListRestResponse;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
+import net.cabezudo.sofia.math.Numbers;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.users.Group;
@@ -13,6 +14,7 @@ import net.cabezudo.sofia.users.service.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,9 +72,10 @@ public class UsersController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/users/{id}")
-  public ResponseEntity<?> getUser(@PathVariable Integer id) {
+  public ResponseEntity<?> getUser(@PathVariable String id) {
     log.debug("Run /v1/users/{id}");
 
+    Site site = super.getSite();
     Account account = super.getAccount();
 
     ResponseEntity result;
@@ -82,14 +85,52 @@ public class UsersController extends SofiaAuthorizedController {
 
     UserRestResponse userRestResponse;
 
-    SofiaUser user = userManager.get(account, id);
+    SofiaUser user;
+    if (Numbers.isInteger(id)) {
+      user = userManager.get(Integer.parseInt(id));
+    } else {
+      user = userManager.get(account, id);
+    }
+
+    RestUser restUser;
+    if (user == null) {
+      return new ResponseEntity(HttpStatus.NOT_FOUND);
+    }
+    restUser = businessToRestUserMapper.map(user);
+    restUser.setSite(site);
+    userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Retrieve user " + id, restUser);
+    return ResponseEntity.ok(userRestResponse);
+  }
+
+  @GetMapping("/v1/users/{id}/exists")
+  public ResponseEntity<?> exists(@PathVariable String id) {
+    log.debug("Run /v1/users/{id}");
+
+    Site site = super.getSite();
+    Account account = super.getAccount();
+
+    ResponseEntity result;
+    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
+      return result;
+    }
+
+    UserRestResponse userRestResponse;
+
+    SofiaUser user;
+    if (Numbers.isInteger(id)) {
+      user = userManager.get(Integer.parseInt(id));
+    } else {
+      user = userManager.get(account, id);
+    }
+
     RestUser restUser;
     if (user == null) {
       restUser = null;
     } else {
       restUser = businessToRestUserMapper.map(user);
+      restUser.setSite(site);
     }
-    userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Retrieve place " + id, restUser);
+    userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Retrieve user " + id, restUser);
     return ResponseEntity.ok(userRestResponse);
   }
 
@@ -130,7 +171,7 @@ public class UsersController extends SofiaAuthorizedController {
     );
     RestUser restUser = businessToRestUserMapper.map(user);
 
-    UserRestResponse userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Retrieve place " + restUser.getId(), restUser);
+    UserRestResponse userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Retrieve user " + restUser.getId(), restUser);
     return ResponseEntity.ok(userRestResponse);
   }
 
@@ -152,7 +193,7 @@ public class UsersController extends SofiaAuthorizedController {
     SofiaUser updatedUser = userManager.update(id, user);
     RestUser restUser = businessToRestUserMapper.map(updatedUser);
     restUser.setSite(site);
-    UserRestResponse userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Retrieve place " + id, restUser);
+    UserRestResponse userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Retrieve user " + id, restUser);
     return ResponseEntity.ok(userRestResponse);
   }
 }

@@ -29,7 +29,6 @@
     <module>sofia-people</module>
     <module>sofia-template-engine</module>
     <module>sofia-web</module>
-    <module>sofia-security</module>
     <module>sofia-places</module>
   </modules>
 

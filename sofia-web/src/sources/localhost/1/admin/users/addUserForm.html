@@ -1,6 +1,13 @@
 <style file="../commons.css"></style>
 
 <style>
+    #waitingImageContainer {
+        grid-column: 4;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
     #userSaveButton {
         grid-column: 5;
     }
@@ -10,8 +17,19 @@
     const init = () => {
         formInit();
 
+        usernameBaseData = '';
+        groupsBaseData = [];
         const groupContainer = createGroupContainer(null, false, NEW_GROUP_ID);
         groupsContainer.appendChild(groupContainer);
+
+        waitingImageContainer = document.createElement('div');
+        waitingImageContainer.id = 'waitingImageContainer';
+        userFormContainer.appendChild(waitingImageContainer);
+        waitingImage = document.createElement('div');
+        waitingImage.id = 'waitingImage';
+        waitingImage.className = 'hideWaitingImage';
+        waitingImageContainer.appendChild(waitingImage);
+
 
         userSaveButton = document.createElement('button');
         userSaveButton.id = 'userSaveButton';

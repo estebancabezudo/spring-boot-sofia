@@ -122,6 +122,38 @@ public class UserRepository {
     return userEntity;
   }
 
+  public UserEntity get(int accountId, String eMail) {
+    log.debug("Search user with e-mail " + eMail + " for account " + accountId);
+
+    List<Map<String, Object>> list = new ArrayList<>();
+    jdbcTemplate.queryForList(
+        "SELECT u.id AS id, u.site_id, e.id AS eMailId, email AS email, password, enabled, authority " +
+            "FROM accounts_users as au " +
+            "LEFT JOIN users AS u ON au.user_id = u.id " +
+            "LEFT JOIN emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN authorities AS a ON u.id = a.user_id " +
+            "WHERE account_id= ? AND email = ?",
+        accountId, eMail).forEach(rs -> {
+      list.add(rs);
+    });
+
+    if (list.size() == 0) {
+      return null;
+    }
+
+    Map<String, Object> firstRecord = list.get(0);
+
+    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
+    UserEntity userEntity = new UserEntity((int) firstRecord.get("id"), (Integer) firstRecord.get("site_id"), eMailEntity, (String) firstRecord.get("password"), (boolean) firstRecord.get("enabled"));
+    for (Map<String, Object> rs : list) {
+      String authority = (String) rs.get("authority");
+      if (authority != null) {
+        userEntity.add(new GroupEntity(userEntity.getId(), authority));
+      }
+    }
+    return userEntity;
+  }
+
   public UserEntity create(int siteId, EMailEntity eMailEntity, String password, boolean enabled) {
     String encodedPassword = password == null ? null : passwordEncoder.encode(password);
     KeyHolder keyHolder = new GeneratedKeyHolder();

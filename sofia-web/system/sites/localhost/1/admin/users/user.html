@@ -13,7 +13,7 @@
 
 /* CSS import from /admin/users/editUserForm.html called by style tag on admin/users/editUserForm.html:3:2 */
 
-/* CSS import from /admin/users/userForm.html called by style tag on admin/users/userForm.html:1:2 */
+/* CSS import from /admin/users/userForm.html called by style tag on admin/users/userForm.html:2:2 */
 
 /* CSS import from /commons.css called by sofia */
 
@@ -60,14 +60,10 @@
     justify-content: space-between;
 }
 
-.formContainer input,
-.formContainer select {
-    background-color: rgba(0, 165, 8, 0.06);
-}
-
-.textInput {
-    padding: 5px 20px;
-    border: 0;
+.formContainer input>.error {
+    background-color: rgba(165, 0, 0, 0.06);
+    -webkit-box-shadow: 0px 0px 7px 0px #7A0000;
+    box-shadow: 0px 0px 7px 0px #7A0000;
 }
 
 .deleteGroupContainer {
@@ -126,7 +122,7 @@
         grid-column: 5;
     }
 
-/* CSS code from /admin/users/userForm.html called by style tag on admin/users/userForm.html:1:2 */
+/* CSS code from /admin/users/userForm.html called by style tag on admin/users/userForm.html:2:2 */
 
     #userFormContainer {
         display: grid;
@@ -216,8 +212,15 @@ select {
   box-sizing: border-box;
   padding: 10px 14px;
   font-size: 16px;
+  font-family: Gotham;
+  border: 0;
   box-sizing: border-box;
-  border: 1px solid lightgrey;
+  background-color: rgba(0, 165, 8, 0.06);
+}
+
+input:disabled {
+  background-color: white;
+  border: 0;
 }
 
 input::placeholder,
@@ -283,17 +286,6 @@ select:focus {
   padding-bottom: 15px;
 }
 
-.textInput {
-  font-size: 24px;
-  font-family: Gotham;
-  border: 0;
-}
-
-.textInput:disabled {
-  background-color: white;
-  border: 0;
-}
-
 @media all and (min-width: 750px) {
   #content {
     margin: 20px auto;
@@ -301,10 +293,6 @@ select:focus {
 
   .contentTitle {
     text-align: left;
-  }
-
-  .textInput {
-    font-size: 20px;
   }
 }
 
@@ -1437,7 +1425,7 @@ class TwoLanguageFlag {
     const showData = data => {
         const username = data.username;
         const groups = data.groups;
-        usernameInput.value = username;
+        usernameInput.getElement().value = username;
 
         const groupsContainer = document.getElementById('groupsContainer');
         groupsContainer.innerHTML = '';
@@ -1460,7 +1448,7 @@ class TwoLanguageFlag {
         userSaveButton.className = 'button greenButton';
         userSaveButton.addEventListener('click', () => {
             userSaveButton.disabled = true;
-            const username = document.getElementById('usernameInput').value;
+            username = usernameInput.getElement().value;
             const groups = [];
             const groupElements = document.querySelectorAll("#groupsContainer > div > input");
             groupElements.forEach(groupElement => {
@@ -1505,7 +1493,71 @@ class TwoLanguageFlag {
     };
     window.addEventListener('load', init, false);
 
-// Code from script tag on admin/users/userForm.html:45:2 called by file attribute on div on admin/users/userForm.html:117:6
+// Code from library inputs:email:1.00 on admin/users/userForm.html called by file attribute on div on admin/users/userForm.html:117:6
+class EMailInput {
+    constructor(value) {
+        this.validated = false;
+        const getElement = value => {
+            if (value === undefined || value == null) {
+                throw new Error('You MUST specify an id or element.');
+            }
+            if (Core.isString(value)) {
+                const id = value;
+                console.log(`Using the id ${id}`);
+                this.element = document.getElementById(id);
+                if (this.element === null || this.element === undefined) {
+                    throw new Error(`Element NOT FOUND: ${id}`);
+                }
+                return;
+            }
+            if (Core.isHTMLDivElement(value)) {
+                console.log(`Linking the element `, value);
+                this.element = value;
+                return;
+            }
+        }
+        getElement(value);
+        this.element.addEventListener('keyup', event => {
+            console.log(`lib::input::email::keyup:`, event);
+
+            this.validated = false;
+            clearTimeout(this.timmerHandler);
+            this.timmerHandler = setTimeout(() => {
+                fetch(`/v1/emails/${this.element.value}/info`)
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(jsonResponse => {
+                        if (this.element.value == jsonResponse.data.address) {
+                            console.log(jsonResponse);
+                            if (jsonResponse.status == 1) {
+                                this.element.classList.remove('error');
+                            } else {
+                                this.element.classList.add('error');
+                            }
+                        } else {
+                            console.log('Ignore response');
+                        }
+
+                    })
+                    .catch(error => {
+                        Core.showErrorMessage(error.message);
+                        Core.reportSystemError(error);
+                    });
+            }, 1000);
+        });
+    }
+
+    getElement() {
+        return this.element;
+    }
+
+    isValid() {
+        return this.validated;
+    }
+}
+
+// Code from script tag on admin/users/userForm.html:46:2 called by file attribute on div on admin/users/userForm.html:117:6
 
     const NEW_GROUP_ID = 'newGroup';
     let usernameBaseData, groupsBaseData, usernameInput, userSaveButton;
@@ -1584,8 +1636,8 @@ class TwoLanguageFlag {
     };
     const checkForChanges = () => {
         const theDataChanged = () => {
-            if (usernameInput.value.trim() !== usernameBaseData) {
-                console.log(`The username in base data is ${usernameBaseData} but in DOM is ${usernameInput.value}.`);
+            if (usernameInput.getElement.value !== usernameBaseData) {
+                console.log(`The username in base data is ${usernameBaseData} but in DOM is ${usernameInput.getElement().value}.`);
                 return true;
             }
             // I don't check the size of the groups before because the DOM groups can have +1 or +2 groups more than base data and I also need the bucle to check that.
@@ -1610,8 +1662,8 @@ class TwoLanguageFlag {
         userSaveButton.disabled = !dataChange;
     };
     const formInit = () => {
-        usernameInput = document.getElementById('usernameInput');
-        usernameInput.addEventListener('keyup', () => {
+        usernameInput = new EMailInput('usernameInput');
+        usernameInput.getElement().addEventListener('keyup', () => {
             checkForChanges();
         });
     }

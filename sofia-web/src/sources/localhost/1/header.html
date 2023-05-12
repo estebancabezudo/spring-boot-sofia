@@ -1,83 +1,6 @@
 <link lib="burgerMenu:1.00" />
 <link lib="linkTo:1.00" />
 <link lib="twoLanguageFlag:1.00" />
-<script>
-    const initHeader = () => {
-        const burgerMenu = new BurgerMenu(
-            {
-                menuContainerId: 'headerMenuContainer',
-                openMenuElementId: 'headerBurgerMenuActivator',
-                closeMenuElementId: 'headerBurgerMenuActivator',
-                items: [
-                    {
-                        id: 'users',
-                        hide: ['page:/admin/users/list.html'],
-                        onclick: '/admin/users/list.html'
-                    },
-                    {
-                        id: 'places',
-                        hide: ['page:/admin/places/list.html'],
-                        onclick: '/admin/places/list.html'
-                    },
-                    {
-                        id: 'login',
-                        hide: ['status:logged', 'page:/login.html'],
-                        show: ['status:notLogged'],
-                        onclick: '/login.html'
-                    },
-                    {
-                        id: 'logout',
-                        hide: ['status:notLogged'],
-                        show: ['status:logged'],
-                        onclick: '/logout'
-                    }
-                ]
-            }
-        );
-        new LinkTo({
-            id: 'headerLogo',
-            onclick: '/',
-            disableWhen: ['page:/'],
-        });
-        new TwoLanguageFlag({
-            id: 'twoLanguageFlag',
-            languages: [{ code: 'en' }, { code: 'es' }],
-            onchange: language => {
-                fetch('/v1/web/clients/actual/languages/default', {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    method: 'PUT',
-                    body: `{ "code": "${language}"}`
-                });
-            }
-        });
-        Core.subscribeTo('core:showErrorMessage', data => {
-            const hideMessage = () => {
-                element.classList.remove('errorMessage');
-            };
-            const element = document.getElementById('messages');
-            element.innerHTML = data.errorMessage;
-            element.style.backgroundColor = 'rgb(145, 0, 0)'
-            element.classList.add('errorMessage');
-            setTimeout(hideMessage, 3000);
-        });
-        Core.subscribeTo('core:showMessage', data => {
-            console.log(data);
-            const hideMessage = () => {
-                element.classList.remove('message');
-            };
-            const element = document.getElementById('messages');
-            element.style.backgroundColor = 'rgb(0, 145, 7)'
-            element.innerHTML = data.message;
-            element.classList.add('message');
-            setTimeout(hideMessage, 3000);
-        });
-    }
-
-    window.addEventListener('load', initHeader);
-</script>
-
 <style>
     :root {
         --headerHeight: #{header.height};
@@ -173,27 +96,19 @@
     }
 
     .messages {
-        position: fixed;
         display: flex;
         width: 100%;
-        height: 50px;
-        top: var(--headerHeight);
+        padding: 5px;
         color: white;
-        align-content: center;
-        justify-content: center;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        overflow: hidden;
         font-weight: bold;
-        opacity: 0;
-        transition: .5s opacity;
         pointer-events: none;
-    }
-
-    .message {
-        opacity: 1;
+        transition: background-color .2s ease-out;
     }
 
     .errorMessage {
-        opacity: 1;
+        background-color: rgb(177, 40, 40);
     }
 
     @media all and (min-width: 750px) {
@@ -219,6 +134,82 @@
         }
     }
 </style>
+
+<script>
+    const initHeader = () => {
+        const burgerMenu = new BurgerMenu(
+            {
+                menuContainerId: 'headerMenuContainer',
+                openMenuElementId: 'headerBurgerMenuActivator',
+                closeMenuElementId: 'headerBurgerMenuActivator',
+                items: [
+                    {
+                        id: 'users',
+                        hide: ['page:/admin/users/list.html'],
+                        onclick: '/admin/users/list.html'
+                    },
+                    {
+                        id: 'places',
+                        hide: ['page:/admin/places/list.html'],
+                        onclick: '/admin/places/list.html'
+                    },
+                    {
+                        id: 'login',
+                        hide: ['status:logged', 'page:/login.html'],
+                        show: ['status:notLogged'],
+                        onclick: '/login.html'
+                    },
+                    {
+                        id: 'logout',
+                        hide: ['status:notLogged'],
+                        show: ['status:logged'],
+                        onclick: '/logout'
+                    }
+                ]
+            }
+        );
+        new LinkTo({
+            id: 'headerLogo',
+            onclick: '/',
+            disableWhen: ['page:/'],
+        });
+        new TwoLanguageFlag({
+            id: 'twoLanguageFlag',
+            languages: [{ code: 'en' }, { code: 'es' }],
+            onchange: language => {
+                fetch('/v1/web/clients/actual/languages/default', {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    method: 'PUT',
+                    body: `{ "code": "${language}"}`
+                });
+            }
+        });
+        Core.subscribeTo('core:showErrorMessage', data => {
+            console.log(`header.html::initHeader::data: `, data);
+            const hideMessage = () => {
+                element.classList.remove('errorMessage');
+            };
+            const element = document.getElementById('messages');
+            element.innerHTML = Core.getText(data.errorMessage);
+            element.classList.add('errorMessage');
+            setTimeout(hideMessage, 3000);
+        });
+        Core.subscribeTo('core:showMessage', data => {
+            console.log(data);
+            const hideMessage = () => {
+                element.classList.remove('message');
+            };
+            const element = document.getElementById('messages');
+            element.innerHTML = Core.getText(data.message);
+            element.classList.add('message');
+            setTimeout(hideMessage, 8000);
+        });
+    }
+
+    window.addEventListener('load', initHeader);
+</script>
 
 <body>
     <div id="headerContainer">
@@ -257,5 +248,4 @@
             <div class="headerIcon headerBurgerMenuActivator" id="headerBurgerMenuActivator"></div>
         </div>
     </div>
-    <div id="messages" class="messages"></div>
 </body>

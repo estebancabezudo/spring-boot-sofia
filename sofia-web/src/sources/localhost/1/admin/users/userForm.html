@@ -1,3 +1,4 @@
+<link lib="inputs:email:1.00" />
 <style>
     #userFormContainer {
         display: grid;
@@ -44,7 +45,11 @@
 
 <script>
     const NEW_GROUP_ID = 'newGroup';
-    let usernameBaseData, groupsBaseData, usernameInput, userSaveButton;
+    const NOT_CHECKED = 0;
+    const EXISTS_IN_SERVER = 1;
+    const OK = 2;
+
+    let usernameBaseData, groupsBaseData, usernameInput, userSaveButton, userNameInServer = NOT_CHECKED;
     const createGroupContainer = (groupName, visible, newGroupId) => {
         const groupContainer = document.createElement('DIV');
         if (newGroupId && newGroupId.length > 0) {
@@ -119,9 +124,25 @@
         return groupContainer;
     };
     const checkForChanges = () => {
+        const theDataIsValid = () => {
+            if (!usernameInput.isValid()) {
+                return false;
+            }
+            if (userNameInServer === NOT_CHECKED) {
+                return false;
+            }
+            if (userNameInServer === EXISTS_IN_SERVER) {
+                usernameInput.setInvalid(true);
+                return false;
+            }
+            return true;
+        }
         const theDataChanged = () => {
-            if (usernameInput.value.trim() !== usernameBaseData) {
-                console.log(`The username in base data is ${usernameBaseData} but in DOM is ${usernameInput.value}.`);
+            if (!groupsBaseData) {
+                throw new Error('You must define a base data for groups');
+            }
+            if (usernameInput.getElement().value !== usernameBaseData) {
+                console.log(`The username in base data is ${usernameBaseData} but in DOM is ${usernameInput.getElement().value}.`);
                 return true;
             }
             // I don't check the size of the groups before because the DOM groups can have +1 or +2 groups more than base data and I also need the bucle to check that.
@@ -139,16 +160,66 @@
             }
             return false;
         };
-        changeButtons(theDataChanged());
+        changeButtons(theDataIsValid() && theDataChanged());
     };
     const changeButtons = dataChange => {
         console.log(`Data change: ${dataChange}`);
         userSaveButton.disabled = !dataChange;
     };
     const formInit = () => {
-        usernameInput = document.getElementById('usernameInput');
-        usernameInput.addEventListener('keyup', () => {
+        const showWaitingWeel = () => { document.getElementById('waitingImage').classList.remove('hideWaitingImage'); };
+        const hideWaitingWeel = () => { document.getElementById('waitingImage').classList.add('hideWaitingImage'); };
+        usernameInput = new EMailInput('usernameInput');
+        usernameInput.getElement().addEventListener('input', () => {
+            showWaitingWeel();
+            userNameInServer = NOT_CHECKED;
             checkForChanges();
+        })
+        usernameInput.onInputEvent(() => {
+            showWaitingWeel();
+        });
+        usernameInput.beforeValidation(() => {
+            showWaitingWeel();
+        });
+        usernameInput.afterValidation(value => {
+            hideWaitingWeel();
+            console.log(`userForm.html::formInit::afterValidation::valid: ${usernameInput.isValid()}`);
+            checkForChanges();
+            if (usernameInput.isValid()) {
+                if (userNameInServer === NOT_CHECKED) {
+                    console.log(`userForm.html::formInit::afterValidation::fetch: /v1/users/${value}/exists`);
+                    if (value === undefined || value.length < 3) {
+                        usernameInput.setInvalid(false);
+                        return;
+                    }
+                    usernameInput.setInvalid(false);
+                    showWaitingWeel();
+                    fetch(`/v1/users/${value}/exists`)
+                        .then(response => {
+                            hideWaitingWeel();
+                            return response.json();
+                        })
+                        .then(response => {
+                            console.log(`userForm.html::formInit::afterValidation::response.data: `, response.data);
+                            if (response.data === undefined) {
+                                userNameInServer = OK;
+                                usernameInput.setInvalid(false);
+                                checkForChanges();
+                            } else {
+                                userNameInServer = EXISTS_IN_SERVER;
+                                usernameInput.setInvalid(true);
+                                Core.showErrorMessage('usernameAlreadyExists');
+                            }
+                        })
+                        .catch(error => {
+                            Core.showErrorMessage(error.message);
+                            Core.reportSystemError(error);
+                        });
+                }
+            } else {
+                usernameInput.setInvalid(true);
+                checkForChanges();
+            }
         });
     }
 </script>
@@ -158,7 +229,7 @@
         <div id="usernameLabel" class="adminLabel">
             <texts><text language="es">Nombre de usuario</text><text language="en">Username</text></texts>
         </div>
-        <input id="usernameInput" class="textInput" spellcheck="false" autocomplete="off">
+        <input id="usernameInput" spellcheck="false" autocomplete="off">
         <div id="userGroupsLabel" class="adminLabel">
             <texts><text language="es">Grupos</text><text language="en">Groups</text></texts>
         </div>
