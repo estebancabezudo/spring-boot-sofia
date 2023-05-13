@@ -55,7 +55,8 @@ public abstract class SofiaAuthorizedController extends SofiaController {
 
   protected Account getAccount() {
     if (sofiaEnvironment.isSecurityNotActive() && sofiaEnvironment.isDevelopment()) {
-      return new Account(1);
+      // TODO improve this
+      return new Account(1, 1);
     }
 
     SofiaUser user = getSofiaUser();

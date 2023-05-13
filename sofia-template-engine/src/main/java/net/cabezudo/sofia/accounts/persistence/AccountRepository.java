@@ -5,11 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 @Component
@@ -31,10 +34,33 @@ public class AccountRepository {
     return new AccountEntity(id, siteId);
   }
 
-  public AccountUserRelation addUser(int accountId, int userId) {
-    log.debug("Add account user relation between account " + accountId + " and user " + userId);
+  public List<Integer> find(int accountId, int userId) {
+    log.debug("Check if exists a relation between account " + accountId + " and user " + userId);
 
-    String sqlQuery = "INSERT INTO accounts_users (account_id, user_id) VALUES (?, ?)";
+    List<Integer> list = jdbcTemplate.query(
+        "SELECT account_id FROM users WHERE account_id = ? AND user_id = ?",
+        new RowMapper<Integer>() {
+          public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return rs.getInt(1);
+          }
+        }, accountId, userId);
+
+    return list;
+  }
+
+  public List<AccountEntity> findAll(int userId) {
+    log.debug("Return all the account for the user " + userId);
+
+    List<AccountEntity> list = jdbcTemplate.query(
+        "SELECT account_id, user_id FROM accounts_users WHERE user_id = ?",
+        new AccountRowMapper(), userId);
+    return list;
+  }
+
+  public void delete(int accountId, int userId) {
+    log.debug("Delete account user relation between account " + accountId + " and user " + userId);
+
+    String sqlQuery = "DELETE FROM accounts_users WHERE account_id = ? AND user_id =?";
     PreparedStatementCreator preparedStatementCreator = connection -> {
       PreparedStatement ps = connection.prepareStatement(sqlQuery);
       ps.setInt(1, accountId);
@@ -42,26 +68,5 @@ public class AccountRepository {
       return ps;
     };
     jdbcTemplate.update(preparedStatementCreator);
-    return new AccountUserRelation(accountId, userId);
   }
-
-  public List<AccountUserRelation> find(int accountId, int userId) {
-    log.debug("Check if exists a relation between account " + accountId + " and user " + userId);
-
-    List<AccountUserRelation> list = jdbcTemplate.query(
-        "SELECT account_id, user_id FROM accounts_users WHERE account_id = ? AND user_id = ?",
-        new AccountUserRelationRowMapper(), accountId, userId);
-
-    return list;
-  }
-
-  public List<AccountUserRelation> findAll(int userId) {
-    log.debug("Return all the account for the user " + userId);
-
-    List<AccountUserRelation> list = jdbcTemplate.query(
-        "SELECT account_id, user_id FROM accounts_users WHERE user_id = ?",
-        new AccountUserRelationRowMapper(), userId);
-    return list;
-  }
-
 }

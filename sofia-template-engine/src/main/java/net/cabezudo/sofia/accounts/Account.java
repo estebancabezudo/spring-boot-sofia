@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public record Account(Integer id) implements Comparable<Account> {
+public record Account(Integer id, int siteId) implements Comparable<Account> {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

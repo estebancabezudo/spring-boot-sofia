@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -146,7 +147,7 @@ public class UsersController extends SofiaAuthorizedController {
     }
 
     SofiaRestResponse userRestResponse;
-    UserList userList = userManager.findAll(site, account);
+    UserList userList = userManager.findAll(account);
     RestUserList restList = businessToRestUserListMapper.map(userList);
     userRestResponse = new ListRestResponse(SofiaRestResponse.OK, "List retrieved", restList);
     return ResponseEntity.ok(userRestResponse);
@@ -167,7 +168,7 @@ public class UsersController extends SofiaAuthorizedController {
     SofiaUser newUser = restToBusinessUserMapper.map(restUserToSave);
 
     SofiaUser user = userManager.create(
-        account, newUser.getSite().getId(), newUser.getUsername(), newUser.getPassword(), newUser.getGroups(), newUser.isEnabled()
+        account, newUser.getUsername(), newUser.getPassword(), newUser.getGroups(), newUser.isEnabled()
     );
     RestUser restUser = businessToRestUserMapper.map(user);
 
@@ -194,6 +195,22 @@ public class UsersController extends SofiaAuthorizedController {
     RestUser restUser = businessToRestUserMapper.map(updatedUser);
     restUser.setSite(site);
     UserRestResponse userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Retrieve user " + id, restUser);
+    return ResponseEntity.ok(userRestResponse);
+  }
+
+  @DeleteMapping("/v1/users/{id}")
+  public ResponseEntity<?> delete(@PathVariable Integer id) throws IOException {
+    log.debug("Delete a user");
+
+    Account account = super.getAccount();
+
+    ResponseEntity result;
+    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
+      return result;
+    }
+
+    userManager.delete(account.id(), id);
+    UserRestResponse userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Delete user " + id, null);
     return ResponseEntity.ok(userRestResponse);
   }
 }

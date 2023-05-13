@@ -19,6 +19,7 @@ import net.cabezudo.sofia.users.persistence.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -63,8 +65,8 @@ public class UserManager {
     return authorities;
   }
 
-  public UserList findAll(Site site, Account account) {
-    final UserEntityList entityList = userRepository.findAll(site.getId(), account.id());
+  public UserList findAll(Account account) {
+    final UserEntityList entityList = userRepository.findAll(account.id());
     return entityToBusinessUserListMapper.map(entityList);
   }
 
@@ -82,7 +84,7 @@ public class UserManager {
   }
 
   @Transactional
-  public SofiaUser create(Account account, int siteId, String eMailAddress, String password, Groups groups, boolean enabled) {
+  public SofiaUser create(Account account, String eMailAddress, String password, Groups groups, boolean enabled) {
 
     EMailEntity userFromDatabase = eMailRepository.get(eMailAddress);
     EMailEntity userToUse;
@@ -94,9 +96,7 @@ public class UserManager {
 
     log.debug("Using email with id " + userToUse);
 
-    UserEntity userEntity = userRepository.create(siteId, userToUse, password, enabled);
-
-    accountRepository.addUser(account.id(), userEntity.getId());
+    UserEntity userEntity = userRepository.create(account.id(), userToUse, password, enabled);
 
     GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(userEntity, groups);
     for (GroupEntity groupEntity : groupsEntity) {
@@ -141,6 +141,25 @@ public class UserManager {
     return entityToBusinessUserMapper.map(updatedEntity);
   }
 
+  public void delete(int accountId, int userId) {
+    UserEntity user = userRepository.get(userId);
+    groupsRepository.deleteGroupsFor(user);
+    int eMailIdToDelete = user.getEMailEntity().id();
+    userRepository.delete(userId);
+
+    try {
+      eMailRepository.delete(eMailIdToDelete);
+    } catch (DataAccessException e) {
+      if (e.getCause() instanceof SQLIntegrityConstraintViolationException) {
+        log.debug("I can't delete the user because is used in another account.");
+      } else {
+        throw e;
+      }
+    }
+
+
+    eMailRepository.delete(eMailIdToDelete);
+  }
 }
 
 

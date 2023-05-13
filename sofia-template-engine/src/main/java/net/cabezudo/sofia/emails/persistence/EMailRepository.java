@@ -46,19 +46,19 @@ public class EMailRepository {
     return new EMailEntity(id, email);
   }
 
-  public void delete(int entityId) {
-    log.debug("Delete email with id " + entityId);
+  public void delete(int id) {
+    log.debug("Delete email with id " + id);
     String sqlQuery = "DELETE FROM emails WHERE id = ?";
     PreparedStatementCreator preparedStatementCreator = connection -> {
       PreparedStatement ps = connection.prepareStatement(sqlQuery);
-      ps.setInt(1, entityId);
+      ps.setInt(1, id);
       return ps;
     };
     try {
       jdbcTemplate.update(preparedStatementCreator);
     } catch (DataAccessException e) {
       if (e.getCause() instanceof SQLIntegrityConstraintViolationException) {
-        log.debug("I can't delete the email because is used with another user in other account.");
+        log.debug("I can't delete the email because is used with another user in another account.");
       } else {
         throw e;
       }

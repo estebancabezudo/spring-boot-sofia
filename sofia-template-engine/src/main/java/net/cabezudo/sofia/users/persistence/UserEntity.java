@@ -7,15 +7,15 @@ import javax.persistence.Column;
 public class UserEntity {
   private final int id;
   @Column(name = "site_id")
-  private final int siteId;
+  private final int accountId;
   private final EMailEntity eMailEntity;
   private final String password;
   private final GroupsEntity groupsEntity = new GroupsEntity();
   private final boolean enabled;
 
-  public UserEntity(int id, int siteId, EMailEntity eMailEntity, String password, boolean enabled) {
+  public UserEntity(int id, int accountId, EMailEntity eMailEntity, String password, boolean enabled) {
     this.id = id;
-    this.siteId = siteId;
+    this.accountId = accountId;
     this.eMailEntity = eMailEntity;
     this.password = password;
     this.enabled = enabled;
@@ -25,8 +25,8 @@ public class UserEntity {
     return id;
   }
 
-  public int getSiteId() {
-    return siteId;
+  public int getAccountId() {
+    return accountId;
   }
 
   public EMailEntity getEMailEntity() {

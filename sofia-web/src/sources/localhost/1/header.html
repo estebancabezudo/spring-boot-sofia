@@ -187,7 +187,7 @@
             }
         });
         Core.subscribeTo('core:showErrorMessage', data => {
-            console.log(`header.html::initHeader::data: `, data);
+            console.log(`header.html::initHeader::showErrorMessage::data: `, data);
             const hideMessage = () => {
                 element.classList.remove('errorMessage');
             };
@@ -197,7 +197,7 @@
             setTimeout(hideMessage, 3000);
         });
         Core.subscribeTo('core:showMessage', data => {
-            console.log(data);
+            console.log(`header.html::initHeader::showMessage::data: `, data);
             const hideMessage = () => {
                 element.classList.remove('message');
             };

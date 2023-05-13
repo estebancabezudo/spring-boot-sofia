@@ -1354,7 +1354,7 @@ class TwoLanguageFlag {
             }
         });
         Core.subscribeTo('core:showErrorMessage', data => {
-            console.log(`header.html::initHeader::data: `, data);
+            console.log(`header.html::initHeader::showErrorMessage::data: `, data);
             const hideMessage = () => {
                 element.classList.remove('errorMessage');
             };
@@ -1364,7 +1364,7 @@ class TwoLanguageFlag {
             setTimeout(hideMessage, 3000);
         });
         Core.subscribeTo('core:showMessage', data => {
-            console.log(data);
+            console.log(`header.html::initHeader::showMessage::data: `, data);
             const hideMessage = () => {
                 element.classList.remove('message');
             };
@@ -1377,17 +1377,34 @@ class TwoLanguageFlag {
 
     window.addEventListener('load', initHeader);
 
-// Code from library users:1.00 on admin/users/listUsers.html called by file attribute on div on admin/users/listUsers.html:16:10
+// Code from library users:1.00 on admin/users/listUsers.html called by file attribute on div on admin/users/listUsers.html:17:10
 const LIST_USERS_URL = '/admin/users/list.html';
 
 class UserList {
     constructor() {
     }
     loadUserList() {
+        const loadList = () => {
+            fetch('/v1/users')
+                .then(response => {
+                    if (response.status === 200) {
+                        return response.json();
+                    }
+                    throw new Error(response.statusText);
+                })
+                .then(jsonResponse => {
+                    createList(jsonResponse.data);
+                })
+                .catch(error => {
+                    Core.showErrorMessage(error);
+                });
+        };
+
         const createList = data => {
-            const hasData = data => {
-                return data !== undefined && data !== null && data.length > 0;
-            };
+            const elementsToDelete = document.getElementsByClassName('dataCell');
+            while (elementsToDelete.length > 0) {
+                elementsToDelete[0].parentNode.removeChild(elementsToDelete[0]);
+            }
             data.list.forEach(element => {
                 const userElement = document.createElement('DIV');
                 userElement.className = 'cell dataCell';
@@ -1430,8 +1447,10 @@ class UserList {
                         fetch(`/v1/users/${element.id}`, { method: 'DELETE' })
                             .then(response => {
                                 if (response.status === 200) {
-                                    Core.showMessage('userDeleted');
-                                    location.reload();
+                                    loadList();
+                                    if (Core.isFunction(this.afterDeleteFunction)) {
+                                        this.afterDeleteFunction();
+                                    }
                                 } else {
                                     Core.showErrorMessage(Core.getText('responseErrorWhenDeleting', [response.status]));
                                 }
@@ -1460,31 +1479,21 @@ class UserList {
             onclick: `/admin/users/addUser.html`
         });
 
-        fetch('/v1/users')
-            .then(response => {
-                if (response.status === 200) {
-                    return response.json();
-                }
-                throw new Error(response.statusText);
-            })
-            .then(jsonResponse => {
-                createList(jsonResponse.data);
-            })
-            .catch(error => {
-                Core.showErrorMessage(error);
-            });
+        loadList();
     };
-
+    afterDelete(afterDeleteFunction) {
+        this.afterDeleteFunction = afterDeleteFunction;
+    }
 }
 
 
 
-// Code from script tag on admin/users/listUsers.html:2:2 called by file attribute on div on admin/users/listUsers.html:16:10
+// Code from script tag on admin/users/listUsers.html:2:2 called by file attribute on div on admin/users/listUsers.html:17:10
 
     const list = new UserList();
     window.addEventListener('load', list.loadUserList, false);
 
-// Code from script tag on footer.html:138:2 called by file attribute on footer on footer.html:18:6
+// Code from script tag on footer.html:138:2 called by file attribute on footer on footer.html:19:6
 
     const initFooter = () => {
         new LinkTo({
@@ -1533,6 +1542,7 @@ Core.setReportSystemErrorFunction(error => {
     </div>
 </header>
     <div id="contentContainer">
+        <div class="messages" id="messages">&nbsp;</div>
         <div id="content">
     <div class="contentTitle">
         <span id="s5"></span>

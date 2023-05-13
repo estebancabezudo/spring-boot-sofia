@@ -19,7 +19,7 @@
 
 /* CSS import from /footer.html called by style tag on footer.html:1:2 */
 
-/* CSS import from /header.html called by style tag on header.html:81:2 */
+/* CSS import from /header.html called by style tag on header.html:4:2 */
 
 /* CSS import from /burguerMenu.css called by file libraryburgerMenu:1.00 on header.html */
 
@@ -28,6 +28,17 @@
 /* CSS import from /twoLanguageFlag.css called by file librarytwoLanguageFlag:1.00 on header.html */
 
 /* CSS code from /admin/commons.css called by file attribute on style tag on admin/users/user.html:10:6 */
+#waitingImage {
+    background-image: url(/images/waiting.gif);
+    background-size: cover;
+    width: 30px;
+    height: 30px;
+}
+
+.hideWaitingImage {
+    display: none;
+}
+
 #listContainer {
     display: grid;
     gap: 12px;
@@ -58,12 +69,6 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-}
-
-.formContainer input>.error {
-    background-color: rgba(165, 0, 0, 0.06);
-    -webkit-box-shadow: 0px 0px 7px 0px #7A0000;
-    box-shadow: 0px 0px 7px 0px #7A0000;
 }
 
 .deleteGroupContainer {
@@ -233,6 +238,12 @@ select::placeholder {
 input:focus,
 select:focus {
   outline: none;
+}
+
+input.error {
+  background-color: rgba(165, 0, 0, 0.06);
+  -webkit-box-shadow: 0px 0px 7px 0px #7A0000;
+  box-shadow: 0px 0px 7px 0px #7A0000;
 }
 
 .button {
@@ -432,7 +443,7 @@ select:focus {
         }
     }
 
-/* CSS code from /header.html called by style tag on header.html:81:2 */
+/* CSS code from /header.html called by style tag on header.html:4:2 */
 
     :root {
         --headerHeight: 60px;
@@ -528,27 +539,19 @@ select:focus {
     }
 
     .messages {
-        position: fixed;
         display: flex;
         width: 100%;
-        height: 50px;
-        top: var(--headerHeight);
+        padding: 5px;
         color: white;
-        align-content: center;
-        justify-content: center;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        overflow: hidden;
         font-weight: bold;
-        opacity: 0;
-        transition: .5s opacity;
         pointer-events: none;
-    }
-
-    .message {
-        opacity: 1;
+        transition: background-color .2s ease-out;
     }
 
     .errorMessage {
-        opacity: 1;
+        background-color: rgb(177, 40, 40);
     }
 
     @media all and (min-width: 750px) {
@@ -1316,7 +1319,7 @@ class TwoLanguageFlag {
     };
 }
 
-// Code from script tag on header.html:4:2 called by file attribute on header on header.html:14:6
+// Code from script tag on header.html:138:2 called by file attribute on header on header.html:14:6
 
     const initHeader = () => {
         const burgerMenu = new BurgerMenu(
@@ -1369,12 +1372,12 @@ class TwoLanguageFlag {
             }
         });
         Core.subscribeTo('core:showErrorMessage', data => {
+            console.log(`header.html::initHeader::data: `, data);
             const hideMessage = () => {
                 element.classList.remove('errorMessage');
             };
             const element = document.getElementById('messages');
-            element.innerHTML = data.errorMessage;
-            element.style.backgroundColor = 'rgb(145, 0, 0)'
+            element.innerHTML = Core.getText(data.errorMessage);
             element.classList.add('errorMessage');
             setTimeout(hideMessage, 3000);
         });
@@ -1384,10 +1387,9 @@ class TwoLanguageFlag {
                 element.classList.remove('message');
             };
             const element = document.getElementById('messages');
-            element.style.backgroundColor = 'rgb(0, 145, 7)'
-            element.innerHTML = data.message;
+            element.innerHTML = Core.getText(data.message);
             element.classList.add('message');
-            setTimeout(hideMessage, 3000);
+            setTimeout(hideMessage, 8000);
         });
     }
 
@@ -1496,7 +1498,7 @@ class TwoLanguageFlag {
 // Code from library inputs:email:1.00 on admin/users/userForm.html called by file attribute on div on admin/users/userForm.html:117:6
 class EMailInput {
     constructor(value) {
-        this.validated = false;
+        this.valid = false;
         const getElement = value => {
             if (value === undefined || value == null) {
                 throw new Error('You MUST specify an id or element.');
@@ -1516,25 +1518,56 @@ class EMailInput {
                 return;
             }
         }
-        getElement(value);
-        this.element.addEventListener('keyup', event => {
-            console.log(`lib::input::email::keyup:`, event);
+        const runFunctionOnInputEvent = value => {
+            if (Core.isFunction(this.functionOnInputEvent)) {
+                this.functionOnInputEvent(value);
+            }
+        }
+        const runFunctionBeforeValidation = value => {
+            if (Core.isFunction(this.functionBeforeValidation)) {
+                this.functionBeforeValidation(value);
+            }
+        }
+        const runFunctionAfterValidation = value => {
+            if (Core.isFunction(this.functionAfterValidation)) {
+                this.functionAfterValidation(value);
+            }
+        }
 
-            this.validated = false;
+        getElement(value);
+        this.element.addEventListener('input', () => {
             clearTimeout(this.timmerHandler);
+            runFunctionOnInputEvent();
             this.timmerHandler = setTimeout(() => {
-                fetch(`/v1/emails/${this.element.value}/info`)
+                const value = this.element.value;
+                if (value.length < 3) {
+                    this.setInvalid(false);
+                    runFunctionAfterValidation();
+                    return;
+                }
+                const validateEmailRegex = /^[A-Za-z0-9!#$%&'*+/=?^_`@{|}~\.-]+$/;
+                if (!value.match(validateEmailRegex)) {
+                    console.log(`${value} doesn't match the email regex validation.`);
+                    this.setInvalid(true);
+                    Core.showErrorMessage('emailInvalidCharacterOnAddress');
+                    runFunctionAfterValidation();
+                    return;
+                }
+                runFunctionBeforeValidation();
+                fetch(`/v1/emails/${value}/info`)
                     .then(response => {
                         return response.json();
                     })
                     .then(jsonResponse => {
-                        if (this.element.value == jsonResponse.data.address) {
+                        if (value === jsonResponse.data.address) {
                             console.log(jsonResponse);
                             if (jsonResponse.status == 1) {
-                                this.element.classList.remove('error');
+                                this.setInvalid(false);
                             } else {
-                                this.element.classList.add('error');
+                                this.setInvalid(true);
+                                Core.showErrorMessage(jsonResponse.message);
                             }
+                            runFunctionAfterValidation(value);
                         } else {
                             console.log('Ignore response');
                         }
@@ -1544,23 +1577,48 @@ class EMailInput {
                         Core.showErrorMessage(error.message);
                         Core.reportSystemError(error);
                     });
-            }, 1000);
+            }, 2000);
         });
     }
 
     getElement() {
         return this.element;
+    };
+
+    setInvalid(value) {
+        this.valid = !value;
+        if (this.valid) {
+            this.element.classList.remove('error');
+        } else {
+            this.element.classList.add('error');
+        }
     }
 
     isValid() {
-        return this.validated;
-    }
+        return this.valid;
+    };
+
+    onInputEvent(functionOnInputEvent) {
+        this.functionOnInputEvent = functionOnInputEvent;
+    };
+
+    beforeValidation(functionBeforeValidation) {
+        this.functionBeforeValidation = functionBeforeValidation;
+    };
+
+    afterValidation(functionAfterValidation) {
+        this.functionAfterValidation = functionAfterValidation;
+    };
 }
 
 // Code from script tag on admin/users/userForm.html:46:2 called by file attribute on div on admin/users/userForm.html:117:6
 
     const NEW_GROUP_ID = 'newGroup';
-    let usernameBaseData, groupsBaseData, usernameInput, userSaveButton;
+    const NOT_CHECKED = 0;
+    const EXISTS_IN_SERVER = 1;
+    const OK = 2;
+
+    let usernameBaseData, groupsBaseData, usernameInput, userSaveButton, userNameInServer = NOT_CHECKED;
     const createGroupContainer = (groupName, visible, newGroupId) => {
         const groupContainer = document.createElement('DIV');
         if (newGroupId && newGroupId.length > 0) {
@@ -1635,8 +1693,24 @@ class EMailInput {
         return groupContainer;
     };
     const checkForChanges = () => {
+        const theDataIsValid = () => {
+            if (!usernameInput.isValid()) {
+                return false;
+            }
+            if (userNameInServer === NOT_CHECKED) {
+                return false;
+            }
+            if (userNameInServer === EXISTS_IN_SERVER) {
+                usernameInput.setInvalid(true);
+                return false;
+            }
+            return true;
+        }
         const theDataChanged = () => {
-            if (usernameInput.getElement.value !== usernameBaseData) {
+            if (!groupsBaseData) {
+                throw new Error('You must define a base data for groups');
+            }
+            if (usernameInput.getElement().value !== usernameBaseData) {
                 console.log(`The username in base data is ${usernameBaseData} but in DOM is ${usernameInput.getElement().value}.`);
                 return true;
             }
@@ -1655,16 +1729,66 @@ class EMailInput {
             }
             return false;
         };
-        changeButtons(theDataChanged());
+        changeButtons(theDataIsValid() && theDataChanged());
     };
     const changeButtons = dataChange => {
         console.log(`Data change: ${dataChange}`);
         userSaveButton.disabled = !dataChange;
     };
     const formInit = () => {
+        const showWaitingWeel = () => { document.getElementById('waitingImage').classList.remove('hideWaitingImage'); };
+        const hideWaitingWeel = () => { document.getElementById('waitingImage').classList.add('hideWaitingImage'); };
         usernameInput = new EMailInput('usernameInput');
-        usernameInput.getElement().addEventListener('keyup', () => {
+        usernameInput.getElement().addEventListener('input', () => {
+            showWaitingWeel();
+            userNameInServer = NOT_CHECKED;
             checkForChanges();
+        })
+        usernameInput.onInputEvent(() => {
+            showWaitingWeel();
+        });
+        usernameInput.beforeValidation(() => {
+            showWaitingWeel();
+        });
+        usernameInput.afterValidation(value => {
+            hideWaitingWeel();
+            console.log(`userForm.html::formInit::afterValidation::valid: ${usernameInput.isValid()}`);
+            checkForChanges();
+            if (usernameInput.isValid()) {
+                if (userNameInServer === NOT_CHECKED) {
+                    console.log(`userForm.html::formInit::afterValidation::fetch: /v1/users/${value}/exists`);
+                    if (value === undefined || value.length < 3) {
+                        usernameInput.setInvalid(false);
+                        return;
+                    }
+                    usernameInput.setInvalid(false);
+                    showWaitingWeel();
+                    fetch(`/v1/users/${value}/exists`)
+                        .then(response => {
+                            hideWaitingWeel();
+                            return response.json();
+                        })
+                        .then(response => {
+                            console.log(`userForm.html::formInit::afterValidation::response.data: `, response.data);
+                            if (response.data === undefined) {
+                                userNameInServer = OK;
+                                usernameInput.setInvalid(false);
+                                checkForChanges();
+                            } else {
+                                userNameInServer = EXISTS_IN_SERVER;
+                                usernameInput.setInvalid(true);
+                                Core.showErrorMessage('usernameAlreadyExists');
+                            }
+                        })
+                        .catch(error => {
+                            Core.showErrorMessage(error.message);
+                            Core.reportSystemError(error);
+                        });
+                }
+            } else {
+                usernameInput.setInvalid(true);
+                checkForChanges();
+            }
         });
     }
 
@@ -1715,7 +1839,6 @@ Core.setReportSystemErrorFunction(error => {
             <div class="headerIcon headerBurgerMenuActivator" id="headerBurgerMenuActivator"></div>
         </div>
     </div>
-    <div class="messages" id="messages"></div>
 </header>
     <div id="contentContainer">
         <div id="content">
@@ -1727,7 +1850,7 @@ Core.setReportSystemErrorFunction(error => {
         <div class="adminLabel" id="usernameLabel">
             <span id="s6"></span>
         </div>
-        <input autocomplete="off" class="textInput" id="usernameInput" spellcheck="false">
+        <input autocomplete="off" id="usernameInput" spellcheck="false">
         <div class="adminLabel" id="userGroupsLabel">
             <span id="s7"></span>
         </div>

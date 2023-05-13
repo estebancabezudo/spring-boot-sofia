@@ -4,10 +4,27 @@ class UserList {
     constructor() {
     }
     loadUserList() {
+        const loadList = () => {
+            fetch('/v1/users')
+                .then(response => {
+                    if (response.status === 200) {
+                        return response.json();
+                    }
+                    throw new Error(response.statusText);
+                })
+                .then(jsonResponse => {
+                    createList(jsonResponse.data);
+                })
+                .catch(error => {
+                    Core.showErrorMessage(error);
+                });
+        };
+
         const createList = data => {
-            const hasData = data => {
-                return data !== undefined && data !== null && data.length > 0;
-            };
+            const elementsToDelete = document.getElementsByClassName('dataCell');
+            while (elementsToDelete.length > 0) {
+                elementsToDelete[0].parentNode.removeChild(elementsToDelete[0]);
+            }
             data.list.forEach(element => {
                 const userElement = document.createElement('DIV');
                 userElement.className = 'cell dataCell';
@@ -50,8 +67,10 @@ class UserList {
                         fetch(`/v1/users/${element.id}`, { method: 'DELETE' })
                             .then(response => {
                                 if (response.status === 200) {
-                                    Core.showMessage('userDeleted');
-                                    location.reload();
+                                    loadList();
+                                    if (Core.isFunction(this.afterDeleteFunction)) {
+                                        this.afterDeleteFunction();
+                                    }
                                 } else {
                                     Core.showErrorMessage(Core.getText('responseErrorWhenDeleting', [response.status]));
                                 }
@@ -80,21 +99,11 @@ class UserList {
             onclick: `/admin/users/addUser.html`
         });
 
-        fetch('/v1/users')
-            .then(response => {
-                if (response.status === 200) {
-                    return response.json();
-                }
-                throw new Error(response.statusText);
-            })
-            .then(jsonResponse => {
-                createList(jsonResponse.data);
-            })
-            .catch(error => {
-                Core.showErrorMessage(error);
-            });
+        loadList();
     };
-
+    afterDelete(afterDeleteFunction) {
+        this.afterDeleteFunction = afterDeleteFunction;
+    }
 }
 
 
