@@ -47,7 +47,7 @@
 <script>
     const NEW_GROUP_ID = 'newGroup';
 
-    let groupsBaseData, usernameInput, baseUsername, userSaveButton;
+    let id, groupsBaseData, usernameInput, usernameBaseData, userSaveButton;
     const createGroupContainer = (groupName, visible, newGroupId) => {
         const groupContainer = document.createElement('DIV');
         if (newGroupId && newGroupId.length > 0) {
@@ -121,11 +121,11 @@
 
         return groupContainer;
     };
-    const setSaveButton = value => {
-        const theDataChange = () => {
+    const setSaveButton = valueToSet => {
+        const theDataChangeAndIsValid = () => {
+            console.log('userForm.html::setSaveButton::theDataChange');
             const inputValue = usernameInput.getElement().value;
-            console.log(baseUsername + '!==' + inputValue);
-            if (baseUsername !== inputValue) {
+            if (usernameBaseData !== inputValue && usernameInput.isValid()) {
                 return true;
             }
             if (!groupsBaseData) {
@@ -136,18 +136,23 @@
             for (const groupInput of groupsContainer.getElementsByClassName('textInput')) {
                 if (groupInput.value.trim().length > 2) {
                     groupDOMSize++;
+                    console.log('groupInput.value.trim(): ' + groupInput.value.trim());
+                    console.log('groupsBaseData.includes(groupInput.value.trim()): ' + groupsBaseData.includes(groupInput.value.trim()));
                     if (!groupsBaseData.includes(groupInput.value.trim())) {
                         return true;
                     }
                 }
             };
+            console.log('groupsBaseData.length' + groupsBaseData.length);
+            console.log('groupDOMSize' + groupDOMSize);
+            console.log('groupsBaseData.length !== groupDOMSize' + groupsBaseData.length !== groupDOMSize);
             if (groupsBaseData.length !== groupDOMSize) {
                 return true;
             }
             return false;
         };
-        console.log(theDataChange() + '&&' + usernameInput.isValid());
-        userSaveButton.disabled = value !== undefined ? !value : (!(theDataChange() && usernameInput.isValid()));
+        const tooShortUserName = usernameInput.getElement().value.length < 3;
+        userSaveButton.disabled = valueToSet !== undefined ? !valueToSet : (tooShortUserName || !(theDataChangeAndIsValid()));
     };
     const formInit = () => {
         Core.subscribeTo('core:showWait', () => {
@@ -158,13 +163,27 @@
             console.log(`userForm.html::formInit::hideWait`);
             document.getElementById('waitingImage').classList.add('hideWaitingImage');
         })
-        usernameInput = new EMailInput({
-            element: 'usernameInput',
-            url:
-                username => {
-                    return `/v1/users/usernames/${username}/info`;
-                },
-        });
+
+        let params = new URLSearchParams(window.location.search);
+        id = params.get('id');
+
+        if (id === undefined || id === null) {
+            usernameInput = new EMailInput({
+                element: 'usernameInput',
+                url:
+                    username => {
+                        return `/v1/users/usernames/${username}/info`;
+                    },
+            });
+        } else {
+            usernameInput = new EMailInput({
+                element: 'usernameInput',
+                url:
+                    username => {
+                        return `/v1/users/${id}/usernames/${username}/info`;
+                    },
+            });
+        }
         usernameInput.beforeValidation(() => {
             console.log(`userForm.html::formInit::beforeValidation::valid: ${usernameInput.isValid()}`);
             Core.publish('core:showWait');
@@ -175,7 +194,6 @@
             Core.publish('core:hideWait');
             setSaveButton();
         });
-        baseUsername = usernameInput.getElement().value;
         usernameInput.getElement().focus();
     }
 </script>

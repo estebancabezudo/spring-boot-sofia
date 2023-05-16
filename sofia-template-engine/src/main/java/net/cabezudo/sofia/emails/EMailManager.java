@@ -7,6 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Component
 public class EMailManager {
   private static final Logger log = LoggerFactory.getLogger(EMailManager.class);
@@ -24,15 +27,20 @@ public class EMailManager {
     EMail eMail = new EMail(address);
     String localPart = EMail.getLocalPart();
 
-    for (int j = 0; j < localPart.length(); j++) {
-      char c = localPart.charAt(j);
-      if (!Character.isLetterOrDigit(c) && c != '.' && c != '_') {
-        throw new EMailAddressValidationException("invalidEMailAddress");
-      }
+    if (localPart.length() == 0) {
+      throw new EMailAddressValidationException("invalidEMailAddress");
     }
 
     if (!eMail.hasArroba()) {
       throw new EMailAddressValidationException("arrobaMissing");
+    }
+
+    String regex = "^[\\w!#$%&amp;'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&amp;'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
+    Pattern pattern = Pattern.compile(regex);
+
+    Matcher matcher = pattern.matcher(address);
+    if (!matcher.matches()) {
+      throw new EMailAddressValidationException("invalidEMailAddress");
     }
 
     String domainName = eMail.getDomain();

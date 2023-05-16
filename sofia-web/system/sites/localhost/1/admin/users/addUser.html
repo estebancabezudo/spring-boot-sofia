@@ -1595,7 +1595,7 @@ class EMailInput extends Input {
 
     const NEW_GROUP_ID = 'newGroup';
 
-    let groupsBaseData, usernameInput, baseUsername, userSaveButton;
+    let id, groupsBaseData, usernameInput, baseUsername, userSaveButton;
     const createGroupContainer = (groupName, visible, newGroupId) => {
         const groupContainer = document.createElement('DIV');
         if (newGroupId && newGroupId.length > 0) {
@@ -1669,7 +1669,7 @@ class EMailInput extends Input {
 
         return groupContainer;
     };
-    const setSaveButton = value => {
+    const setSaveButton = valueToSet => {
         const theDataChange = () => {
             const inputValue = usernameInput.getElement().value;
             console.log(baseUsername + '!==' + inputValue);
@@ -1694,8 +1694,8 @@ class EMailInput extends Input {
             }
             return false;
         };
-        console.log(theDataChange() + '&&' + usernameInput.isValid());
-        userSaveButton.disabled = value !== undefined ? !value : (!(theDataChange() && usernameInput.isValid()));
+        const tooShortUserName = usernameInput.getElement().value.length < 3;
+        userSaveButton.disabled = valueToSet !== undefined ? !valueToSet : (tooShortUserName || !(theDataChange() && usernameInput.isValid()));
     };
     const formInit = () => {
         Core.subscribeTo('core:showWait', () => {
@@ -1706,13 +1706,27 @@ class EMailInput extends Input {
             console.log(`userForm.html::formInit::hideWait`);
             document.getElementById('waitingImage').classList.add('hideWaitingImage');
         })
-        usernameInput = new EMailInput({
-            element: 'usernameInput',
-            url:
-                username => {
-                    return `/v1/users/usernames/${username}/info`;
-                },
-        });
+
+        let params = new URLSearchParams(window.location.search);
+        id = params.get('id');
+
+        if (id === undefined || id === null) {
+            usernameInput = new EMailInput({
+                element: 'usernameInput',
+                url:
+                    username => {
+                        return `/v1/users/usernames/${username}/info`;
+                    },
+            });
+        } else {
+            usernameInput = new EMailInput({
+                element: 'usernameInput',
+                url:
+                    username => {
+                        return `/v1/users/${id}/usernames/${username}/info`;
+                    },
+            });
+        }
         usernameInput.beforeValidation(() => {
             console.log(`userForm.html::formInit::beforeValidation::valid: ${usernameInput.isValid()}`);
             Core.publish('core:showWait');

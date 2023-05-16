@@ -166,6 +166,38 @@ public class UsersController extends SofiaAuthorizedController {
     return ResponseEntity.ok(new SofiaRestResponse(SofiaRestResponse.ERROR, "usernameAlreadyExists"));
   }
 
+  @GetMapping("/v1/users/{id}/usernames/{username}/info")
+  public ResponseEntity<?> validateUsernameForEdit(@PathVariable Integer id, @PathVariable String username) {
+    log.debug("Run /v1/users/{id}/usernames/{username}/info for validate username");
+
+    Account account = super.getAccount();
+
+    ResponseEntity result;
+    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
+      return result;
+    }
+
+
+    SofiaUser user = userManager.get(id);
+    if (user == null) {
+      return ResponseEntity.notFound().build();
+    }
+
+    try {
+      eMailManager.info(username);
+    } catch (EMailAddressValidationException e) {
+      return ResponseEntity.ok(new SofiaRestResponse(SofiaRestResponse.ERROR, e.getMessage()));
+    }
+
+    SofiaUser userWithTheNewUsername;
+    userWithTheNewUsername = userManager.get(account, username);
+
+    if (userWithTheNewUsername == null || userWithTheNewUsername.getId() == id) {
+      return ResponseEntity.ok(new SofiaRestResponse(SofiaRestResponse.OK, "validUsername"));
+    }
+    return ResponseEntity.ok(new SofiaRestResponse(SofiaRestResponse.ERROR, "usernameAlreadyExists"));
+  }
+
   @GetMapping("/v1/users")
   public ResponseEntity<?> getUsers() throws IOException {
     log.debug("Get list of users");

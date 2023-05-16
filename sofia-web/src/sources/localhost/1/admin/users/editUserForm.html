@@ -5,19 +5,23 @@
         grid-column: 1;
     }
 
+    #waitingImageContainer {
+        grid-column: 4;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
     #userSaveButton {
         grid-column: 5;
     }
 </style>
 
 <script>
-    let id;
     const init = () => {
         formInit();
         createButtons();
 
-        let params = new URLSearchParams(window.location.search);
-        id = params.get('id');
         fetch(`/v1/users/${id}`)
             .then(response => {
                 return response.json();
@@ -59,6 +63,14 @@
         userDeleteButton.className = 'button redButton';
         userFormContainer.appendChild(userDeleteButton);
 
+        waitingImageContainer = document.createElement('div');
+        waitingImageContainer.id = 'waitingImageContainer';
+        userFormContainer.appendChild(waitingImageContainer);
+        waitingImage = document.createElement('div');
+        waitingImage.id = 'waitingImage';
+        waitingImage.className = 'hideWaitingImage';
+        waitingImageContainer.appendChild(waitingImage);
+
         userSaveButton = document.createElement('button');
         userSaveButton.id = 'userSaveButton';
         userSaveButton.className = 'button greenButton';
@@ -95,8 +107,7 @@
                     return response.json();
                 })
                 .then(jsonResponse => {
-                    showData(jsonResponse.data);
-                    createBaseData(jsonResponse.data);
+                    window.location.replace('/admin/users/list.html');
                 })
                 .catch(error => {
                     throw error;

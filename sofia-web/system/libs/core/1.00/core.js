@@ -155,7 +155,6 @@ const Core = {
     },
 
     isArray: v => {
-        console.log('Core::isArray: ', Object.prototype.toString.call(v), v);
         return Object.prototype.toString.call(v) === '[object Array]';
     },
 
