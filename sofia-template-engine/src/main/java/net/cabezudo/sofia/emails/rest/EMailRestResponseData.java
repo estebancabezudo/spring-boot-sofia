@@ -1,4 +1,4 @@
-package net.cabezudo.sofia.hostnames.rest;
+package net.cabezudo.sofia.emails.rest;
 
 public class EMailRestResponseData {
   private final String address;

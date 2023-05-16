@@ -13,7 +13,7 @@
 
 /* CSS import from /admin/users/editUserForm.html called by style tag on admin/users/editUserForm.html:3:2 */
 
-/* CSS import from /admin/users/userForm.html called by style tag on admin/users/userForm.html:2:2 */
+/* CSS import from /admin/users/userForm.html called by style tag on admin/users/userForm.html:3:2 */
 
 /* CSS import from /commons.css called by sofia */
 
@@ -127,7 +127,7 @@
         grid-column: 5;
     }
 
-/* CSS code from /admin/users/userForm.html called by style tag on admin/users/userForm.html:2:2 */
+/* CSS code from /admin/users/userForm.html called by style tag on admin/users/userForm.html:3:2 */
 
     #userFormContainer {
         display: grid;
@@ -1372,7 +1372,7 @@ class TwoLanguageFlag {
             }
         });
         Core.subscribeTo('core:showErrorMessage', data => {
-            console.log(`header.html::initHeader::data: `, data);
+            console.log(`header.html::initHeader::showErrorMessage::data: `, data);
             const hideMessage = () => {
                 element.classList.remove('errorMessage');
             };
@@ -1382,7 +1382,7 @@ class TwoLanguageFlag {
             setTimeout(hideMessage, 3000);
         });
         Core.subscribeTo('core:showMessage', data => {
-            console.log(data);
+            console.log(`header.html::initHeader::showMessage::data: `, data);
             const hideMessage = () => {
                 element.classList.remove('message');
             };
@@ -1495,16 +1495,19 @@ class TwoLanguageFlag {
     };
     window.addEventListener('load', init, false);
 
-// Code from library inputs:email:1.00 on admin/users/userForm.html called by file attribute on div on admin/users/userForm.html:117:6
-class EMailInput {
-    constructor(value) {
+// Code from library inputs:input:1.00 on admin/users/userForm.html called by file attribute on div on admin/users/userForm.html:117:6
+class Input {
+    constructor(options) {
         this.valid = false;
-        const getElement = value => {
-            if (value === undefined || value == null) {
+        this.validator = options.validator;
+        this.url = options.url;
+        this.invalidCharacterMessageKey = options.invalidCharacterMessageKey;
+        const getElement = element => {
+            if (element === undefined || element == null) {
                 throw new Error('You MUST specify an id or element.');
             }
-            if (Core.isString(value)) {
-                const id = value;
+            if (Core.isString(element)) {
+                const id = element;
                 console.log(`Using the id ${id}`);
                 this.element = document.getElementById(id);
                 if (this.element === null || this.element === undefined) {
@@ -1512,9 +1515,9 @@ class EMailInput {
                 }
                 return;
             }
-            if (Core.isHTMLDivElement(value)) {
-                console.log(`Linking the element `, value);
-                this.element = value;
+            if (Core.isHTMLDivElement(element)) {
+                console.log(`Using the element `, element);
+                this.element = element;
                 return;
             }
         }
@@ -1534,7 +1537,7 @@ class EMailInput {
             }
         }
 
-        getElement(value);
+        getElement(options.element);
         this.element.addEventListener('input', () => {
             clearTimeout(this.timmerHandler);
             runFunctionOnInputEvent();
@@ -1545,16 +1548,15 @@ class EMailInput {
                     runFunctionAfterValidation();
                     return;
                 }
-                const validateEmailRegex = /^[A-Za-z0-9!#$%&'*+/=?^_`@{|}~\.-]+$/;
-                if (!value.match(validateEmailRegex)) {
-                    console.log(`${value} doesn't match the email regex validation.`);
+                if (!this.validator(value)) {
+                    console.log(`${value} doesn't match the regex validation.`);
                     this.setInvalid(true);
-                    Core.showErrorMessage('emailInvalidCharacterOnAddress');
+                    Core.showErrorMessage(this.invalidCharacterMessageKey);
                     runFunctionAfterValidation();
                     return;
                 }
                 runFunctionBeforeValidation();
-                fetch(`/v1/emails/${value}/info`)
+                fetch(this.url(value))
                     .then(response => {
                         return response.json();
                     })
@@ -1611,7 +1613,25 @@ class EMailInput {
     };
 }
 
-// Code from script tag on admin/users/userForm.html:46:2 called by file attribute on div on admin/users/userForm.html:117:6
+// Code from library inputs:email:1.00 on admin/users/userForm.html called by file attribute on div on admin/users/userForm.html:117:6
+class EMailInput extends Input {
+    constructor(value) {
+        super({
+            element: value,
+            validator: () => {
+                const regex = /^[A-Za-z0-9!#$%&'*+/=?^_`@{|}~\.-]+$/;
+                return value.match(regex);
+            },
+            url: value => {
+                console.log(`EMailInput::constructor::value: ${value}`);
+                return `/v1/emails/${value}/info`;
+            },
+            invalidCharacterMessageKey: 'emailInvalidCharacterOnAddress'
+        });
+    };
+}
+
+// Code from script tag on admin/users/userForm.html:47:2 called by file attribute on div on admin/users/userForm.html:117:6
 
     const NEW_GROUP_ID = 'newGroup';
     const NOT_CHECKED = 0;
@@ -1790,6 +1810,7 @@ class EMailInput {
                 checkForChanges();
             }
         });
+        usernameInput.getElement().focus();
     }
 
 // Code from script tag on footer.html:138:2 called by file attribute on footer on footer.html:18:6

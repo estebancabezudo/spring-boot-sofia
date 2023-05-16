@@ -156,8 +156,6 @@ public class UserManager {
         throw e;
       }
     }
-
-
     eMailRepository.delete(eMailIdToDelete);
   }
 }

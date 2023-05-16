@@ -1,4 +1,4 @@
-package net.cabezudo.sofia.hostnames.rest;
+package net.cabezudo.sofia.emails.rest;
 
 import net.cabezudo.json.exceptions.DuplicateKeyException;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;

@@ -3,6 +3,8 @@ package net.cabezudo.sofia.users.rest;
 import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.core.rest.ListRestResponse;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
+import net.cabezudo.sofia.emails.EMailAddressValidationException;
+import net.cabezudo.sofia.emails.EMailManager;
 import net.cabezudo.sofia.math.Numbers;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.sites.Site;
@@ -37,6 +39,8 @@ public class UsersController extends SofiaAuthorizedController {
   private @Autowired BusinessToRestUserListMapper businessToRestUserListMapper;
   private @Autowired BusinessToRestUserMapper businessToRestUserMapper;
   private @Autowired UserManager userManager;
+
+  private @Autowired EMailManager eMailManager;
 
   public UsersController(HttpServletRequest request) {
     super(request);
@@ -135,6 +139,33 @@ public class UsersController extends SofiaAuthorizedController {
     return ResponseEntity.ok(userRestResponse);
   }
 
+  @GetMapping("/v1/users/usernames/{username}/info")
+  public ResponseEntity<?> validateUsername(@PathVariable String username) {
+    log.debug("Run /v1/users/usernames/{value}/info for validate username");
+
+    Site site = super.getSite();
+    Account account = super.getAccount();
+
+    ResponseEntity result;
+    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
+      return result;
+    }
+
+    try {
+      eMailManager.info(username);
+    } catch (EMailAddressValidationException e) {
+      return ResponseEntity.ok(new SofiaRestResponse(SofiaRestResponse.ERROR, e.getMessage()));
+    }
+
+    SofiaUser user;
+    user = userManager.get(account, username);
+
+    if (user == null) {
+      return ResponseEntity.ok(new SofiaRestResponse(SofiaRestResponse.OK, "validUsername"));
+    }
+    return ResponseEntity.ok(new SofiaRestResponse(SofiaRestResponse.ERROR, "usernameAlreadyExists"));
+  }
+
   @GetMapping("/v1/users")
   public ResponseEntity<?> getUsers() throws IOException {
     log.debug("Get list of users");
@@ -214,4 +245,3 @@ public class UsersController extends SofiaAuthorizedController {
     return ResponseEntity.ok(userRestResponse);
   }
 }
-

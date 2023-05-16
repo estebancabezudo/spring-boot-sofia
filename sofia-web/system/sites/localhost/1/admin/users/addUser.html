@@ -13,7 +13,7 @@
 
 /* CSS import from /admin/users/addUserForm.html called by style tag on admin/users/addUserForm.html:3:2 */
 
-/* CSS import from /admin/users/userForm.html called by style tag on admin/users/userForm.html:2:2 */
+/* CSS import from /admin/users/userForm.html called by style tag on admin/users/userForm.html:3:2 */
 
 /* CSS import from /commons.css called by sofia */
 
@@ -130,7 +130,7 @@
         grid-column: 5;
     }
 
-/* CSS code from /admin/users/userForm.html called by style tag on admin/users/userForm.html:2:2 */
+/* CSS code from /admin/users/userForm.html called by style tag on admin/users/userForm.html:3:2 */
 
     #userFormContainer {
         display: grid;
@@ -1416,7 +1416,6 @@ class TwoLanguageFlag {
         waitingImage.className = 'hideWaitingImage';
         waitingImageContainer.appendChild(waitingImage);
 
-
         userSaveButton = document.createElement('button');
         userSaveButton.id = 'userSaveButton';
         userSaveButton.className = 'button greenButton';
@@ -1466,16 +1465,19 @@ class TwoLanguageFlag {
 
     window.addEventListener('load', init, false);
 
-// Code from library inputs:email:1.00 on admin/users/userForm.html called by file attribute on div on admin/users/userForm.html:88:6
-class EMailInput {
-    constructor(value) {
+// Code from library inputs:input:1.00 on admin/users/userForm.html called by file attribute on div on admin/users/userForm.html:87:6
+class Input {
+    constructor(options) {
         this.valid = false;
-        const getElement = value => {
-            if (value === undefined || value == null) {
+        this.validator = options.validator;
+        this.url = options.url;
+        this.invalidCharacterMessageKey = options.invalidCharacterMessageKey;
+        const getElement = element => {
+            if (element === undefined || element == null) {
                 throw new Error('You MUST specify an id or element.');
             }
-            if (Core.isString(value)) {
-                const id = value;
+            if (Core.isString(element)) {
+                const id = element;
                 console.log(`Using the id ${id}`);
                 this.element = document.getElementById(id);
                 if (this.element === null || this.element === undefined) {
@@ -1483,15 +1485,10 @@ class EMailInput {
                 }
                 return;
             }
-            if (Core.isHTMLDivElement(value)) {
-                console.log(`Linking the element `, value);
-                this.element = value;
+            if (Core.isHTMLDivElement(element)) {
+                console.log(`Using the element `, element);
+                this.element = element;
                 return;
-            }
-        }
-        const runFunctionOnInputEvent = value => {
-            if (Core.isFunction(this.functionOnInputEvent)) {
-                this.functionOnInputEvent(value);
             }
         }
         const runFunctionBeforeValidation = value => {
@@ -1505,44 +1502,45 @@ class EMailInput {
             }
         }
 
-        getElement(value);
+        getElement(options.element);
+        this.lastValue = this.element.value;
         this.element.addEventListener('input', () => {
+            runFunctionBeforeValidation();
+            Core.publish('core:showWait');
+            const value = this.element.value;
+            if (this.lastValue == value && value.length < 3) {
+                return;
+            }
+            this.lastValue = value;
             clearTimeout(this.timmerHandler);
-            runFunctionOnInputEvent();
             this.timmerHandler = setTimeout(() => {
-                const value = this.element.value;
                 if (value.length < 3) {
                     this.setInvalid(false);
                     runFunctionAfterValidation();
+                    Core.publish('core:hideWait');
                     return;
                 }
-                const validateEmailRegex = /^[A-Za-z0-9!#$%&'*+/=?^_`@{|}~\.-]+$/;
-                if (!value.match(validateEmailRegex)) {
-                    console.log(`${value} doesn't match the email regex validation.`);
+                if (!this.validator(value)) {
+                    console.log(`${value} doesn't match the regex validation.`);
                     this.setInvalid(true);
-                    Core.showErrorMessage('emailInvalidCharacterOnAddress');
+                    Core.showErrorMessage(this.invalidCharacterMessageKey);
                     runFunctionAfterValidation();
+                    Core.publish('core:hideWait');
                     return;
                 }
-                runFunctionBeforeValidation();
-                fetch(`/v1/emails/${value}/info`)
+                fetch(this.url(value))
                     .then(response => {
                         return response.json();
                     })
                     .then(jsonResponse => {
-                        if (value === jsonResponse.data.address) {
-                            console.log(jsonResponse);
-                            if (jsonResponse.status == 1) {
-                                this.setInvalid(false);
-                            } else {
-                                this.setInvalid(true);
-                                Core.showErrorMessage(jsonResponse.message);
-                            }
-                            runFunctionAfterValidation(value);
+                        Core.publish('core:hideWait');
+                        if (jsonResponse.status == 1) {
+                            this.setInvalid(false);
                         } else {
-                            console.log('Ignore response');
+                            this.setInvalid(true);
+                            Core.showErrorMessage(jsonResponse.message);
                         }
-
+                        runFunctionAfterValidation(value);
                     })
                     .catch(error => {
                         Core.showErrorMessage(error.message);
@@ -1569,10 +1567,6 @@ class EMailInput {
         return this.valid;
     };
 
-    onInputEvent(functionOnInputEvent) {
-        this.functionOnInputEvent = functionOnInputEvent;
-    };
-
     beforeValidation(functionBeforeValidation) {
         this.functionBeforeValidation = functionBeforeValidation;
     };
@@ -1582,14 +1576,26 @@ class EMailInput {
     };
 }
 
-// Code from script tag on admin/users/userForm.html:46:2 called by file attribute on div on admin/users/userForm.html:88:6
+// Code from library inputs:email:1.00 on admin/users/userForm.html called by file attribute on div on admin/users/userForm.html:87:6
+class EMailInput extends Input {
+    constructor(options) {
+        super({
+            element: options.element,
+            validator: value => {
+                const regex = /^[A-Za-z0-9!#$%&'*+/=?^_`@{|}~\.-]+$/;
+                return value.match(regex);
+            },
+            url: options.url,
+            invalidCharacterMessageKey: 'emailInvalidCharacterOnAddress'
+        });
+    };
+}
+
+// Code from script tag on admin/users/userForm.html:47:2 called by file attribute on div on admin/users/userForm.html:87:6
 
     const NEW_GROUP_ID = 'newGroup';
-    const NOT_CHECKED = 0;
-    const EXISTS_IN_SERVER = 1;
-    const OK = 2;
 
-    let usernameBaseData, groupsBaseData, usernameInput, userSaveButton, userNameInServer = NOT_CHECKED;
+    let groupsBaseData, usernameInput, baseUsername, userSaveButton;
     const createGroupContainer = (groupName, visible, newGroupId) => {
         const groupContainer = document.createElement('DIV');
         if (newGroupId && newGroupId.length > 0) {
@@ -1634,7 +1640,7 @@ class EMailInput {
 
         deleteGropIconContainer.addEventListener('click', () => {
             deleteGropIconContainer.parentElement.remove();
-            checkForChanges();
+            setSaveButton();
         })
         if (!visible) {
             deleteGropIcon.style.display = 'none';
@@ -1651,39 +1657,27 @@ class EMailInput {
             } else {
                 deleteGropIcon.style.display = 'none';
             }
-            checkForChanges();
+            setSaveButton();
         });
 
         groupNameInput.addEventListener('focusout', () => {
             if (groupNameInput.value.length < 3 && groupNameInput.parentElement.id !== NEW_GROUP_ID) {
                 groupNameInput.parentElement.remove();
             }
-            checkForChanges();
+            setSaveButton();
         });
 
         return groupContainer;
     };
-    const checkForChanges = () => {
-        const theDataIsValid = () => {
-            if (!usernameInput.isValid()) {
-                return false;
+    const setSaveButton = value => {
+        const theDataChange = () => {
+            const inputValue = usernameInput.getElement().value;
+            console.log(baseUsername + '!==' + inputValue);
+            if (baseUsername !== inputValue) {
+                return true;
             }
-            if (userNameInServer === NOT_CHECKED) {
-                return false;
-            }
-            if (userNameInServer === EXISTS_IN_SERVER) {
-                usernameInput.setInvalid(true);
-                return false;
-            }
-            return true;
-        }
-        const theDataChanged = () => {
             if (!groupsBaseData) {
                 throw new Error('You must define a base data for groups');
-            }
-            if (usernameInput.getElement().value !== usernameBaseData) {
-                console.log(`The username in base data is ${usernameBaseData} but in DOM is ${usernameInput.getElement().value}.`);
-                return true;
             }
             // I don't check the size of the groups before because the DOM groups can have +1 or +2 groups more than base data and I also need the bucle to check that.
             let groupDOMSize = 0;
@@ -1700,67 +1694,36 @@ class EMailInput {
             }
             return false;
         };
-        changeButtons(theDataIsValid() && theDataChanged());
-    };
-    const changeButtons = dataChange => {
-        console.log(`Data change: ${dataChange}`);
-        userSaveButton.disabled = !dataChange;
+        console.log(theDataChange() + '&&' + usernameInput.isValid());
+        userSaveButton.disabled = value !== undefined ? !value : (!(theDataChange() && usernameInput.isValid()));
     };
     const formInit = () => {
-        const showWaitingWeel = () => { document.getElementById('waitingImage').classList.remove('hideWaitingImage'); };
-        const hideWaitingWeel = () => { document.getElementById('waitingImage').classList.add('hideWaitingImage'); };
-        usernameInput = new EMailInput('usernameInput');
-        usernameInput.getElement().addEventListener('input', () => {
-            showWaitingWeel();
-            userNameInServer = NOT_CHECKED;
-            checkForChanges();
+        Core.subscribeTo('core:showWait', () => {
+            console.log(`userForm.html::formInit::showWait`);
+            document.getElementById('waitingImage').classList.remove('hideWaitingImage');
         })
-        usernameInput.onInputEvent(() => {
-            showWaitingWeel();
+        Core.subscribeTo('core:hideWait', () => {
+            console.log(`userForm.html::formInit::hideWait`);
+            document.getElementById('waitingImage').classList.add('hideWaitingImage');
+        })
+        usernameInput = new EMailInput({
+            element: 'usernameInput',
+            url:
+                username => {
+                    return `/v1/users/usernames/${username}/info`;
+                },
         });
         usernameInput.beforeValidation(() => {
-            showWaitingWeel();
-        });
+            console.log(`userForm.html::formInit::beforeValidation::valid: ${usernameInput.isValid()}`);
+            Core.publish('core:showWait');
+            setSaveButton(false);
+        })
         usernameInput.afterValidation(value => {
-            hideWaitingWeel();
             console.log(`userForm.html::formInit::afterValidation::valid: ${usernameInput.isValid()}`);
-            checkForChanges();
-            if (usernameInput.isValid()) {
-                if (userNameInServer === NOT_CHECKED) {
-                    console.log(`userForm.html::formInit::afterValidation::fetch: /v1/users/${value}/exists`);
-                    if (value === undefined || value.length < 3) {
-                        usernameInput.setInvalid(false);
-                        return;
-                    }
-                    usernameInput.setInvalid(false);
-                    showWaitingWeel();
-                    fetch(`/v1/users/${value}/exists`)
-                        .then(response => {
-                            hideWaitingWeel();
-                            return response.json();
-                        })
-                        .then(response => {
-                            console.log(`userForm.html::formInit::afterValidation::response.data: `, response.data);
-                            if (response.data === undefined) {
-                                userNameInServer = OK;
-                                usernameInput.setInvalid(false);
-                                checkForChanges();
-                            } else {
-                                userNameInServer = EXISTS_IN_SERVER;
-                                usernameInput.setInvalid(true);
-                                Core.showErrorMessage('usernameAlreadyExists');
-                            }
-                        })
-                        .catch(error => {
-                            Core.showErrorMessage(error.message);
-                            Core.reportSystemError(error);
-                        });
-                }
-            } else {
-                usernameInput.setInvalid(true);
-                checkForChanges();
-            }
+            Core.publish('core:hideWait');
+            setSaveButton();
         });
+        baseUsername = usernameInput.getElement().value;
         usernameInput.getElement().focus();
     }
 
