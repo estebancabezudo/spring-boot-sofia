@@ -1,4 +1,4 @@
-package net.cabezudo.sofia.users;
+package net.cabezudo.sofia.security;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 public class SofiaAuthenticationProvider implements AuthenticationProvider {
 
   @Resource
-  UserDetailsService userDetailsService;
+  CustomDetailsService customDetailsService;
   private PasswordEncoder passwordEncoder;
 
   @Override
@@ -27,7 +27,7 @@ public class SofiaAuthenticationProvider implements AuthenticationProvider {
     // get user details using Spring security user details service
     UserDetails user;
     try {
-      user = userDetailsService.loadUserByUsername(username);
+      user = customDetailsService.loadUserByUsername(username);
     } catch (UsernameNotFoundException exception) {
       throw new BadCredentialsException("Invalid login");
     }
@@ -47,7 +47,6 @@ public class SofiaAuthenticationProvider implements AuthenticationProvider {
   public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
     Assert.notNull(passwordEncoder, "passwordEncoder cannot be null");
     this.passwordEncoder = passwordEncoder;
-//    this.userNotFoundEncodedPassword = null;
   }
 
   private Authentication createSuccessfulAuthentication(final Authentication authentication, final UserDetails user) {

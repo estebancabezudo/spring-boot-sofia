@@ -1,6 +1,6 @@
 package net.cabezudo.sofia.users;
 
-import net.cabezudo.sofia.sites.Site;
+import net.cabezudo.sofia.accounts.Account;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -8,37 +8,37 @@ import java.util.Collection;
 
 public class SofiaUser implements UserDetails {
   private final int id;
-  private final int siteId;
   private final String username;
   private final String password;
   private final Groups groups;
   private final boolean enabled;
-  private Site site;
+  private int accountId;
+  private Account account;
 
 
-  public SofiaUser(int id, Site site, String username, String password, Groups groups, boolean enabled) {
+  public SofiaUser(int id, Account account, String username, String password, Groups groups, boolean enabled) {
     this.id = id;
-    this.siteId = site.getId();
-    this.site = site;
+    this.accountId = account.id();
+    this.account = account;
     this.username = username;
     this.password = password;
     this.groups = groups;
     this.enabled = enabled;
   }
 
-  public SofiaUser(int id, Site site, String username, String password, Collection<GrantedAuthority> authorities, boolean enabled) {
+  public SofiaUser(int id, Account account, String username, String password, Collection<GrantedAuthority> authorities, boolean enabled) {
     this.id = id;
-    this.siteId = site.getId();
-    this.site = site;
+    this.accountId = account.id();
+    this.account = account;
     this.username = username;
     this.password = password;
     this.groups = new Groups(authorities);
     this.enabled = enabled;
   }
 
-  public SofiaUser(int id, int siteId, String username, String password, Groups groups, boolean enabled) {
+  public SofiaUser(int id, int accountId, String username, String password, Groups groups, boolean enabled) {
     this.id = id;
-    this.siteId = siteId;
+    this.accountId = accountId;
     this.username = username;
     this.password = password;
     this.groups = groups;
@@ -92,7 +92,12 @@ public class SofiaUser implements UserDetails {
     return groups;
   }
 
-  public Site getSite() {
-    return site;
+  public Account getAccount() {
+    return account;
+  }
+
+  public void setAccount(Account account) {
+    this.account = account;
+    this.accountId = account.id();
   }
 }

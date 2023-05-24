@@ -645,7 +645,6 @@ const Core = {
     },
 
     isArray: v => {
-        console.log('Core::isArray: ', Object.prototype.toString.call(v), v);
         return Object.prototype.toString.call(v) === '[object Array]';
     },
 
@@ -1229,7 +1228,7 @@ class TwoLanguageFlag {
             }
         });
         Core.subscribeTo('core:showErrorMessage', data => {
-            console.log(`header.html::initHeader::data: `, data);
+            console.log(`header.html::initHeader::showErrorMessage::data: `, data);
             const hideMessage = () => {
                 element.classList.remove('errorMessage');
             };
@@ -1239,7 +1238,7 @@ class TwoLanguageFlag {
             setTimeout(hideMessage, 3000);
         });
         Core.subscribeTo('core:showMessage', data => {
-            console.log(data);
+            console.log(`header.html::initHeader::showMessage::data: `, data);
             const hideMessage = () => {
                 element.classList.remove('message');
             };
@@ -1264,7 +1263,7 @@ class TwoLanguageFlag {
 
     window.addEventListener('load', initFooter);
 
-// Code from :commons.js: called by system 
+// Code from :/home/esteban/Documents/trabajo/sofia/spring-boot-sofia/sofia-web/src/sources/localhost/1:commons.js: called by system 
 Core.setReportSystemErrorFunction(error => {
     Core.showErrorMessage(error.message);
     throw error;

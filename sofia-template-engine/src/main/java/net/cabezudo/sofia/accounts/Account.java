@@ -22,4 +22,12 @@ public record Account(Integer id, int siteId) implements Comparable<Account> {
   public int compareTo(@NotNull Account a) {
     return id.compareTo(a.id);
   }
+
+  @Override
+  public String toString() {
+    return "Account{" +
+        "id=" + id +
+        ", siteId=" + siteId +
+        '}';
+  }
 }

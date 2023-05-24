@@ -1,6 +1,5 @@
 package net.cabezudo.sofia.core;
 
-import net.cabezudo.sofia.core.modules.ModuleManager;
 import net.cabezudo.sofia.creator.ContentManager;
 import net.cabezudo.sofia.creator.IdStorage;
 import net.cabezudo.sofia.creator.SiteCreationException;
@@ -41,7 +40,6 @@ public class StaticContentCreatorFilter implements Filter {
 
   TemplateVariables templateVariables;
   private @Autowired IdStorage idStorage;
-  private @Autowired ModuleManager moduleManager;
   private @Autowired SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
   private @Autowired ContentManager contentManager;
   private @Autowired SiteManager siteManager;
@@ -83,7 +81,7 @@ public class StaticContentCreatorFilter implements Filter {
           if (requestURI.endsWith(".html")) {
             log.debug("Create file using " + targetPath);
             templateVariables = new TemplateVariables();
-            SofiaFile sofiaFile = new SofiaFile(request, sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+            SofiaFile sofiaFile = new SofiaFile(request, sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
             sofiaFile.loadRootFile();
             sofiaFile.save();
           } else {

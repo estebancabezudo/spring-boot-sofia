@@ -8,6 +8,6 @@ public class BusinessToRestUserMapper {
 
   public RestUser map(SofiaUser u) {
     BusinessToRestGroupsMapper businessToRestGroupsMapper = new BusinessToRestGroupsMapper();
-    return new RestUser(u.getId(), u.getSite(), u.getUsername(), businessToRestGroupsMapper.map(u.getGroups()), u.isEnabled());
+    return new RestUser(u.getId(), u.getAccount(), u.getUsername(), businessToRestGroupsMapper.map(u.getGroups()), u.isEnabled());
   }
 }

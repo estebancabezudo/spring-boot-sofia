@@ -1,6 +1,5 @@
 package net.cabezudo.sofia.web.client;
 
-import net.cabezudo.sofia.core.modules.ModuleManager;
 import net.cabezudo.sofia.users.persistence.UserRepository;
 import net.cabezudo.sofia.web.client.mappers.BusinessToEntityWebClientMapper;
 import net.cabezudo.sofia.web.client.mappers.EntityToBusinessWebClientMapper;
@@ -22,7 +21,6 @@ import javax.transaction.Transactional;
 public class WebClientManager {
   private static final Logger log = LoggerFactory.getLogger(WebClientManager.class);
 
-  private @Autowired ModuleManager moduleManager;
   private @Resource UserRepository userRepository;
   private @Resource WebClientRepository webClientRepository;
   private @Autowired HttpServletRequest request;

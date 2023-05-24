@@ -1,6 +1,10 @@
-package net.cabezudo.sofia.users;
+package net.cabezudo.sofia.security;
 
-import net.cabezudo.sofia.sites.Site;
+import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.accounts.mappers.EntityToBusinessAccountMapper;
+import net.cabezudo.sofia.accounts.persistence.AccountEntity;
+import net.cabezudo.sofia.accounts.persistence.AccountRepository;
+import net.cabezudo.sofia.users.SofiaUser;
 import net.cabezudo.sofia.users.mappers.EntityToBusinessUserMapper;
 import net.cabezudo.sofia.users.persistence.GroupEntity;
 import net.cabezudo.sofia.users.persistence.GroupsEntity;
@@ -9,7 +13,9 @@ import net.cabezudo.sofia.users.persistence.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,24 +24,41 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Service("userDetailsService")
+@Service
 @Transactional
-public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
+public class CustomDetailsService implements UserDetailsService {
 
-  @Resource
-  private UserRepository userRepository;
+  private @Resource AccountRepository accountRepository;
+  private @Resource UserRepository userRepository;
   private @Autowired HttpServletRequest request;
   private @Autowired EntityToBusinessUserMapper entityToBusinessUserMapper;
 
+  private @Autowired OAuth2AuthorizedClientService authorizedClientService;
+  private @Autowired EntityToBusinessAccountMapper entityToBusinessAccountMapper;
+
   @Override
   public SofiaUser loadUserByUsername(String email) throws UsernameNotFoundException {
-    Site site = (Site) request.getSession().getAttribute("site");
-    final UserEntity userEntity = userRepository.findByEmail(site.getId(), email);
+
+    authorizedClientService.loadAuthorizedClient("google", email);
+
+    Account account = (Account) request.getSession().getAttribute("account");
+    int accountId;
+    Account accountToSet;
+    if (account == null) {
+      AccountEntity accountEntity = accountRepository.getAccountFor(email);
+      accountId = accountEntity.id();
+      accountToSet = entityToBusinessAccountMapper.map(accountEntity);
+    } else {
+      accountId = account.id();
+      accountToSet = account;
+    }
+    final UserEntity userEntity = userRepository.findByEmail(accountId, email);
     if (userEntity == null) {
       throw new UsernameNotFoundException(email);
     }
 
     SofiaUser sofiaUser = entityToBusinessUserMapper.map(userEntity);
+    sofiaUser.setAccount(accountToSet);
     return sofiaUser;
   }
 

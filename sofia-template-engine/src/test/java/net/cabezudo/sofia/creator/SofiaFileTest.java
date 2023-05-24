@@ -4,7 +4,6 @@ import net.cabezudo.sofia.config.ConfigurationException;
 import net.cabezudo.sofia.config.H2TestDataSourceConfig;
 import net.cabezudo.sofia.config.SofiaEnvironment;
 import net.cabezudo.sofia.core.SofiaTemplateEngineEnvironment;
-import net.cabezudo.sofia.core.modules.ModuleManager;
 import net.cabezudo.sofia.sites.HostNotFoundException;
 import net.cabezudo.sofia.sites.PathManager;
 import net.cabezudo.sofia.sites.Site;
@@ -30,7 +29,7 @@ import java.io.IOException;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
-    SofiaTemplateEngineEnvironment.class, SofiaEnvironment.class, SiteManager.class, SiteRepository.class, ModuleManager.class, PathManager.class,
+    SofiaTemplateEngineEnvironment.class, SofiaEnvironment.class, SiteManager.class, SiteRepository.class, PathManager.class,
     TemplateVariables.class, H2TestDataSourceConfig.class
 })
 @ActiveProfiles("test")
@@ -42,7 +41,6 @@ public class SofiaFileTest {
   private @Autowired SiteManager siteManager;
   private @Autowired PathManager pathManager;
   private @Autowired TemplateVariables templateVariables;
-  private @Autowired ModuleManager moduleManager;
 
   @Test
   public void testSofiaFile() throws ConfigurationException, SiteCreationException, IOException, SiteNotFoundException, HostNotFoundException {
@@ -51,7 +49,7 @@ public class SofiaFileTest {
     String name = "example.com";
 
     Site site = new Site(1, name);
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "/index.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "/index.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     sofiaFile.loadRootFile();
     sofiaFile.save();
@@ -106,7 +104,7 @@ public class SofiaFileTest {
     String name = "example.com";
 
     Site site = new Site(1, name);
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "/documentElementInFile.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "/documentElementInFile.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
     sofiaFile.loadRootFile();
     sofiaFile.save();
 
@@ -132,7 +130,7 @@ public class SofiaFileTest {
     String name = "example.com";
 
     Site site = new Site(1, name);
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "/sourceAlreadyAddedException.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "/sourceAlreadyAddedException.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     FileNotFoundException fileNotFoundException = Assertions.assertThrows(FileNotFoundException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(fileNotFoundException);
@@ -147,7 +145,7 @@ public class SofiaFileTest {
 
     String name = "example.com";
     Site site = new Site(1, name);
-    SofiaFile sofiaFile = new SofiaFile(site, "2", "/commonsCSSFileNotFound.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "2", "/commonsCSSFileNotFound.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
     sofiaFile.loadRootFile();
   }
 
@@ -159,7 +157,7 @@ public class SofiaFileTest {
 
     String name = "example.com";
     Site site = new Site(1, name);
-    SofiaFile sofiaFile = new SofiaFile(site, "4", "/jsonParseExceptionInCommonsConfigurationFile.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "4", "/jsonParseExceptionInCommonsConfigurationFile.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     SiteCreationException siteCreationException = Assertions.assertThrows(SiteCreationException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(siteCreationException);
@@ -181,7 +179,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    SofiaFile sofiaFile = new SofiaFile(site, "4", "/jsonParseExceptionInTextsFile.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "4", "/jsonParseExceptionInTextsFile.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     SiteCreationException siteCreationException = Assertions.assertThrows(SiteCreationException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(siteCreationException);
@@ -196,7 +194,7 @@ public class SofiaFileTest {
 
     String name = "example.com";
     Site site = new Site(1, name);
-    SofiaFile sofiaFile = new SofiaFile(site, "2", "/testUndefinedLiteralException.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "2", "/testUndefinedLiteralException.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     SiteCreationException siteCreationException = Assertions.assertThrows(SiteCreationException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(siteCreationException);
@@ -212,7 +210,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "/invalidHTML.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "/invalidHTML.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     SiteCreationException siteCreationException = Assertions.assertThrows(SiteCreationException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(siteCreationException);
@@ -228,7 +226,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "/duplicateId.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "/duplicateId.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     SiteCreationException siteCreationException = Assertions.assertThrows(SiteCreationException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(siteCreationException);
@@ -244,7 +242,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "/duplicateIdOnText.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "/duplicateIdOnText.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     SiteCreationException siteCreationException = Assertions.assertThrows(SiteCreationException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(siteCreationException);
@@ -260,7 +258,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "/emptyLanguage.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "/emptyLanguage.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     sofiaFile.loadRootFile();
   }
@@ -274,7 +272,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "/rootFileWithoutHead.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "/rootFileWithoutHead.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     SiteCreationException siteCreationException = Assertions.assertThrows(SiteCreationException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(siteCreationException);
@@ -290,7 +288,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "/duplicateIdOnText.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "/duplicateIdOnText.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     SiteCreationException siteCreationException = Assertions.assertThrows(SiteCreationException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(siteCreationException);
@@ -306,7 +304,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "/scriptPathOutsideSourcePath.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "/scriptPathOutsideSourcePath.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     SiteCreationException siteCreationException = Assertions.assertThrows(SiteCreationException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(siteCreationException);
@@ -322,7 +320,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "/scriptPathDoNotExists.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "/scriptPathDoNotExists.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     SiteCreationException siteCreationException = Assertions.assertThrows(SiteCreationException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(siteCreationException);
@@ -338,7 +336,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "/stylePathOutsideSourcePath.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "/stylePathOutsideSourcePath.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     SiteCreationException siteCreationException = Assertions.assertThrows(SiteCreationException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(siteCreationException);
@@ -354,7 +352,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "/stylePathDoNotExists.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "/stylePathDoNotExists.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     SiteCreationException siteCreationException = Assertions.assertThrows(SiteCreationException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(siteCreationException);
@@ -370,7 +368,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "/fileContainerWithChildren.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "/fileContainerWithChildren.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     SiteCreationException siteCreationException = Assertions.assertThrows(SiteCreationException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(siteCreationException);
@@ -386,7 +384,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "/undefinedLiteralInCalledFile.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "/undefinedLiteralInCalledFile.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     SiteCreationException siteCreationException = Assertions.assertThrows(SiteCreationException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(siteCreationException);
@@ -402,7 +400,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "/callFileWithoutBody.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "/callFileWithoutBody.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     SiteCreationException siteCreationException = Assertions.assertThrows(SiteCreationException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(siteCreationException);
@@ -418,7 +416,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    new SofiaFile(site, "1", "/styleFileAlreadyAdded.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    new SofiaFile(site, "1", "/styleFileAlreadyAdded.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
   }
 
   @Test
@@ -430,7 +428,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    new SofiaFile(site, "1", "/scriptFileAlreadyAdded.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    new SofiaFile(site, "1", "/scriptFileAlreadyAdded.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
   }
 
   @Test
@@ -442,7 +440,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "/textFileJSONParseException.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "/textFileJSONParseException.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     SiteCreationException siteCreationException = Assertions.assertThrows(SiteCreationException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(siteCreationException);
@@ -458,7 +456,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "../loadConfigurationFileFromAttributeOutsidePath.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "../loadConfigurationFileFromAttributeOutsidePath.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     SiteCreationException siteCreationException = Assertions.assertThrows(SiteCreationException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(siteCreationException);
@@ -474,7 +472,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "../configurationFileFromAttributeDoNotExists.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "../configurationFileFromAttributeDoNotExists.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     SiteCreationException siteCreationException = Assertions.assertThrows(SiteCreationException.class, sofiaFile::loadRootFile);
     Assertions.assertNotNull(siteCreationException);
@@ -490,7 +488,7 @@ public class SofiaFileTest {
 
     Site site = new Site(1, name);
 
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "../loadConfigurationFileFromAttribute.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "../loadConfigurationFileFromAttribute.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     sofiaFile.loadRootFile();
   }
@@ -503,7 +501,7 @@ public class SofiaFileTest {
     String name = "example.com";
 
     Site site = new Site(1, name);
-    SofiaFile sofiaFile = new SofiaFile(site, "1", "../loadFileFromAttributeWithFullPath.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, moduleManager);
+    SofiaFile sofiaFile = new SofiaFile(site, "1", "../loadFileFromAttributeWithFullPath.html", sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
 
     sofiaFile.loadRootFile();
   }

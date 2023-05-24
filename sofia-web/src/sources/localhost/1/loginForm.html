@@ -1,19 +1,5 @@
-<style>
-    .formContainer {
-        margin: 30px auto 60px auto;
-        max-width: 350px;
-    }
-
-    .inputContainer {
-        margin: 10px;
-    }
-
-    #loginMessageContainer {
-        text-align: center;
-        color: red;
-        font-weight: bold;
-    }
-</style>
+<link lib="login:socialButtons:base:1.00" />
+<link lib="login:socialButtons:google:1.00" />
 
 <script>
     const initLogin = async () => {
@@ -21,6 +7,7 @@
         const loginMessageContainer = document.getElementById('loginMessageContainer');
         const loginUsernameInput = document.getElementById('loginUsernameInput');
         const loginPasswordInput = document.getElementById('loginPasswordInput');
+        new GoogleSocialButton({ element: 'googleLoginButton' });
 
         loginForm.onsubmit = async (e) => {
             e.preventDefault();
@@ -67,6 +54,23 @@
     window.addEventListener('load', initLogin);
 </script>
 
+<style>
+    .formContainer {
+        margin: 30px auto 60px auto;
+        max-width: 350px;
+    }
+
+    .inputContainer {
+        margin: 10px;
+    }
+
+    #loginMessageContainer {
+        text-align: center;
+        color: red;
+        font-weight: bold;
+    }
+</style>
+
 <body>
     <div id="application">
         <div class="formContainer">
@@ -83,6 +87,7 @@
                 <div id="loginMessageContainer"></div>
                 <div class="inputContainer">
                     <input type="submit" id="loginButton" class="blueButton" value="Login" />
+                    <div id="googleLoginButton"></div>
                 </div>
             </form>
         </div>

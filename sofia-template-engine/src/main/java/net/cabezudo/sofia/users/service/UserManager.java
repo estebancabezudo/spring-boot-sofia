@@ -1,7 +1,9 @@
 package net.cabezudo.sofia.users.service;
 
 import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
+import net.cabezudo.sofia.accounts.persistence.AccountUserRelationEntity;
 import net.cabezudo.sofia.emails.persistence.EMailEntity;
 import net.cabezudo.sofia.emails.persistence.EMailRepository;
 import net.cabezudo.sofia.sites.Site;
@@ -47,12 +49,13 @@ public class UserManager {
   private @Autowired AccountRepository accountRepository;
 
   public SofiaUser loadUserByUsername(String email) throws UsernameNotFoundException {
-    Site site = (Site) request.getSession().getAttribute("site");
-    final UserEntity userEntity = userRepository.findByEmail(site.getId(), email);
+    Account account = (Account) request.getSession().getAttribute("account");
+
+    final UserEntity userEntity = userRepository.findByEmail(account.id(), email);
     if (userEntity == null) {
       throw new UsernameNotFoundException(email);
     }
-    SofiaUser sofiaUser = new SofiaUser(userEntity.getId(), site, userEntity.getEMailEntity().email(), userEntity.getPassword(), getAuthorities(userEntity), userEntity.isEnabled());
+    SofiaUser sofiaUser = new SofiaUser(userEntity.getId(), account, userEntity.getEMailEntity().email(), userEntity.getPassword(), getAuthorities(userEntity), userEntity.isEnabled());
     return sofiaUser;
   }
 
@@ -70,13 +73,13 @@ public class UserManager {
     return entityToBusinessUserListMapper.map(entityList);
   }
 
-  public SofiaUser get(Integer id) {
+  public SofiaUser findByAccountId(Integer id) {
     final UserEntity userEntity = userRepository.get(id);
     return entityToBusinessUserMapper.map(userEntity);
   }
 
-  public SofiaUser get(Account account, String username) {
-    final UserEntity userEntity = userRepository.get(account.id(), username);
+  public SofiaUser findByAccountId(int accountId, String username) {
+    final UserEntity userEntity = userRepository.get(accountId, username);
     if (userEntity == null) {
       return null;
     }
@@ -84,23 +87,52 @@ public class UserManager {
   }
 
   @Transactional
-  public SofiaUser create(Account account, String eMailAddress, String password, Groups groups, boolean enabled) {
-
+  public SofiaUser create(Site site, String eMailAddress, Groups groups, boolean enabled) {
     EMailEntity userFromDatabase = eMailRepository.get(eMailAddress);
-    EMailEntity userToUse;
+    EMailEntity usernameToUse;
     if (userFromDatabase == null) {
-      userToUse = eMailRepository.create(eMailAddress);
+      usernameToUse = eMailRepository.create(eMailAddress);
     } else {
-      userToUse = userFromDatabase;
+      usernameToUse = userFromDatabase;
     }
 
-    log.debug("Using email with id " + userToUse);
+    log.debug("Using email with id " + usernameToUse);
 
-    UserEntity userEntity = userRepository.create(account.id(), userToUse, password, enabled);
+    UserEntity userEntity = userRepository.create(usernameToUse, enabled);
 
-    GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(userEntity, groups);
+    AccountEntity account = accountRepository.create(site.getId());
+
+    AccountUserRelationEntity accountUserRelationEntity = accountRepository.create(account.id(), userEntity.getId(), true);
+
+    GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(accountUserRelationEntity.id(), groups);
     for (GroupEntity groupEntity : groupsEntity) {
       groupsRepository.create(userEntity.getId(), groupEntity.getName());
+    }
+
+    return entityToBusinessUserMapper.map(userEntity);
+  }
+
+  @Transactional
+  public SofiaUser create(Account account, String eMailAddress, Groups groups, boolean enabled) {
+
+    EMailEntity userFromDatabase = eMailRepository.get(eMailAddress);
+    EMailEntity usernameToUse;
+    if (userFromDatabase == null) {
+      usernameToUse = eMailRepository.create(eMailAddress);
+    } else {
+      usernameToUse = userFromDatabase;
+    }
+
+    log.debug("Using email with id " + usernameToUse);
+
+    UserEntity userEntity = userRepository.create(usernameToUse, enabled);
+
+    AccountUserRelationEntity accountUserRelationEntity = accountRepository.create(account.id(), userEntity.getId(), false);
+    userEntity.setAccountUserId(accountUserRelationEntity.id());
+
+    GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(accountUserRelationEntity.id(), groups);
+    for (GroupEntity groupEntity : groupsEntity) {
+      groupsRepository.create(userEntity.getAccountUserId(), groupEntity.getName());
     }
 
     return entityToBusinessUserMapper.map(userEntity);
@@ -121,15 +153,15 @@ public class UserManager {
     }
 
     UserEntity newEntity = new UserEntity(
-        id, user.getSite().getId(), eMailToUse, null, user.isEnabled()
+        id, user.getAccount().id(), userInDatabase.getAccountUserId(), eMailToUse, null, user.isEnabled()
     );
 
     final UserEntity updatedEntity = userRepository.update(newEntity);
 
-    groupsRepository.deleteGroupsFor(updatedEntity);
-    GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(updatedEntity, user.getGroups());
+    groupsRepository.deleteGroupsFor(userInDatabase.getAccountUserId());
+    GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(userInDatabase.getAccountUserId(), user.getGroups());
     for (GroupEntity groupEntity : groupsEntity) {
-      GroupEntity newGroupEntity = groupsRepository.create(updatedEntity.getId(), groupEntity.getName());
+      GroupEntity newGroupEntity = groupsRepository.create(updatedEntity.getAccountUserId(), groupEntity.getName());
       updatedEntity.add(newGroupEntity);
     }
 
@@ -143,7 +175,10 @@ public class UserManager {
 
   public void delete(int accountId, int userId) {
     UserEntity user = userRepository.get(userId);
-    groupsRepository.deleteGroupsFor(user);
+    groupsRepository.deleteGroupsFor(user.getAccountUserId());
+
+    accountRepository.delete(accountId, userId);
+
     int eMailIdToDelete = user.getEMailEntity().id();
     userRepository.delete(userId);
 

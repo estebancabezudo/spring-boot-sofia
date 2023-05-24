@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +25,6 @@ public class UserRepository {
 
   private @Autowired JdbcTemplate jdbcTemplate;
   private @Autowired EMailRepository eMailRepository;
-  private @Autowired PasswordEncoder passwordEncoder;
 
   @Transactional
   public UserEntity findByEmail(int account_id, String email) {
@@ -34,12 +32,13 @@ public class UserRepository {
 
     List<Map<String, Object>> list = new ArrayList<>();
     jdbcTemplate.queryForList(
-        "SELECT u.id AS id, a.site_id, e.id AS eMailId, e.email AS email, u.password, u.enabled, authority " +
+        "SELECT u.id AS id, a.site_id, a.id AS account_user_id, e.id AS eMailId, e.email AS email, u.password, u.enabled, authority " +
             "FROM accounts AS a " +
-            "LEFT JOIN users AS u ON a.id = u.account_id " +
+            "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
+            "LEFT JOIN users AS u ON u.id = au.user_id " +
             "LEFT JOIN emails AS e ON u.email_id = e.id " +
-            "LEFT JOIN authorities AS t ON u.id = t.user_id " +
-            "WHERE u.email_id = e.id AND u.id = a.user_id AND site_id = ? AND e.email = ?", account_id, email).forEach(rs -> {
+            "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
+            "WHERE u.email_id = e.id AND a.id = ? AND e.email = ?", account_id, email).forEach(rs -> {
       list.add(rs);
     });
 
@@ -49,9 +48,18 @@ public class UserRepository {
 
     Map<String, Object> firstRecord = list.get(0);
     EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
-    UserEntity userEntity = new UserEntity((int) firstRecord.get("id"), (Integer) firstRecord.get("site_id"), eMailEntity, (String) firstRecord.get("password"), (boolean) firstRecord.get("enabled"));
+    UserEntity userEntity = new UserEntity(
+        (int) firstRecord.get("id"),
+        (Integer) firstRecord.get("site_id"),
+        (Integer) firstRecord.get("account_user_id"),
+        eMailEntity, (String) firstRecord.get("password"),
+        (boolean) firstRecord.get("enabled")
+    );
     for (Map<String, Object> rs : list) {
-      userEntity.add(new GroupEntity((int) firstRecord.get("id"), (String) rs.get("authority")));
+      String groupName = (String) rs.get("authority");
+      if (groupName != null) {
+        userEntity.add(new GroupEntity((int) firstRecord.get("id"), groupName));
+      }
     }
     return userEntity;
   }
@@ -63,11 +71,12 @@ public class UserRepository {
     Map<Integer, UserEntity> map = new TreeMap<>();
     UserEntityList list = new UserEntityList();
     jdbcTemplate.queryForList(
-        "SELECT u.id AS id, a.site_id, e.id AS eMailId, e.email AS email, u.password, u.enabled, authority " +
+        "SELECT u.id AS id, a.site_id, au.id AS account_user_id, e.id AS eMailId, e.email AS email, u.password, u.enabled, authority " +
             "FROM accounts AS a " +
-            "LEFT JOIN users AS u ON a.id = u.account_id " +
+            "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
+            "LEFT JOIN users AS u ON u.id = au.user_id " +
             "LEFT JOIN emails AS e ON u.email_id = e.id " +
-            "LEFT JOIN authorities AS t ON u.id = t.user_id " +
+            "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
             "WHERE a.id = ? " +
             "ORDER BY email"
         , accountId
@@ -77,7 +86,14 @@ public class UserRepository {
       UserEntity newUserEntity;
       if (userEntityFromMap == null) {
         EMailEntity eMailEntity = new EMailEntity((int) rs.get("eMailId"), (String) rs.get("email"));
-        newUserEntity = new UserEntity((int) rs.get("id"), (Integer) rs.get("site_id"), eMailEntity, (String) rs.get("password"), (boolean) rs.get("enabled"));
+        newUserEntity = new UserEntity(
+            (int) rs.get("id"),
+            (Integer) rs.get("site_id"),
+            (Integer) rs.get("account_user_id"),
+            eMailEntity,
+            (String) rs.get("password"),
+            (boolean) rs.get("enabled")
+        );
         map.put(id, newUserEntity);
         list.add(newUserEntity);
         String authority = (String) rs.get("authority");
@@ -100,11 +116,12 @@ public class UserRepository {
 
     List<Map<String, Object>> list = new ArrayList<>();
     jdbcTemplate.queryForList(
-        "SELECT u.id AS id, a.site_id, e.id AS eMailId, e.email AS email, u.password, u.enabled, authority " +
+        "SELECT u.id AS id, a.site_id, au.id AS account_user_id, e.id AS email_id, e.email AS email, u.password, u.enabled, authority " +
             "FROM accounts AS a " +
-            "LEFT JOIN users AS u ON a.id = u.account_id " +
+            "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
+            "LEFT JOIN users AS u ON au.user_id = u.id " +
             "LEFT JOIN emails AS e ON u.email_id = e.id " +
-            "LEFT JOIN authorities AS t ON u.id = t.user_id " +
+            "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
             "WHERE u.id = ?", id
     ).forEach(rs -> {
       list.add(rs);
@@ -116,8 +133,15 @@ public class UserRepository {
 
     Map<String, Object> firstRecord = list.get(0);
 
-    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
-    UserEntity userEntity = new UserEntity((int) firstRecord.get("id"), (Integer) firstRecord.get("site_id"), eMailEntity, (String) firstRecord.get("password"), (boolean) firstRecord.get("enabled"));
+    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("email_id"), (String) firstRecord.get("email"));
+    UserEntity userEntity = new UserEntity(
+        (int) firstRecord.get("id"),
+        (Integer) firstRecord.get("site_id"),
+        (Integer) firstRecord.get("account_user_id"),
+        eMailEntity,
+        (String) firstRecord.get("password"),
+        (boolean) firstRecord.get("enabled")
+    );
     for (Map<String, Object> rs : list) {
       String authority = (String) rs.get("authority");
       if (authority != null) {
@@ -128,16 +152,17 @@ public class UserRepository {
   }
 
   public UserEntity get(int accountId, String eMail) {
-    log.debug("Search user with e-mail " + eMail + " for account " + accountId);
+    log.debug("Search user for account " + accountId + " with e-mail " + eMail);
 
     List<Map<String, Object>> list = new ArrayList<>();
     jdbcTemplate.queryForList(
-        "SELECT u.id AS id, a.site_id, e.id AS eMailId, e.email AS email, u.password, u.enabled, authority " +
+        "SELECT u.id AS id, a.site_id, au.id AS account_user_id, e.id AS eMailId, e.email AS email, u.password, u.enabled, authority " +
             "FROM accounts AS a " +
-            "LEFT JOIN users AS u ON a.id = u.account_id " +
+            "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
+            "LEFT JOIN users AS u ON au.user_id = u.id " +
             "LEFT JOIN emails AS e ON u.email_id = e.id " +
-            "LEFT JOIN authorities AS t ON u.id = t.user_id " +
-            "WHERE account_id= ? AND email = ?",
+            "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
+            "WHERE a.id = ? AND email = ?",
         accountId, eMail).forEach(rs -> {
       list.add(rs);
     });
@@ -146,10 +171,21 @@ public class UserRepository {
       return null;
     }
 
+    if (list.size() == 1) {
+      throw new RuntimeException("I found more than one user entity.");
+    }
+
     Map<String, Object> firstRecord = list.get(0);
 
     EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
-    UserEntity userEntity = new UserEntity((int) firstRecord.get("id"), (Integer) firstRecord.get("site_id"), eMailEntity, (String) firstRecord.get("password"), (boolean) firstRecord.get("enabled"));
+    UserEntity userEntity = new UserEntity(
+        (int) firstRecord.get("id"),
+        (Integer) firstRecord.get("site_id"),
+        (Integer) firstRecord.get("account_user_id"),
+        eMailEntity,
+        (String) firstRecord.get("password"),
+        (boolean) firstRecord.get("enabled")
+    );
     for (Map<String, Object> rs : list) {
       String authority = (String) rs.get("authority");
       if (authority != null) {
@@ -159,26 +195,23 @@ public class UserRepository {
     return userEntity;
   }
 
-  public UserEntity create(int accountId, EMailEntity eMailEntity, String password, boolean enabled) {
-    String encodedPassword = password == null ? null : passwordEncoder.encode(password);
+  public UserEntity create(EMailEntity eMailEntity, boolean enabled) {
     KeyHolder keyHolder = new GeneratedKeyHolder();
     PreparedStatementCreator preparedStatementCreator = connection -> {
-      String query = "INSERT INTO users (account_id, email_id, password, enabled) values(?, ?, ?, ?)";
+      String query = "INSERT INTO users (email_id, enabled) values(?, ?)";
       PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-      ps.setInt(1, accountId);
-      ps.setInt(2, eMailEntity.id());
-      ps.setString(3, encodedPassword);
-      ps.setBoolean(4, enabled);
+      ps.setInt(1, eMailEntity.id());
+      ps.setBoolean(2, enabled);
       return ps;
     };
     jdbcTemplate.update(preparedStatementCreator, keyHolder);
 
-    return new UserEntity(keyHolder.getKey().intValue(), accountId, eMailEntity, password, enabled);
+    return new UserEntity(keyHolder.getKey().intValue(), 0, 0, eMailEntity, null, enabled);
   }
 
   public UserEntity update(UserEntity entity) {
     int id = entity.getId();
-    int accountId = entity.getAccountId();
+    int accountId = entity.getSiteId();
     EMailEntity eMailEntity = entity.getEMailEntity();
     String password = entity.getPassword();
     boolean enabled = entity.isEnabled();
@@ -193,7 +226,7 @@ public class UserRepository {
     };
     jdbcTemplate.update(preparedStatementCreator);
 
-    return new UserEntity(id, accountId, eMailEntity, password, enabled);
+    return new UserEntity(id, accountId, entity.getAccountUserId(), eMailEntity, password, enabled);
   }
 
   public void delete(Integer id) {

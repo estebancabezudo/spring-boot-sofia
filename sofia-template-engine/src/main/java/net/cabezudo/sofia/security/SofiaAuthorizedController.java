@@ -2,9 +2,6 @@ package net.cabezudo.sofia.security;
 
 import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.accounts.AccountManager;
-import net.cabezudo.sofia.accounts.Accounts;
-import net.cabezudo.sofia.config.SofiaEnvironment;
-import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.core.rest.SofiaController;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
 import net.cabezudo.sofia.users.SofiaUser;
@@ -13,9 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,61 +17,32 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public abstract class SofiaAuthorizedController extends SofiaController {
   private static final Logger log = LoggerFactory.getLogger(SofiaAuthorizedController.class);
-
+  private @Autowired SofiaSecurityManager sofiaSecurityManager;
   private @Autowired AccountManager accountManager;
   private @Autowired PermissionManager permissionManager;
-  private @Autowired SofiaEnvironment sofiaEnvironment;
 
   public SofiaAuthorizedController(HttpServletRequest request) {
     super(request);
   }
 
-  protected SofiaUser getSofiaUser() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication instanceof UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) {
-      return (SofiaUser) usernamePasswordAuthenticationToken.getPrincipal();
-    }
-    return null;
-  }
-
   protected ResponseEntity checkPermissionFor(Account account, String group) {
-    SofiaUser user = getSofiaUser();
-    if (user == null && sofiaEnvironment.isSecurityActive()) {
-      log.debug("The user is null and the security is active");
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new SofiaRestResponse(SofiaRestResponse.ERROR, "unauthorized"));
+    SofiaUser user = sofiaSecurityManager.getLoggedUser();
+    if (user == null) {
+      log.debug("The user is null");
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new SofiaRestResponse(SofiaRestResponse.ERROR, "Not logged"));
     }
     if (!permissionManager.hasPermission(account, user, group)) {
       log.debug("The user(" + user + ") has not permission(group=" + group + ") for th account (" + account + ")");
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new SofiaRestResponse(SofiaRestResponse.ERROR, "forbidden"));
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new SofiaRestResponse(SofiaRestResponse.ERROR, "The user(" + user + ") has not permission(group=" + group + ") for th account (" + account + ")"));
     }
     return null;
   }
 
   protected Account getAccount() {
-    if (sofiaEnvironment.isSecurityNotActive() && sofiaEnvironment.isDevelopment()) {
-      // TODO improve this
-      return new Account(1, 1);
-    }
-
-    SofiaUser user = getSofiaUser();
+    SofiaUser user = sofiaSecurityManager.getLoggedUser();
     if (user == null) {
       return null;
     }
-    Accounts accounts = accountManager.getAll(user);
-    Account accountFromSession = (Account) super.getRequest().getSession().getAttribute("account");
-    if (accountFromSession == null) {
-      Account account = accounts.getFirst();
-      if (account == null) {
-        throw new SofiaRuntimeException("null account in account list from manager. Incorrect data from database. A user must have an account.");
-      }
-      super.getRequest().getSession().setAttribute("account", account);
-      return account;
-    } else {
-      if (accounts.contains(accountFromSession)) {
-        return accountFromSession;
-      } else {
-        return accounts.getFirst();
-      }
-    }
+    return user.getAccount();
   }
 }

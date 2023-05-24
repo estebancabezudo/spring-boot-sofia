@@ -14,11 +14,13 @@
 
 /* CSS import from /header.html called by style tag on header.html:4:2 */
 
-/* CSS import from /loginForm.html called by style tag on loginForm.html:1:2 */
+/* CSS import from /loginForm.html called by style tag on loginForm.html:57:2 */
 
 /* CSS import from /burguerMenu.css called by file libraryburgerMenu:1.00 on header.html */
 
 /* CSS import from /linkTo.css called by file librarylinkTo:1.00 on header.html */
+
+/* CSS import from /button.css called by file librarylogin:socialButtons:base:1.00 on loginForm.html */
 
 /* CSS import from /twoLanguageFlag.css called by file librarytwoLanguageFlag:1.00 on header.html */
 
@@ -428,7 +430,7 @@ input.error {
         }
     }
 
-/* CSS code from /loginForm.html called by style tag on loginForm.html:1:2 */
+/* CSS code from /loginForm.html called by style tag on loginForm.html:57:2 */
 
     .formContainer {
         margin: 30px auto 60px auto;
@@ -468,6 +470,37 @@ input.error {
 
 .enabled {
     cursor: pointer;
+}
+
+/* CSS code from /button.css called by file librarylogin:socialButtons:base:1.00 on loginForm.html */
+.socialButtonContainer {
+    display: flex;
+    flex-direction: row;
+    margin: 10px 0;
+    border: 1px solid rgb(233, 233, 233);
+    border-radius: 3px;
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+}
+
+.socialButtonLogoContainer {
+    padding: 10px;
+}
+
+.socialButtonLogo {
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.socialButtonTextContainer {}
+
+.socialButtonText {
+    color: rgb(199, 199, 199);
+    margin: 0 10px;
+    pointer-events: none;
 }
 
 /* CSS code from /twoLanguageFlag.css called by file librarytwoLanguageFlag:1.00 on header.html */
@@ -656,7 +689,6 @@ const Core = {
     },
 
     isArray: v => {
-        console.log('Core::isArray: ', Object.prototype.toString.call(v), v);
         return Object.prototype.toString.call(v) === '[object Array]';
     },
 
@@ -1240,7 +1272,7 @@ class TwoLanguageFlag {
             }
         });
         Core.subscribeTo('core:showErrorMessage', data => {
-            console.log(`header.html::initHeader::data: `, data);
+            console.log(`header.html::initHeader::showErrorMessage::data: `, data);
             const hideMessage = () => {
                 element.classList.remove('errorMessage');
             };
@@ -1250,7 +1282,7 @@ class TwoLanguageFlag {
             setTimeout(hideMessage, 3000);
         });
         Core.subscribeTo('core:showMessage', data => {
-            console.log(data);
+            console.log(`header.html::initHeader::showMessage::data: `, data);
             const hideMessage = () => {
                 element.classList.remove('message');
             };
@@ -1263,13 +1295,82 @@ class TwoLanguageFlag {
 
     window.addEventListener('load', initHeader);
 
-// Code from script tag on loginForm.html:18:2 called by file attribute on div on loginForm.html:14:4
+// Code from library login:socialButtons:base:1.00 on loginForm.html called by file attribute on div on loginForm.html:14:4
+class SocialButton {
+    constructor(options) {
+        this.url = options.url;
+        const getElement = target => {
+            if (target === undefined || target == null) {
+                throw new Error('You MUST specify an id or element.');
+            }
+            if (Core.isString(target)) {
+                const id = target;
+                console.log(`Using the id ${id}`);
+                const element = document.getElementById(id);
+                if (element === null || element === undefined) {
+                    throw new Error(`Element NOT FOUND: ${target}`);
+                }
+                return element;
+            }
+            if (Core.isHTMLDivElement(target)) {
+                console.log(`Using the element `, target);
+                this.element = target;
+                return element;
+            }
+        }
+        this.element = getElement(options.element);
+        const socialButtonContainer = document.createElement('div');
+        socialButtonContainer.className = 'socialButtonContainer';
+        this.element.appendChild(socialButtonContainer);
+
+        const socialButtonLogoContainer = document.createElement('div');
+        socialButtonLogoContainer.className = 'socialButtonLogoContainer'
+        socialButtonContainer.appendChild(socialButtonLogoContainer);
+
+        const socialButtonLogo = document.createElement('div');
+        socialButtonLogo.className = 'socialButtonLogo'
+        socialButtonLogo.style.backgroundImage = `url(${options.image})`;
+        socialButtonLogoContainer.appendChild(socialButtonLogo);
+
+        const socialButtonTextContainer = document.createElement('div');
+        socialButtonTextContainer.className = 'socialButtonTextContainer'
+        socialButtonContainer.appendChild(socialButtonTextContainer);
+
+        const socialButtonText = document.createElement('div');
+        socialButtonText.className = 'socialButtonText'
+        socialButtonText.id = options.textKey;
+        socialButtonTextContainer.appendChild(socialButtonText);
+
+        Core.subscribeTo('core:setTexts', () => {
+            socialButtonText.innerText = Core.getText(options.textKey);
+        });
+
+        this.element.addEventListener('click', event => {
+            window.location.replace(this.url);
+        });
+    }
+}
+
+// Code from library login:socialButtons:google:1.00 on loginForm.html called by file attribute on div on loginForm.html:14:4
+class GoogleSocialButton extends SocialButton {
+    constructor(options) {
+        super({
+            element: options.element,
+            url: '/oauth2/authorization/google',
+            image: '/images/login/socialButtons/google/1.00/logoGoogle.png',
+            textKey: 'googleButtonText'
+        });
+    }
+}
+
+// Code from script tag on loginForm.html:4:2 called by file attribute on div on loginForm.html:14:4
 
     const initLogin = async () => {
         const loginForm = document.getElementById('loginForm');
         const loginMessageContainer = document.getElementById('loginMessageContainer');
         const loginUsernameInput = document.getElementById('loginUsernameInput');
         const loginPasswordInput = document.getElementById('loginPasswordInput');
+        new GoogleSocialButton({ element: 'googleLoginButton' });
 
         loginForm.onsubmit = async (e) => {
             e.preventDefault();
@@ -1327,7 +1428,7 @@ class TwoLanguageFlag {
 
     window.addEventListener('load', initFooter);
 
-// Code from :commons.js: called by system 
+// Code from :/home/esteban/Documents/trabajo/sofia/spring-boot-sofia/sofia-web/src/sources/localhost/1:commons.js: called by system 
 Core.setReportSystemErrorFunction(error => {
     Core.showErrorMessage(error.message);
     throw error;
@@ -1379,6 +1480,7 @@ Core.setReportSystemErrorFunction(error => {
                 <div id="loginMessageContainer"></div>
                 <div class="inputContainer">
                     <input class="blueButton" id="loginButton" type="submit" value="Login"/>
+                    <div id="googleLoginButton"></div>
                 </div>
             </form>
         </div>

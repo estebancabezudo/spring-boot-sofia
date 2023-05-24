@@ -6,10 +6,11 @@ import net.cabezudo.sofia.config.ConfigurationException;
 import net.cabezudo.sofia.config.ConfigurationFileYAMLData;
 import net.cabezudo.sofia.config.ConfigurationFileYAMLSiteData;
 import net.cabezudo.sofia.config.SofiaEnvironment;
-import net.cabezudo.sofia.core.modules.ModuleException;
-import net.cabezudo.sofia.core.modules.ModuleManager;
-import net.cabezudo.sofia.core.modules.SofiaSecurityModule;
+import net.cabezudo.sofia.creator.ContentManager;
+import net.cabezudo.sofia.security.Permission;
+import net.cabezudo.sofia.security.PermissionManagerImplementation;
 import net.cabezudo.sofia.sites.Host;
+import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteManager;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ public class SofiaTemplateEngineEnvironment {
   private Path basePath;
   private Path sitesPath;
   private Path systemLibraryPath;
-  private @Autowired ModuleManager moduleManager;
+  private @Autowired ContentManager contentManager;
 
   private Path checkForDirectoryAndCreate(String identifier, Path path) throws ConfigurationException, IOException {
     if (!Files.exists(path)) {
@@ -104,7 +105,7 @@ public class SofiaTemplateEngineEnvironment {
     log.debug("Load configuration for template engine enviroment.");
     try {
       loadDataFromYAMLFile();
-    } catch (SiteNotFoundException | ModuleException e) {
+    } catch (SiteNotFoundException e) {
       throw new ConfigurationException(e);
     }
     setSystemBasePath();
@@ -176,7 +177,7 @@ public class SofiaTemplateEngineEnvironment {
     }
   }
 
-  private void loadDataFromYAMLFile() throws SiteNotFoundException, ModuleException {
+  private void loadDataFromYAMLFile() throws SiteNotFoundException {
     log.debug("Load data from configuration file sofia.yml.");
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     ClassLoader classLoader = this.getClass().getClassLoader();
@@ -189,20 +190,40 @@ public class SofiaTemplateEngineEnvironment {
       try {
         configurationFileYAMLData = mapper.readValue(sofiaConfigurationFile, ConfigurationFileYAMLData.class);
         createHostToSiteData();
-
-        sofiaEnvironment.setSecurityActive(configurationFileYAMLData.isSecurityActive());
-
-        SofiaSecurityModule securityModule = moduleManager.getSecurityModule();
-        if (securityModule != null) {
-          securityModule.config(configurationFileYAMLData, siteManager);
-        }
+        addPermissions(configurationFileYAMLData);
       } catch (IOException e) {
         log.error("invalid configuration: " + e.getMessage());
-      } catch (ConfigurationException e) {
-        throw new ModuleException(e);
       }
     }
   }
+
+  private void addPermissions(ConfigurationFileYAMLData configurationFileYAMLData) throws SiteNotFoundException {
+    log.debug("Create permissions with data in configuration file.");
+    List<ConfigurationFileYAMLSiteData> sites = configurationFileYAMLData.getSites();
+    for (ConfigurationFileYAMLSiteData siteData : sites) {
+      Site site = siteManager.get(siteData.getName());
+      log.debug("Site: " + site.getName());
+
+      List<String> apis = siteData.getAPIs();
+      apis.add("/logout");
+      for (String api : apis) {
+        contentManager.add(api);
+        String permissionString = "all:all:grant:" + api + "/**";
+        Permission permission = new Permission(permissionString);
+        PermissionManagerImplementation.getInstance().add(site, permission);
+        log.debug("Add " + permissionString + " to site " + site.getName());
+      }
+
+      List<String> permissions = siteData.getPermissions();
+      for (String permissionData : permissions) {
+        Permission permission = new Permission(permissionData);
+        PermissionManagerImplementation.getInstance().add(site, permission);
+        log.debug("Add " + permissionData + " to site " + site.getName());
+      }
+
+    }
+  }
+
 
   private void createHostToSiteData() {
     log.debug("Create host to site data.");

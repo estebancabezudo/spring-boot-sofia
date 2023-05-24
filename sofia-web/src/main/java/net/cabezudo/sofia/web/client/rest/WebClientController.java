@@ -1,8 +1,10 @@
 package net.cabezudo.sofia.web.client.rest;
 
-import net.cabezudo.sofia.core.modules.ModuleManager;
-import net.cabezudo.sofia.core.modules.SofiaSecurityModule;
-import net.cabezudo.sofia.core.rest.SofiaController;
+import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.security.SofiaAuthorizedController;
+import net.cabezudo.sofia.security.SofiaSecurityManager;
+import net.cabezudo.sofia.users.SofiaUser;
+import net.cabezudo.sofia.users.rest.BusinessToRestUserMapper;
 import net.cabezudo.sofia.users.rest.RestUser;
 import net.cabezudo.sofia.web.client.Language;
 import net.cabezudo.sofia.web.client.WebClientManager;
@@ -21,12 +23,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @RestController
-public class WebClientController extends SofiaController {
+public class WebClientController extends SofiaAuthorizedController {
 
   private static final Logger log = LoggerFactory.getLogger(WebClientController.class);
 
-  private @Autowired ModuleManager moduleManager;
+  private @Autowired SofiaSecurityManager securityManager;
   private @Autowired WebClientManager webClientManager;
+  private @Autowired BusinessToRestWebClientMapper businessToRestWebClientMapper;
+
+  private @Autowired BusinessToRestUserMapper businessToRestUserMapper;
 
   public WebClientController(HttpServletRequest request) {
     super(request);
@@ -40,14 +45,14 @@ public class WebClientController extends SofiaController {
     Object o = session.getAttribute(WebClient.OBJECT_NAME_IN_SESSION);
     WebClient webClient = (WebClient) o;
 
-    BusinessToRestWebClientMapper mapper = new BusinessToRestWebClientMapper();
-    RestWebClient restWebClient = mapper.map(webClient);
+    RestWebClient restWebClient = businessToRestWebClientMapper.map(webClient);
 
-    SofiaSecurityModule module = moduleManager.getSecurityModule();
-    if (module != null) {
-      RestUser restUser = module.getUser();
-      restWebClient.setUser(restUser);
-    }
+    Account account = super.getAccount();
+
+    SofiaUser sofiaUser = securityManager.getLoggedUser();
+    RestUser restUser = sofiaUser == null ? null : businessToRestUserMapper.map(sofiaUser);
+
+    restWebClient.setUser(restUser);
     log.debug("Web client data: " + restWebClient);
     return ResponseEntity.ok(restWebClient);
   }

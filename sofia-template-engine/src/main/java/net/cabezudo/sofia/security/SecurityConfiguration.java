@@ -1,12 +1,9 @@
-package net.cabezudo.sofia.config;
+package net.cabezudo.sofia.security;
 
-import net.cabezudo.sofia.security.SofiaAuthenticationFailureHandler;
-import net.cabezudo.sofia.security.SofiaAuthenticationSuccessHandler;
-import net.cabezudo.sofia.security.SofiaAuthorizationManager;
-import net.cabezudo.sofia.security.SofiaSecurityEnvironment;
-import net.cabezudo.sofia.users.SofiaAuthenticationProvider;
+import net.cabezudo.sofia.config.SofiaEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
 /**
@@ -28,6 +26,10 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 @ComponentScan
 public class SecurityConfiguration {
   private static final Logger log = LoggerFactory.getLogger(SecurityConfiguration.class);
+
+  private @Autowired UrlAuthenticationFilter urlAuthenticationFilter;
+  private @Autowired SofiaEnvironment sofiaEnvironment;
+  private @Autowired CustomDetailsService customDetailsService;
 
   @Bean
   public SofiaAuthenticationProvider authProvider() {
@@ -50,16 +52,26 @@ public class SecurityConfiguration {
   @Bean
   SecurityFilterChain web(HttpSecurity http) throws Exception {
     log.debug("Run security configuration security web filter chain");
+
+    if (sofiaEnvironment.isDevelopment()) {
+      log.debug("The URL authenticator filter is active");
+      http.addFilterBefore(urlAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
     http
         .requestCache().requestCache(getHttpSessionRequestCache())
         .and()
         .formLogin()
         .successHandler(new SofiaAuthenticationSuccessHandler())
         .failureHandler(new SofiaAuthenticationFailureHandler())
-        .loginPage(SofiaSecurityEnvironment.DEFAULT_LOGIN_PAGE)
-        .loginProcessingUrl(SofiaSecurityEnvironment.DEFAULT_LOGIN_WEB_SERVICE).and()
+        .loginPage(SofiaSecurityConfig.DEFAULT_LOGIN_PAGE)
+        .loginProcessingUrl(SofiaSecurityConfig.DEFAULT_LOGIN_WEB_SERVICE).and()
         .logout()
-        .logoutSuccessUrl(SofiaSecurityEnvironment.DEFAULT_LOGOUT_SUCCESS_URL)
+        .logoutSuccessUrl(SofiaSecurityConfig.DEFAULT_LOGOUT_SUCCESS_URL)
+        .and()
+        .oauth2Login()
+        .successHandler(new SofiaOAuth2AuthenticationSuccessHandler())
+        .failureHandler(new SofiaOAuth2AuthenticationFailureHandler())
         .and()
         .authorizeHttpRequests((authorize) -> {
               try {
@@ -70,7 +82,8 @@ public class SecurityConfiguration {
                 log.warn(e.getMessage());
               }
             }
-        );
+        )
+    ;
     return http.build();
   }
 }

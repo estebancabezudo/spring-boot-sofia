@@ -33,7 +33,7 @@ public class SofiaAuthorizationManager implements AuthorizationManager<RequestAu
     String servletPath = request.getServletPath();
 
     // The following lines are to avoid the dummy request provided by Spring that raise a UnsupportedOperationException when call /error
-    if ("/error".equals(servletPath) || SofiaSecurityEnvironment.DEFAULT_LOGIN_PAGE.equals(servletPath)) { // TODO Improve this
+    if ("/error".equals(servletPath) || SofiaSecurityConfig.DEFAULT_LOGIN_PAGE.equals(servletPath)) { // TODO Improve this
       return new AuthorizationDecision(true);
     }
     Site site = (Site) request.getSession().getAttribute("site");

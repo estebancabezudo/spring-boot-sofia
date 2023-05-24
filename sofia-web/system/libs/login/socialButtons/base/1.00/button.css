@@ -1,0 +1,29 @@
+.socialButtonContainer {
+    display: flex;
+    flex-direction: row;
+    margin: 10px 0;
+    border: 1px solid rgb(233, 233, 233);
+    border-radius: 3px;
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+}
+
+.socialButtonLogoContainer {
+    padding: 10px;
+}
+
+.socialButtonLogo {
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.socialButtonTextContainer {}
+
+.socialButtonText {
+    color: rgb(199, 199, 199);
+    margin: 0 10px;
+    pointer-events: none;
+}

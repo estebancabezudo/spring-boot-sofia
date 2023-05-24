@@ -791,7 +791,6 @@ const Core = {
     },
 
     isArray: v => {
-        console.log('Core::isArray: ', Object.prototype.toString.call(v), v);
         return Object.prototype.toString.call(v) === '[object Array]';
     },
 
@@ -1595,7 +1594,7 @@ class EMailInput extends Input {
 
     const NEW_GROUP_ID = 'newGroup';
 
-    let id, groupsBaseData, usernameInput, baseUsername, userSaveButton;
+    let id, groupsBaseData, usernameInput, usernameBaseData, userSaveButton;
     const createGroupContainer = (groupName, visible, newGroupId) => {
         const groupContainer = document.createElement('DIV');
         if (newGroupId && newGroupId.length > 0) {
@@ -1670,10 +1669,10 @@ class EMailInput extends Input {
         return groupContainer;
     };
     const setSaveButton = valueToSet => {
-        const theDataChange = () => {
+        const theDataChangeAndIsValid = () => {
+            console.log('userForm.html::setSaveButton::theDataChange');
             const inputValue = usernameInput.getElement().value;
-            console.log(baseUsername + '!==' + inputValue);
-            if (baseUsername !== inputValue) {
+            if (usernameBaseData !== inputValue && usernameInput.isValid()) {
                 return true;
             }
             if (!groupsBaseData) {
@@ -1684,18 +1683,23 @@ class EMailInput extends Input {
             for (const groupInput of groupsContainer.getElementsByClassName('textInput')) {
                 if (groupInput.value.trim().length > 2) {
                     groupDOMSize++;
+                    console.log('groupInput.value.trim(): ' + groupInput.value.trim());
+                    console.log('groupsBaseData.includes(groupInput.value.trim()): ' + groupsBaseData.includes(groupInput.value.trim()));
                     if (!groupsBaseData.includes(groupInput.value.trim())) {
                         return true;
                     }
                 }
             };
+            console.log('groupsBaseData.length' + groupsBaseData.length);
+            console.log('groupDOMSize' + groupDOMSize);
+            console.log('groupsBaseData.length !== groupDOMSize' + groupsBaseData.length !== groupDOMSize);
             if (groupsBaseData.length !== groupDOMSize) {
                 return true;
             }
             return false;
         };
         const tooShortUserName = usernameInput.getElement().value.length < 3;
-        userSaveButton.disabled = valueToSet !== undefined ? !valueToSet : (tooShortUserName || !(theDataChange() && usernameInput.isValid()));
+        userSaveButton.disabled = valueToSet !== undefined ? !valueToSet : (tooShortUserName || !(theDataChangeAndIsValid()));
     };
     const formInit = () => {
         Core.subscribeTo('core:showWait', () => {
@@ -1737,7 +1741,6 @@ class EMailInput extends Input {
             Core.publish('core:hideWait');
             setSaveButton();
         });
-        baseUsername = usernameInput.getElement().value;
         usernameInput.getElement().focus();
     }
 
@@ -1753,7 +1756,7 @@ class EMailInput extends Input {
 
     window.addEventListener('load', initFooter);
 
-// Code from :commons.js: called by system 
+// Code from :/home/esteban/Documents/trabajo/sofia/spring-boot-sofia/sofia-web/src/sources/localhost/1:commons.js: called by system 
 Core.setReportSystemErrorFunction(error => {
     Core.showErrorMessage(error.message);
     throw error;

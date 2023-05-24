@@ -19,10 +19,9 @@ import net.cabezudo.json.exceptions.JSONParseException;
 import net.cabezudo.json.values.JSONObject;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.core.SofiaTemplateEngineEnvironment;
-import net.cabezudo.sofia.core.modules.ModuleException;
-import net.cabezudo.sofia.core.modules.ModuleManager;
-import net.cabezudo.sofia.core.modules.SofiaSecurityModule;
 import net.cabezudo.sofia.files.FileHelper;
+import net.cabezudo.sofia.security.Permission;
+import net.cabezudo.sofia.security.PermissionManagerImplementation;
 import net.cabezudo.sofia.sites.Host;
 import net.cabezudo.sofia.sites.HostNotFoundException;
 import net.cabezudo.sofia.sites.PathManager;
@@ -30,6 +29,8 @@ import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteManager;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.sites.SourceNotFoundException;
+import net.cabezudo.sofia.users.Group;
+import net.cabezudo.sofia.users.Groups;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,7 @@ import java.util.stream.Stream;
  */
 public class SofiaFile {
   private static final Logger log = LoggerFactory.getLogger(SofiaFile.class);
-  
+
   private final Site site;
   private final Path requestFilePath;
   private final Path voidRootFilePath;
@@ -69,19 +70,17 @@ public class SofiaFile {
   private final PathManager pathManager;
   private final SiteManager siteManager;
   private final TemplateVariables templateVariables;
-  private final ModuleManager moduleManager;
   SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
   private boolean hasDocType = false;
   private Document document;
   private Element head;
 
-  public SofiaFile(HttpServletRequest request, SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment, SiteManager siteManager, PathManager pathManager, TemplateVariables templateVariables, ModuleManager moduleManager) throws SiteNotFoundException, HostNotFoundException {
+  public SofiaFile(HttpServletRequest request, SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment, SiteManager siteManager, PathManager pathManager, TemplateVariables templateVariables) throws SiteNotFoundException, HostNotFoundException {
     this.sofiaTemplateEngineEnvironment = sofiaTemplateEngineEnvironment;
     this.siteManager = siteManager;
     this.pathManager = pathManager;
     this.idStorage = new IdStorage(pathManager);
     this.templateVariables = templateVariables;
-    this.moduleManager = moduleManager;
     jsCode = new JSCode(sofiaTemplateEngineEnvironment);
     textsFile = new TextsFile(sofiaTemplateEngineEnvironment);
     site = siteManager.get(request);
@@ -93,13 +92,12 @@ public class SofiaFile {
     voidRootFilePath = FileHelper.removeExtension(requestURI);
   }
 
-  public SofiaFile(Site site, String version, String requestURIParameter, SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment, SiteManager siteManager, PathManager pathManager, TemplateVariables templateVariables, ModuleManager moduleManager) {
+  public SofiaFile(Site site, String version, String requestURIParameter, SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment, SiteManager siteManager, PathManager pathManager, TemplateVariables templateVariables) {
     this.sofiaTemplateEngineEnvironment = sofiaTemplateEngineEnvironment;
     this.siteManager = siteManager;
     this.pathManager = pathManager;
     this.idStorage = new IdStorage(pathManager);
     this.templateVariables = templateVariables;
-    this.moduleManager = moduleManager;
     this.site = site;
     this.version = version;
     String requestURI = requestURIParameter.substring(1);
@@ -387,14 +385,31 @@ public class SofiaFile {
           FilePathOutsideSourcePath | UndefinedLiteralException | DuplicateKeyException | SiteNotFoundException e) {
         throw new SiteCreationException(e);
       }
-      try {
-        SofiaSecurityModule securityModule = moduleManager.getSecurityModule();
-        if (securityModule != null) {
-          securityModule.processElement(site, requestFilePath, element, caller, voidRootFilePath);
-        }
-      } catch (ModuleException e) {
-        throw new SiteCreationException(e);
+      if (TagName.BODY.equals(element.getTagName())) {
+        processBodyTag(site, requestFilePath, element, caller, voidRootFilePath);
       }
+    }
+  }
+
+  private void processBodyTag(Site site, Path requestFilePath, Element body, Caller caller, Path voidRootFilePath) {
+    Attribute attribute;
+    if ((attribute = body.getAttribute(Attribute.GROUPS)) != null) {
+      Groups groups = new Groups(attribute.getValue());
+      if (groups.isEmpty()) {
+        log.debug("No groups found in tag");
+      } else {
+        for (Group group : groups) {
+          log.debug("Found group: " + group.name());
+          String fileResource = '/' + requestFilePath.toString();
+          Permission filePermission = new Permission(group.name(), Permission.USER_ALL, Permission.ACCESS_GRANT, fileResource);
+          PermissionManagerImplementation.getInstance().add(site, filePermission);
+          String textsResource = "/texts/" + voidRootFilePath.toString() + "/**";
+          Permission textsPermission = new Permission(group.name(), Permission.USER_ALL, Permission.ACCESS_GRANT, textsResource);
+          PermissionManagerImplementation.getInstance().add(site, textsPermission);
+        }
+      }
+    } else {
+      log.debug("No groups tag found");
     }
   }
 

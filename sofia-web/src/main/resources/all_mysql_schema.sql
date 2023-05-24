@@ -50,22 +50,30 @@ CREATE TABLE `emails` (
 
 CREATE TABLE `users` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `account_id` INT(11) NOT NULL,
   `email_id` INT(11) NOT NULL,
   `password` VARCHAR(500),
   `enabled` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ix_account_email` (`account_id`,`email_id`),
-  KEY `fk_email` (`email_id`),
-  CONSTRAINT `fk_users_account` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  UNIQUE KEY `ix_email` (`email_id`),
   CONSTRAINT `fk_users_email` FOREIGN KEY (`email_id`) REFERENCES `emails` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `authorities` (
+CREATE TABLE `accounts_users` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `account_id` INT(11) NOT NULL,
   `user_id` INT(11) NOT NULL,
+  `owner` BOOLEAN NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_account_user` (`account_id`, `user_id`),
+  CONSTRAINT `fk_accounts_users_account` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `fk_accounts_users_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `authorities` (
+  `account_user_id` INT(11) NOT NULL,
   `authority` VARCHAR(50) NOT NULL,
-  UNIQUE KEY `ix_auth_username` (`user_id`, `authority`),
-  CONSTRAINT `fk_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  UNIQUE KEY `ix_auth_username` (`account_user_id`, `authority`),
+  CONSTRAINT `fk_accounts_users` FOREIGN KEY (`account_user_id`) REFERENCES `accounts_users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `countries` (
@@ -184,21 +192,26 @@ INSERT INTO `emails` (email) VALUES ('sofia@cabezudo.net');
 INSERT INTO `emails` (email) VALUES ('sofia@example.com');
 INSERT INTO `emails` (email) VALUES ('esteban@example.com');
 
-INSERT INTO `users` (account_id, email_id, password, enabled) VALUES (1, 1, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 1);
-INSERT INTO `users` (account_id, email_id, password, enabled) VALUES (1, 2, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 1);
-INSERT INTO `users` (account_id, email_id, password, enabled) VALUES (2, 2, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 1);
-INSERT INTO `users` (account_id, email_id, password, enabled) VALUES (2, 3, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 1);
-INSERT INTO `users` (account_id, email_id, password, enabled) VALUES (1, 3, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 1);
-INSERT INTO `users` (account_id, email_id, password, enabled) VALUES (3, 4, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 1);
+INSERT INTO `users` (email_id, password, enabled) VALUES (1, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 1);
+INSERT INTO `users` (email_id, password, enabled) VALUES (2, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 1);
+INSERT INTO `users` (email_id, password, enabled) VALUES (3, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 1);
+INSERT INTO `users` (email_id, password, enabled) VALUES (4, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 1);
 
-INSERT INTO `authorities` (user_id, authority) VALUES (1, 'user');
-INSERT INTO `authorities` (user_id, authority) VALUES (1, 'admin');
-INSERT INTO `authorities` (user_id, authority) VALUES (2, 'user');
-INSERT INTO `authorities` (user_id, authority) VALUES (3, 'admin');
-INSERT INTO `authorities` (user_id, authority) VALUES (3, 'user');
-INSERT INTO `authorities` (user_id, authority) VALUES (4, 'user');
-INSERT INTO `authorities` (user_id, authority) VALUES (5, 'user');
-INSERT INTO `authorities` (user_id, authority) VALUES (6, 'root');
+INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (1, 1, true);
+INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (2, 1, false);
+INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (3, 1, false);
+INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (2, 2, true);
+INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (1, 2, false);
+INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (1 ,3, false);
+INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (3 ,4, true);
+INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (1 ,4, false);
+
+INSERT INTO `authorities` (account_user_id, authority) VALUES (1, 'admin');
+INSERT INTO `authorities` (account_user_id, authority) VALUES (1, 'user');
+INSERT INTO `authorities` (account_user_id, authority) VALUES (4, 'admin');
+INSERT INTO `authorities` (account_user_id, authority) VALUES (4, 'user');
+INSERT INTO `authorities` (account_user_id, authority) VALUES (5, 'user');
+INSERT INTO `authorities` (account_user_id, authority) VALUES (6, 'user');
 
 INSERT INTO `administrative_division_types` (name) VALUES ('state');
 INSERT INTO `administrative_division_types` (name) VALUES ('municipality');

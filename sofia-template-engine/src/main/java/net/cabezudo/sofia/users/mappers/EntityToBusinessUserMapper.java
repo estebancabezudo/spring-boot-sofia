@@ -11,7 +11,7 @@ public class EntityToBusinessUserMapper {
   public SofiaUser map(UserEntity e) {
     EntityToBusinessGroupsMapper mapper = new EntityToBusinessGroupsMapper();
     int id = e.getId();
-    int siteId = e.getAccountId();
+    int siteId = e.getSiteId();
     EMailEntity eMailEntity = e.getEMailEntity();
     String password = e.getPassword();
     Groups groups = mapper.map(e.getEntityGroups());

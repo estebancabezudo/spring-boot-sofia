@@ -4,16 +4,15 @@ import net.cabezudo.sofia.users.Group;
 import net.cabezudo.sofia.users.Groups;
 import net.cabezudo.sofia.users.persistence.GroupEntity;
 import net.cabezudo.sofia.users.persistence.GroupsEntity;
-import net.cabezudo.sofia.users.persistence.UserEntity;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BusinessToEntityGroupsMapper {
 
-  public GroupsEntity map(UserEntity user, Groups groups) {
+  public GroupsEntity map(int accountUserRelationId, Groups groups) {
     GroupsEntity groupsEntity = new GroupsEntity();
     for (Group group : groups) {
-      GroupEntity groupEntity = new GroupEntity(user.getId(), group.name());
+      GroupEntity groupEntity = new GroupEntity(accountUserRelationId, group.name());
       groupsEntity.add(groupEntity);
     }
     return groupsEntity;

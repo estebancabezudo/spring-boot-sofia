@@ -3,11 +3,11 @@ package net.cabezudo.sofia.users.persistence;
 import java.util.Objects;
 
 public class GroupEntity {
-  private final int userId;
+  private final int accountUserId;
   private final String name;
 
-  public GroupEntity(int userId, String name) {
-    this.userId = userId;
+  public GroupEntity(int accountUserId, String name) {
+    this.accountUserId = accountUserId;
     this.name = name;
   }
 
@@ -15,12 +15,12 @@ public class GroupEntity {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof GroupEntity that)) return false;
-    return userId == that.userId && getName().equals(that.getName());
+    return accountUserId == that.accountUserId && getName().equals(that.getName());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(userId, getName());
+    return Objects.hash(accountUserId, getName());
   }
 
   public String getName() {

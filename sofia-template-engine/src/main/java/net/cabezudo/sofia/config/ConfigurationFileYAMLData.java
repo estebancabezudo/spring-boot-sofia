@@ -13,7 +13,6 @@ import java.util.List;
 public class ConfigurationFileYAMLData {
 
   private String basePath;
-  private boolean securityActive;
   private String[] sourcePaths;
   private List<ConfigurationFileYAMLSiteData> sites;
 
@@ -24,10 +23,6 @@ public class ConfigurationFileYAMLData {
   public ConfigurationFileYAMLData(String basePath, List<ConfigurationFileYAMLSiteData> sites) {
     this.basePath = basePath;
     this.sites = sites;
-  }
-
-  public boolean isSecurityActive() {
-    return securityActive;
   }
 
   public String[] getSourcePaths() {

@@ -1,17 +1,17 @@
 package net.cabezudo.sofia.users.rest;
 
-import net.cabezudo.sofia.sites.Site;
+import net.cabezudo.sofia.accounts.Account;
 
 public class RestUser {
   private final int id;
   private final String username;
   private final RestGroups groups;
   private final boolean enabled;
-  private Site site;
+  private Account account;
 
-  public RestUser(int id, Site site, String username, RestGroups groups, boolean enabled) {
+  public RestUser(int id, Account account, String username, RestGroups groups, boolean enabled) {
     this.id = id;
-    this.site = site;
+    this.account = account;
     this.username = username;
     this.groups = groups;
     this.enabled = enabled;
@@ -34,11 +34,11 @@ public class RestUser {
     return enabled;
   }
 
-  public Site getSite() {
-    return site;
+  public Account getAccount() {
+    return account;
   }
 
-  public void setSite(Site site) {
-    this.site = site;
+  public void setAccount(Account account) {
+    this.account = account;
   }
 }

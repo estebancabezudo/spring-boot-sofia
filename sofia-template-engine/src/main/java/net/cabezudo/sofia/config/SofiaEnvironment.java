@@ -10,22 +10,9 @@ import java.util.TreeSet;
 
 @Component
 public class SofiaEnvironment {
-  private boolean securityActive;
   private Boolean development;
-  
+
   private @Autowired Environment environment;
-
-  public boolean isSecurityActive() {
-    return securityActive;
-  }
-
-  public void setSecurityActive(boolean securityActive) {
-    this.securityActive = securityActive;
-  }
-
-  public boolean isSecurityNotActive() {
-    return !isSecurityActive();
-  }
 
   public boolean isDevelopment() {
     if (development == null) {

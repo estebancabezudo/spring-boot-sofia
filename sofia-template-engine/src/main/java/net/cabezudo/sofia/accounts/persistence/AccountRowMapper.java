@@ -8,6 +8,6 @@ import java.sql.SQLException;
 public class AccountRowMapper implements RowMapper<AccountEntity> {
   @Override
   public AccountEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
-    return new AccountEntity(rs.getInt("account_id"), rs.getInt("site_id"));
+    return new AccountEntity(rs.getInt("id"), rs.getInt("site_id"));
   }
 }

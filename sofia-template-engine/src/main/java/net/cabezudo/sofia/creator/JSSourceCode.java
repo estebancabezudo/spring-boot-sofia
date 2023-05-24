@@ -19,7 +19,7 @@ import java.util.Scanner;
  */
 class JSSourceCode extends CodeSource {
   private static final Logger log = LoggerFactory.getLogger(JSSourceCode.class);
-  
+
   private final StringBuilder code = new StringBuilder();
   private final String sourceId;
   private final Caller caller;
@@ -29,7 +29,7 @@ class JSSourceCode extends CodeSource {
 
     log.debug("Resolved to " + fullFilePath);
 
-    this.sourceId = File.pathSeparator + filePath + (id == null ? ":" : id);
+    this.sourceId = File.pathSeparator + basePath + File.pathSeparator + filePath + (id == null ? ":" : id);
     this.caller = caller;
     log.debug("Check for JavaScript file: " + fullFilePath);
     if (!Files.exists(fullFilePath)) {
