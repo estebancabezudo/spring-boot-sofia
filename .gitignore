@@ -4,4 +4,4 @@ nbproject
 .iml
 .DS_store
 *.iml
-application.yml
+sofia-web/src/main/resources/application.yml
