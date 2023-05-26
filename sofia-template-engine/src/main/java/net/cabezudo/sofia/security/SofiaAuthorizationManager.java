@@ -44,9 +44,9 @@ public class SofiaAuthorizationManager implements AuthorizationManager<RequestAu
       return new AuthorizationDecision(true);
     }
     Site site = (Site) request.getSession().getAttribute("site");
+    SofiaUser user = sofiaSecurityManager.getLoggedUser();
     WebClientData webClientData = webClientDataManager.getFromSession();
     Account account = webClientData.getAccount();
-    SofiaUser user = sofiaSecurityManager.getLoggedUser();
     if (site != null && permissionManager.hasPermission(user, site, account, requestURI)) {
       return new AuthorizationDecision(true);
     }
