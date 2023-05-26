@@ -15,7 +15,6 @@ public class SofiaUser implements UserDetails {
   private int accountId;
   private Account account;
 
-
   public SofiaUser(int id, Account account, String username, String password, Groups groups, boolean enabled) {
     this.id = id;
     this.accountId = account.id();
@@ -25,6 +24,7 @@ public class SofiaUser implements UserDetails {
     this.groups = groups;
     this.enabled = enabled;
   }
+
 
   public SofiaUser(int id, Account account, String username, String password, Collection<GrantedAuthority> authorities, boolean enabled) {
     this.id = id;
@@ -43,6 +43,18 @@ public class SofiaUser implements UserDetails {
     this.password = password;
     this.groups = groups;
     this.enabled = enabled;
+  }
+
+  @Override
+  public String toString() {
+    return "SofiaUser{" +
+        "id=" + id +
+        ", username='" + username + '\'' +
+        ", groups=" + groups +
+        ", enabled=" + enabled +
+        ", accountId=" + accountId +
+        ", account=" + account +
+        '}';
   }
 
   @Override

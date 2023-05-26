@@ -3,13 +3,12 @@ package net.cabezudo.sofia.web.client.rest;
 import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.security.SofiaSecurityManager;
+import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
 import net.cabezudo.sofia.users.SofiaUser;
 import net.cabezudo.sofia.users.rest.BusinessToRestUserMapper;
-import net.cabezudo.sofia.users.rest.RestUser;
 import net.cabezudo.sofia.web.client.Language;
-import net.cabezudo.sofia.web.client.WebClientManager;
+import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.mappers.BusinessToRestWebClientMapper;
-import net.cabezudo.sofia.web.client.service.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +27,10 @@ public class WebClientController extends SofiaAuthorizedController {
   private static final Logger log = LoggerFactory.getLogger(WebClientController.class);
 
   private @Autowired SofiaSecurityManager securityManager;
-  private @Autowired WebClientManager webClientManager;
   private @Autowired BusinessToRestWebClientMapper businessToRestWebClientMapper;
 
   private @Autowired BusinessToRestUserMapper businessToRestUserMapper;
+  private @Autowired UserPreferencesManager userPreferencesManager;
 
   public WebClientController(HttpServletRequest request) {
     super(request);
@@ -42,17 +41,8 @@ public class WebClientController extends SofiaAuthorizedController {
     log.debug("Run /v1/web/clients/actual/details");
 
     HttpSession session = super.getRequest().getSession();
-    Object o = session.getAttribute(WebClient.OBJECT_NAME_IN_SESSION);
-    WebClient webClient = (WebClient) o;
-
-    RestWebClient restWebClient = businessToRestWebClientMapper.map(webClient);
-
-    Account account = super.getAccount();
-
-    SofiaUser sofiaUser = securityManager.getLoggedUser();
-    RestUser restUser = sofiaUser == null ? null : businessToRestUserMapper.map(sofiaUser);
-
-    restWebClient.setUser(restUser);
+    WebClientData webClientData = (WebClientData) session.getAttribute(WebClientData.OBJECT_NAME_IN_SESSION);
+    RestWebClientData restWebClient = businessToRestWebClientMapper.map(webClientData);
     log.debug("Web client data: " + restWebClient);
     return ResponseEntity.ok(restWebClient);
   }
@@ -62,19 +52,24 @@ public class WebClientController extends SofiaAuthorizedController {
     log.debug("Run /v1/web/clients/actual/languages/default");
 
     HttpSession session = super.getRequest().getSession();
-    Object o = session.getAttribute(WebClient.OBJECT_NAME_IN_SESSION);
-    WebClient webClient = (WebClient) o;
 
-    WebClient responseWebClient;
-    if (restLanguage != null && !restLanguage.equals(webClient.getLanguage())) {
-      WebClient newWebClient = new WebClient(webClient.getId(), new Language(restLanguage.getCode()));
-      request.getSession().setAttribute(WebClient.OBJECT_NAME_IN_SESSION, newWebClient);
-      responseWebClient = webClientManager.update(newWebClient);
+    WebClientData webClientData = (WebClientData) session.getAttribute(WebClientData.OBJECT_NAME_IN_SESSION);
+
+    WebClientData responseWebClient;
+    if (restLanguage != null && !restLanguage.equals(webClientData.getLanguage())) {
+      Language languageToSet = new Language(restLanguage.getCode());
+      Account account = webClientData.getAccount();
+      SofiaUser user = webClientData.getUser();
+
+      WebClientData newWebClient = new WebClientData(languageToSet, account);
+      request.getSession().setAttribute(WebClientData.OBJECT_NAME_IN_SESSION, newWebClient);
+      userPreferencesManager.setLanguage(account, user, languageToSet);
+      responseWebClient = newWebClient;
     } else {
-      responseWebClient = webClient;
+      responseWebClient = webClientData;
     }
-    BusinessToRestWebClientMapper mapper = new BusinessToRestWebClientMapper();
-    RestWebClient newRestWebClient = mapper.map(responseWebClient);
+
+    RestWebClientData newRestWebClient = businessToRestWebClientMapper.map(responseWebClient);
     return ResponseEntity.ok(newRestWebClient);
   }
 }

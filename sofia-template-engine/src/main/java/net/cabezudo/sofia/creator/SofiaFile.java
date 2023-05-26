@@ -21,7 +21,7 @@ import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.core.SofiaTemplateEngineEnvironment;
 import net.cabezudo.sofia.files.FileHelper;
 import net.cabezudo.sofia.security.Permission;
-import net.cabezudo.sofia.security.PermissionManagerImplementation;
+import net.cabezudo.sofia.security.PermissionManager;
 import net.cabezudo.sofia.sites.Host;
 import net.cabezudo.sofia.sites.HostNotFoundException;
 import net.cabezudo.sofia.sites.PathManager;
@@ -74,13 +74,15 @@ public class SofiaFile {
   private boolean hasDocType = false;
   private Document document;
   private Element head;
+  private PermissionManager permissionManager;
 
-  public SofiaFile(HttpServletRequest request, SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment, SiteManager siteManager, PathManager pathManager, TemplateVariables templateVariables) throws SiteNotFoundException, HostNotFoundException {
+  public SofiaFile(HttpServletRequest request, SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment, SiteManager siteManager, PathManager pathManager, TemplateVariables templateVariables, PermissionManager permissionManager) throws SiteNotFoundException, HostNotFoundException {
     this.sofiaTemplateEngineEnvironment = sofiaTemplateEngineEnvironment;
     this.siteManager = siteManager;
     this.pathManager = pathManager;
     this.idStorage = new IdStorage(pathManager);
     this.templateVariables = templateVariables;
+    this.permissionManager = permissionManager;
     jsCode = new JSCode(sofiaTemplateEngineEnvironment);
     textsFile = new TextsFile(sofiaTemplateEngineEnvironment);
     site = siteManager.get(request);
@@ -402,10 +404,10 @@ public class SofiaFile {
           log.debug("Found group: " + group.name());
           String fileResource = '/' + requestFilePath.toString();
           Permission filePermission = new Permission(group.name(), Permission.USER_ALL, Permission.ACCESS_GRANT, fileResource);
-          PermissionManagerImplementation.getInstance().add(site, filePermission);
+          permissionManager.add(site, filePermission);
           String textsResource = "/texts/" + voidRootFilePath.toString() + "/**";
           Permission textsPermission = new Permission(group.name(), Permission.USER_ALL, Permission.ACCESS_GRANT, textsResource);
-          PermissionManagerImplementation.getInstance().add(site, textsPermission);
+          permissionManager.add(site, textsPermission);
         }
       }
     } else {

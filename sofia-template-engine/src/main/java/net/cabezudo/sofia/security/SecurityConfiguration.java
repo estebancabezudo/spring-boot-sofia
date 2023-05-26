@@ -30,6 +30,7 @@ public class SecurityConfiguration {
   private @Autowired UrlAuthenticationFilter urlAuthenticationFilter;
   private @Autowired SofiaEnvironment sofiaEnvironment;
   private @Autowired CustomDetailsService customDetailsService;
+  private @Autowired SofiaAuthorizationManager sofiaAuthorizationManager;
 
   @Bean
   public SofiaAuthenticationProvider authProvider() {
@@ -76,7 +77,7 @@ public class SecurityConfiguration {
         .authorizeHttpRequests((authorize) -> {
               try {
                 authorize
-                    .anyRequest().access(SofiaAuthorizationManager.getInstance())
+                    .anyRequest().access(sofiaAuthorizationManager)
                     .and().csrf().disable();
               } catch (Exception e) {
                 log.warn(e.getMessage());

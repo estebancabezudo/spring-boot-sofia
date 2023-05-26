@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.users.rest;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.cabezudo.sofia.accounts.Account;
 
 public class RestUser {
@@ -7,6 +8,7 @@ public class RestUser {
   private final String username;
   private final RestGroups groups;
   private final boolean enabled;
+  @JsonIgnore
   private Account account;
 
   public RestUser(int id, Account account, String username, RestGroups groups, boolean enabled) {

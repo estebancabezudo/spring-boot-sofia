@@ -8,7 +8,7 @@ import net.cabezudo.sofia.config.ConfigurationFileYAMLSiteData;
 import net.cabezudo.sofia.config.SofiaEnvironment;
 import net.cabezudo.sofia.creator.ContentManager;
 import net.cabezudo.sofia.security.Permission;
-import net.cabezudo.sofia.security.PermissionManagerImplementation;
+import net.cabezudo.sofia.security.PermissionManager;
 import net.cabezudo.sofia.sites.Host;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteManager;
@@ -38,7 +38,6 @@ public class SofiaTemplateEngineEnvironment {
 
   public static final String DEV = "dev";
   public static final String PROD = "prod";
-
   public static final String DEFAULT_DIRECTORY_INDEX_FILE = "index.html";
   public static final String SOFIA_DIRECTORY_NAME = "sofia";
   public static final String LIBS_DIRECTORY_NAME = "libs";
@@ -49,6 +48,7 @@ public class SofiaTemplateEngineEnvironment {
   private static final String SOFIA_CONFIGURATION_FILENAME = "sofia.yml";
   private static final Logger log = LoggerFactory.getLogger(SofiaTemplateEngineEnvironment.class);
   private final List<Path> sourcePaths = new ArrayList<>();
+  private @Autowired PermissionManager permissionManager;
   private @Autowired SofiaEnvironment sofiaEnvironment;
   private @Autowired SiteManager siteManager;
   private String name;
@@ -210,14 +210,14 @@ public class SofiaTemplateEngineEnvironment {
         contentManager.add(api);
         String permissionString = "all:all:grant:" + api + "/**";
         Permission permission = new Permission(permissionString);
-        PermissionManagerImplementation.getInstance().add(site, permission);
+        permissionManager.add(site, permission);
         log.debug("Add " + permissionString + " to site " + site.getName());
       }
 
       List<String> permissions = siteData.getPermissions();
       for (String permissionData : permissions) {
         Permission permission = new Permission(permissionData);
-        PermissionManagerImplementation.getInstance().add(site, permission);
+        permissionManager.add(site, permission);
         log.debug("Add " + permissionData + " to site " + site.getName());
       }
 

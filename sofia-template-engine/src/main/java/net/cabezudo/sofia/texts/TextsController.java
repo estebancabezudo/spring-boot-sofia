@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.texts;
 
+import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.core.rest.SofiaController;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
 import net.cabezudo.sofia.files.FileHelper;
@@ -8,8 +9,9 @@ import net.cabezudo.sofia.sites.HostNotFoundException;
 import net.cabezudo.sofia.sites.PathManager;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
+import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
 import net.cabezudo.sofia.web.client.Language;
-import net.cabezudo.sofia.web.client.service.WebClient;
+import net.cabezudo.sofia.web.client.WebClientData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,7 @@ public class TextsController extends SofiaController {
   private static final Logger log = LoggerFactory.getLogger(TextsController.class);
 
   private @Autowired PathManager pathManager;
+  private @Autowired UserPreferencesManager userPreferencesManager;
 
   public TextsController(HttpServletRequest request) {
     super(request);
@@ -43,8 +46,8 @@ public class TextsController extends SofiaController {
       method = RequestMethod.GET,
       produces = "application/json"
   )
-  public ResponseEntity<? extends SofiaRestResponse> texts(@RequestParam String language, @RequestParam String page) {
-    log.debug("Run /v1/pages/actual/texts, language=" + language + ", page=" + page);
+  public ResponseEntity<? extends SofiaRestResponse> texts(@RequestParam(value = "language") String requestedLanguage, @RequestParam String page) {
+    log.debug("Run /v1/pages/actual/texts, language=" + requestedLanguage + ", page=" + page);
     Site site = super.getSite();
     Host host = super.getHost();
     String version = host.getVersion();
@@ -62,32 +65,34 @@ public class TextsController extends SofiaController {
         pageWithFile = pageWithoutStart;
       }
       String pageWithoutExtension = FileHelper.removeExtension(pageWithFile).toString();
-      Path path = pathManager.getVersionedSiteTextsPath(site, version).resolve(pageWithoutExtension).resolve(language + ".json");
+      Path path = pathManager.getVersionedSiteTextsPath(site, version).resolve(pageWithoutExtension).resolve(requestedLanguage + ".json");
       log.debug("Path to text file: " + path);
       if (!Files.exists(path)) {
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
             .body(new SofiaRestResponse(
                 SofiaRestResponse.ERROR,
-                "File with texts for page " + page + " for the language " + language + " not found."
+                "File with texts for page " + page + " for the language " + requestedLanguage + " not found."
             ));
       }
       String textFromFile = Files.readString(path);
 
-      WebClient webClient = (WebClient) super.getRequest().getSession().getAttribute(WebClient.OBJECT_NAME_IN_SESSION);
-      log.debug("Web client: " + webClient);
-      if (webClient != null) {
-        Language languageFromClient = webClient.getLanguage();
-        log.debug("Language request: " + language);
-        log.debug("Language in web client: " + languageFromClient);
-        if (languageFromClient == null || !languageFromClient.getValue().equals(language)) {
-          WebClient newWebClient = new WebClient(webClient.getId(), new Language(language));
-          log.debug("Change new web client for: " + newWebClient);
-          HttpSession session = super.getRequest().getSession();
-          session.setAttribute(WebClient.OBJECT_NAME_IN_SESSION, newWebClient);
-          String sessionId = session.getId();
-          log.debug("Set web client object in session " + sessionId + " for language change to " + language);
-        }
+      WebClientData webClientData = (WebClientData) super.getRequest().getSession().getAttribute(WebClientData.OBJECT_NAME_IN_SESSION);
+      log.debug("Client data: " + webClientData);
+      if (webClientData == null) {
+        throw new SofiaRuntimeException("The client data is null");
+      }
+      Language languageFromClient = webClientData.getLanguage();
+      log.debug("Language request: " + requestedLanguage);
+      log.debug("Language in web client: " + languageFromClient);
+      if (languageFromClient == null || !languageFromClient.getValue().equals(requestedLanguage)) {
+
+        WebClientData newWebClientData = new WebClientData(new Language(requestedLanguage), null);
+        log.debug("Change new web client for: " + newWebClientData);
+        HttpSession session = super.getRequest().getSession();
+        session.setAttribute(WebClientData.OBJECT_NAME_IN_SESSION, newWebClientData);
+        String sessionId = session.getId();
+        log.debug("Set web client object in session " + sessionId + " for language change to " + requestedLanguage);
       }
 
       return ResponseEntity.ok(new TextsRestResponse(textFromFile));

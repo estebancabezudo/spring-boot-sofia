@@ -1,13 +1,21 @@
 package net.cabezudo.sofia.web.client.mappers;
 
-import net.cabezudo.sofia.web.client.rest.RestWebClient;
-import net.cabezudo.sofia.web.client.service.WebClient;
+import net.cabezudo.sofia.users.SofiaUser;
+import net.cabezudo.sofia.users.rest.BusinessToRestUserMapper;
+import net.cabezudo.sofia.users.rest.RestUser;
+import net.cabezudo.sofia.web.client.WebClientData;
+import net.cabezudo.sofia.web.client.rest.RestWebClientData;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BusinessToRestWebClientMapper {
-  public RestWebClient map(WebClient c) {
+  private @Autowired BusinessToRestUserMapper businessToRestUserMapper;
+
+  public RestWebClientData map(WebClientData c) {
     String language = c == null || c.getLanguage() == null ? null : c.getLanguage().getValue();
-    return new RestWebClient(c.getId(), language, null);
+    SofiaUser user = c.getUser();
+    RestUser restUser = user == null ? null : businessToRestUserMapper.map(user);
+    return new RestWebClientData(language, c.getAccount(), restUser);
   }
 }

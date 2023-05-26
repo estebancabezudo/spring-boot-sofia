@@ -1,12 +1,12 @@
 package net.cabezudo.sofia.core.hostname;
 
 import net.cabezudo.sofia.hostnames.DomainNameValidationException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-@Component
+@Service
 public class HostnameManager {
 
   private static final int NAME_MAX_LENGTH = 200;

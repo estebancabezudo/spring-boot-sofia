@@ -5,6 +5,7 @@ import net.cabezudo.sofia.creator.IdStorage;
 import net.cabezudo.sofia.creator.SiteCreationException;
 import net.cabezudo.sofia.creator.SofiaFile;
 import net.cabezudo.sofia.creator.TemplateVariables;
+import net.cabezudo.sofia.security.PermissionManager;
 import net.cabezudo.sofia.sites.Host;
 import net.cabezudo.sofia.sites.HostNotFoundException;
 import net.cabezudo.sofia.sites.PathManager;
@@ -18,12 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +34,7 @@ import java.nio.file.StandardCopyOption;
 
 @Component
 @Order(SecurityProperties.DEFAULT_FILTER_ORDER - 1)
-public class StaticContentCreatorFilter implements Filter {
+public class StaticContentCreatorFilter extends OncePerRequestFilter {
   private static final Logger log = LoggerFactory.getLogger(StaticContentCreatorFilter.class);
 
   TemplateVariables templateVariables;
@@ -44,12 +43,13 @@ public class StaticContentCreatorFilter implements Filter {
   private @Autowired ContentManager contentManager;
   private @Autowired SiteManager siteManager;
   private @Autowired PathManager pathManager;
+  private @Autowired PermissionManager permissionManager;
 
   @Override
-  public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+  protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
     log.debug("Static content creator filter.");
     if (req instanceof HttpServletRequest) {
-      HttpServletRequest request = new HttpServletRequestWrapper((HttpServletRequest) req) {
+      HttpServletRequest request = new HttpServletRequestWrapper(req) {
         @Override
         public String getRequestURI() {
           String requestURI = super.getRequestURI();
@@ -61,7 +61,7 @@ public class StaticContentCreatorFilter implements Filter {
       };
       String requestURI = request.getRequestURI();
 
-      HttpServletResponse response = (HttpServletResponse) res;
+      HttpServletResponse response = res;
       try {
         String partialPath = requestURI.substring(1);
         Host host = siteManager.getHostByName(request.getServerName());
@@ -72,7 +72,7 @@ public class StaticContentCreatorFilter implements Filter {
         log.debug("Set the request session attribute site to " + site);
 
         if (contentManager.ignoreRequestURI(requestURI)) {
-          chain.doFilter(request, res);
+          filterChain.doFilter(request, res);
           return;
         }
 
@@ -81,7 +81,7 @@ public class StaticContentCreatorFilter implements Filter {
           if (requestURI.endsWith(".html")) {
             log.debug("Create file using " + targetPath);
             templateVariables = new TemplateVariables();
-            SofiaFile sofiaFile = new SofiaFile(request, sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables);
+            SofiaFile sofiaFile = new SofiaFile(request, sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, permissionManager);
             sofiaFile.loadRootFile();
             sofiaFile.save();
           } else {
@@ -117,9 +117,9 @@ public class StaticContentCreatorFilter implements Filter {
       } catch (RuntimeException e) {
         throw new SofiaRuntimeException(e);
       }
-      chain.doFilter(request, response);
+      filterChain.doFilter(request, response);
     } else {
-      chain.doFilter(req, res);
+      filterChain.doFilter(req, res);
     }
   }
 }

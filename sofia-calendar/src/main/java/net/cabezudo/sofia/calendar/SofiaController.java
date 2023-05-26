@@ -1,12 +1,11 @@
 package net.cabezudo.sofia.calendar;
 
 import net.cabezudo.sofia.sites.Site;
-import net.cabezudo.sofia.users.UserPreferences;
-import net.cabezudo.sofia.users.UserPreferencesManager;
+import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.core.Authentication;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneOffset;
@@ -16,6 +15,7 @@ import java.util.Locale;
 
 public class SofiaController {
   private static final Logger log = LoggerFactory.getLogger(SofiaController.class);
+  private @Autowired UserPreferencesManager userPreferencesManager;
 
   private Locale getLocale(HttpServletRequest request) {
     String header = request.getHeader(HttpHeaders.ACCEPT_LANGUAGE);
@@ -37,25 +37,6 @@ public class SofiaController {
     }
 
     return Locale.ENGLISH;
-  }
-
-  protected UserPreferences getUserPreferences(HttpServletRequest request, Authentication authentication) {
-    UserPreferences userPreferencesFromSession = (UserPreferences) request.getSession().getAttribute("userPreferences");
-    if (userPreferencesFromSession != null) {
-      return userPreferencesFromSession;
-    }
-    if (authentication != null) {
-      UserPreferences userPreferencesFromDatabase = UserPreferencesManager.getInstance().get(authentication.getName());
-      if (userPreferencesFromDatabase != null) {
-        request.getSession().setAttribute("userPreferences", userPreferencesFromDatabase);
-        return userPreferencesFromDatabase;
-      }
-    }
-    ZoneOffset zoneOffset = getTimeZone(request);
-    Locale locale = getLocale(request);
-    UserPreferences userPreferences = new UserPreferences(zoneOffset, locale);
-    request.getSession().setAttribute("userPreferences", userPreferences);
-    return userPreferences;
   }
 
   private ZoneOffset getTimeZone(HttpServletRequest request) {

@@ -1,11 +1,11 @@
 package net.cabezudo.sofia.creator;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Service
 public class ContentManager {
 
   private final List<String> list = new ArrayList();

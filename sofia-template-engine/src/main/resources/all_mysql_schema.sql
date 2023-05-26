@@ -9,6 +9,8 @@ DROP TABLE IF EXISTS `administrative_divisions`;
 DROP TABLE IF EXISTS `places`;
 DROP TABLE IF EXISTS `accounts`;
 DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `user_account_preferences`;
+DROP TABLE IF EXISTS `user_preferences`;
 DROP TABLE IF EXISTS `sites`;
 DROP TABLE IF EXISTS `administrative_division_types`;
 DROP TABLE IF EXISTS `administrative_division_names`;
@@ -21,12 +23,6 @@ DROP TABLE IF EXISTS `phones`;
 DROP TABLE IF EXISTS `person_phones`;
 DROP TABLE IF EXISTS `people_users`;
 
-CREATE TABLE `web_clients` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `language` VARCHAR(5),
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 CREATE TABLE `sites` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(60) NOT NULL,
@@ -38,7 +34,7 @@ CREATE TABLE `accounts` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `site_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_site` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`)
+  CONSTRAINT `fk_accounts_site` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `emails` (
@@ -69,11 +65,27 @@ CREATE TABLE `accounts_users` (
   CONSTRAINT `fk_accounts_users_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE `user_account_preferences` (
+  `account_user_id` INT(11) NOT NULL,
+  `name` VARCHAR(50) NOT NULL,
+  `value` VARCHAR(50) NOT NULL,
+  UNIQUE KEY `ix_name` (`name`),
+  CONSTRAINT `fk_user_account_preferences_accounts_users` FOREIGN KEY (`account_user_id`) REFERENCES `accounts_users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `user_preferences` (
+  `user_id` INT(11) NOT NULL,
+  `name` VARCHAR(50) NOT NULL,
+  `value` VARCHAR(50) NOT NULL,
+  UNIQUE KEY `ix_user_name` (`user_id`, `name`),
+  CONSTRAINT `fk_user_preferences_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE `authorities` (
   `account_user_id` INT(11) NOT NULL,
   `authority` VARCHAR(50) NOT NULL,
   UNIQUE KEY `ix_auth_username` (`account_user_id`, `authority`),
-  CONSTRAINT `fk_accounts_users` FOREIGN KEY (`account_user_id`) REFERENCES `accounts_users` (`id`)
+  CONSTRAINT `fk_authorities_accounts_users` FOREIGN KEY (`account_user_id`) REFERENCES `accounts_users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `countries` (
@@ -98,8 +110,8 @@ CREATE TABLE `places` (
   `postal_code` VARCHAR(10) NOT NULL,
   `country_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_account` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`),
-  CONSTRAINT `fk_country` FOREIGN KEY (`country_id`) REFERENCES `countries` (`id`)
+  CONSTRAINT `fk_places_account` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`),
+  CONSTRAINT `fk_places_country` FOREIGN KEY (`country_id`) REFERENCES `countries` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `administrative_division_types` (
@@ -124,9 +136,9 @@ CREATE TABLE `administrative_divisions` (
   `enabled` BOOLEAN DEFAULT TRUE,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_place_type` (`place_id`,`type_id`),
-  CONSTRAINT `fk_place` FOREIGN KEY (`place_id`) REFERENCES `places` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_type` FOREIGN KEY (`type_id`) REFERENCES `administrative_division_types` (`id`),
-  CONSTRAINT `fk_name` FOREIGN KEY (`name_id`) REFERENCES `administrative_division_names` (`id`)
+  CONSTRAINT `fk_administrative_divisions_place` FOREIGN KEY (`place_id`) REFERENCES `places` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_administrative_divisions_type` FOREIGN KEY (`type_id`) REFERENCES `administrative_division_types` (`id`),
+  CONSTRAINT `fk_administrative_divisions_name` FOREIGN KEY (`name_id`) REFERENCES `administrative_division_names` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `sites_people` (

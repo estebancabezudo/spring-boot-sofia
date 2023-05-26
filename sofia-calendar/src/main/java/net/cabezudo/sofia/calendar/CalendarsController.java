@@ -1,6 +1,5 @@
 package net.cabezudo.sofia.calendar;
 
-import net.cabezudo.sofia.users.UserPreferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +21,7 @@ public class CalendarsController extends SofiaController {
   public ResponseEntity<?> actual(ServletWebRequest webRequest, Authentication authentication, @RequestParam(defaultValue = "0") int offset) {
     HttpServletRequest request = webRequest.getRequest();
 
-    UserPreferences userPreferences = super.getUserPreferences(request, authentication);
-
-    Locale locale = userPreferences.getLocale();
+    Locale locale = null; // Get the locale from web client data or browser
 
     Week week = new Week(locale, offset);
     WeekRestResponse calendarRestResponse = new WeekRestResponse(week);

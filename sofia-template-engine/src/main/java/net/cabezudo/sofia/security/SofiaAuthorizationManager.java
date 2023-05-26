@@ -1,23 +1,30 @@
 package net.cabezudo.sofia.security;
 
+import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.sites.Site;
+import net.cabezudo.sofia.users.SofiaUser;
+import net.cabezudo.sofia.users.service.UserManager;
+import net.cabezudo.sofia.web.client.WebClientData;
+import net.cabezudo.sofia.web.client.WebClientDataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.function.Supplier;
 
+@Service
 public class SofiaAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
-  private static final SofiaAuthorizationManager INSTANCE = new SofiaAuthorizationManager();
   private static final Logger log = LoggerFactory.getLogger(SofiaAuthorizationManager.class);
-
-  public static SofiaAuthorizationManager getInstance() {
-    return INSTANCE;
-  }
+  private @Autowired PermissionManager permissionManager;
+  private @Autowired UserManager userManager;
+  private @Autowired SofiaSecurityManager sofiaSecurityManager;
+  private @Autowired WebClientDataManager webClientDataManager;
 
   @Override
   public AuthorizationDecision check(Supplier<Authentication> supplier, RequestAuthorizationContext context) {
@@ -37,9 +44,10 @@ public class SofiaAuthorizationManager implements AuthorizationManager<RequestAu
       return new AuthorizationDecision(true);
     }
     Site site = (Site) request.getSession().getAttribute("site");
-
-    Authentication authentication = supplier.get();
-    if (site != null && PermissionManagerImplementation.getInstance().authorize(site, requestURI, authentication.getName(), authentication.getAuthorities())) {
+    WebClientData webClientData = webClientDataManager.getFromSession();
+    Account account = webClientData.getAccount();
+    SofiaUser user = sofiaSecurityManager.getLoggedUser();
+    if (site != null && permissionManager.hasPermission(user, site, account, requestURI)) {
       return new AuthorizationDecision(true);
     }
 
