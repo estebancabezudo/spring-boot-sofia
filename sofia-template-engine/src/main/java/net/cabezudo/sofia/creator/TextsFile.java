@@ -1,9 +1,7 @@
 package net.cabezudo.sofia.creator;
 
-import net.cabezudo.json.JSON;
 import net.cabezudo.json.JSONPair;
 import net.cabezudo.json.exceptions.DuplicateKeyException;
-import net.cabezudo.json.exceptions.JSONParseException;
 import net.cabezudo.json.values.JSONObject;
 import net.cabezudo.sofia.core.SofiaEnvironment;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
@@ -29,19 +27,6 @@ class TextsFile {
   public TextsFile(SofiaEnvironment sofiaEnvironment) {
     this.sofiaEnvironment = sofiaEnvironment;
     jsonTexts = new JSONObject();
-  }
-
-  public TextsFile(Path filePath) throws JSONParseException, IOException {
-    jsonTexts = JSON.parse(filePath, sofiaEnvironment.getCharset()).toJSONObject();
-  }
-
-  void merge(Path filePath) throws IOException {
-    try {
-      JSONObject jsonTextsFromFile = JSON.parse(filePath, sofiaEnvironment.getCharset()).toJSONObject();
-      jsonTexts.merge(jsonTextsFromFile);
-    } catch (JSONParseException e) {
-      throw new SofiaRuntimeException(e);
-    }
   }
 
   public void add(JSONObject jsonTexts) {
@@ -78,13 +63,13 @@ class TextsFile {
       });
       Path languageFilePath = fullTextsDirectoryPath.resolve(language + ".json");
       logger.info(() -> "Save language file " + languageFilePath);
-      Files.write(languageFilePath, jsonTextObject.toJSON().getBytes(sofiaEnvironment.getCharset()));
+      Files.writeString(languageFilePath, jsonTextObject.toJSON(), sofiaEnvironment.getCharset());
     }
   }
 
   private Set<String> getLanguageSet(List<String> keys) {
     Set<String> languageSet = new TreeSet<>();
-    keys.stream().map(jsonTexts::getNullObject).map(jsonLanguages -> jsonLanguages.getKeyList()).forEachOrdered(languages -> languages.forEach(languageSet::add));
+    keys.stream().map(jsonTexts::getNullObject).map(JSONObject::getKeyList).forEachOrdered(languages -> languageSet.addAll(languages));
     return languageSet;
   }
 

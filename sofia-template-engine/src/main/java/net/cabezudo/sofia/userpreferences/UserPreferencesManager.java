@@ -25,6 +25,9 @@ public class UserPreferencesManager {
 
   @Transactional
   public void setLanguage(Account account, SofiaUser user, Language language) {
+    if (account == null) {
+      return;
+    }
     AccountUserRelationEntity accountUserRelationEntity = accountRepository.find(account.id(), user.getId());
     UserPreferences userPreferences = accountPreferencesRepository.get(accountUserRelationEntity.id(), LANGUAGE);
   }
