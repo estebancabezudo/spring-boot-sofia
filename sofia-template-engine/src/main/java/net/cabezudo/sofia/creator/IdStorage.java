@@ -34,7 +34,7 @@ public class IdStorage {
     String key = element.getAttribute("id").getValue();
     Element foundElement;
     if ((foundElement = map.get(key)) != null) {
-      Path sourcesPath = null;
+      Path sourcesPath;
       try {
         sourcesPath = pathManager.getSourcesPath(site);
       } catch (SourceNotFoundException e) {
@@ -47,10 +47,6 @@ public class IdStorage {
       throw new DuplicateIdException("The id '" + key + "' already exist in element in " + position, element);
     }
     map.put(key, element);
-  }
-
-  boolean contains(String id) {
-    return map.containsKey(id);
   }
 
   @Override

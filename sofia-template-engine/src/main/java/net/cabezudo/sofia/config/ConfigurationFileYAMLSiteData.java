@@ -10,7 +10,7 @@ public class ConfigurationFileYAMLSiteData {
   private String name;
   private List<String> hosts;
   private List<String> permissions;
-  private List<String> apis;
+  private List<String> api;
 
   public ConfigurationFileYAMLSiteData() {
     // Without a default constructor, Jackson will throw an exception
@@ -23,11 +23,11 @@ public class ConfigurationFileYAMLSiteData {
     return permissions;
   }
 
-  public List<String> getAPIs() {
-    if (apis == null) {
-      apis = new ArrayList<>();
+  public List<String> getAPI() {
+    if (api == null) {
+      api = new ArrayList<>();
     }
-    return apis;
+    return api;
   }
 
   public String getName() {

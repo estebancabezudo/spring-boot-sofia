@@ -5,8 +5,8 @@ import net.cabezudo.json.JSONPair;
 import net.cabezudo.json.exceptions.DuplicateKeyException;
 import net.cabezudo.json.exceptions.JSONParseException;
 import net.cabezudo.json.values.JSONObject;
+import net.cabezudo.sofia.core.SofiaEnvironment;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
-import net.cabezudo.sofia.core.SofiaTemplateEngineEnvironment;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,20 +24,20 @@ class TextsFile {
 
   private static final Logger logger = Logger.getLogger("main");
   private final JSONObject jsonTexts;
-  SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
+  SofiaEnvironment sofiaEnvironment;
 
-  public TextsFile(SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment) {
-    this.sofiaTemplateEngineEnvironment = sofiaTemplateEngineEnvironment;
+  public TextsFile(SofiaEnvironment sofiaEnvironment) {
+    this.sofiaEnvironment = sofiaEnvironment;
     jsonTexts = new JSONObject();
   }
 
   public TextsFile(Path filePath) throws JSONParseException, IOException {
-    jsonTexts = JSON.parse(filePath, sofiaTemplateEngineEnvironment.getCharset()).toJSONObject();
+    jsonTexts = JSON.parse(filePath, sofiaEnvironment.getCharset()).toJSONObject();
   }
 
   void merge(Path filePath) throws IOException {
     try {
-      JSONObject jsonTextsFromFile = JSON.parse(filePath, sofiaTemplateEngineEnvironment.getCharset()).toJSONObject();
+      JSONObject jsonTextsFromFile = JSON.parse(filePath, sofiaEnvironment.getCharset()).toJSONObject();
       jsonTexts.merge(jsonTextsFromFile);
     } catch (JSONParseException e) {
       throw new SofiaRuntimeException(e);
@@ -78,7 +78,7 @@ class TextsFile {
       });
       Path languageFilePath = fullTextsDirectoryPath.resolve(language + ".json");
       logger.info(() -> "Save language file " + languageFilePath);
-      Files.write(languageFilePath, jsonTextObject.toJSON().getBytes(sofiaTemplateEngineEnvironment.getCharset()));
+      Files.write(languageFilePath, jsonTextObject.toJSON().getBytes(sofiaEnvironment.getCharset()));
     }
   }
 

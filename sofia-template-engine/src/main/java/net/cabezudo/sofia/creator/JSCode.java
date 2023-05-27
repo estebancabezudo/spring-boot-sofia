@@ -1,7 +1,7 @@
 package net.cabezudo.sofia.creator;
 
 import net.cabezudo.html.nodes.Element;
-import net.cabezudo.sofia.core.SofiaTemplateEngineEnvironment;
+import net.cabezudo.sofia.core.SofiaEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,12 +17,12 @@ class JSCode {
 
   private static final Logger log = LoggerFactory.getLogger(JSCode.class);
 
-  SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
+  SofiaEnvironment sofiaEnvironment;
 
   JSCodeGroup group = new JSCodeGroup();
 
-  public JSCode(SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment) {
-    this.sofiaTemplateEngineEnvironment = sofiaTemplateEngineEnvironment;
+  public JSCode(SofiaEnvironment sofiaEnvironment) {
+    this.sofiaEnvironment = sofiaEnvironment;
   }
 
   void add(Path filePath, Element element, String configurationPrefix, TemplateVariables templateVariables, Caller caller) throws IOException, SiteCreationException {
@@ -46,7 +46,7 @@ class JSCode {
 
   public String toCode() {
     String code = group.toCode();
-    if (sofiaTemplateEngineEnvironment.isProduction()) {
+    if (sofiaEnvironment.isProduction()) {
       StringBuilder sb = new StringBuilder();
       try (Scanner scanner = new Scanner(code)) {
         while (scanner.hasNextLine()) {

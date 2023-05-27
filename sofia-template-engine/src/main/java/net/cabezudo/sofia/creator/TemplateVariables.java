@@ -6,8 +6,8 @@ import net.cabezudo.json.exceptions.DuplicateKeyException;
 import net.cabezudo.json.exceptions.JSONParseException;
 import net.cabezudo.json.exceptions.PropertyNotExistException;
 import net.cabezudo.json.values.JSONObject;
+import net.cabezudo.sofia.core.SofiaEnvironment;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
-import net.cabezudo.sofia.core.SofiaTemplateEngineEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +25,9 @@ import java.util.List;
 @Component
 public class TemplateVariables {
   private static final Logger log = LoggerFactory.getLogger(TemplateVariables.class);
-  
+
   private final JSONObject jsonObject;
-  private @Autowired SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
+  private @Autowired SofiaEnvironment sofiaEnvironment;
 
   public TemplateVariables() {
     jsonObject = new JSONObject();
@@ -85,7 +85,7 @@ public class TemplateVariables {
       try {
         value = digString(name);
       } catch (PropertyNotExistException e) {
-        if (sofiaTemplateEngineEnvironment.isDevelopment()) {
+        if (sofiaEnvironment.isDevelopment()) {
           log.info(jsonObject.toString());
         }
         throw new UndefinedLiteralException(name, new Position(lineNumber, i + 3), e);

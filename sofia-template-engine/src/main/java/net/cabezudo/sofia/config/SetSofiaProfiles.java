@@ -1,6 +1,6 @@
 package net.cabezudo.sofia.config;
 
-import net.cabezudo.sofia.core.SofiaTemplateEngineEnvironment;
+import net.cabezudo.sofia.core.SofiaEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,28 +17,35 @@ import javax.annotation.PostConstruct;
 public class SetSofiaProfiles {
 
   private static final Logger log = LoggerFactory.getLogger(SetSofiaProfiles.class);
-  private @Autowired SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
+  private @Autowired SofiaEnvironment sofiaEnvironment;
   private @Autowired Environment environment;
 
   @PostConstruct
   public void init() throws ConfigurationException {
+    log.debug("Set Sofia profile");
     String[] activeProfiles = environment.getActiveProfiles();
     if (activeProfiles != null) {
       for (String profile : activeProfiles) {
         switch (profile) {
-          case SofiaTemplateEngineEnvironment.DEV:
-            sofiaTemplateEngineEnvironment.setName(profile);
+          case SofiaEnvironment.DEV:
+            if (sofiaEnvironment.isProduction()) {
+              log.warn("Production profile already set. Don't set development profile");
+            } else {
+              sofiaEnvironment.setName(profile);
+            }
             break;
-          case SofiaTemplateEngineEnvironment.PROD:
-            sofiaTemplateEngineEnvironment.setName(profile);
+          case SofiaEnvironment.PROD:
+            sofiaEnvironment.setName(profile);
             break;
           default:
-            // Ignore the other profiles
+            log.debug("Ignoring profile name: " + profile);
         }
       }
     }
-    if (sofiaTemplateEngineEnvironment.getName() == null) {
-      sofiaTemplateEngineEnvironment.setName(SofiaTemplateEngineEnvironment.DEV);
+    if (sofiaEnvironment.getName() == null) {
+      sofiaEnvironment.setName(SofiaEnvironment.PROD);
+      log.debug("Profile set to " + sofiaEnvironment.getName());
     }
+    log.debug("Final profile set to " + sofiaEnvironment.getName());
   }
 }

@@ -29,10 +29,9 @@ class CSSCodeGroup {
 
   String getImports() {
     StringBuilder sb = new StringBuilder();
-    map.entrySet().stream().map(entry -> entry.getValue()).map(cssSourceCode -> {
+    map.values().stream().peek(cssSourceCode -> {
       Caller caller = cssSourceCode.getCaller();
       sb.append("/* CSS import from ").append(File.separatorChar).append(cssSourceCode.getFilePath()).append(" called by ").append(caller == null ? "sofia" : caller).append(" */\n");
-      return cssSourceCode;
     }).forEachOrdered(cssSourceCode -> sb.append(cssSourceCode.getImports()).append("\n"));
     return sb.toString();
   }

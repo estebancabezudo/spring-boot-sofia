@@ -1,6 +1,5 @@
 package net.cabezudo.sofia.creator;
 
-import net.cabezudo.html.nodes.Attribute;
 import net.cabezudo.html.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +47,7 @@ class JSSourceCode extends CodeSource {
   JSSourceCode(Path filePath, Element element, String configurationPrefix, String code, TemplateVariables templateVariables, Caller caller) throws SiteCreationException {
     this.sourceId = element.getPosition().toString();
     this.caller = caller;
-    Attribute attributeId = element.getAttribute("id");
+
     log.info("Add code with code id " + sourceId);
 
     int lineNumber = 0;

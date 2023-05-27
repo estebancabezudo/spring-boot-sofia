@@ -1,6 +1,6 @@
 package net.cabezudo.sofia.security;
 
-import net.cabezudo.sofia.config.SofiaEnvironment;
+import net.cabezudo.sofia.core.SofiaEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

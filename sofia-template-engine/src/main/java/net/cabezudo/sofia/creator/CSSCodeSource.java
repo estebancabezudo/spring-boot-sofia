@@ -1,6 +1,5 @@
 package net.cabezudo.sofia.creator;
 
-import net.cabezudo.html.nodes.Attribute;
 import net.cabezudo.html.nodes.Element;
 
 import java.io.FileNotFoundException;
@@ -51,7 +50,6 @@ class CSSCodeSource extends CodeSource {
     this.sourceId = element.getPosition().toString();
     this.filePath = filePath;
     this.caller = caller;
-    Attribute attributeId = element.getAttribute("id");
     logger.info(() -> "Add code with code id " + sourceId);
 
     int lineNumber = 0;

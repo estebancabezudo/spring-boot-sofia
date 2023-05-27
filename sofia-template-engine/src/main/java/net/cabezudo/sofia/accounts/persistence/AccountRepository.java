@@ -1,6 +1,7 @@
 package net.cabezudo.sofia.accounts.persistence;
 
 import net.cabezudo.sofia.core.SofiaRuntimeException;
+import net.cabezudo.sofia.core.persistence.InvalidKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,11 @@ public class AccountRepository {
     };
     jdbcTemplate.update(preparedStatementCreator, keyHolder);
 
-    int id = keyHolder.getKey().intValue();
-    return new AccountEntity(id, siteId);
+    Number key = keyHolder.getKey();
+    if (key == null) {
+      throw new InvalidKey("key from key holder is null");
+    }
+    return new AccountEntity(key.intValue(), siteId);
   }
 
   public AccountUserRelationEntity find(int accountId, int userId) {
@@ -54,14 +58,13 @@ public class AccountRepository {
   public List<AccountEntity> findAll(int userId) {
     log.debug("Return all the account for the user " + userId);
 
-    List<AccountEntity> list = jdbcTemplate.query(
+    return jdbcTemplate.query(
         "SELECT a.id AS id, a.site_id AS site_id " +
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON au.user_id = u.id " +
             "WHERE u.id = ?",
         new AccountRowMapper(), userId);
-    return list;
   }
 
   public AccountUserRelationEntity create(int accountId, int userId, boolean owner) {
@@ -75,8 +78,11 @@ public class AccountRepository {
       return ps;
     };
     jdbcTemplate.update(preparedStatementCreator, keyHolder);
-    int id = keyHolder.getKey().intValue();
-    return new AccountUserRelationEntity(id, accountId, userId, owner);
+    Number key = keyHolder.getKey();
+    if (key == null) {
+      throw new InvalidKey("key from key holder is null");
+    }
+    return new AccountUserRelationEntity(key.intValue(), accountId, userId, owner);
   }
 
   public void delete(int accountId, int userId) {

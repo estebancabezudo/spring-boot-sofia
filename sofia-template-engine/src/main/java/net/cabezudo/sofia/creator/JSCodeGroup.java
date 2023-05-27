@@ -31,9 +31,7 @@ class JSCodeGroup {
 
   public String toCode() {
     StringBuilder sb = new StringBuilder();
-    for (JSSourceCode code : list) {
-
-      JSSourceCode jsSourceCode = code;
+    for (JSSourceCode jsSourceCode : list) {
       if (jsSourceCode.getCaller() == null) {
         sb.append("// Code from ").append(jsSourceCode.getSourceId()).append(" called by system ").append("\n");
       } else {

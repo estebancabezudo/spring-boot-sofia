@@ -13,6 +13,7 @@ sites:
       - all:all:grant:/texts/index/**
       - all:all:grant:/images/**
       - all:all:grant:/fonts/**
+      - all:all:grant:/admin/users/list.html
   - name: example.com
     hosts:
       - example.com:1

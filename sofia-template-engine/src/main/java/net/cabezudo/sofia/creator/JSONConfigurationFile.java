@@ -3,8 +3,8 @@ package net.cabezudo.sofia.creator;
 import net.cabezudo.json.JSON;
 import net.cabezudo.json.exceptions.JSONParseException;
 import net.cabezudo.json.values.JSONObject;
+import net.cabezudo.sofia.core.SofiaEnvironment;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
-import net.cabezudo.sofia.core.SofiaTemplateEngineEnvironment;
 import net.cabezudo.sofia.sites.PathManager;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SourceNotFoundException;
@@ -24,15 +24,15 @@ import java.util.List;
 @Component
 class JSONConfigurationFile {
   private static final Logger log = LoggerFactory.getLogger(JSONConfigurationFile.class);
-  
+
   private final StringBuilder sb = new StringBuilder();
-  SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
+  SofiaEnvironment sofiaEnvironment;
   PathManager pathManager;
 
   private JSONObject jsonObject;
 
-  JSONObject load(Site site, Path filePath, String id, TemplateVariables templateVariables, SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment, PathManager pathManager) throws IOException, SiteCreationException {
-    this.sofiaTemplateEngineEnvironment = sofiaTemplateEngineEnvironment;
+  JSONObject load(Site site, Path filePath, String id, TemplateVariables templateVariables, SofiaEnvironment sofiaEnvironment, PathManager pathManager) throws IOException, SiteCreationException {
+    this.sofiaEnvironment = sofiaEnvironment;
     this.pathManager = pathManager;
     log.info("Load configuration using the id: " + id);
     if (Files.isRegularFile(filePath)) {

@@ -15,6 +15,7 @@ public class RestList<R> implements Iterable<R> {
   private int size;
 
   public RestList() {
+    start = 0;
   }
 
   public RestList(R[] values) {

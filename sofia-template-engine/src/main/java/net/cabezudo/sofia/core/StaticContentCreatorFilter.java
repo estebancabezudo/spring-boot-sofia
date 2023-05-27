@@ -1,7 +1,6 @@
 package net.cabezudo.sofia.core;
 
 import net.cabezudo.sofia.creator.ContentManager;
-import net.cabezudo.sofia.creator.IdStorage;
 import net.cabezudo.sofia.creator.SiteCreationException;
 import net.cabezudo.sofia.creator.SofiaFile;
 import net.cabezudo.sofia.creator.TemplateVariables;
@@ -13,6 +12,7 @@ import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteManager;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.sites.SourceNotFoundException;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,89 +38,84 @@ public class StaticContentCreatorFilter extends OncePerRequestFilter {
   private static final Logger log = LoggerFactory.getLogger(StaticContentCreatorFilter.class);
 
   TemplateVariables templateVariables;
-  private @Autowired IdStorage idStorage;
-  private @Autowired SofiaTemplateEngineEnvironment sofiaTemplateEngineEnvironment;
+  private @Autowired SofiaEnvironment sofiaEnvironment;
   private @Autowired ContentManager contentManager;
   private @Autowired SiteManager siteManager;
   private @Autowired PathManager pathManager;
   private @Autowired PermissionManager permissionManager;
 
   @Override
-  protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
+  protected void doFilterInternal(@NotNull HttpServletRequest req, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
     log.debug("Static content creator filter.");
-    if (req instanceof HttpServletRequest) {
-      HttpServletRequest request = new HttpServletRequestWrapper(req) {
-        @Override
-        public String getRequestURI() {
-          String requestURI = super.getRequestURI();
-          if (requestURI.endsWith("/")) {
-            return requestURI + sofiaTemplateEngineEnvironment.getDirectoryIndexFile();
-          }
-          return requestURI;
+    HttpServletRequest request = new HttpServletRequestWrapper(req) {
+      @Override
+      public String getRequestURI() {
+        String requestURI = super.getRequestURI();
+        if (requestURI.endsWith("/")) {
+          return requestURI + sofiaEnvironment.getDirectoryIndexFile();
         }
-      };
-      String requestURI = request.getRequestURI();
-
-      HttpServletResponse response = res;
-      try {
-        String partialPath = requestURI.substring(1);
-        Host host = siteManager.getHostByName(request.getServerName());
-        request.setAttribute("host", host);
-
-        Site site = siteManager.getByHostname(request.getServerName());
-        request.getSession().setAttribute("site", site);
-        log.debug("Set the request session attribute site to " + site);
-
-        if (contentManager.ignoreRequestURI(requestURI)) {
-          filterChain.doFilter(request, res);
-          return;
-        }
-
-        Path targetPath = pathManager.getVersionedSitePath(site, host.getVersion()).resolve(partialPath);
-        if (sofiaTemplateEngineEnvironment.isDevelopment() || !Files.exists(targetPath)) {
-          if (requestURI.endsWith(".html")) {
-            log.debug("Create file using " + targetPath);
-            templateVariables = new TemplateVariables();
-            SofiaFile sofiaFile = new SofiaFile(request, sofiaTemplateEngineEnvironment, siteManager, pathManager, templateVariables, permissionManager);
-            sofiaFile.loadRootFile();
-            sofiaFile.save();
-          } else {
-            Path sourcePath = null;
-            try {
-              sourcePath = pathManager.getVersionedSourcesPath(site, host.getVersion()).resolve(partialPath);
-            } catch (SourceNotFoundException e) {
-              throw new RuntimeException(e);
-            }
-            log.debug("Search for " + sourcePath);
-            if (Files.exists(sourcePath) && !Files.isDirectory(sourcePath)) {
-              log.debug("Copy " + sourcePath + " to " + targetPath);
-              Files.createDirectories(targetPath.getParent());
-              Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
-            } else {
-              if (!Files.exists(targetPath)) {
-                response.sendError(404, "File not found: " + requestURI);
-                return;
-              }
-            }
-          }
-        } else {
-          log.debug("Nothing to do with " + targetPath);
-        }
-      } catch (FileNotFoundException e) {
-        response.sendError(404, e.getMessage());
-        return;
-      } catch (SiteCreationException | SiteNotFoundException | HostNotFoundException e) {
-        e.printStackTrace();
-        log.warn(e.getMessage());
-        response.sendError(500, e.getMessage());
-        return;
-      } catch (RuntimeException e) {
-        throw new SofiaRuntimeException(e);
+        return requestURI;
       }
-      filterChain.doFilter(request, response);
-    } else {
-      filterChain.doFilter(req, res);
+    };
+    String requestURI = request.getRequestURI();
+
+    try {
+      String partialPath = requestURI.substring(1);
+      Host host = siteManager.getHostByName(request.getServerName());
+      request.setAttribute("host", host);
+
+      Site site = siteManager.getByHostname(request.getServerName());
+      request.getSession().setAttribute("site", site);
+      log.debug("Set the request session attribute site to " + site);
+
+      if (contentManager.ignoreRequestURI(requestURI)) {
+        filterChain.doFilter(request, response);
+        return;
+      }
+
+      Path targetPath = pathManager.getVersionedSitePath(site, host.getVersion()).resolve(partialPath);
+      if (sofiaEnvironment.isDevelopment() || !Files.exists(targetPath)) {
+        if (requestURI.endsWith(".html")) {
+          log.debug("Create file using " + targetPath);
+          templateVariables = new TemplateVariables();
+          SofiaFile sofiaFile = new SofiaFile(request, sofiaEnvironment, siteManager, pathManager, templateVariables, permissionManager);
+          sofiaFile.loadRootFile();
+          sofiaFile.save();
+        } else {
+          Path sourcePath;
+          try {
+            sourcePath = pathManager.getVersionedSourcesPath(site, host.getVersion()).resolve(partialPath);
+          } catch (SourceNotFoundException e) {
+            throw new RuntimeException(e);
+          }
+          log.debug("Search for " + sourcePath);
+          if (Files.exists(sourcePath) && !Files.isDirectory(sourcePath)) {
+            log.debug("Copy " + sourcePath + " to " + targetPath);
+            Files.createDirectories(targetPath.getParent());
+            Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+          } else {
+            // TODO Check this. Don't have any sense. If the file do not exist in source path, don't exist in target path either. And, why return a 404. It appears like an 500.
+            if (!Files.exists(targetPath)) {
+              response.sendError(404, "File not found: " + requestURI);
+              return;
+            }
+          }
+        }
+      } else {
+        log.debug("Nothing to do with " + targetPath);
+      }
+    } catch (FileNotFoundException e) {
+      response.sendError(404, e.getMessage());
+      return;
+    } catch (SiteCreationException | SiteNotFoundException | HostNotFoundException e) {
+      e.printStackTrace();
+      log.warn(e.getMessage());
+      response.sendError(500, e.getMessage());
+      return;
+    } catch (RuntimeException e) {
+      throw new SofiaRuntimeException(e);
     }
+    filterChain.doFilter(request, response);
   }
 }
 

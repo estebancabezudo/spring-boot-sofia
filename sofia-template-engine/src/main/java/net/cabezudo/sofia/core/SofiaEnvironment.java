@@ -5,7 +5,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import net.cabezudo.sofia.config.ConfigurationException;
 import net.cabezudo.sofia.config.ConfigurationFileYAMLData;
 import net.cabezudo.sofia.config.ConfigurationFileYAMLSiteData;
-import net.cabezudo.sofia.config.SofiaEnvironment;
 import net.cabezudo.sofia.creator.ContentManager;
 import net.cabezudo.sofia.security.Permission;
 import net.cabezudo.sofia.security.PermissionManager;
@@ -34,7 +33,7 @@ import java.util.List;
  * @version 0.01.00, 2022.08.30
  */
 @Configuration
-public class SofiaTemplateEngineEnvironment {
+public class SofiaEnvironment {
 
   public static final String DEV = "dev";
   public static final String PROD = "prod";
@@ -46,10 +45,9 @@ public class SofiaTemplateEngineEnvironment {
   public static final String IMAGES_FOLDER_NAME = "images";
   public static final String TEXTS_FOLDER_NAME = "texts";
   private static final String SOFIA_CONFIGURATION_FILENAME = "sofia.yml";
-  private static final Logger log = LoggerFactory.getLogger(SofiaTemplateEngineEnvironment.class);
+  private static final Logger log = LoggerFactory.getLogger(SofiaEnvironment.class);
   private final List<Path> sourcePaths = new ArrayList<>();
   private @Autowired PermissionManager permissionManager;
-  private @Autowired SofiaEnvironment sofiaEnvironment;
   private @Autowired SiteManager siteManager;
   private String name;
   private ConfigurationFileYAMLData configurationFileYAMLData;
@@ -58,14 +56,13 @@ public class SofiaTemplateEngineEnvironment {
   private Path systemLibraryPath;
   private @Autowired ContentManager contentManager;
 
-  private Path checkForDirectoryAndCreate(String identifier, Path path) throws ConfigurationException, IOException {
+  private Path checkForDirectoryAndCreate(Path path) throws ConfigurationException, IOException {
     if (!Files.exists(path)) {
       Files.createDirectories(path);
     }
     if (!Files.isDirectory(basePath)) {
-      throw new ConfigurationException(identifier + " is not a directory: " + path);
+      throw new ConfigurationException("Not a directory: " + path);
     }
-    log.debug(identifier + ": " + basePath);
     return path;
   }
 
@@ -102,7 +99,7 @@ public class SofiaTemplateEngineEnvironment {
   }
 
   public void loadConfiguration() throws ConfigurationException {
-    log.debug("Load configuration for template engine enviroment.");
+    log.debug("Load configuration for template engine environment.");
     try {
       loadDataFromYAMLFile();
     } catch (SiteNotFoundException e) {
@@ -138,16 +135,18 @@ public class SofiaTemplateEngineEnvironment {
   }
 
   private void setSystemBasePath() throws ConfigurationException {
-    String stringBasePath = configurationFileYAMLData.getBasePath();
+    String stringBasePathFromConfigurationFile = configurationFileYAMLData.getBasePath();
+    String stringBasePath;
     ClassLoader classLoader = this.getClass().getClassLoader();
-    if (stringBasePath == null) {
+    if (stringBasePathFromConfigurationFile == null) {
       URL url = classLoader.getResource(SOFIA_DIRECTORY_NAME);
       log.debug("URL: " + url);
-      // FIX Posible null pointer
+      if (url == null) {
+        throw new ConfigurationException("Cant find the system path");
+      }
       stringBasePath = url.getFile();
-    }
-    if (stringBasePath == null) {
-      throw new ConfigurationException("Cant find the system path");
+    } else {
+      stringBasePath = stringBasePathFromConfigurationFile;
     }
     basePath = Paths.get(stringBasePath);
     if (!Files.exists(basePath)) {
@@ -167,7 +166,8 @@ public class SofiaTemplateEngineEnvironment {
     log.debug("Base path: " + basePath);
 
     try {
-      sitesPath = checkForDirectoryAndCreate("Sites code", basePath.resolve(SITES_DIRECTORY_NAME));
+      log.debug("Sites final code: " + basePath);
+      sitesPath = checkForDirectoryAndCreate(basePath.resolve(SITES_DIRECTORY_NAME));
     } catch (IOException e) {
       throw new ConfigurationException(e);
     }
@@ -204,8 +204,7 @@ public class SofiaTemplateEngineEnvironment {
       Site site = siteManager.get(siteData.getName());
       log.debug("Site: " + site.getName());
 
-      List<String> apis = siteData.getAPIs();
-      apis.add("/logout");
+      List<String> apis = siteData.getAPI();
       for (String api : apis) {
         contentManager.add(api);
         String permissionString = "all:all:grant:" + api + "/**";
