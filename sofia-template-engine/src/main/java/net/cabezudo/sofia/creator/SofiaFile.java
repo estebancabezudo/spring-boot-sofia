@@ -409,6 +409,7 @@ public class SofiaFile {
           String fileResource = '/' + requestFilePath.toString();
           Permission filePermission = new Permission(group.name(), Permission.USER_ALL, Permission.ACCESS_GRANT, fileResource);
           permissionManager.add(site, filePermission);
+          // Add to the list of permissions the page
           String textsResource = "/texts/" + voidRootFilePath.toString() + "/**";
           Permission textsPermission = new Permission(group.name(), Permission.USER_ALL, Permission.ACCESS_GRANT, textsResource);
           permissionManager.add(site, textsPermission);
