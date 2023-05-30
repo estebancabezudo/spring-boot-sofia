@@ -1,5 +1,6 @@
 <link lib="login:socialButtons:base:1.00" />
 <link lib="login:socialButtons:google:1.00" />
+<link lib="login:socialButtons:facebook:1.00" />
 
 <script>
     const initLogin = async () => {
@@ -8,6 +9,7 @@
         const loginUsernameInput = document.getElementById('loginUsernameInput');
         const loginPasswordInput = document.getElementById('loginPasswordInput');
         new GoogleSocialButton({ element: 'googleLoginButton' });
+        new FacebookSocialButton({ element: 'facebookLoginButton' });
 
         loginForm.onsubmit = async (e) => {
             e.preventDefault();
@@ -88,6 +90,7 @@
                 <div class="inputContainer">
                     <input type="submit" id="loginButton" class="blueButton" value="Login" />
                     <div id="googleLoginButton"></div>
+                    <div id="facebookLoginButton"></div>
                 </div>
             </form>
         </div>

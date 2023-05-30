@@ -69,7 +69,7 @@ class TextsFile {
 
   private Set<String> getLanguageSet(List<String> keys) {
     Set<String> languageSet = new TreeSet<>();
-    keys.stream().map(jsonTexts::getNullObject).map(JSONObject::getKeyList).forEachOrdered(languages -> languageSet.addAll(languages));
+    keys.stream().map(jsonTexts::getNullObject).map(JSONObject::getKeyList).forEachOrdered(languageSet::addAll);
     return languageSet;
   }
 

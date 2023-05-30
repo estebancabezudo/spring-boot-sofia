@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.web.client.mappers;
 
+import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.users.SofiaUser;
 import net.cabezudo.sofia.users.rest.BusinessToRestUserMapper;
 import net.cabezudo.sofia.users.rest.RestUser;
@@ -13,9 +14,10 @@ public class BusinessToRestWebClientMapper {
   private @Autowired BusinessToRestUserMapper businessToRestUserMapper;
 
   public RestWebClientData map(WebClientData c) {
-    String language = c == null || c.getLanguage() == null ? null : c.getLanguage().getValue();
-    SofiaUser user = c.getUser();
+    String language = c == null || c.getLanguage() == null ? null : c.getLanguage().value();
+    Account account = c == null ? null : c.getAccount();
+    SofiaUser user = c == null ? null : c.getUser();
     RestUser restUser = user == null ? null : businessToRestUserMapper.map(user);
-    return new RestWebClientData(language, c.getAccount(), restUser);
+    return new RestWebClientData(language, account, restUser);
   }
 }

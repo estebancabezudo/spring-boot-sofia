@@ -1,5 +1,6 @@
-package net.cabezudo.sofia.security;
+package net.cabezudo.sofia.security.oauth2;
 
+import net.cabezudo.sofia.security.SofiaSecurityConfig;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 

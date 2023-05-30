@@ -24,22 +24,20 @@ public class SetSofiaProfiles {
   public void init() throws ConfigurationException {
     log.debug("Set Sofia profile");
     String[] activeProfiles = environment.getActiveProfiles();
-    if (activeProfiles != null) {
-      for (String profile : activeProfiles) {
-        switch (profile) {
-          case SofiaEnvironment.DEV:
-            if (sofiaEnvironment.isProduction()) {
-              log.warn("Production profile already set. Don't set development profile");
-            } else {
-              sofiaEnvironment.setName(profile);
-            }
-            break;
-          case SofiaEnvironment.PROD:
+    for (String profile : activeProfiles) {
+      switch (profile) {
+        case SofiaEnvironment.DEV:
+          if (sofiaEnvironment.isProduction()) {
+            log.warn("Production profile already set. Don't set development profile");
+          } else {
             sofiaEnvironment.setName(profile);
-            break;
-          default:
-            log.debug("Ignoring profile name: " + profile);
-        }
+          }
+          break;
+        case SofiaEnvironment.PROD:
+          sofiaEnvironment.setName(profile);
+          break;
+        default:
+          log.debug("Ignoring profile name: " + profile);
       }
     }
     if (sofiaEnvironment.getName() == null) {

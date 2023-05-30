@@ -6,6 +6,7 @@ import net.cabezudo.sofia.sites.PathManager;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteManager;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -29,8 +30,11 @@ public class SofiaResourceResolver implements ResourceResolver {
   }
 
   @Override
-  public Resource resolveResource(HttpServletRequest request, String requestPath, List<? extends Resource> locations, ResourceResolverChain chain) {
+  public Resource resolveResource(HttpServletRequest request, @NotNull String requestPath, @NotNull List<? extends Resource> locations, @NotNull ResourceResolverChain chain) {
     try {
+      if (request == null) {
+        throw new SofiaRuntimeException("null request");
+      }
       Host host = siteManager.getHostByName(request.getServerName());
       Site site = siteManager.get(request);
       Path path = pathManager.getVersionedSitePath(site, host.getVersion()).resolve(request.getRequestURI().substring(1));
@@ -42,7 +46,7 @@ public class SofiaResourceResolver implements ResourceResolver {
   }
 
   @Override
-  public String resolveUrlPath(String resourcePath, List<? extends Resource> locations, ResourceResolverChain chain) {
+  public String resolveUrlPath(@NotNull String resourcePath, @NotNull List<? extends Resource> locations, @NotNull ResourceResolverChain chain) {
     return null;
   }
 }

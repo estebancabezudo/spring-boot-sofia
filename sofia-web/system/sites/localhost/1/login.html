@@ -14,7 +14,7 @@
 
 /* CSS import from /header.html called by style tag on header.html:4:2 */
 
-/* CSS import from /loginForm.html called by style tag on loginForm.html:57:2 */
+/* CSS import from /loginForm.html called by style tag on loginForm.html:59:2 */
 
 /* CSS import from /burguerMenu.css called by file libraryburgerMenu:1.00 on header.html */
 
@@ -430,7 +430,7 @@ input.error {
         }
     }
 
-/* CSS code from /loginForm.html called by style tag on loginForm.html:57:2 */
+/* CSS code from /loginForm.html called by style tag on loginForm.html:59:2 */
 
     .formContainer {
         margin: 30px auto 60px auto;
@@ -493,6 +493,7 @@ input.error {
     height: 20px;
     background-repeat: no-repeat;
     background-size: contain;
+    background-position: center;
 }
 
 .socialButtonTextContainer {}
@@ -1363,7 +1364,19 @@ class GoogleSocialButton extends SocialButton {
     }
 }
 
-// Code from script tag on loginForm.html:4:2 called by file attribute on div on loginForm.html:14:4
+// Code from library login:socialButtons:facebook:1.00 on loginForm.html called by file attribute on div on loginForm.html:14:4
+class FacebookSocialButton extends SocialButton {
+    constructor(options) {
+        super({
+            element: options.element,
+            url: '/oauth2/authorization/facebook',
+            image: '/images/login/socialButtons/facebook/1.00/logoFacebook.svg',
+            textKey: 'facebookButtonText'
+        });
+    }
+}
+
+// Code from script tag on loginForm.html:5:2 called by file attribute on div on loginForm.html:14:4
 
     const initLogin = async () => {
         const loginForm = document.getElementById('loginForm');
@@ -1371,6 +1384,7 @@ class GoogleSocialButton extends SocialButton {
         const loginUsernameInput = document.getElementById('loginUsernameInput');
         const loginPasswordInput = document.getElementById('loginPasswordInput');
         new GoogleSocialButton({ element: 'googleLoginButton' });
+        new FacebookSocialButton({ element: 'facebookLoginButton' });
 
         loginForm.onsubmit = async (e) => {
             e.preventDefault();
@@ -1481,6 +1495,7 @@ Core.setReportSystemErrorFunction(error => {
                 <div class="inputContainer">
                     <input class="blueButton" id="loginButton" type="submit" value="Login"/>
                     <div id="googleLoginButton"></div>
+                    <div id="facebookLoginButton"></div>
                 </div>
             </form>
         </div>

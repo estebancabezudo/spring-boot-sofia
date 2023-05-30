@@ -85,7 +85,7 @@ public class TextsController extends SofiaController {
       Language languageFromClient = webClientData.getLanguage();
       log.debug("Language request: " + requestedLanguage);
       log.debug("Language in web client: " + languageFromClient);
-      if (languageFromClient == null || !languageFromClient.getValue().equals(requestedLanguage)) {
+      if (languageFromClient == null || !languageFromClient.value().equals(requestedLanguage)) {
 
         WebClientData newWebClientData = new WebClientData(new Language(requestedLanguage), null);
         log.debug("Change new web client for: " + newWebClientData);

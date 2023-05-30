@@ -16,7 +16,7 @@ public class BusinessToEntityPlaceMapper {
     String interiorNumber = p.interiorNumber();
     String references = p.references();
     String postalCode = p.postalCode();
-    int countryId = p.country().getId();
+    int countryId = p.country().id();
 
     return new PlaceEntity(id, account.id(), name, street, number, interiorNumber, references, postalCode, countryId);
   }

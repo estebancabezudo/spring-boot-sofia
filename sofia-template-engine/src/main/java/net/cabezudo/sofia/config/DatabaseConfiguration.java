@@ -1,7 +1,5 @@
 package net.cabezudo.sofia.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,20 +14,15 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 public class DatabaseConfiguration {
-
-  private static final Logger log = LoggerFactory.getLogger(DatabaseConfiguration.class);
-
   @Bean
   @ConfigurationProperties(prefix = "spring.datasource")
   public DataSource mysqlDataSource() {
-    DriverManagerDataSource dataSource = new DriverManagerDataSource();
-    return dataSource;
+    return new DriverManagerDataSource();
   }
 
   @Bean
   JdbcUserDetailsManager jdbcUserDetailsManager(DataSource dataSource) {
-    JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
-    return jdbcUserDetailsManager;
+    return new JdbcUserDetailsManager(dataSource);
   }
 
   @Bean

@@ -2,14 +2,11 @@ package net.cabezudo.sofia.web.client;
 
 import net.cabezudo.sofia.core.InvalidParameterException;
 
-public class Language {
-  private final String value;
-
-  public Language(String value) {
+public record Language(String value) {
+  public Language {
     if (value == null) {
       throw new InvalidParameterException("The code for language can't be null.");
     }
-    this.value = value;
   }
 
   @Override
@@ -17,9 +14,5 @@ public class Language {
     return "Language{" +
         "value='" + value + '\'' +
         '}';
-  }
-
-  public String getValue() {
-    return value;
   }
 }

@@ -1,7 +1,9 @@
-package net.cabezudo.sofia.security;
+package net.cabezudo.sofia.security.oauth2;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.cabezudo.sofia.security.LoginRestResponse;
+import net.cabezudo.sofia.security.SofiaSecurityConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;

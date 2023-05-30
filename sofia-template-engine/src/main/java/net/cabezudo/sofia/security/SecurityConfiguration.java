@@ -1,6 +1,8 @@
 package net.cabezudo.sofia.security;
 
 import net.cabezudo.sofia.core.SofiaEnvironment;
+import net.cabezudo.sofia.security.oauth2.SofiaOAuth2AuthenticationFailureHandler;
+import net.cabezudo.sofia.security.oauth2.SofiaOAuth2AuthenticationSuccessHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

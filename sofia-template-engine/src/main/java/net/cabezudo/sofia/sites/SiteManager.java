@@ -48,6 +48,9 @@ public class SiteManager {
   }
 
   public Site get(HttpServletRequest request) throws SiteNotFoundException {
+    if (request == null) {
+      return null;
+    }
     return getByHostname(request.getServerName());
   }
 

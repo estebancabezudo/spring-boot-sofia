@@ -13,6 +13,7 @@ public class CountryManager {
   private static final Logger log = LoggerFactory.getLogger(CountryManager.class);
 
   public Country get(int id) {
+    // TODO Put this in database
     return new Country(1, "mx");
   }
 }

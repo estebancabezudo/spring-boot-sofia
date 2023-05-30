@@ -55,8 +55,7 @@ public class UserManager {
     if (userEntity == null) {
       throw new UsernameNotFoundException(email);
     }
-    SofiaUser sofiaUser = new SofiaUser(userEntity.getId(), account, userEntity.getEMailEntity().email(), userEntity.getPassword(), getAuthorities(userEntity), userEntity.isEnabled());
-    return sofiaUser;
+    return new SofiaUser(userEntity.getId(), account, userEntity.getEMailEntity().email(), userEntity.getPassword(), getAuthorities(userEntity), userEntity.isEnabled());
   }
 
   private Collection<GrantedAuthority> getAuthorities(UserEntity userEntity) {

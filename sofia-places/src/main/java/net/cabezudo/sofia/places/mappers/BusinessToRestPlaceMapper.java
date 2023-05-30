@@ -18,8 +18,8 @@ public class BusinessToRestPlaceMapper {
     String interiorNumber = p.interiorNumber();
     String references = p.references();
     String postalCode = p.postalCode();
-    int countryId = p.country().getId();
-    String countryCode = p.country().getCode();
+    int countryId = p.country().id();
+    String countryCode = p.country().code();
 
     AdministrativeDivisionsRestList administrativeDivisionList
         = businessToRestAdminitrativeDivisionListMapper.map(p.administrativeDivisionList());
