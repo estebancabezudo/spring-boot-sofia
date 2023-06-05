@@ -7,7 +7,8 @@ mantenimiento.
 También tiene cierta funcionalidad básica, común a la mayoría de los sitios, ya implementada para permitir crear sitios
 con control de usuarios e internacionalización en minutos.
 
-La información "casi" completa del servidor la encontramos en el proyecto sofia-template-engine.
+La información "casi" completa del servidor la encontramos en el
+proyecto [sofia-template-engine](estebancabezudo/spring-boot-sofia).
 
 # Sofia
 
@@ -17,4 +18,5 @@ It allows organizing templates, configuration files, and information in a way th
 It also has certain basic functionality, common to most sites, already implemented to allow the creation of sites with
 user control and internationalization in minutes.
 
-The "almost" complete information of the server can be found in the Sofia Template Engine project.
+The "almost" complete information of the server can be found in
+the [sofia-template-engine](estebancabezudo/spring-boot-sofia) project.
