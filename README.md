@@ -8,7 +8,7 @@ También tiene cierta funcionalidad básica, común a la mayoría de los sitios,
 con control de usuarios e internacionalización en minutos.
 
 La información "casi" completa del servidor la encontramos en el
-proyecto [sofia-template-engine](estebancabezudo/spring-boot-sofia).
+proyecto [sofia-template-engine](/estebancabezudo/spring-boot-sofia).
 
 # Sofia
 
@@ -19,4 +19,4 @@ It also has certain basic functionality, common to most sites, already implement
 user control and internationalization in minutes.
 
 The "almost" complete information of the server can be found in
-the [sofia-template-engine](estebancabezudo/spring-boot-sofia) project.
+the [sofia-template-engine](/estebancabezudo/spring-boot-sofia) project.
