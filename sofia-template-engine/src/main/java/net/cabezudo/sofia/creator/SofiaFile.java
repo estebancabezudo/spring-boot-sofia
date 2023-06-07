@@ -74,7 +74,7 @@ public class SofiaFile {
   private boolean hasDocType = false;
   private Document document;
   private Element head;
-  private PermissionManager permissionManager;
+  private final PermissionManager permissionManager;
 
   public SofiaFile(HttpServletRequest request, SofiaEnvironment sofiaEnvironment, SiteManager siteManager, PathManager pathManager, TemplateVariables templateVariables, PermissionManager permissionManager) throws SiteNotFoundException, HostNotFoundException {
     this.sofiaEnvironment = sofiaEnvironment;
@@ -94,12 +94,13 @@ public class SofiaFile {
     voidRootFilePath = FileHelper.removeExtension(requestURI);
   }
 
-  public SofiaFile(Site site, String version, String requestURIParameter, SofiaEnvironment sofiaEnvironment, SiteManager siteManager, PathManager pathManager, TemplateVariables templateVariables) {
+  public SofiaFile(Site site, String version, String requestURIParameter, SofiaEnvironment sofiaEnvironment, SiteManager siteManager, PathManager pathManager, TemplateVariables templateVariables, PermissionManager permissionManager) {
     this.sofiaEnvironment = sofiaEnvironment;
     this.siteManager = siteManager;
     this.pathManager = pathManager;
     this.idStorage = new IdStorage(pathManager);
     this.templateVariables = templateVariables;
+    this.permissionManager = permissionManager;
     this.site = site;
     this.version = version;
     String requestURI = requestURIParameter.substring(1);
