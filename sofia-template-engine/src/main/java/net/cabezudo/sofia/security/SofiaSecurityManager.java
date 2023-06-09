@@ -63,14 +63,15 @@ public class SofiaSecurityManager {
     if (authentication instanceof OAuth2AuthenticationToken oAuth2AuthenticationToken) {
       OAuth2User principal = oAuth2AuthenticationToken.getPrincipal();
       String email = principal.getAttribute("email");
+      Site site = (Site) request.getSession().getAttribute("site");
       // TODO Get the account from the stored as default for the user with that email
-      AccountEntity accountEntity = accountRepository.getAccountFor(email);
+      AccountEntity accountEntity = accountRepository.getAccountFor(site, email);
       if (accountEntity == null) {
-        SofiaUser newUser = newUser(email);
+        SofiaUser newUser = newUser(site, email);
         setUserInWebClientData(webClientData, newUser);
         return newUser;
       } else {
-        final UserEntity userEntity = userRepository.findByEmail(accountEntity.id(), email);
+        final UserEntity userEntity = userRepository.findByEmail(site, accountEntity.id(), email);
         if (userEntity == null) {
           throw new UsernameNotFoundException(email);
         }
@@ -87,12 +88,13 @@ public class SofiaSecurityManager {
     webClientData.setUser(user);
     log.debug("Web client data=" + webClientData);
     if (webClientData.getAccount() == null) {
-      Account preferredAccount = userPreferencesManager.getAccount(user);
+      Site site = (Site) request.getSession().getAttribute("site");
+      Account preferredAccount = userPreferencesManager.getAccount(site, user);
       log.debug("Account recovered from user preferences=" + preferredAccount);
       if (preferredAccount == null) {
         log.debug("The user don't have a preferred account. Set the user account " + user.getAccount() + " as preferred in web client data session object.");
         webClientData.setAccount(user.getAccount());
-        userPreferencesManager.createAccount(webClientData.getUser(), webClientData.getAccount());
+        userPreferencesManager.createAccount(site, webClientData.getUser(), webClientData.getAccount());
       } else {
         log.debug("Setting the user preferred account " + user.getAccount() + " in web client data session object.");
         webClientData.setAccount(user.getAccount());
@@ -100,19 +102,18 @@ public class SofiaSecurityManager {
     }
   }
 
-  private SofiaUser newUser(String email) {
+  private SofiaUser newUser(Site site, String email) {
     EMailEntity emailForAccount;
-    EMailEntity emailEntityFromRepository = emailRepository.get(email);
+    EMailEntity emailEntityFromRepository = emailRepository.get(site, email);
     if (emailEntityFromRepository == null) {
-      emailForAccount = emailRepository.create(email);
+      emailForAccount = emailRepository.create(site, email);
     } else {
       emailForAccount = emailEntityFromRepository;
     }
-    UserEntity userEntity = userRepository.create(emailForAccount, true);
-    Site site = (Site) request.getSession().getAttribute("site");
-    AccountEntity newAccountEntity = accountRepository.create(site.getId());
-    accountRepository.create(newAccountEntity.id(), userEntity.getId(), true);
-    UserEntity newUser = userRepository.get(userEntity.getId());
+    UserEntity userEntity = userRepository.create(site, emailForAccount, true);
+    AccountEntity newAccountEntity = accountRepository.create(site);
+    accountRepository.create(site, newAccountEntity.id(), userEntity.getId(), true);
+    UserEntity newUser = userRepository.get(site, userEntity.getId());
     SofiaUser user = entityToBusinessUserMapper.map(newUser);
     user.setAccount(entityToBusinessAccountMapper.map(newAccountEntity));
     return user;

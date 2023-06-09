@@ -1,29 +1,22 @@
-basePath: /home/esteban/Documents/trabajo/sofia/spring-boot-sofia/sofia-web/system
-sourcePaths:
-  - /home/esteban/Documents/trabajo/sofia/spring-boot-sofia/sofia-web/src/sources
+basePath: /home/sofia/system
 sites:
   - name: localhost
     hosts:
       - localhost:1
-      - medicina.digital:1
-      - beta.localhost:2
-    api:
-      - /logout
-      - /login/oauth2/code
-      - /oauth2
-      - /v1
     permissions:
+      - all:all:grant:/v1/calendars/weeks
+      - all:all:grant:/login
+      - all:all:grant:/users/actual/status
       - all:all:grant:/login.html
       - all:all:grant:/texts/login/**
       - all:all:grant:/index.html
       - all:all:grant:/texts/index/**
       - all:all:grant:/images/**
       - all:all:grant:/fonts/**
+      - all:all:grant:/admin/**
   - name: example.com
     hosts:
       - example.com:1
       - local.example.com:1
       - beta.example.com:2
       - www.example.com:1
-
-

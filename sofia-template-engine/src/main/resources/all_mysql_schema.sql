@@ -1,9 +1,30 @@
 DROP DATABASE sofia;
 CREATE DATABASE sofia;
+
 USE `sofia`;
+DROP TABLE IF EXISTS `sites`;
+DROP TABLE IF EXISTS `emails`;
+
+CREATE TABLE `sites` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(60) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `emails` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP DATABASE site_localhost;
+CREATE DATABASE site_localhost;
+
+USE `site_localhost`;
 DROP TABLE IF EXISTS `web_clients`;
 DROP TABLE IF EXISTS `authorities`;
-DROP TABLE IF EXISTS `emails`;
 DROP TABLE IF EXISTS `accounts_users`;
 DROP TABLE IF EXISTS `administrative_divisions`;
 DROP TABLE IF EXISTS `places`;
@@ -11,7 +32,6 @@ DROP TABLE IF EXISTS `accounts`;
 DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `user_account_preferences`;
 DROP TABLE IF EXISTS `user_preferences`;
-DROP TABLE IF EXISTS `sites`;
 DROP TABLE IF EXISTS `administrative_division_types`;
 DROP TABLE IF EXISTS `administrative_division_names`;
 DROP TABLE IF EXISTS `sites_people`;
@@ -23,25 +43,11 @@ DROP TABLE IF EXISTS `phones`;
 DROP TABLE IF EXISTS `person_phones`;
 DROP TABLE IF EXISTS `people_users`;
 
-CREATE TABLE `sites` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(60) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `ix_name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 CREATE TABLE `accounts` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `site_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_accounts_site` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `emails` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `email` VARCHAR(100) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `ix_email` (`email`)
+  CONSTRAINT `fk_accounts_site` FOREIGN KEY (`site_id`) REFERENCES `sofia`.`sites` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `users` (
@@ -51,7 +57,7 @@ CREATE TABLE `users` (
   `enabled` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_email` (`email_id`),
-  CONSTRAINT `fk_users_email` FOREIGN KEY (`email_id`) REFERENCES `emails` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT `fk_users_email` FOREIGN KEY (`email_id`) REFERENCES `sofia`.`emails` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `accounts_users` (
@@ -192,17 +198,17 @@ CREATE TABLE `people_users` (
   PRIMARY KEY (`person_id`, `user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `sites` (name) VALUES ('localhost');
-INSERT INTO `sites` (name) VALUES ('example.com');
+INSERT INTO `sofia`.`sites` (name, `schema`) VALUES ('localhost');
+INSERT INTO `sofia`.`sites` (name, `schema`) VALUES ('example.com');
 
 INSERT INTO `accounts` (site_id) VALUES(1);
 INSERT INTO `accounts` (site_id) VALUES(1);
 INSERT INTO `accounts` (site_id) VALUES(2);
 
-INSERT INTO `emails` (email) VALUES ('esteban@cabezudo.net');
-INSERT INTO `emails` (email) VALUES ('sofia@cabezudo.net');
-INSERT INTO `emails` (email) VALUES ('sofia@example.com');
-INSERT INTO `emails` (email) VALUES ('esteban@example.com');
+INSERT INTO `sofia`.`emails` (email) VALUES ('esteban@cabezudo.net');
+INSERT INTO `sofia`.`emails` (email) VALUES ('sofia@cabezudo.net');
+INSERT INTO `sofia`.`emails` (email) VALUES ('sofia@example.com');
+INSERT INTO `sofia`.`emails` (email) VALUES ('esteban@example.com');
 
 INSERT INTO `users` (email_id, password, enabled) VALUES (1, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 1);
 INSERT INTO `users` (email_id, password, enabled) VALUES (2, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 1);

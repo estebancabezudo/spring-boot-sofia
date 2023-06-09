@@ -3,6 +3,7 @@ package net.cabezudo.sofia.web.client.rest;
 import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.security.SofiaSecurityManager;
+import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
 import net.cabezudo.sofia.users.SofiaUser;
 import net.cabezudo.sofia.users.rest.BusinessToRestUserMapper;
@@ -54,6 +55,7 @@ public class WebClientController extends SofiaAuthorizedController {
     HttpSession session = super.getRequest().getSession();
 
     WebClientData webClientData = (WebClientData) session.getAttribute(WebClientData.OBJECT_NAME_IN_SESSION);
+    Site site = super.getSite();
 
     WebClientData responseWebClient;
     if (restLanguage != null && !restLanguage.equals(webClientData.getLanguage())) {
@@ -63,7 +65,7 @@ public class WebClientController extends SofiaAuthorizedController {
 
       WebClientData newWebClient = new WebClientData(languageToSet, account);
       request.getSession().setAttribute(WebClientData.OBJECT_NAME_IN_SESSION, newWebClient);
-      userPreferencesManager.setLanguage(account, user, languageToSet);
+      userPreferencesManager.setLanguage(site, account, user, languageToSet);
       responseWebClient = newWebClient;
     } else {
       responseWebClient = webClientData;

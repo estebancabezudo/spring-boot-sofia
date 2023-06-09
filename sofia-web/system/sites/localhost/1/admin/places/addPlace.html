@@ -14,7 +14,7 @@
 
 /* CSS import from /footer.html called by style tag on footer.html:1:2 */
 
-/* CSS import from /header.html called by style tag on header.html:81:2 */
+/* CSS import from /header.html called by style tag on header.html:4:2 */
 
 /* CSS import from /burguerMenu.css called by file libraryburgerMenu:1.00 on header.html */
 
@@ -25,6 +25,17 @@
 /* CSS import from /twoLanguageFlag.css called by file librarytwoLanguageFlag:1.00 on header.html */
 
 /* CSS code from /admin/commons.css called by file attribute on style tag on admin/places/addPlaceForm.html:4:2 */
+#waitingImage {
+    background-image: url(/images/waiting.gif);
+    background-size: cover;
+    width: 30px;
+    height: 30px;
+}
+
+.hideWaitingImage {
+    display: none;
+}
+
 #listContainer {
     display: grid;
     gap: 12px;
@@ -55,16 +66,6 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-}
-
-.formContainer input,
-.formContainer select {
-    background-color: rgba(0, 165, 8, 0.06);
-}
-
-.textInput {
-    padding: 5px 20px;
-    border: 0;
 }
 
 .deleteGroupContainer {
@@ -159,8 +160,15 @@ select {
   box-sizing: border-box;
   padding: 10px 14px;
   font-size: 16px;
+  font-family: Gotham;
+  border: 0;
   box-sizing: border-box;
-  border: 1px solid lightgrey;
+  background-color: rgba(0, 165, 8, 0.06);
+}
+
+input:disabled {
+  background-color: white;
+  border: 0;
 }
 
 input::placeholder,
@@ -173,6 +181,12 @@ select::placeholder {
 input:focus,
 select:focus {
   outline: none;
+}
+
+input.error {
+  background-color: rgba(165, 0, 0, 0.06);
+  -webkit-box-shadow: 0px 0px 7px 0px #7A0000;
+  box-shadow: 0px 0px 7px 0px #7A0000;
 }
 
 .button {
@@ -226,17 +240,6 @@ select:focus {
   padding-bottom: 15px;
 }
 
-.textInput {
-  font-size: 24px;
-  font-family: Gotham;
-  border: 0;
-}
-
-.textInput:disabled {
-  background-color: white;
-  border: 0;
-}
-
 @media all and (min-width: 750px) {
   #content {
     margin: 20px auto;
@@ -244,10 +247,6 @@ select:focus {
 
   .contentTitle {
     text-align: left;
-  }
-
-  .textInput {
-    font-size: 20px;
   }
 }
 
@@ -387,7 +386,7 @@ select:focus {
         }
     }
 
-/* CSS code from /header.html called by style tag on header.html:81:2 */
+/* CSS code from /header.html called by style tag on header.html:4:2 */
 
     :root {
         --headerHeight: 60px;
@@ -483,27 +482,19 @@ select:focus {
     }
 
     .messages {
-        position: fixed;
         display: flex;
         width: 100%;
-        height: 50px;
-        top: var(--headerHeight);
+        padding: 5px;
         color: white;
-        align-content: center;
-        justify-content: center;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        overflow: hidden;
         font-weight: bold;
-        opacity: 0;
-        transition: .5s opacity;
         pointer-events: none;
-    }
-
-    .message {
-        opacity: 1;
+        transition: background-color .2s ease-out;
     }
 
     .errorMessage {
-        opacity: 1;
+        background-color: rgb(177, 40, 40);
     }
 
     @media all and (min-width: 750px) {
@@ -897,7 +888,6 @@ const Core = {
     },
 
     isArray: v => {
-        console.log('Core::isArray: ', Object.prototype.toString.call(v), v);
         return Object.prototype.toString.call(v) === '[object Array]';
     },
 
@@ -1428,7 +1418,7 @@ class TwoLanguageFlag {
     };
 }
 
-// Code from script tag on header.html:4:2 called by file attribute on header on header.html:13:6
+// Code from script tag on header.html:138:2 called by file attribute on header on header.html:13:6
 
     const initHeader = () => {
         const burgerMenu = new BurgerMenu(
@@ -1481,25 +1471,24 @@ class TwoLanguageFlag {
             }
         });
         Core.subscribeTo('core:showErrorMessage', data => {
+            console.log(`header.html::initHeader::showErrorMessage::data: `, data);
             const hideMessage = () => {
                 element.classList.remove('errorMessage');
             };
             const element = document.getElementById('messages');
-            element.innerHTML = data.errorMessage;
-            element.style.backgroundColor = 'rgb(145, 0, 0)'
+            element.innerHTML = Core.getText(data.errorMessage);
             element.classList.add('errorMessage');
             setTimeout(hideMessage, 3000);
         });
         Core.subscribeTo('core:showMessage', data => {
-            console.log(data);
+            console.log(`header.html::initHeader::showMessage::data: `, data);
             const hideMessage = () => {
                 element.classList.remove('message');
             };
             const element = document.getElementById('messages');
-            element.style.backgroundColor = 'rgb(0, 145, 7)'
-            element.innerHTML = data.message;
+            element.innerHTML = Core.getText(data.message);
             element.classList.add('message');
-            setTimeout(hideMessage, 3000);
+            setTimeout(hideMessage, 8000);
         });
     }
 
@@ -1908,7 +1897,7 @@ window.placeMX = class PlaceMX {
 
     window.addEventListener('load', initFooter);
 
-// Code from :commons.js: called by system 
+// Code from :/home/esteban/Documents/trabajo/sofia/spring-boot-sofia/sofia-web/src/sources/localhost/1:commons.js: called by system 
 Core.setReportSystemErrorFunction(error => {
     Core.showErrorMessage(error.message);
     throw error;
@@ -1943,7 +1932,6 @@ Core.setReportSystemErrorFunction(error => {
             <div class="headerIcon headerBurgerMenuActivator" id="headerBurgerMenuActivator"></div>
         </div>
     </div>
-    <div class="messages" id="messages"></div>
 </header>
     <div id="contentContainer">
         <div id="content">

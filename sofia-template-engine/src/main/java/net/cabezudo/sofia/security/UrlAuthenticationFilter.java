@@ -3,6 +3,7 @@ package net.cabezudo.sofia.security;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
 import net.cabezudo.sofia.math.Numbers;
+import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.users.SofiaUser;
 import net.cabezudo.sofia.users.service.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,16 +37,17 @@ public class UrlAuthenticationFilter extends OncePerRequestFilter {
       String accountParameter = request.getParameter(ACCOUNT_PARAMETER);
 
       SofiaUser user;
+      Site site = (Site) request.getSession().getAttribute("site");
       if (Numbers.isInteger(accountParameter)) {
         int id = Integer.parseInt(accountParameter);
-        AccountEntity accountEntity = accountRepository.get(id);
-        user = userManager.findByAccountId(accountEntity.id(), email);
+        AccountEntity accountEntity = accountRepository.get(site, id);
+        user = userManager.findByAccountId(site, accountEntity.id(), email);
       } else {
         // TODO create a find by email for user without search first the account for the email
-        AccountEntity accountEntity = accountRepository.getAccountFor(email);
-        user = userManager.findByAccountId(accountEntity.id(), email);
+        AccountEntity accountEntity = accountRepository.getAccountFor(site, email);
+        user = userManager.findByAccountId(site, accountEntity.id(), email);
       }
-      
+
       Authentication auth = new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
       SecurityContextHolder.getContext().setAuthentication(auth);
     }

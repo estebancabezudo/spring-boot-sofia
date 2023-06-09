@@ -3,6 +3,7 @@ package net.cabezudo.sofia.web.client.mappers;
 import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.accounts.AccountManager;
 import net.cabezudo.sofia.countries.Country;
+import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.web.client.City;
 import net.cabezudo.sofia.web.client.CountryLanguages;
 import net.cabezudo.sofia.web.client.Language;
@@ -18,7 +19,7 @@ import java.math.BigDecimal;
 public class RestToBusinessWebClientMapper {
   private @Autowired AccountManager accountManager;
 
-  public WebClientData map(RestWebClientData c) {
+  public WebClientData map(Site site, RestWebClientData c) {
     if (c == null) {
       return null;
     }
@@ -29,7 +30,7 @@ public class RestToBusinessWebClientMapper {
     Longitude longitude = new Longitude(new BigDecimal("1.1"));
     CountryLanguages languages = new CountryLanguages();
     Language language = new Language(c.language());
-    Account account = accountManager.get(c.account().id());
+    Account account = accountManager.get(site, c.account().id());
     return new WebClientData(language, account);
   }
 }

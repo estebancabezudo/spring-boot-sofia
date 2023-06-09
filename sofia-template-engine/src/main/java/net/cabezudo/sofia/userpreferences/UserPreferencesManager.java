@@ -5,6 +5,7 @@ import net.cabezudo.sofia.accounts.mappers.EntityToBusinessAccountMapper;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
 import net.cabezudo.sofia.accounts.persistence.AccountUserRelationEntity;
+import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.userpreferences.persistence.AccountPreferencesRepository;
 import net.cabezudo.sofia.userpreferences.persistence.UserPreferencesRepository;
 import net.cabezudo.sofia.users.SofiaUser;
@@ -24,30 +25,33 @@ public class UserPreferencesManager {
   private @Autowired EntityToBusinessAccountMapper entityToBusinessAccountMapper;
 
   @Transactional
-  public void setLanguage(Account account, SofiaUser user, Language language) {
+  public void setLanguage(Site site, Account account, SofiaUser user, Language language) {
     if (account == null) {
       return;
     }
-    AccountUserRelationEntity accountUserRelationEntity = accountRepository.find(account.id(), user.getId());
+    AccountUserRelationEntity accountUserRelationEntity = accountRepository.find(site, account.id(), user.getId());
+
     UserPreferences userPreferences = accountPreferencesRepository.get(accountUserRelationEntity.id(), LANGUAGE);
+    // TODO set user preferences
   }
 
   @Transactional
-  public Account getAccount(SofiaUser user) {
-    String result = userPreferencesRepository.get(user.getId(), ACCOUNT);
+  public Account getAccount(Site site, SofiaUser user) {
+    String result = userPreferencesRepository.get(site, user.getId(), ACCOUNT);
     if (result == null) {
       return null;
     }
+
     int accountId = Integer.parseInt(result);
-    AccountEntity accountEntity = accountRepository.get(accountId);
+    AccountEntity accountEntity = accountRepository.get(site, accountId);
     return entityToBusinessAccountMapper.map(accountEntity);
   }
 
-  public void setAccount(SofiaUser user, Account account) {
-    userPreferencesRepository.update(user.getId(), ACCOUNT, Integer.toString(account.id()));
+  public void setAccount(Site site, SofiaUser user, Account account) {
+    userPreferencesRepository.update(site, user.getId(), ACCOUNT, Integer.toString(account.id()));
   }
 
-  public void createAccount(SofiaUser user, Account account) {
-    userPreferencesRepository.create(user.getId(), ACCOUNT, Integer.toString(account.id()));
+  public void createAccount(Site site, SofiaUser user, Account account) {
+    userPreferencesRepository.create(site, user.getId(), ACCOUNT, Integer.toString(account.id()));
   }
 }

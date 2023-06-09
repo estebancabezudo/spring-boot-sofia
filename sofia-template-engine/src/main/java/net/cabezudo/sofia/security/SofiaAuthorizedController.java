@@ -4,6 +4,7 @@ import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.accounts.AccountManager;
 import net.cabezudo.sofia.core.rest.SofiaController;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
+import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.users.SofiaUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +26,13 @@ public abstract class SofiaAuthorizedController extends SofiaController {
     super(request);
   }
 
-  protected ResponseEntity checkPermissionFor(Account account, String group) {
+  protected ResponseEntity checkPermissionFor(Site site, Account account, String group) {
     SofiaUser user = sofiaSecurityManager.getLoggedUser();
     if (user == null) {
       log.debug("The user is null");
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new SofiaRestResponse(SofiaRestResponse.ERROR, "Not logged"));
     }
-    if (!permissionManager.hasPermission(account, user, group)) {
+    if (!permissionManager.hasPermission(site, account, user, group)) {
       log.debug("The user(" + user + ") has not permission(group=" + group + ") for th account (" + account + ")");
       return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new SofiaRestResponse(SofiaRestResponse.ERROR, "The user(" + user + ") has not permission(group=" + group + ") for th account (" + account + ")"));
     }

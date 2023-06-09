@@ -4,6 +4,7 @@ import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.accounts.mappers.EntityToBusinessAccountMapper;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
+import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.users.SofiaUser;
 import net.cabezudo.sofia.users.mappers.EntityToBusinessUserMapper;
 import net.cabezudo.sofia.users.persistence.GroupEntity;
@@ -41,18 +42,20 @@ public class CustomDetailsService implements UserDetailsService {
 
     authorizedClientService.loadAuthorizedClient("google", email);
 
+    Site site = (Site) request.getSession().getAttribute("site");
     Account account = (Account) request.getSession().getAttribute("account");
+
     int accountId;
     Account accountToSet;
     if (account == null) {
-      AccountEntity accountEntity = accountRepository.getAccountFor(email);
+      AccountEntity accountEntity = accountRepository.getAccountFor(site, email);
       accountId = accountEntity.id();
       accountToSet = entityToBusinessAccountMapper.map(accountEntity);
     } else {
       accountId = account.id();
       accountToSet = account;
     }
-    final UserEntity userEntity = userRepository.findByEmail(accountId, email);
+    final UserEntity userEntity = userRepository.findByEmail(site, accountId, email);
     if (userEntity == null) {
       throw new UsernameNotFoundException(email);
     }

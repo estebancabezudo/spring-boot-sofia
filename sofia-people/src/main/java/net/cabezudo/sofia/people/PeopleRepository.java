@@ -1,10 +1,11 @@
 package net.cabezudo.sofia.people;
 
 import net.cabezudo.sofia.core.persistence.EntityList;
+import net.cabezudo.sofia.persistence.DatabaseManager;
+import net.cabezudo.sofia.sites.Site;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
@@ -14,14 +15,14 @@ import java.util.List;
 @Repository
 public class PeopleRepository {
   private static final Logger log = LoggerFactory.getLogger(PeopleRepository.class);
-  private @Autowired JdbcTemplate jdbcTemplate;
+  private @Autowired DatabaseManager databaseManager;
 
   @Transactional
-  public EntityList<PersonEntity> findAll(int accountId) {
+  public EntityList<PersonEntity> findAll(Site site, int accountId) {
     log.debug("Search people for " + accountId);
 
     EntityList<PersonEntity> list = new EntityList<>();
-    jdbcTemplate.queryForList(
+    databaseManager.getJDBCTemplate(site).queryForList(
         "SELECT p.id AS id, name, second_name, last_name, second_last_name, date_of_birth " +
             "FROM sites_people AS s " +
             "LEFT JOIN people AS p ON s.person_id = p.id " +
@@ -40,10 +41,10 @@ public class PeopleRepository {
     return list;
   }
 
-  public PersonEntity get(int accountId, int id) {
+  public PersonEntity get(Site site, int accountId, int id) {
     log.debug("Search person with id " + id);
 
-    return jdbcTemplate.queryForObject(
+    return databaseManager.getJDBCTemplate(site).queryForObject(
         "SELECT p.id AS id, name, second_name, last_name, second_last_name, date_of_birth " +
             "FROM sites_people AS s " +
             "LEFT JOIN people AS p ON s.person_id = p.id" +
@@ -51,10 +52,10 @@ public class PeopleRepository {
         new PersonRowMapper(), accountId, id);
   }
 
-  public List<PersonEntity> findAllUsing(String searchCriteria) {
+  public List<PersonEntity> findAllUsing(Site site, String searchCriteria) {
     log.debug("Search person using " + searchCriteria);
 
-    return jdbcTemplate.query(
+    return databaseManager.getJDBCTemplate(site).query(
         "SELECT p.id AS id, name, second_name, last_name, second_last_name, date_of_birth " +
             "FROM sites_people AS s " +
             "LEFT JOIN people AS p ON s.person_id = p.id " +

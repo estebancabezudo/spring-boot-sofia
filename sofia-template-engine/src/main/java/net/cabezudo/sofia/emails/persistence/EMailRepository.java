@@ -1,10 +1,12 @@
 package net.cabezudo.sofia.emails.persistence;
 
+import net.cabezudo.sofia.config.DatabaseConfiguration;
+import net.cabezudo.sofia.persistence.DatabaseManager;
+import net.cabezudo.sofia.sites.Site;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -17,27 +19,27 @@ import java.sql.SQLIntegrityConstraintViolationException;
 public class EMailRepository {
   private static final Logger log = LoggerFactory.getLogger(EMailRepository.class);
 
-  private @Autowired JdbcTemplate jdbcTemplate;
+  private @Autowired DatabaseManager databaseManager;
 
-  public EMailEntity get(String address) {
+  public EMailEntity get(Site site, String address) {
     log.debug("Search email with address " + address);
 
-    String query = "SELECT id, email FROM emails AS e WHERE email = ?";
-    return jdbcTemplate.query(query, new EMailMapper(), address).stream().findFirst().orElse(null);
+    String query = "SELECT id, email FROM `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e WHERE email = ?";
+    return databaseManager.getJDBCTemplate(site).query(query, new EMailMapper(), address).stream().findFirst().orElse(null);
   }
 
 
-  public EMailEntity get(int id) {
+  public EMailEntity get(Site site, int id) {
     log.debug("Search email with id " + id);
 
-    String query = "SELECT id, email FROM emails AS e WHERE id = ?";
-    return jdbcTemplate.query(query, new EMailMapper(), id).stream().findFirst().orElse(null);
+    String query = "SELECT id, email FROM `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e WHERE id = ?";
+    return databaseManager.getJDBCTemplate(site).query(query, new EMailMapper(), id).stream().findFirst().orElse(null);
   }
 
-  public EMailEntity create(String email) {
-    String sqlQuery = "INSERT INTO emails (email) VALUES (?)";
+  public EMailEntity create(Site site, String email) {
+    String sqlQuery = "INSERT INTO `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails (email) VALUES (?)";
     KeyHolder keyHolder = new GeneratedKeyHolder();
-    jdbcTemplate.update(connection -> {
+    databaseManager.getJDBCTemplate(site).update(connection -> {
       PreparedStatement ps = connection.prepareStatement(sqlQuery, new String[]{"email"});
       ps.setString(1, email);
       return ps;
@@ -46,16 +48,16 @@ public class EMailRepository {
     return new EMailEntity(id, email);
   }
 
-  public void delete(int id) {
+  public void delete(Site site, int id) {
     log.debug("Delete email with id " + id);
-    String sqlQuery = "DELETE FROM emails WHERE id = ?";
+    String sqlQuery = "DELETE FROM `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails WHERE id = ?";
     PreparedStatementCreator preparedStatementCreator = connection -> {
       PreparedStatement ps = connection.prepareStatement(sqlQuery);
       ps.setInt(1, id);
       return ps;
     };
     try {
-      jdbcTemplate.update(preparedStatementCreator);
+      databaseManager.getJDBCTemplate(site).update(preparedStatementCreator);
     } catch (DataAccessException e) {
       if (e.getCause() instanceof SQLIntegrityConstraintViolationException) {
         log.debug("I can't delete the email because is used with another user in another account.");

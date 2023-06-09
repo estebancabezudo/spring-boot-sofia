@@ -33,8 +33,8 @@ public class PermissionManager {
     permissions.add(permission);
   }
 
-  public boolean hasPermission(Account account, SofiaUser user, String group) {
-    AccountUserRelationEntity relation = accountManager.findRelation(account, user);
+  public boolean hasPermission(Site site, Account account, SofiaUser user, String group) {
+    AccountUserRelationEntity relation = accountManager.findRelation(site, account, user);
     return user.hasPermission(group) || (relation != null && relation.owner());
   }
 
@@ -43,7 +43,7 @@ public class PermissionManager {
 
     String username = user == null ? null : user.getUsername();
 
-    if (accountManager.ownsTheAccount(user, account)) {
+    if (accountManager.ownsTheAccount(site, account, user)) {
       return true;
     }
 

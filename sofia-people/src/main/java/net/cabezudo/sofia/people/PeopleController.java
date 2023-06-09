@@ -5,6 +5,7 @@ import net.cabezudo.sofia.core.rest.ListRestResponse;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
 import net.cabezudo.sofia.security.PermissionManager;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
+import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.users.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,13 +39,14 @@ public class PeopleController extends SofiaAuthorizedController {
     ListRestResponse<RestPerson> listRestResponse;
 
     Account account = super.getAccount();
+    Site site = super.getSite();
 
     ResponseEntity result;
-    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
+    if ((result = super.checkPermissionFor(site, account, Group.ADMIN)) != null) {
       return result;
     }
 
-    PeopleList peopleList = peopleManager.findAll(account);
+    PeopleList peopleList = peopleManager.findAll(site, account);
     BusinessToRestPersonListMapper mapper = new BusinessToRestPersonListMapper();
     RestPersonList restPersonList = mapper.map(peopleList);
     listRestResponse = new ListRestResponse(SofiaRestResponse.OK, "Retrieve list of people", restPersonList);
@@ -57,13 +59,14 @@ public class PeopleController extends SofiaAuthorizedController {
     PeopleRestResponse peopleRestResponse;
 
     Account account = super.getAccount();
+    Site site = super.getSite();
 
     ResponseEntity result;
-    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
+    if ((result = super.checkPermissionFor(site, account, Group.ADMIN)) != null) {
       return result;
     }
 
-    Person person = peopleManager.get(account, id);
+    Person person = peopleManager.get(site, account, id);
     BusinessToRestPersonMapper mapper = new BusinessToRestPersonMapper();
     RestPerson restPerson = mapper.map(person);
     peopleRestResponse = new PeopleRestResponse(SofiaRestResponse.OK, "Retrieve list of people", restPerson);

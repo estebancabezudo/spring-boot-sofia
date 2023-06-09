@@ -1,11 +1,12 @@
 package net.cabezudo.sofia.users.persistence;
 
+import net.cabezudo.sofia.config.DatabaseConfiguration;
 import net.cabezudo.sofia.emails.persistence.EMailEntity;
-import net.cabezudo.sofia.emails.persistence.EMailRepository;
+import net.cabezudo.sofia.persistence.DatabaseManager;
+import net.cabezudo.sofia.sites.Site;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -17,30 +18,27 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 @Repository
 public class UserRepository {
   private static final Logger log = LoggerFactory.getLogger(UserRepository.class);
 
-  private @Autowired JdbcTemplate jdbcTemplate;
-  private @Autowired EMailRepository eMailRepository;
+  private @Autowired DatabaseManager databaseManager;
 
   @Transactional
-  public UserEntity findByEmail(int account_id, String email) {
+  public UserEntity findByEmail(Site site, int account_id, String email) {
     log.debug("Search user for account " + account_id + " and " + email);
 
-    List<Map<String, Object>> list = new ArrayList<>();
-    jdbcTemplate.queryForList(
+    List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate(site).queryForList(
         "SELECT u.id AS id, a.site_id, a.id AS account_user_id, e.id AS eMailId, e.email AS email, u.password, u.enabled, authority " +
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON u.id = au.user_id " +
-            "LEFT JOIN emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e ON u.email_id = e.id " +
             "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
-            "WHERE u.email_id = e.id AND a.id = ? AND e.email = ?", account_id, email).forEach(rs -> {
-      list.add(rs);
-    });
+            "WHERE u.email_id = e.id AND a.id = ? AND e.email = ?", account_id, email));
 
     if (list.size() == 0) {
       return null;
@@ -65,22 +63,22 @@ public class UserRepository {
   }
 
   @Transactional
-  public UserEntityList findAll(int accountId) {
+  public UserEntityList findAll(Site site, int accountId) {
     log.debug("Search users for account " + accountId);
 
     Map<Integer, UserEntity> map = new TreeMap<>();
     UserEntityList list = new UserEntityList();
-    jdbcTemplate.queryForList(
+    databaseManager.getJDBCTemplate(site).queryForList(
         "SELECT u.id AS id, a.site_id, au.id AS account_user_id, e.id AS eMailId, e.email AS email, u.password, u.enabled, authority " +
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON u.id = au.user_id " +
-            "LEFT JOIN emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e ON u.email_id = e.id " +
             "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
             "WHERE a.id = ? " +
             "ORDER BY email"
         , accountId
-    ).stream().forEach(rs -> {
+    ).forEach(rs -> {
       int id = (Integer) rs.get("id");
       UserEntity userEntityFromMap = map.get(id);
       UserEntity newUserEntity;
@@ -111,21 +109,18 @@ public class UserRepository {
     return list;
   }
 
-  public UserEntity get(int id) {
+  public UserEntity get(Site site, int id) {
     log.debug("Search user with id " + id);
 
-    List<Map<String, Object>> list = new ArrayList<>();
-    jdbcTemplate.queryForList(
+    List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate(site).queryForList(
         "SELECT u.id AS id, a.site_id, au.id AS account_user_id, e.id AS email_id, e.email AS email, u.password, u.enabled, authority " +
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON au.user_id = u.id " +
-            "LEFT JOIN emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e ON u.email_id = e.id " +
             "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
             "WHERE u.id = ?", id
-    ).forEach(rs -> {
-      list.add(rs);
-    });
+    ));
 
     if (list.size() == 0) {
       return null;
@@ -151,21 +146,18 @@ public class UserRepository {
     return userEntity;
   }
 
-  public UserEntity get(int accountId, String eMail) {
+  public UserEntity get(Site site, int accountId, String eMail) {
     log.debug("Search user for account " + accountId + " with e-mail " + eMail);
 
-    List<Map<String, Object>> list = new ArrayList<>();
-    jdbcTemplate.queryForList(
+    List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate(site).queryForList(
         "SELECT u.id AS id, a.site_id, au.id AS account_user_id, e.id AS eMailId, e.email AS email, u.password, u.enabled, authority " +
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON au.user_id = u.id " +
-            "LEFT JOIN emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e ON u.email_id = e.id " +
             "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
             "WHERE a.id = ? AND email = ?",
-        accountId, eMail).forEach(rs -> {
-      list.add(rs);
-    });
+        accountId, eMail));
 
     if (list.size() == 0) {
       return null;
@@ -195,7 +187,7 @@ public class UserRepository {
     return userEntity;
   }
 
-  public UserEntity create(EMailEntity eMailEntity, boolean enabled) {
+  public UserEntity create(Site site, EMailEntity eMailEntity, boolean enabled) {
     KeyHolder keyHolder = new GeneratedKeyHolder();
     PreparedStatementCreator preparedStatementCreator = connection -> {
       String query = "INSERT INTO users (email_id, enabled) values(?, ?)";
@@ -204,12 +196,12 @@ public class UserRepository {
       ps.setBoolean(2, enabled);
       return ps;
     };
-    jdbcTemplate.update(preparedStatementCreator, keyHolder);
+    databaseManager.getJDBCTemplate(site).update(preparedStatementCreator, keyHolder);
 
-    return new UserEntity(keyHolder.getKey().intValue(), 0, 0, eMailEntity, null, enabled);
+    return new UserEntity(Objects.requireNonNull(keyHolder.getKey()).intValue(), 0, 0, eMailEntity, null, enabled);
   }
 
-  public UserEntity update(UserEntity entity) {
+  public UserEntity update(Site site, UserEntity entity) {
     int id = entity.getId();
     int accountId = entity.getSiteId();
     EMailEntity eMailEntity = entity.getEMailEntity();
@@ -224,18 +216,18 @@ public class UserRepository {
       ps.setInt(3, id);
       return ps;
     };
-    jdbcTemplate.update(preparedStatementCreator);
+    databaseManager.getJDBCTemplate(site).update(preparedStatementCreator);
 
     return new UserEntity(id, accountId, entity.getAccountUserId(), eMailEntity, password, enabled);
   }
 
-  public void delete(Integer id) {
+  public void delete(Site site, Integer id) {
     PreparedStatementCreator preparedStatementCreator = connection -> {
       String query = "DELETE FROM users WHERE id = ?";
       PreparedStatement ps = connection.prepareStatement(query);
       ps.setInt(1, id);
       return ps;
     };
-    jdbcTemplate.update(preparedStatementCreator);
+    databaseManager.getJDBCTemplate(site).update(preparedStatementCreator);
   }
 }

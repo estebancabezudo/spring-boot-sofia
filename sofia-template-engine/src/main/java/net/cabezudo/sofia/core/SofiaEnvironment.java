@@ -230,7 +230,7 @@ public class SofiaEnvironment {
       log.debug("Found data for site: " + configurationFileYAMLSiteData.getName());
       configurationFileYAMLSiteData.getHosts().forEach(hostname -> {
         Host host = new Host(hostname);
-        siteManager.add(configurationFileYAMLSiteData.getName(), host);
+        siteManager.add(configurationFileYAMLSiteData, host);
       });
     }
   }

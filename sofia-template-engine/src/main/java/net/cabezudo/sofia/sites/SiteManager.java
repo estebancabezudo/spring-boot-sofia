@@ -1,5 +1,7 @@
 package net.cabezudo.sofia.sites;
 
+import net.cabezudo.sofia.config.ConfigurationFileYAMLSiteData;
+import net.cabezudo.sofia.config.DatabaseConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -22,29 +24,28 @@ public class SiteManager {
   private @Autowired ApplicationContext applicationContext;
   private @Autowired SiteRepository siteRepository;
 
-  public void add(String siteName, @NotNull Host host) {
+  public void add(ConfigurationFileYAMLSiteData configurationFileYAMLSiteData, @NotNull Host host) {
+    String siteName = configurationFileYAMLSiteData.getName();
+    String url;
+    if (configurationFileYAMLSiteData.getDatabase() == null || configurationFileYAMLSiteData.getDatabase().getUrl() == null) {
+      url = DatabaseConfiguration.DEFAULT_SCHEMA;
+    } else {
+      url = configurationFileYAMLSiteData.getDatabase().getUrl();
+    }
     Site siteFound = siteByName.get(siteName);
     Site site;
+    // TODO verify for the values of the site and change if someone change on the configuration file
     if (siteFound == null) {
       int id = 0;
-      if (isDatabaseManaged()) {
-        SiteEntity siteEntity = siteRepository.findByName(siteName);
-        id = siteEntity.getId();
-      }
-      site = new Site(id, siteName);
+      SiteEntity siteEntity = siteRepository.findByName(siteName);
+      id = siteEntity.id();
+      site = new Site(id, siteName, url);
       siteByName.put(siteName, site);
     } else {
       site = siteFound;
     }
     hostByHostname.put(host.getName(), host);
     siteByHostname.put(host.getName(), site);
-  }
-
-  private boolean isDatabaseManaged() {
-    if (databaseManaged == null) {
-      databaseManaged = applicationContext.containsBeanDefinition("jdbcTemplate");
-    }
-    return databaseManaged;
   }
 
   public Site get(HttpServletRequest request) throws SiteNotFoundException {

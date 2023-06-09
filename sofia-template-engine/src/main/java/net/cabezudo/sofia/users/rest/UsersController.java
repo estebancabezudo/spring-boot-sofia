@@ -85,8 +85,8 @@ public class UsersController extends SofiaAuthorizedController {
     Site site = super.getSite();
     Account account = super.getAccount();
 
-    ResponseEntity result;
-    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
+    ResponseEntity<?> result;
+    if ((result = super.checkPermissionFor(site, account, Group.ADMIN)) != null) {
       return result;
     }
 
@@ -94,14 +94,14 @@ public class UsersController extends SofiaAuthorizedController {
 
     SofiaUser user;
     if (Numbers.isInteger(id)) {
-      user = userManager.findByAccountId(Integer.parseInt(id));
+      user = userManager.findByAccountId(site, Integer.parseInt(id));
     } else {
-      user = userManager.findByAccountId(account.id(), id);
+      user = userManager.findByAccountId(site, account.id(), id);
     }
 
     RestUser restUser;
     if (user == null) {
-      return new ResponseEntity(HttpStatus.NOT_FOUND);
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     restUser = businessToRestUserMapper.map(user);
     restUser.setAccount(account);
@@ -116,8 +116,8 @@ public class UsersController extends SofiaAuthorizedController {
     Site site = super.getSite();
     Account account = super.getAccount();
 
-    ResponseEntity result;
-    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
+    ResponseEntity<?> result;
+    if ((result = super.checkPermissionFor(site, account, Group.ADMIN)) != null) {
       return result;
     }
 
@@ -125,9 +125,9 @@ public class UsersController extends SofiaAuthorizedController {
 
     SofiaUser user;
     if (Numbers.isInteger(id)) {
-      user = userManager.findByAccountId(Integer.parseInt(id));
+      user = userManager.findByAccountId(site, Integer.parseInt(id));
     } else {
-      user = userManager.findByAccountId(account.id(), id);
+      user = userManager.findByAccountId(site, account.id(), id);
     }
 
     RestUser restUser;
@@ -148,24 +148,24 @@ public class UsersController extends SofiaAuthorizedController {
     Site site = super.getSite();
     Account account = super.getAccount();
 
-    ResponseEntity result;
-    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
+    ResponseEntity<?> result;
+    if ((result = super.checkPermissionFor(site, account, Group.ADMIN)) != null) {
       return result;
     }
 
     try {
       eMailManager.info(username);
     } catch (EMailAddressValidationException e) {
-      return ResponseEntity.ok(new SofiaRestResponse(SofiaRestResponse.ERROR, e.getMessage()));
+      return ResponseEntity.ok(new SofiaRestResponse<>(SofiaRestResponse.ERROR, e.getMessage()));
     }
 
     SofiaUser user;
-    user = userManager.findByAccountId(account.id(), username);
+    user = userManager.findByAccountId(site, account.id(), username);
 
     if (user == null) {
-      return ResponseEntity.ok(new SofiaRestResponse(SofiaRestResponse.OK, "validUsername"));
+      return ResponseEntity.ok(new SofiaRestResponse<>(SofiaRestResponse.OK, "validUsername"));
     }
-    return ResponseEntity.ok(new SofiaRestResponse(SofiaRestResponse.ERROR, "usernameAlreadyExists"));
+    return ResponseEntity.ok(new SofiaRestResponse<>(SofiaRestResponse.ERROR, "usernameAlreadyExists"));
   }
 
   @GetMapping("/v1/users/{id}/usernames/{username}/info")
@@ -173,14 +173,15 @@ public class UsersController extends SofiaAuthorizedController {
     log.debug("Run /v1/users/{id}/usernames/{username}/info for validate username");
 
     Account account = super.getAccount();
+    Site site = super.getSite();
 
-    ResponseEntity result;
-    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
+    ResponseEntity<?> result;
+    if ((result = super.checkPermissionFor(site, account, Group.ADMIN)) != null) {
       return result;
     }
 
 
-    SofiaUser user = userManager.findByAccountId(id);
+    SofiaUser user = userManager.findByAccountId(site, id);
     if (user == null) {
       return ResponseEntity.notFound().build();
     }
@@ -188,33 +189,33 @@ public class UsersController extends SofiaAuthorizedController {
     try {
       eMailManager.info(username);
     } catch (EMailAddressValidationException e) {
-      return ResponseEntity.ok(new SofiaRestResponse(SofiaRestResponse.ERROR, e.getMessage()));
+      return ResponseEntity.ok(new SofiaRestResponse<>(SofiaRestResponse.ERROR, e.getMessage()));
     }
 
     SofiaUser userWithTheNewUsername;
-    userWithTheNewUsername = userManager.findByAccountId(account.id(), username);
+    userWithTheNewUsername = userManager.findByAccountId(site, account.id(), username);
 
     if (userWithTheNewUsername == null || userWithTheNewUsername.getId() == id) {
-      return ResponseEntity.ok(new SofiaRestResponse(SofiaRestResponse.OK, "validUsername"));
+      return ResponseEntity.ok(new SofiaRestResponse<>(SofiaRestResponse.OK, "validUsername"));
     }
-    return ResponseEntity.ok(new SofiaRestResponse(SofiaRestResponse.ERROR, "usernameAlreadyExists"));
+    return ResponseEntity.ok(new SofiaRestResponse<>(SofiaRestResponse.ERROR, "usernameAlreadyExists"));
   }
 
   @GetMapping("/v1/users")
-  public ResponseEntity<?> getUsers() throws IOException {
+  public ResponseEntity<?> getUsers() {
     log.debug("Get list of users");
 
     Site site = super.getSite();
     Account account = super.getAccount();
-    ResponseEntity result;
-    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
+    ResponseEntity<?> result;
+    if ((result = super.checkPermissionFor(site, account, Group.ADMIN)) != null) {
       return result;
     }
 
-    SofiaRestResponse userRestResponse;
-    UserList userList = userManager.findAll(account);
+    SofiaRestResponse<?> userRestResponse;
+    UserList userList = userManager.findAll(site, account);
     RestUserList restList = businessToRestUserListMapper.map(userList);
-    userRestResponse = new ListRestResponse(SofiaRestResponse.OK, "List retrieved", restList);
+    userRestResponse = new ListRestResponse<>(SofiaRestResponse.OK, "List retrieved", restList);
     return ResponseEntity.ok(userRestResponse);
   }
 
@@ -223,16 +224,18 @@ public class UsersController extends SofiaAuthorizedController {
     log.debug("Create a new user");
 
     Account account = super.getAccount();
+    Site site = super.getSite();
+
     restUserToSave.setAccount(super.getAccount());
 
-    ResponseEntity result;
-    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
+    ResponseEntity<?> result;
+    if ((result = super.checkPermissionFor(site, account, Group.ADMIN)) != null) {
       return result;
     }
 
     SofiaUser newUser = restToBusinessUserMapper.map(restUserToSave);
 
-    SofiaUser user = userManager.create(account, newUser.getUsername(), newUser.getGroups(), newUser.isEnabled()
+    SofiaUser user = userManager.create(site, account, newUser.getUsername(), newUser.getGroups(), newUser.isEnabled()
     );
     RestUser restUser = businessToRestUserMapper.map(user);
 
@@ -245,16 +248,17 @@ public class UsersController extends SofiaAuthorizedController {
     log.debug("Update an existing user");
 
     Account account = super.getAccount();
+    Site site = super.getSite();
 
-    ResponseEntity result;
-    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
+    ResponseEntity<?> result;
+    if ((result = super.checkPermissionFor(site, account, Group.ADMIN)) != null) {
       return result;
     }
 
     restUserToUpdate.setAccount(account);
 
     SofiaUser user = restToBusinessUserMapper.map(restUserToUpdate);
-    SofiaUser updatedUser = userManager.update(id, user);
+    SofiaUser updatedUser = userManager.update(site, id, user);
     RestUser restUser = businessToRestUserMapper.map(updatedUser);
     restUser.setAccount(account);
     UserRestResponse userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Retrieve user " + id, restUser);
@@ -266,13 +270,14 @@ public class UsersController extends SofiaAuthorizedController {
     log.debug("Delete a user");
 
     Account account = super.getAccount();
+    Site site = super.getSite();
 
-    ResponseEntity result;
-    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
+    ResponseEntity<?> result;
+    if ((result = super.checkPermissionFor(site, account, Group.ADMIN)) != null) {
       return result;
     }
 
-    userManager.delete(account.id(), id);
+    userManager.delete(site, account.id(), id);
     UserRestResponse userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Delete user " + id, null);
     return ResponseEntity.ok(userRestResponse);
   }

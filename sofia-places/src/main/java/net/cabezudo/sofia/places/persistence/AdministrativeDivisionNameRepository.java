@@ -1,11 +1,12 @@
 package net.cabezudo.sofia.places.persistence;
 
 import net.cabezudo.sofia.core.SofiaRuntimeException;
+import net.cabezudo.sofia.persistence.DatabaseManager;
 import net.cabezudo.sofia.places.mappers.AdministrativeDivisionNameRowMapper;
+import net.cabezudo.sofia.sites.Site;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -16,12 +17,12 @@ import java.util.List;
 @Repository
 public class AdministrativeDivisionNameRepository {
   private static final Logger log = LoggerFactory.getLogger(AdministrativeDivisionNameRepository.class);
-  private @Autowired JdbcTemplate jdbcTemplate;
+  private @Autowired DatabaseManager databaseManager;
 
-  public AdministrativeDivisionNameEntity findByName(String name) {
+  public AdministrativeDivisionNameEntity findByName(Site site, String name) {
     log.debug("Search administrative division name " + name);
 
-    List<AdministrativeDivisionNameEntity> list = jdbcTemplate.query(
+    List<AdministrativeDivisionNameEntity> list = databaseManager.getJDBCTemplate(site).query(
         "SELECT id, name " +
             "FROM administrative_division_names AS a " +
             "WHERE name = ?",
@@ -35,10 +36,10 @@ public class AdministrativeDivisionNameRepository {
     throw new SofiaRuntimeException("More than one register in query");
   }
 
-  public AdministrativeDivisionNameEntity create(String name) {
+  public AdministrativeDivisionNameEntity create(Site site, String name) {
     String sqlQuery = "INSERT INTO administrative_division_names (name) VALUES (?)";
     KeyHolder keyHolder = new GeneratedKeyHolder();
-    jdbcTemplate.update(connection -> {
+    databaseManager.getJDBCTemplate(site).update(connection -> {
       PreparedStatement ps = connection.prepareStatement(sqlQuery, new String[]{"id"});
       ps.setString(1, name);
       return ps;
