@@ -1,9 +1,12 @@
 package net.cabezudo.sofia.security;
 
 import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.core.SofiaEnvironment;
+import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.sites.Site;
+import net.cabezudo.sofia.sites.SiteManager;
+import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.users.SofiaUser;
-import net.cabezudo.sofia.users.service.UserManager;
 import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
 import org.slf4j.Logger;
@@ -22,9 +25,10 @@ import java.util.function.Supplier;
 public class SofiaAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
   private static final Logger log = LoggerFactory.getLogger(SofiaAuthorizationManager.class);
   private @Autowired PermissionManager permissionManager;
-  private @Autowired UserManager userManager;
+  private @Autowired SiteManager siteManager;
   private @Autowired SofiaSecurityManager sofiaSecurityManager;
   private @Autowired WebClientDataManager webClientDataManager;
+  private @Autowired SofiaEnvironment sofiaEnvironment;
 
   @Override
   public AuthorizationDecision check(Supplier<Authentication> supplier, RequestAuthorizationContext context) {
@@ -43,14 +47,22 @@ public class SofiaAuthorizationManager implements AuthorizationManager<RequestAu
     if ("/error".equals(servletPath) || SofiaSecurityConfig.DEFAULT_LOGIN_PAGE.equals(servletPath)) { // TODO Improve this
       return new AuthorizationDecision(true);
     }
-    Site site = (Site) request.getSession().getAttribute("site");
-    SofiaUser user = sofiaSecurityManager.getLoggedUser();
-    WebClientData webClientData = webClientDataManager.getFromSession();
-    Account account = webClientData.getAccount();
-    if (site != null && permissionManager.hasPermission(user, site, account, requestURI)) {
+    Site site;
+    try {
+      site = siteManager.getByHostname(request.getServerName());
+    } catch (SiteNotFoundException e) {
+      throw new SofiaRuntimeException(e);
+    }
+    if (sofiaEnvironment.isSecurityActive()) {
+      SofiaUser user = sofiaSecurityManager.getLoggedUser();
+      WebClientData webClientData = webClientDataManager.getFromSession(request);
+      Account account = webClientData.getAccount();
+      if (site != null && permissionManager.hasPermission(user, site, account, requestURI)) {
+        return new AuthorizationDecision(true);
+      }
+      return new AuthorizationDecision(false);
+    } else {
       return new AuthorizationDecision(true);
     }
-
-    return new AuthorizationDecision(false);
   }
 }

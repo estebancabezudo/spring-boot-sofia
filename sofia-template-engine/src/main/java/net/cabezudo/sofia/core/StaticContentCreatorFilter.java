@@ -65,10 +65,9 @@ public class StaticContentCreatorFilter extends OncePerRequestFilter {
       request.setAttribute("host", host);
 
       Site site = siteManager.getByHostname(request.getServerName());
-      request.getSession().setAttribute("site", site);
-      log.debug("Set the request session attribute site to " + site);
 
-      if (contentManager.ignoreRequestURI(requestURI)) {
+      // Ignore the URLs listed in the 'api' property.
+      if (contentManager.ignoreRequestURI(site, requestURI)) {
         filterChain.doFilter(request, response);
         return;
       }
@@ -77,7 +76,7 @@ public class StaticContentCreatorFilter extends OncePerRequestFilter {
       if (sofiaEnvironment.isDevelopment() || !Files.exists(targetPath)) {
         if (requestURI.endsWith(".html")) {
           log.debug("Create file using " + targetPath);
-          templateVariables = new TemplateVariables();
+          templateVariables = new TemplateVariables(sofiaEnvironment);
           SofiaFile sofiaFile = new SofiaFile(request, sofiaEnvironment, siteManager, pathManager, templateVariables, permissionManager);
           sofiaFile.loadRootFile();
           sofiaFile.save();
@@ -110,7 +109,12 @@ public class StaticContentCreatorFilter extends OncePerRequestFilter {
     } catch (SiteCreationException | SiteNotFoundException | HostNotFoundException e) {
       e.printStackTrace();
       log.warn(e.getMessage());
-      response.sendError(500, e.getMessage());
+      if (sofiaEnvironment.isDevelopment()) {
+        response.setStatus(500);
+        response.getWriter().write(e.getMessage());
+      } else {
+        response.sendError(500);
+      }
       return;
     } catch (RuntimeException e) {
       throw new SofiaRuntimeException(e);

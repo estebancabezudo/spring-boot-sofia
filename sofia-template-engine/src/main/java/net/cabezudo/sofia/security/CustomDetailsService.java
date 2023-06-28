@@ -4,7 +4,10 @@ import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.accounts.mappers.EntityToBusinessAccountMapper;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
+import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.sites.Site;
+import net.cabezudo.sofia.sites.SiteManager;
+import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.users.SofiaUser;
 import net.cabezudo.sofia.users.mappers.EntityToBusinessUserMapper;
 import net.cabezudo.sofia.users.persistence.GroupEntity;
@@ -36,33 +39,35 @@ public class CustomDetailsService implements UserDetailsService {
 
   private @Autowired OAuth2AuthorizedClientService authorizedClientService;
   private @Autowired EntityToBusinessAccountMapper entityToBusinessAccountMapper;
+  private @Autowired SiteManager siteManager;
 
   @Override
   public SofiaUser loadUserByUsername(String email) throws UsernameNotFoundException {
-
     authorizedClientService.loadAuthorizedClient("google", email);
-
-    Site site = (Site) request.getSession().getAttribute("site");
     Account account = (Account) request.getSession().getAttribute("account");
+    try {
+      Site site = siteManager.get(request);
 
-    int accountId;
-    Account accountToSet;
-    if (account == null) {
-      AccountEntity accountEntity = accountRepository.getAccountFor(site, email);
-      accountId = accountEntity.id();
-      accountToSet = entityToBusinessAccountMapper.map(accountEntity);
-    } else {
-      accountId = account.id();
-      accountToSet = account;
-    }
-    final UserEntity userEntity = userRepository.findByEmail(site, accountId, email);
-    if (userEntity == null) {
-      throw new UsernameNotFoundException(email);
-    }
+      Account accountToSet;
+      if (account == null) {
+        AccountEntity accountEntity = accountRepository.getAccountByEMail(email, site.getId());
+        if (accountEntity == null) {
+          throw new UsernameNotFoundException(email);
+        }
+        accountToSet = entityToBusinessAccountMapper.map(accountEntity);
+      } else {
+        accountToSet = account;
+      }
+      final UserEntity userEntity = userRepository.findByEmail(accountToSet.getId(), email);
+      if (userEntity == null) {
+        throw new UsernameNotFoundException(email);
+      }
 
-    SofiaUser sofiaUser = entityToBusinessUserMapper.map(userEntity);
-    sofiaUser.setAccount(accountToSet);
-    return sofiaUser;
+      SofiaUser sofiaUser = entityToBusinessUserMapper.map(accountToSet, userEntity);
+      return sofiaUser;
+    } catch (SiteNotFoundException e) {
+      throw new SofiaRuntimeException(e);
+    }
   }
 
   private Collection<GrantedAuthority> getAuthorities(UserEntity userEntity) {

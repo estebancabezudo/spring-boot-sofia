@@ -24,24 +24,24 @@ public class AdministrativeDivisionManager {
   private @Autowired EntityToBusinessAdministrativeDivisionMapper entityToBusinessAdministrativeDivisionEntityMapper;
   private @Autowired AdministrativeDivisionTypeRepository administrativeDivisionTypeRepository;
 
-  public AdministrativeDivisionList findAll(Site site, int id) {
-    final AdministrativeDivisionEntityList administrativeDivisionEntityList = administrativeDivisionRepository.findAll(site, id);
+  public AdministrativeDivisionList findAll(int id) {
+    final AdministrativeDivisionEntityList administrativeDivisionEntityList = administrativeDivisionRepository.findAll(id);
     return entityToBusinessAdministrativeDivisionListMapper.map(administrativeDivisionEntityList);
   }
 
   public AdministrativeDivision create(Site site, PlaceEntity place, AdministrativeDivisionNameEntity name, String typeName) {
-    AdministrativeDivisionTypeEntity databaseTypeEntity = administrativeDivisionTypeRepository.findByName(site, typeName);
+    AdministrativeDivisionTypeEntity databaseTypeEntity = administrativeDivisionTypeRepository.findByName(typeName);
     AdministrativeDivisionTypeEntity typeEntity;
     if (databaseTypeEntity == null) {
-      typeEntity = administrativeDivisionTypeRepository.create(site, typeName);
+      typeEntity = administrativeDivisionTypeRepository.create(typeName);
     } else {
       typeEntity = databaseTypeEntity;
     }
     AdministrativeDivisionEntity databaseEntity =
-        administrativeDivisionRepository.findByPlaceNameAndType(site, place, name.getValue(), typeEntity);
+        administrativeDivisionRepository.findByPlaceNameAndType(place, name.getValue(), typeEntity);
     AdministrativeDivisionEntity entity;
     if (databaseEntity == null) {
-      entity = administrativeDivisionRepository.create(site, place, typeEntity, name);
+      entity = administrativeDivisionRepository.create(place, typeEntity, name);
     } else {
       entity = databaseEntity;
     }

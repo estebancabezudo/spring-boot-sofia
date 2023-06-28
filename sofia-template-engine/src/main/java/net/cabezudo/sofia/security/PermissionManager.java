@@ -33,7 +33,7 @@ public class PermissionManager {
     permissions.add(permission);
   }
 
-  public boolean hasPermission(Site site, Account account, SofiaUser user, String group) {
+  public boolean hasPermission(Site site, Account account, SofiaUser user, String group, boolean isSecurityActive) {
     AccountUserRelationEntity relation = accountManager.findRelation(site, account, user);
     return user.hasPermission(group) || (relation != null && relation.owner());
   }
@@ -43,7 +43,7 @@ public class PermissionManager {
 
     String username = user == null ? null : user.getUsername();
 
-    if (accountManager.ownsTheAccount(site, account, user)) {
+    if (accountManager.ownsTheAccount(account, user)) {
       return true;
     }
 
@@ -55,7 +55,6 @@ public class PermissionManager {
     }
     // TODO Improve this search
     List<Permission> permissions = sitePermissions.get(requestURI);
-
 
     for (Permission permission : permissions) {
       logger.debug("Try to deny with " + permission);

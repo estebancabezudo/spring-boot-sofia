@@ -8,14 +8,19 @@ public class RestUser {
   private final String username;
   private final RestGroups groups;
   private final boolean enabled;
+  private String locale;
   @JsonIgnore
   private Account account;
+  @JsonIgnore
+  private String password;
 
-  public RestUser(int id, Account account, String username, RestGroups groups, boolean enabled) {
+  public RestUser(int id, Account account, String username, String password, RestGroups groups, String locale, boolean enabled) {
     this.id = id;
     this.account = account;
     this.username = username;
+    this.password = password;
     this.groups = groups;
+    this.locale = locale;
     this.enabled = enabled;
   }
 
@@ -29,7 +34,6 @@ public class RestUser {
 
   public RestGroups getGroups() {
     return groups;
-
   }
 
   public boolean isEnabled() {
@@ -42,5 +46,21 @@ public class RestUser {
 
   public void setAccount(Account account) {
     this.account = account;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public String getLocale() {
+    return locale;
+  }
+
+  public void setLocale(String locale) {
+    this.locale = locale;
   }
 }

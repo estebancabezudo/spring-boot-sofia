@@ -1,21 +1,35 @@
 package net.cabezudo.sofia.users.mappers;
 
+import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.accounts.mappers.EntityToBusinessAccountMapper;
+import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.emails.persistence.EMailEntity;
 import net.cabezudo.sofia.users.Groups;
 import net.cabezudo.sofia.users.SofiaUser;
 import net.cabezudo.sofia.users.persistence.UserEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 @Component
 public class EntityToBusinessUserMapper {
-  public SofiaUser map(UserEntity e) {
+
+  private @Autowired EntityToBusinessAccountMapper entityToBusinessAccountMapper;
+
+  public SofiaUser map(AccountEntity accountEntity, UserEntity userEntity) {
+    Account account = entityToBusinessAccountMapper.map(accountEntity);
+    return map(account, userEntity);
+  }
+
+  public SofiaUser map(Account account, UserEntity userEntity) {
     EntityToBusinessGroupsMapper mapper = new EntityToBusinessGroupsMapper();
-    int id = e.getId();
-    int siteId = e.getSiteId();
-    EMailEntity eMailEntity = e.getEMailEntity();
-    String password = e.getPassword();
-    Groups groups = mapper.map(e.getEntityGroups());
-    boolean isEnabled = e.isEnabled();
-    return new SofiaUser(id, siteId, eMailEntity.email(), password, groups, isEnabled);
+    int id = userEntity.getId();
+    EMailEntity eMailEntity = userEntity.getEMailEntity();
+    String password = userEntity.getPassword();
+    Groups groups = mapper.map(userEntity.getEntityGroups());
+    boolean isEnabled = userEntity.isEnabled();
+    Locale locale = new Locale(userEntity.getLocale());
+    return new SofiaUser(id, account, eMailEntity.getEmail(), password, groups, locale, isEnabled);
   }
 }

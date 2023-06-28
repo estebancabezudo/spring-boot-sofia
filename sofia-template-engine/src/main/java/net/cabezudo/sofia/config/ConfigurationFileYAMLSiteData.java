@@ -8,10 +8,11 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConfigurationFileYAMLSiteData {
   private String name;
+  private ConfigurationFileYAMLMailData mail;
+  private String domainName;
   private List<String> hosts;
   private List<String> permissions;
   private List<String> api;
-  private ConfigurationFileYAMLDatabase database;
 
   public ConfigurationFileYAMLSiteData() {
     // Without a default constructor, Jackson will throw an exception
@@ -39,7 +40,7 @@ public class ConfigurationFileYAMLSiteData {
     return hosts;
   }
 
-  public ConfigurationFileYAMLDatabase getDatabase() {
-    return database;
+  public ConfigurationFileYAMLMailData getMail() {
+    return mail;
   }
 }

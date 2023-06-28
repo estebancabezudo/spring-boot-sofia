@@ -4,10 +4,8 @@ import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.users.SofiaUser;
 
 public class WebClientData {
-  public static final String OBJECT_NAME_IN_SESSION = "ClientData";
   private final Language language;
   private Account account;
-
   private SofiaUser user;
 
   public WebClientData(Language language, Account account) {

@@ -1,6 +1,6 @@
 package net.cabezudo.sofia.creator;
 
-import net.cabezudo.html.nodes.Position;
+import net.cabezudo.html.nodes.FilePosition;
 
 /**
  * @author <a href="http://cabezudo.net">Esteban Cabezudo</a>
@@ -10,7 +10,7 @@ public class UndefinedLiteralException extends SiteCreationException {
 
   private final String literal;
 
-  UndefinedLiteralException(String literal, Position position, Throwable cause) {
+  UndefinedLiteralException(String literal, FilePosition position, Throwable cause) {
     super("Undefined literal: " + literal + " in " + position, position, cause);
     this.literal = literal;
   }

@@ -2,8 +2,27 @@ DROP DATABASE sofia;
 CREATE DATABASE sofia;
 
 USE `sofia`;
+DROP TABLE IF EXISTS `accounts_users`;
+DROP TABLE IF EXISTS `accounts`;
+DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `sites`;
 DROP TABLE IF EXISTS `emails`;
+DROP TABLE IF EXISTS `web_clients`;
+DROP TABLE IF EXISTS `authorities`;
+DROP TABLE IF EXISTS `administrative_divisions`;
+DROP TABLE IF EXISTS `places`;
+DROP TABLE IF EXISTS `user_account_preferences`;
+DROP TABLE IF EXISTS `user_preferences`;
+DROP TABLE IF EXISTS `administrative_division_types`;
+DROP TABLE IF EXISTS `administrative_division_names`;
+DROP TABLE IF EXISTS `sites_people`;
+DROP TABLE IF EXISTS `people`;
+DROP TABLE IF EXISTS `languages`;
+DROP TABLE IF EXISTS `countries`;
+DROP TABLE IF EXISTS `phone_formats`;
+DROP TABLE IF EXISTS `phones`;
+DROP TABLE IF EXISTS `person_phones`;
+DROP TABLE IF EXISTS `people_users`;
 
 CREATE TABLE `sites` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
@@ -19,33 +38,10 @@ CREATE TABLE `emails` (
   UNIQUE KEY `ix_email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-DROP DATABASE site_localhost;
-CREATE DATABASE site_localhost;
-
-USE `site_localhost`;
-DROP TABLE IF EXISTS `web_clients`;
-DROP TABLE IF EXISTS `authorities`;
-DROP TABLE IF EXISTS `accounts_users`;
-DROP TABLE IF EXISTS `administrative_divisions`;
-DROP TABLE IF EXISTS `places`;
-DROP TABLE IF EXISTS `accounts`;
-DROP TABLE IF EXISTS `users`;
-DROP TABLE IF EXISTS `user_account_preferences`;
-DROP TABLE IF EXISTS `user_preferences`;
-DROP TABLE IF EXISTS `administrative_division_types`;
-DROP TABLE IF EXISTS `administrative_division_names`;
-DROP TABLE IF EXISTS `sites_people`;
-DROP TABLE IF EXISTS `people`;
-DROP TABLE IF EXISTS `languages`;
-DROP TABLE IF EXISTS `countries`;
-DROP TABLE IF EXISTS `phone_formats`;
-DROP TABLE IF EXISTS `phones`;
-DROP TABLE IF EXISTS `person_phones`;
-DROP TABLE IF EXISTS `people_users`;
-
 CREATE TABLE `accounts` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `site_id` INT NOT NULL,
+  `name` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_accounts_site` FOREIGN KEY (`site_id`) REFERENCES `sofia`.`sites` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -53,7 +49,8 @@ CREATE TABLE `accounts` (
 CREATE TABLE `users` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `email_id` INT(11) NOT NULL,
-  `password` VARCHAR(500),
+  `password` VARCHAR(100),
+  `locale` VARCHAR(7) NOT NULL,
   `enabled` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_email` (`email_id`),
@@ -147,12 +144,6 @@ CREATE TABLE `administrative_divisions` (
   CONSTRAINT `fk_administrative_divisions_name` FOREIGN KEY (`name_id`) REFERENCES `administrative_division_names` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `sites_people` (
-  `site_id` INT(11) NOT NULL,
-  `person_id` INT(11) NOT NULL,
-  PRIMARY KEY (`site_id`, `person_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 CREATE TABLE `people` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
@@ -161,6 +152,14 @@ CREATE TABLE `people` (
   `second_last_name` VARCHAR(100) NOT NULL,
   `date_of_birth` DATE NOT NULL,
   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `users_people` (
+  `user_id` INT(11) NOT NULL,
+  `person_id` INT(11) NOT NULL,
+  PRIMARY KEY (`user_id`, `person_id`),
+  CONSTRAINT `fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `fk_person_id` FOREIGN KEY (`person_id`) REFERENCES `people` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `languages` (
@@ -198,31 +197,35 @@ CREATE TABLE `people_users` (
   PRIMARY KEY (`person_id`, `user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `sofia`.`sites` (name, `schema`) VALUES ('localhost');
-INSERT INTO `sofia`.`sites` (name, `schema`) VALUES ('example.com');
+INSERT INTO `sofia`.`sites` (name) VALUES ('localhost');
+INSERT INTO `sofia`.`sites` (name) VALUES ('cabezudo.net');
+INSERT INTO `sofia`.`sites` (name) VALUES ('otorrinos.condesa.info');
+INSERT INTO `sofia`.`sites` (name) VALUES ('datosinutilesparaimpresionarenlasfiestas.com');
 
-INSERT INTO `accounts` (site_id) VALUES(1);
-INSERT INTO `accounts` (site_id) VALUES(1);
-INSERT INTO `accounts` (site_id) VALUES(2);
+INSERT INTO `accounts` (site_id, name) VALUES(1, 'localhost');
+INSERT INTO `accounts` (site_id, name) VALUES(1, 'sofia');
+INSERT INTO `accounts` (site_id, name) VALUES(1, 'sofiaexample');
+INSERT INTO `accounts` (site_id, name) VALUES(2, 'estebanexample');
 
 INSERT INTO `sofia`.`emails` (email) VALUES ('esteban@cabezudo.net');
 INSERT INTO `sofia`.`emails` (email) VALUES ('sofia@cabezudo.net');
 INSERT INTO `sofia`.`emails` (email) VALUES ('sofia@example.com');
 INSERT INTO `sofia`.`emails` (email) VALUES ('esteban@example.com');
 
-INSERT INTO `users` (email_id, password, enabled) VALUES (1, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 1);
-INSERT INTO `users` (email_id, password, enabled) VALUES (2, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 1);
-INSERT INTO `users` (email_id, password, enabled) VALUES (3, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 1);
-INSERT INTO `users` (email_id, password, enabled) VALUES (4, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 1);
+INSERT INTO `users` (email_id, password, locale, enabled) VALUES (1, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 'es',1);
+INSERT INTO `users` (email_id, password, locale, enabled) VALUES (2, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 'es',1);
+INSERT INTO `users` (email_id, password, locale, enabled) VALUES (3, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 'es',1);
+INSERT INTO `users` (email_id, password, locale, enabled) VALUES (4, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 'es',1);
 
 INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (1, 1, true);
-INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (2, 1, false);
-INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (3, 1, false);
 INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (2, 2, true);
+INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (3, 3, true);
+INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (4, 4, true);
 INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (1, 2, false);
-INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (1 ,3, false);
-INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (3 ,4, true);
-INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (1 ,4, false);
+INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (2, 2, false);
+INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (3, 1, false);
+INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (3, 2, false);
+INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (3, 4, false);
 
 INSERT INTO `authorities` (account_user_id, authority) VALUES (1, 'admin');
 INSERT INTO `authorities` (account_user_id, authority) VALUES (1, 'user');
@@ -339,29 +342,5 @@ INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_bi
 INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('María', 'Mercedes', 'Ybarra', 'LAgos', '1982-7-25');
 INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Elisabet', 'Noelia', 'Otero', 'Martinez', '1992-6-21');
 INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Esther', 'Paloma', 'Amador', 'Mercado', '1994-5-22');
-
-INSERT INTO `sites_people` (site_id, person_id) VALUES (1, 1);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (2, 1);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (3, 1);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (2, 2);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (2, 3);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (2, 4);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (1, 5);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (2, 6);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (3, 7);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (2, 8);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (1, 9);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (1, 10);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (2, 11);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (1, 12);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (3, 13);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (2, 14);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (1, 15);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (3, 16);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (2, 17);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (3, 18);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (3, 19);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (1,20);
-INSERT INTO `sites_people` (site_id, person_id) VALUES (1,21);
 
 INSERT INTO `people_users` (person_id, user_id) VALUES (1, 1);

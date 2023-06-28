@@ -10,7 +10,6 @@ import net.cabezudo.sofia.places.mappers.BusinessToRestPlaceListMapper;
 import net.cabezudo.sofia.places.mappers.BusinessToRestPlaceMapper;
 import net.cabezudo.sofia.places.mappers.RestToBusinessPlaceMapper;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
-import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.users.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,14 +48,13 @@ public class PlacesController extends SofiaAuthorizedController {
     ListRestResponse<RestPlace> listRestResponse;
 
     Account account = super.getAccount();
-    Site site = super.getSite();
 
     ResponseEntity<?> result;
-    if ((result = super.checkPermissionFor(site, account, Group.ADMIN)) != null) {
+    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
       return result;
     }
 
-    PlaceList placeList = placesManager.findAll(site, account, includeAdministrativeDivisionList);
+    PlaceList placeList = placesManager.findAll(account, includeAdministrativeDivisionList);
     RestPlaceList restPlaceList = businessToRestPlaceListMapper.map(placeList);
     listRestResponse = new ListRestResponse(SofiaRestResponse.OK, "Retrieve list of places", restPlaceList);
     return ResponseEntity.ok(listRestResponse);
@@ -67,16 +65,15 @@ public class PlacesController extends SofiaAuthorizedController {
     log.debug("Create a new place");
 
     Account account = super.getAccount();
-    Site site = super.getSite();
 
     ResponseEntity<?> result;
-    if ((result = super.checkPermissionFor(site, account, Group.ADMIN)) != null) {
+    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
       return result;
     }
 
     Place newPlace = restToBusinessPlaceMapper.map(restPlaceToSave);
 
-    Place place = placesManager.create(site, account, newPlace);
+    Place place = placesManager.create(account, newPlace);
     RestPlace restPlace = businessToRestPlaceMapper.map(place);
 
     return ResponseEntity.ok(restPlace);
@@ -88,14 +85,13 @@ public class PlacesController extends SofiaAuthorizedController {
     PlacesRestResponse placesRestResponse;
 
     Account account = super.getAccount();
-    Site site = super.getSite();
 
     ResponseEntity<?> result;
-    if ((result = super.checkPermissionFor(site, account, Group.ADMIN)) != null) {
+    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
       return result;
     }
 
-    Place place = placesManager.get(site, account, id);
+    Place place = placesManager.get(account, id);
     RestPlace restPlace;
     if (place == null) {
       restPlace = null;
@@ -111,14 +107,13 @@ public class PlacesController extends SofiaAuthorizedController {
     log.debug("Update an existing place");
 
     Account account = super.getAccount();
-    Site site = super.getSite();
 
     ResponseEntity<?> result;
-    if ((result = super.checkPermissionFor(site, account, Group.ADMIN)) != null) {
+    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
       return result;
     }
     Place newPlace = restToBusinessPlaceMapper.map(restPlaceToSave);
-    Place place = placesManager.update(site, account, id, newPlace);
+    Place place = placesManager.update(account, id, newPlace);
     RestPlace restPlace = businessToRestPlaceMapper.map(place);
     return ResponseEntity.ok(restPlace);
   }
@@ -128,13 +123,12 @@ public class PlacesController extends SofiaAuthorizedController {
     log.debug("Delete an existing place");
 
     Account account = super.getAccount();
-    Site site = super.getSite();
 
     ResponseEntity<?> result;
-    if ((result = super.checkPermissionFor(site, account, Group.ADMIN)) != null) {
+    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
       return result;
     }
-    placesManager.delete(site, account, id);
+    placesManager.delete(account, id);
     return ResponseEntity.ok(id);
   }
 

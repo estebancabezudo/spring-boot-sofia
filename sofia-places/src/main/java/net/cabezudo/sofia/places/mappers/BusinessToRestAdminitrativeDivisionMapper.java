@@ -11,10 +11,10 @@ public class BusinessToRestAdminitrativeDivisionMapper {
   private @Autowired BusinessToRestAdminitrativeDivisionTypeMapper businessToRestAdminitrativeDivisionTypeMapper;
 
   public RestAdministrativeDivision map(AdministrativeDivision administrativeDivision) {
-    int id = administrativeDivision.id();
+    int id = administrativeDivision.getId();
 
-    RestAdministrativeDivisionType type = businessToRestAdminitrativeDivisionTypeMapper.map(administrativeDivision.administrativeDivisionType());
-    String name = administrativeDivision.name();
+    RestAdministrativeDivisionType type = businessToRestAdminitrativeDivisionTypeMapper.map(administrativeDivision.getAdministrativeDivisionType());
+    String name = administrativeDivision.getName();
     return new RestAdministrativeDivision(id, type, name);
   }
 }

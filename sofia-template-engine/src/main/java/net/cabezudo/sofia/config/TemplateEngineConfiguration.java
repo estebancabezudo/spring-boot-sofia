@@ -24,6 +24,6 @@ public class TemplateEngineConfiguration implements WebMvcConfigurer {
 
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    registry.addResourceHandler("/**").resourceChain(true).addResolver(new SofiaResourceResolver(siteManager, pathManager));
+    registry.addResourceHandler("/**").resourceChain(false).addResolver(new SofiaResourceResolver(siteManager, pathManager));
   }
 }

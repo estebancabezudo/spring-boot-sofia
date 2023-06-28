@@ -2,6 +2,7 @@ package net.cabezudo.sofia.emails;
 
 public class EMail {
   public static final int MAX_LENGTH = 200;
+
   private static String localPart;
   private final String address;
   private final boolean hasArroba;

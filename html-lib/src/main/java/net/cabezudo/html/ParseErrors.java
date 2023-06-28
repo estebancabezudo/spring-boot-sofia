@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class ParseErrors {
 
-  private List<ParseError> list = new ArrayList<>();
+  private final List<ParseError> list = new ArrayList<>();
 
   public void add(ParseError error) {
     list.add(error);

@@ -4,9 +4,12 @@ import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.accounts.mappers.EntityToBusinessAccountMapper;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
+import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.emails.persistence.EMailEntity;
 import net.cabezudo.sofia.emails.persistence.EMailRepository;
 import net.cabezudo.sofia.sites.Site;
+import net.cabezudo.sofia.sites.SiteManager;
+import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
 import net.cabezudo.sofia.users.SofiaUser;
 import net.cabezudo.sofia.users.mappers.EntityToBusinessUserMapper;
@@ -27,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.util.Locale;
 
 @Service
 public class SofiaSecurityManager {
@@ -40,13 +44,14 @@ public class SofiaSecurityManager {
   private @Autowired HttpServletRequest request;
   private @Autowired UserPreferencesManager userPreferencesManager;
   private @Autowired WebClientDataManager webClientDataManager;
+  private @Autowired SiteManager siteManager;
 
   @Transactional
   public SofiaUser getLoggedUser() {
     log.debug("Get the logged user");
-    WebClientData webClientData = webClientDataManager.getFromSession();
+    WebClientData webClientData = webClientDataManager.getFromSession(request);
     if (webClientData == null) {
-      return null;
+      throw new SofiaRuntimeException("The web client data is null");
     }
     SofiaUser userFromRequest = webClientData.getUser();
 
@@ -54,29 +59,35 @@ public class SofiaSecurityManager {
       return userFromRequest;
     }
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication instanceof UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) {
+    if (authentication instanceof UsernamePasswordAuthenticationToken) {
+      UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = (UsernamePasswordAuthenticationToken) authentication;
       SofiaUser user = (SofiaUser) usernamePasswordAuthenticationToken.getPrincipal();
       setUserInWebClientData(webClientData, user);
       return user;
     }
 
-    if (authentication instanceof OAuth2AuthenticationToken oAuth2AuthenticationToken) {
+    if (authentication instanceof OAuth2AuthenticationToken) {
+      OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
       OAuth2User principal = oAuth2AuthenticationToken.getPrincipal();
       String email = principal.getAttribute("email");
-      Site site = (Site) request.getSession().getAttribute("site");
+      Site site;
+      try {
+        site = siteManager.getByHostname(request.getServerName());
+      } catch (SiteNotFoundException e) {
+        throw new SofiaRuntimeException(e);
+      }
       // TODO Get the account from the stored as default for the user with that email
-      AccountEntity accountEntity = accountRepository.getAccountFor(site, email);
+      AccountEntity accountEntity = accountRepository.getAccountByEMail(email, site.getId());
       if (accountEntity == null) {
-        SofiaUser newUser = newUser(site, email);
+        SofiaUser newUser = newUser(site, webClientData.getLanguage().toLocale(), email);
         setUserInWebClientData(webClientData, newUser);
         return newUser;
       } else {
-        final UserEntity userEntity = userRepository.findByEmail(site, accountEntity.id(), email);
+        final UserEntity userEntity = userRepository.findByEmail(accountEntity.getId(), email);
         if (userEntity == null) {
           throw new UsernameNotFoundException(email);
         }
-        SofiaUser user = entityToBusinessUserMapper.map(userEntity);
-        user.setAccount(entityToBusinessAccountMapper.map(accountEntity));
+        SofiaUser user = entityToBusinessUserMapper.map(accountEntity, userEntity);
         setUserInWebClientData(webClientData, user);
         return user;
       }
@@ -88,13 +99,12 @@ public class SofiaSecurityManager {
     webClientData.setUser(user);
     log.debug("Web client data=" + webClientData);
     if (webClientData.getAccount() == null) {
-      Site site = (Site) request.getSession().getAttribute("site");
-      Account preferredAccount = userPreferencesManager.getAccount(site, user);
+      Account preferredAccount = userPreferencesManager.getAccount(user);
       log.debug("Account recovered from user preferences=" + preferredAccount);
       if (preferredAccount == null) {
         log.debug("The user don't have a preferred account. Set the user account " + user.getAccount() + " as preferred in web client data session object.");
         webClientData.setAccount(user.getAccount());
-        userPreferencesManager.createAccount(site, webClientData.getUser(), webClientData.getAccount());
+        userPreferencesManager.createAccount(webClientData.getUser(), webClientData.getAccount());
       } else {
         log.debug("Setting the user preferred account " + user.getAccount() + " in web client data session object.");
         webClientData.setAccount(user.getAccount());
@@ -102,20 +112,19 @@ public class SofiaSecurityManager {
     }
   }
 
-  private SofiaUser newUser(Site site, String email) {
+  private SofiaUser newUser(Site site, Locale locale, String email) {
     EMailEntity emailForAccount;
-    EMailEntity emailEntityFromRepository = emailRepository.get(site, email);
+    EMailEntity emailEntityFromRepository = emailRepository.get(email);
     if (emailEntityFromRepository == null) {
-      emailForAccount = emailRepository.create(site, email);
+      emailForAccount = emailRepository.create(email);
     } else {
       emailForAccount = emailEntityFromRepository;
     }
-    UserEntity userEntity = userRepository.create(site, emailForAccount, true);
-    AccountEntity newAccountEntity = accountRepository.create(site);
-    accountRepository.create(site, newAccountEntity.id(), userEntity.getId(), true);
-    UserEntity newUser = userRepository.get(site, userEntity.getId());
-    SofiaUser user = entityToBusinessUserMapper.map(newUser);
-    user.setAccount(entityToBusinessAccountMapper.map(newAccountEntity));
+    UserEntity userEntity = userRepository.create(emailForAccount, locale.toString(), true);
+    AccountEntity newAccountEntity = accountRepository.create(site, emailForAccount.getEmail());
+    accountRepository.create(newAccountEntity.getId(), userEntity.getId(), true);
+    UserEntity newUser = userRepository.get(newAccountEntity.getId(), userEntity.getId());
+    SofiaUser user = entityToBusinessUserMapper.map(newAccountEntity, newUser);
     return user;
   }
 }

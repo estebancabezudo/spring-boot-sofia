@@ -1,0 +1,31 @@
+logging:
+  level:
+    root: DEBUG
+log4j:
+  logger:
+    org.springframework.jdbc.core: DEBUG
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  datasource:
+    url: jdbc:h2:mem:sofia;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+server:
+  servlet:
+    session:
+      timeout: 12h
+  port: 8080
+  ajp:
+    port: 8009
+    redirectPort: 8443
+  jpa:
+    hibernate:
+      ddl-auto: none
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration

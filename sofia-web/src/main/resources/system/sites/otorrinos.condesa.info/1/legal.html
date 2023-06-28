@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title></title>
+  <meta charset="UTF-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title id="legalHTMLPageTitle"></title>
+  <link href="/images/favicon.png" rel="shortcut icon" type="image/png"/>
+  <link lib="core:1.00"/>
+  <link lib="linkTo:1.00"/>
+
+<style>/* CSS import from /commons.css called by sofia */
+
+/* CSS import from /foot.css called by file attribute on section on foot.html:32:4 */
+
+/* CSS import from /header.css called by file attribute on section on header.html:23:4 */
+
+/* CSS import from /header.html called by style tag on header.html:17:2 */
+
+/* CSS import from /legal.html called by style tag on legal.html:18:2 */
+
+/* CSS import from /menu.html called by style tag on menu.html:145:2 */
+
+/* CSS import from /linkTo.css called by file librarylinkTo:1.00 on legal.html */
+
+/* CSS import from /twoLanguageLink.css called by file librarytwoLanguageLink:1.00 on header.html */
+
+/* CSS code from /commons.css called by sofia */
+@font-face { font-family: 'Lato-Light'; src: url(fonts/Lato/Lato-Light.ttf); }
+@font-face { font-family: 'Lato'; src: url(fonts/Lato/Lato-Regular.ttf); }
+@font-face { font-family: 'SuezOne'; src: url(fonts/SuezOne-Regular.ttf); }
+@font-face { font-family: 'PTSansNarrow-Bold'; src: url(fonts/PTSansNarrow/PTSansNarrow-Bold.ttf); }
+
+
+body, html {
+  font-family: 'Lato';
+  margin: 0;
+  padding: 0;
+}
+
+.appContainer {
+  padding: 30px;
+}
+
+.appContainer > h1 {
+  font-family: 'PTSansNarrow-Bold';
+  color: #00619C;
+  font-weight: 700;
+  font-size: 48px;
+  text-align: center;
+  margin: 0 0 20px 0;
+}
+
+.appContainer > h1.small {
+  font-size: 34px;
+}
+
+.appContainer > p {
+  font-size: 22px;
+  text-align: justify;
+}
+
+@media all and ( min-width: 550px ) {
+  section.centered {
+    width: 500px;
+    margin: auto;
+  }
+  .container > h1.small {
+    font-size: 48px;
+  }
+}
+
+@media all and ( min-width: 750px ) {
+  section.centered {
+    width: 750px;
+  }
+}
+@media all and ( min-width: 1100px ) {
+  section.centered {
+    width: 1000px;
+  }
+}
+
+/* CSS code from /foot.css called by file attribute on section on foot.html:32:4 */
+@font-face {
+  font-family: 'Lato-Light';
+  src: url(fonts/Lato/Lato-Light.ttf);
+}
+
+@font-face {
+  font-family: 'Lato';
+  src: url(fonts/Lato/Lato-Regular.ttf);
+}
+
+@font-face {
+  font-family: 'SuezOne';
+  src: url(fonts/SuezOne-Regular.ttf);
+}
+
+#foot {
+  color: #fff;
+  background-color: #454545;
+  margin: 0;
+}
+
+#foot>.links {
+  font-family: 'Lato-Light';
+  font-weight: 100;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: auto;
+  padding: 50px 0 0 0;
+}
+
+#foot>.links>.linkGroup {
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 40px;
+}
+
+#foot>.links>.linkGroup>.title {
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+#foot>.links>.linkGroup>.link:hover {
+  text-decoration: underline;
+}
+
+#foot>.links>.linkGroup>.link>a {
+  text-decoration: none;
+  color: inherit;
+}
+
+#foot .socialMedia {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 20px;
+}
+
+#foot .socialMediaIcon {
+  width: 25px;
+  height: 25px;
+  background-size: contain;
+}
+
+#foot .facebook {
+  background-image: url(images/facebook.png)
+}
+
+#foot .instagram {
+  background-image: url(images/instagram.png)
+}
+
+#foot>.text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+}
+
+#foot>.text>.copy {
+  display: flex;
+  justify-content: center;
+  font-size: 12px;
+  margin: 10px;
+}
+
+#foot>.text>.cards {
+  width: 100px;
+  height: 26px;
+  background-image: url(/images/cards.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin: 10px;
+}
+
+@media all and (min-width: 550px) {}
+
+@media all and (min-width: 750px) {
+  #foot>.links {
+    flex-direction: row;
+    width: 600px;
+    padding: 50px 0;
+  }
+
+  #foot>.links>.linkGroup {
+    width: 20%;
+    text-align: left;
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  #foot>.links>.linkGroup>.title {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  #foot .socialMedia {
+    justify-content: flex-start;
+    padding: 20px 0;
+  }
+}
+
+@media all and (min-width: 1100px) {
+  #foot>.links {
+    flex-direction: row;
+    width: 600px;
+    padding: 50px 0;
+  }
+
+  #foot>.links>.linkGroup {
+    width: 20%;
+    text-align: left;
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  #foot>.links>.linkGroup>.title {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+}
+
+/* CSS code from /header.css called by file attribute on section on header.html:23:4 */
+@font-face {
+  font-family: 'Lato-Light';
+  src: url(fonts/Lato/Lato-Light.ttf);
+}
+
+@font-face {
+  font-family: 'Lato';
+  src: url(fonts/Lato/Lato-Regular.ttf);
+}
+
+@font-face {
+  font-family: 'SuezOne';
+  src: url(fonts/SuezOne-Regular.ttf);
+}
+
+#header {
+  margin: 65px auto 40px auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#header>.space {
+  padding: 20px 0 0 0;
+}
+
+#header>.space>a.textButton {
+  font-family: 'Lato-Light';
+  font-weight: 600;
+  border-radius: 8px;
+  background-color: #013170;
+  color: white;
+  padding: 0 10px 3px 10px;
+  text-decoration: none;
+}
+
+#header>.space>a.textButton:hover {
+  background-color: #337ab7;
+}
+
+#world {
+  background-image: url(images/world.png);
+  background-size: contain;
+  width: 15px;
+  height: 15px;
+}
+
+#language {
+  position: fixed;
+  width: 100vw;
+  display: flex;
+  background-color: #F5F5F5;
+  justify-content: flex-end;
+  top: 0;
+}
+
+#language>.container {
+  display: flex;
+  margin: 5px 30px;
+}
+
+#language>.container>.text {
+  font-family: 'Lato-Light';
+  font-weight: 100;
+  font-size: 12px;
+  margin: 0 8px;
+}
+
+#menu {
+  display: flex;
+  font-family: 'Lato-Light';
+  font-size: 16px;
+  font-weight: 100;
+  text-transform: uppercase;
+  justify-content: flex-end;
+}
+
+#itemsContainer>.items>.linkTo:hover {
+  color: #337ab7;
+}
+
+@media all and (min-width: 850px) {
+  #menu {
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+}
+
+@media all and (min-width: 750px) {
+  #header {
+    flex-direction: row;
+  }
+
+  #header>.space {
+    padding: 0;
+  }
+
+  #menu>.container {
+    display: flex;
+  }
+}
+
+@media all and (min-width: 1100px) {}
+
+/* CSS code from /header.html called by style tag on header.html:17:2 */
+
+  .twoLanguageLink {
+    font-family: 'Lato-Light';
+    font-size: 12px;
+    margin: 0 0 0 6px;
+    cursor: pointer;
+  }
+
+/* CSS code from /legal.html called by style tag on legal.html:18:2 */
+
+
+/* CSS code from /menu.html called by style tag on menu.html:145:2 */
+
+  #menuButton {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    flex-direction: column;
+    margin: 10px 30px;
+    z-index: 1001;
+  }
+
+  .burger {
+    justify-content: space-around;
+  }
+
+  .cross {
+    justify-content: center
+  }
+
+  .patty {
+    height: 2px;
+    width: 16px;
+    background-color: black;
+  }
+
+  .cross .patty:first-child {
+    transform: translateY(1px) rotate(45deg);
+  }
+
+  .cross .patty:nth-child(2) {
+    display: none;
+  }
+
+  .cross .patty:last-child {
+    transform: translateY(-1px) rotate(-45deg);
+  }
+
+  .buoy {
+    position: absolute;
+    z-index: 1000;
+  }
+
+  #itemsContainer {
+    background-color: white;
+    display: none;
+    width: 100vw;
+  }
+
+  #itemsContainer.show {
+    display: flex;
+  }
+
+  #itemsContainer>.items {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    font-size: 20px;
+    padding-bottom: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  #itemsContainer>.items>.item {
+    color: #4a4a4a;
+    padding: 10px 0;
+  }
+
+  #itemsContainer>.items>.icon {
+    height: 20px;
+    width: 20px;
+    display: flex;
+    align-items: center;
+  }
+
+  #itemsContainer>.items>.icon svg {
+    height: 20px;
+    width: 20px;
+    shape-rendering: geometricprecision;
+    transform: scale(0.9);
+  }
+
+  svg {
+    height: 1em;
+    width: auto;
+    shape-rendering: geometricprecision;
+    transform: scale(1.05);
+  }
+
+  @media all and (min-width: 850px) {
+    #menuButton {
+      display: none;
+    }
+
+    .cross {
+      display: none;
+    }
+
+    .buoy {
+      position: static;
+    }
+
+    #itemsContainer {
+      width: auto;
+      display: flex !important;
+    }
+
+    #itemsContainer>.items {
+      align-items: center;
+      flex-direction: row;
+      font-size: 16px;
+      padding-bottom: 0;
+    }
+
+    #itemsContainer>.items>.item {
+      padding: 0 15px;
+    }
+
+    #itemsContainer>.items>.item:last-child {
+      padding: 0 0 0 15px;
+    }
+  }
+
+  @media all and (min-width: 1024px) {}
+
+  @media all and (min-width: 1250px) {}
+
+  @media all and (min-width: 1800px) {}
+
+/* CSS code from /linkTo.css called by file librarylinkTo:1.00 on legal.html */
+.linkTo {}
+
+.hide {
+    display: none;
+}
+
+.visible {
+    display: block;
+}
+
+.disabled {
+    cursor: auto;
+    pointer-events: none;
+}
+
+.enabled {
+    cursor: pointer;
+}
+
+/* CSS code from /twoLanguageLink.css called by file librarytwoLanguageLink:1.00 on header.html */
+.twoLanguageLinkContainer {
+    margin: 0 0 0 10px;
+    cursor: pointer;
+}
+
+.twoLanguageLink {
+    display: none;
+}
+
+.twoLanguageLinkVisible {
+    display: block;
+}
+
+</style>
+<script>const siteLanguages = ['en', 'es'];
+
+const templateVariables = { "site": { "name": "Otorrinos Condesa" }, "menu": { "menu": { "change": "850px", "items": [ { "id": "home", "url": "/" }, { "id": "surgeries", "url": "/surgeries.html" }, { "id": "otorhinolaryngology", "url": "/otorhinolaryngology.html" }, { "id": "us", "url": "/us.html" }, { "id": "location", "url": "/location.html" } ] } } };
+// Code from library core:1.00 on legal.html
+// core:setTexts
+// core:webClientDataChange
+// core:showMessage
+// core:showErrorMessage
+
+'use strict';
+
+class User {
+    constructor(data) {
+        this.username = data.username;
+        console.log(`Core::User: data.groups:`, data.groups, Core.isArray(data.groups));
+        if (Core.isArray(data.groups)) {
+            this.groups = data.groups;
+        } else {
+            this.groups = [];
+            console.log(`Groups not found in user data.`, data);
+        }
+
+    };
+}
+
+const Core = {
+    PLACEHOLDER: 1,
+    VALUE: 2,
+    texts: {},
+    actualLanguage: null,
+    user: null,
+    requestId: 0,
+    topics: [],
+    reportSystemErrorFunction: null,
+
+    queryParameters: new URLSearchParams(location.search),
+
+    getActualWebClientDetails: () => {
+        console.log(`core::getActualWebClientDetails`);
+        fetch('/v1/web/clients/actual/details', {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(jsonData => {
+                const user = jsonData.user;
+                if (user === undefined || user === null) {
+                    Core.user = null;
+                } else {
+                    Core.user = new User(user);
+                }
+
+                console.log(`commons.js::getActualWebClientDetails: `, jsonData);
+                Core.publish('core:webClientDataChange', jsonData);
+            });
+    },
+
+    getPreferredLanguage: () => {
+        const defaultFromSiteLanguages = () => {
+            if (siteLanguages.includes("en") || siteLanguages.length == 0) {
+                return 'en';
+            }
+            return siteLanguages[0];
+        };
+
+        const browserLocale = window.navigator.userLanguage || window.navigator.language;
+        if (siteLanguages.includes(browserLocale)) {
+            return browserLocale;
+        }
+        if (siteLanguages.includes(browserLocale.substring(0, 2))) {
+            return browserLocale;
+        }
+        if (browserLocale.length < 2) {
+            return defaultFromSiteLanguages();
+        }
+        const browserLanguage = browserLocale.substring(1, 2).toLowerCase();
+        if (siteLanguages.includes(browserLanguage)) {
+            return browserLanguage;
+        }
+        return defaultFromSiteLanguages();
+    },
+
+    getGeoLocation: async () => {
+        if (navigator.geolocation) {
+            try {
+                const getCurrentPositionPromiseFunction = (resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject);
+                };
+                const locationData = await new Promise(getCurrentPositionPromiseFunction);
+                return {
+                    status: "OK",
+                    message: "OK",
+                    code: 0,
+                    data: locationData
+                };
+            } catch (error) {
+                return {
+                    status: "ERROR",
+                    message: error.message,
+                    code: error.code,
+                    data: null
+                };
+            }
+        } else {
+            console.log("*** get end without support");
+            return {
+                status: "NOT_SUPPORTED",
+                message: "Geolocation is not supported by this browser.",
+                code: 0,
+                data: null
+            }
+                ;
+        }
+    },
+    getCookie: name => {
+        const stringToFind = `${name}=`;
+        const uriDecoded = decodeURIComponent(document.cookie);
+        const cookieArray = uriDecoded.split(';');
+        cookieArray.forEach(cookie => {
+            while (cookie.charAt(0) == ' ') {
+                cookie = cookie.substring(1);
+            }
+            if (cookie.indexOf(stringToFind) === 0) {
+                return cookie.substring(stringToFind.length);
+            }
+        })
+    },
+    getNextRequestId: () => {
+        return Core.requestId++;
+    },
+
+    getText: (key, values) => {
+        if (!key) {
+            console.trace();
+            throw new Error(`Missing parameter key: ${key}`);
+        }
+        let text = texts[key];
+        if (!text) {
+            console.log(`No text for key: ${key}`);
+            text = `[${key}]`;
+        }
+        if (values) {
+            if (Core.isArray(values)) {
+                let i = 0;
+                values.forEach(value => {
+                    const RegExpText = "\\{" + i + "\\}";
+                    const searchRegExp = new RegExp(RegExpText, 'g');
+                    text = text.replace(searchRegExp, value);
+                    i++;
+                });
+            } else {
+                throw new Error('The second parameter MUST be an array');
+            }
+        }
+        return text;
+    },
+
+    getTimezoneOffset: () => {
+        return (new Date()).getTimezoneOffset();
+    },
+
+    isArray: v => {
+        return Object.prototype.toString.call(v) === '[object Array]';
+    },
+
+    isFunction: v => {
+        return Object.prototype.toString.call(v) === '[object Function]';
+    },
+
+    isLogged: () => {
+        const user = Core.user;
+        if (user === undefined || user === null) {
+            return false;
+        }
+        const username = user.username;
+        return username !== undefined && username !== null;
+    },
+    isNotLogged: () => {
+        return !Core.isLogged();
+    },
+    isString: v => {
+        return Object.prototype.toString.call(v) === '[object String]';
+    },
+
+    isHTMLDivElement: v => {
+        try {
+            return v instanceof HTMLElement;
+        } catch (e) {
+            return Object.prototype.toString.call(v) === '[object HTMLDivElement]';
+        }
+    },
+
+    isValid: list => {
+        if (!list || list === null) {
+            return false;
+        }
+        for (let i = 0; i < list.length; i++) {
+            const value = list[i];
+            console.log(`Core::isValid: Value to check: ${value}`);
+            if (value === 'status:logged' && Core.isLogged()) {
+                console.log(`Core::isValid: The user is logged`);
+                return true;
+            }
+            if (value === 'status:notLogged' && Core.isNotLogged()) {
+                console.log(`Core::isValid: The user is not logged`);
+                return true;
+            }
+            if (value.startsWith("page:")) {
+                const page = value.substr(5);
+                if (page.endsWith('**')) {
+                    console.log(`${window.location.pathname} start with ${page.substring(0, page.length - 2)}: ${window.location.pathname === page.substring(0, -2)}`);
+                    if (window.location.pathname.startsWith(page.substring(0, page.length - 2))) {
+                        console.log(`Core::isValid: The page is correct: ${page}`);
+                        return true;
+                    }
+                } else {
+                    console.log(`${window.location.pathname} === ${page}: ${window.location.pathname === page}`);
+                    if (window.location.pathname === page) {
+                        console.log(`Core::isValid: The page is correct: ${page}`);
+                        return true;
+                    }
+                }
+            }
+            if (value.startsWith("group:")) {
+                const group = value.substr(6);
+                console.log(`Core::isValid: search for group: ${group}`);
+                if (Core.user === null) {
+                    return false;
+                }
+                console.log('Core::isValid: user: ', Core.user);
+                const groups = Core.user.groups;
+                console.log('Core::isValid: groups: ', groups);
+                for (g of groups) {
+                    if (group === g.name) {
+                        return true;
+                    }
+                };
+                return false;
+            }
+            if (value === 'default') {
+                console.log(`It is true by default`);
+                return true;
+            }
+        };
+        console.log(`   false`);
+        return false;
+    },
+
+    loadLanguage: languageCode => {
+        let fetchLanguage;
+        if (siteLanguages.includes(languageCode)) {
+            fetchLanguage = languageCode;
+        }
+        if (siteLanguages.includes(languageCode.substring(0, 2))) {
+            fetchLanguage = languageCode.substring(0, 2);
+        }
+        const page = window.location.pathname;
+        if (fetchLanguage) {
+            fetch(`/v1/pages/actual/texts?language=${fetchLanguage}&page=${page}`, {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+                .then(response => response.json())
+                .then(jsonData => {
+                    console.log(jsonData.data);
+                    texts = JSON.parse(jsonData.data);
+                    console.log(jsonData);
+                    console.log(texts);
+                    Core.actualLanguage = fetchLanguage;
+                    Core.setTexts(texts);
+                })
+
+                ;
+        } else {
+            throw Error(`Invalid language: ${languageCode}`);
+        }
+    },
+
+    publish: (topicsName, data) => {
+        console.log(`Publish on ${topicsName}`, data);
+        const functions = Core.topics[topicsName];
+        if (functions && Core.isArray(functions)) {
+            functions.forEach(func => {
+                func(data);
+            });
+        }
+    },
+    reportSystemError: error => {
+        if (Core.isFunction(Core.reportSystemErrorFunction)) {
+            Core.reportSystemErrorFunction(error);
+        }
+    },
+    setReportSystemErrorFunction: reportSystemErrorFunction => {
+        Core.reportSystemErrorFunction = reportSystemErrorFunction;
+    },
+    // This function avoid the race condition if the asignation of the text 
+    // to the element is before the text web service is called
+    setText: (element, key, options) => {
+        console.log(`Core::setText:`, element, key);
+
+        Core.subscribeTo('core:setTexts', () => {
+            Core.setTextToElement(element, Core.texts[key], options);
+        });
+        if (Core.texts[key]) {
+            Core.setTextToElement(element, Core.texts[key], options);
+        };
+    },
+    setTexts: ts => {
+        texts = Object.assign(Core.texts, ts);
+        Core.setTextsById();
+        Core.publish('core:setTexts', { language: Core.actualLanguage });
+    },
+    showErrorMessage: errorMessage => {
+        let jsonMessage;
+        if (Core.isString(errorMessage)) {
+            jsonMessage = { errorMessage };
+        } else {
+            jsonMessage = errorMessage;
+        }
+        console.log(`Core::showErrorMessage:`, jsonMessage);
+        Core.publish('core:showErrorMessage', jsonMessage);
+    },
+    showMessage: message => {
+        let jsonMessage;
+        if (Core.isString(message)) {
+            jsonMessage = { message };
+        } else {
+            jsonMessage = errorMessage;
+        }
+        console.log(`Core::showMessage: ${jsonMessage}`, jsonMessage);
+        Core.publish('core:showMessage', jsonMessage);
+    },
+    setTextsById: () => {
+        console.log(`Core::setTextsById: Set text by id`);
+        for (const [key, value] of Object.entries(Core.texts)) {
+            const element = document.getElementById(key);
+            Core.setTextToElement(element, value);
+        }
+    },
+    setTextToElement: (element, text, options) => {
+        if (Core.isHTMLDivElement(element)) {
+            console.log(`Core::setTextToElement: Trying to set text to ${element.id} (${element.constructor.name})`);
+            do {
+                if (
+                        element instanceof HTMLSpanElement || element instanceof HTMLDivElement || element instanceof HTMLButtonElement || element instanceof HTMLOptionElement || element instanceof HTMLAnchorElement ||
+                        element instanceof HTMLTitleElement || element instanceof HTMLParagraphElement || element instanceof HTMLHeadingElement) {
+                    console.log(`Core::setTextToElement: Set text ${text} to element with id ${element.id}`);
+                    const childNodes = element.childNodes;
+                    const write = childNodes.length === 0 || (childNodes.length === 1 && childNodes[0].nodeType === Node.TEXT_NODE && element.textContent !== text);
+                    if (write) {
+                        element.innerHTML = text;
+                    } else {
+                        console.log(`Core::setTextToElement: WARNING. The element with the id ${element.id} is not empty.`, element);
+                    }
+                    break;
+                }
+                if (element instanceof HTMLInputElement) {
+                    console.log(`Core::setTextToElement: element type: ${element.type}`);
+                    switch (element.type) {
+                        case 'submit':
+                            element.value = text;
+                            break;
+                        case 'text':
+                            if (options === undefined || options === null || options & Core.PLACEHOLDER === Core.PLACEHOLDER) {
+                                element.placeholder = text;
+                            }
+                            if ((options & Core.VALUE) === Core.VALUE) {
+                                element.value = text;
+                            }
+                            break;
+                        case 'password':
+                            element.placeholder = text;
+                            break;
+                        default:
+                            console.log(`Core::setTextsById: WARNING. Can't manage the type for the input element ${key}.`, element);
+                    }
+                    break;
+                }
+                throw Error(`Set text to unknown element with id ${element.id} (${element.constructor.name})`);
+            } while (false);
+        }
+    },
+
+    subscribeTo: (topicsName, functionToExecute) => {
+        let functions = Core.topics[topicsName];
+        if (!functions) {
+            functions = [];
+            Core.topics[topicsName] = functions;
+        }
+        functions.push(functionToExecute);
+    }
+}
+
+const pageLoaded = async () => {
+    console.log(`Core::pageLoaded::templateVariables: `, templateVariables);
+    Core.getActualWebClientDetails();
+    Core.subscribeTo('core:webClientDataChange', data => {
+        console.log('Data from core:webClientDataChange topic: ', data);
+        if (data.language === undefined || data.language === null) {
+            Core.loadLanguage(Core.getPreferredLanguage());
+        } else {
+            Core.loadLanguage(data.language);
+        }
+    })
+}
+
+window.addEventListener('load', pageLoaded, false);
+
+// Code from library linkTo:1.00 on legal.html
+/**
+ * Configuration
+ * id - The element to link to.
+ * onclick - A string with the url to link or a function to execute when the link is clicked
+ * disabled - true if the link is disabled
+ * enable - enable when is login, or not login or in a certain page
+ * disable - disable when is login, or not login, or in a certain page
+ * show - show when is login, or not login, or in a certain page
+ * hide - hide when is login, or not login or in a certain page
+ * 
+ *  */
+
+class LinkTo {
+    constructor(configuration) {
+        const getElement = (id, element) => {
+            if (id === undefined && element === undefined) {
+                throw new Error('You MUST specify an id or element to apply the link to.');
+            }
+            if (Core.isString(id)) {
+                console.log(`Linking the id ${id}`);
+                const element = document.getElementById(id);
+                if (element === null || element === undefined) {
+                    throw new Error(`Element NOT FOUND: ${id}`);
+                }
+                return element;
+            }
+            if (Core.isHTMLDivElement(element)) {
+                console.log(`Linking the element `, element);
+                return element;
+            }
+        };
+        this.element = getElement(configuration.id, configuration.element);
+        this.element.classList.add('linkTo');
+        this.element.addEventListener('click', event => {
+            if (this.enable && Core.isString(configuration.onclick)) {
+                window.location.replace(configuration.onclick);
+                return;
+            }
+            if (Core.isFunction(configuration.onclick)) {
+                configuration.onclick(event);
+                return;
+            }
+        });
+        if (configuration.disabled) {
+            configuration.disabled ? this.disable() : this.enable();
+        } else {
+            this.enable();
+        }
+        Core.subscribeTo('core:webClientDataChange', () => {
+            console.log(`linkTo::webClientDataChange: Change the status of the link ${this.element.id}`);
+
+            do {
+                if (configuration.show && Core.isValid(configuration.show)) {
+                    this.show();
+                    break;
+                }
+
+                if (configuration.hide && Core.isValid(configuration.hide)) {
+                    this.hide();
+                    break;
+                }
+            } while (false);
+
+            do {
+                if (configuration.enable && Core.isValid(configuration.enable)) {
+                    this.enable();
+                    break;
+                }
+
+                if (configuration.disable && Core.isValid(configuration.disable)) {
+                    this.disable();
+                    break;
+                }
+            } while (false);
+
+            if (configuration.mark && Core.isValid(configuration.mark)) {
+                this.mark();
+                return;
+            }
+        });
+    }
+
+    mark() {
+        console.log('linkTo::marked');
+        this.element.classList.add('marked')
+    }
+
+    show() {
+        console.log('linkTo::show');
+        this.element.classList.add('visible')
+        this.element.classList.remove('hide')
+    }
+
+    hide() {
+        console.log('linkTo::hide');
+        this.element.classList.add('hide')
+        this.element.classList.remove('visible')
+    }
+
+    disable() {
+        console.log('linkTo::disable');
+        this.isDisable = true;
+        this.element.classList.add('disabled')
+        this.element.classList.remove('enabled')
+    }
+
+    enable() {
+        console.log('linkTo::enable');
+        this.isDisable = false;
+        this.element.classList.add('enabled')
+        this.element.classList.remove('disabled')
+    }
+}
+
+// Code from script tag on legal.html:13:2
+
+  const initLegal = () => {
+  };
+  window.addEventListener('load', initLegal, false);
+
+// Code from library twoLanguageLink:1.00 on header.html called by file attribute on section on header.html:23:4
+/*
+ * Created on: 11/05/2021
+ * Author:     Esteban Cabezudo
+ */
+
+class TwoLanguageLink {
+    constructor(configuration) {
+        this.languages = configuration.languages;
+        this.onchange = configuration.onchange;
+        const validateOptions = () => {
+            this.container = document.getElementById(configuration.id);
+            if (!this.container) {
+                throw new Error(`Can't find the element with the id ${configuration.id}`);
+            }
+        }
+        const setLinkToShow = () => {
+            if (Core.actualLanguage === this.languages[0].code) {
+                this.languages[1].element.classList.add('twoLanguageLinkVisible');
+                this.languages[0].element.classList.remove('twoLanguageLinkVisible');
+            } else {
+                this.languages[0].element.classList.add('twoLanguageLinkVisible');
+                this.languages[1].element.classList.remove('twoLanguageLinkVisible');
+            }
+        };
+        const createGUI = () => {
+            this.container.className = 'twoLanguageContainer';
+            const setLanguageLink = (languageToSet) => {
+                languageToSet.element.className = 'twoLanguageLink';
+                languageToSet.element.innerHTML = languageToSet.text;
+                languageToSet.element.addEventListener('click', event => {
+                    Core.loadLanguage(languageToSet.code);
+                    if (Core.isFunction(this.onchange)) {
+                        this.onchange(languageToSet.code);
+                    }
+                    event.stopPropagation();
+                });
+                this.container.appendChild(languageToSet.element);
+            }
+            this.languages[0].element = document.createElement('DIV');
+            this.languages[1].element = document.createElement('DIV');
+            setLanguageLink(this.languages[0]);
+            setLanguageLink(this.languages[1]);
+            Core.subscribeTo('core:setTexts', setLinkToShow);
+        };
+        validateOptions();
+        createGUI();
+        setLinkToShow();
+    };
+    getActualLanguage = () => {
+        return Core.actualLanguage;
+    };
+}
+
+// Code from script tag on header.html:3:2 called by file attribute on section on header.html:23:4
+
+  {
+    const initHeader = () => {
+      new LinkTo({ id: 'logo', onclick: '/' });
+
+      new TwoLanguageLink({
+        id: 'changeLanguage',
+        languages: [{ code: 'en', text: 'English' }, { code: 'es', text: 'Español' }]
+      }
+      );
+    };
+    window.addEventListener('load', initHeader, false);
+  }
+
+// Code from script tag on header.html:25:2 called by file attribute on section on header.html:23:4
+
+
+// Code from script tag on menu.html:2:2 called by file attribute on section on menu.html:39:4
+
+  const initMenu = () => {
+    const items = templateVariables.menu.menu.items;
+    console.log('menu.html :: items :: Items: ', items);
+    const menu = document.getElementById('items');
+    for (const i in items) {
+      const item = items[i];
+      let profileAccepted = false;
+      const menuProfiles = item.profiles;
+      const user = Core.user;
+      if (menuProfiles === undefined) {
+        profileAccepted = true;
+      } else {
+        if (user !== null) {
+          const userProfiles = user.profiles;
+          if (userProfiles !== undefined) {
+            console.log(`userProfiles: ${JSON.stringify(userProfiles)}`);
+            userProfiles.forEach(userProfile => {
+              if (menuProfiles.includes(userProfile.name)) {
+                profileAccepted = true;
+              }
+            });
+          }
+        }
+      }
+      console.log(`profileAccepted: ${JSON.stringify(profileAccepted)}`);
+      const login = item.logged === undefined || item.logged === null || (Core.isLogged() && item.logged === true) || (Core.isNotLogged() && item.logged === false);
+      console.log(`login ${login}`);
+      const hide = item.hide !== undefined && item.hide !== null && item.hide.includes(window.location.pathname);
+      const isNotHide = !hide;
+      console.log(`isNotHide: ${isNotHide}`);
+      console.log(`profileAccepted: ${profileAccepted}`);
+      if (login && isNotHide && profileAccepted) {
+        const createSVG = (svg, url) => {
+          const itemElement = document.createElement('div');
+          itemElement.className = 'item icon';
+          const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          svgElement.setAttribute('viewBox', svg.viewBox);
+          itemElement.appendChild(svgElement);
+          const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          pathElement.setAttribute('fill', svg.path.fill);
+          pathElement.setAttribute('d', svg.path.d);
+          svgElement.appendChild(pathElement);
+          new LinkTo({
+            onclick: url,
+            id: itemElement
+          });
+          return itemElement;
+        };
+        if (item.id && item.id !== null) {
+          const itemElement = document.createElement('div');
+          menu.appendChild(itemElement);
+          itemElement.className = 'item';
+          itemElement.id = item.id;
+          if (!item.key) {
+            item.key = item.id;
+          }
+          new LinkTo({
+            key: item.key,
+            onclick: item.url,
+            id: item.id,
+            disable: (item.url === window.location.pathname)
+          });
+        }
+        if (item.mailTemplate !== undefined) {
+          const templateName = item.mailTemplate.name;
+          switch (templateName) {
+            case 'twitter':
+              const svg = {
+                viewBox: "0 0 512 512",
+                path: {
+                  fill: "currentColor",
+                  d: "M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"
+                }
+              };
+              const itemElement = createSVG(svg, item.mailTemplate.url);
+              menu.appendChild(itemElement);
+              break;
+            case 'userProfile':
+              {
+                const svg = {
+                  viewBox: "0 0 20 20",
+                  path: {
+                    fill: "currentColor",
+                    d: "m 19.516418,18.090822 c 0.03687,0.856967 -0.972379,1.463064 -1.912083,1.337937 -5.207164,-0.0046 -10.41488,0.0094 -15.6216986,-0.007 C 1.0132326,19.365661 0.44984722,18.509628 0.58215601,17.743048 0.55740234,16.734451 0.55303944,15.666493 1.2588014,14.800831 2.5576409,13.095831 4.7394232,12.06408 6.9049077,11.34297 7.5012387,10.444987 6.5907545,9.8010605 6.0371421,9.1499095 5.2771826,7.7302539 5.4298286,6.1171209 5.3412165,4.5951168 5.4077641,3.0168878 6.4104477,1.3687499 8.2418834,0.83377557 10.402946,0.10019217 13.263171,0.79881497 14.245292,2.690327 c 0.825007,1.4470567 0.487283,3.0912331 0.381896,4.6336153 -0.109833,0.9814239 -0.392643,2.0812703 -1.399528,2.6810907 -0.60899,0.974466 0.258869,1.643214 1.333683,1.819384 2.044848,0.865422 4.226687,2.102699 4.845922,4.099196 0.180358,0.711296 0.08502,1.444973 0.109158,2.167209 z"
+                  }
+                };
+                const itemElement = createSVG(svg, item.mailTemplate.url);
+                menu.appendChild(itemElement);
+                break;
+              }
+            case 'languages':
+              const languageItemContainerElement = document.createElement('DIV');
+              languageItemContainerElement.className = 'item icon';
+              menu.appendChild(languageItemContainerElement);
+
+              const languageItemElement = document.createElement('DIV');
+              languageItemContainerElement.appendChild(languageItemElement);
+
+              const flag = new TwoLanguageFlag({
+                element: languageItemElement,
+                data: item.mailTemplate.data
+              });
+              break;
+            default:
+              throw new Error(`Invalid mailTemplate name ${templateName}`);
+          }
+        }
+        if (item.svg !== undefined) {
+          const itemElement = createSVG(item.svg, item.url);
+          menu.appendChild(itemElement);
+        }
+        if (item.element !== undefined) {
+          const itemElement = document.createElement('DIV');
+          itemElement.id = item.element.id;
+          menu.appendChild(itemElement);
+        }
+      }
+    }
+    const menuButton = document.getElementById('menuButton');
+    const itemsContainer = document.getElementById('itemsContainer');
+    menuButton.addEventListener("click", event => {
+      if (itemsContainer.style.display === 'flex') {
+        itemsContainer.style.display = 'none';
+        menuButton.className = 'burger';
+      } else {
+        menuButton.className = 'cross';
+        itemsContainer.style.display = 'flex';
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
+    });
+    window.addEventListener("click", () => {
+      if (window.getComputedStyle(menuButton).display !== 'none') {
+        itemsContainer.style.display = 'none';
+        menuButton.className = 'burger';
+      }
+    });
+  };
+  window.addEventListener('load', initMenu, false);
+
+
+// Code from script tag on foot.html:1:2 called by file attribute on section on foot.html:32:4
+
+  {
+    const initFoot = () => {
+      const links = [
+        { id: 'footHome', onclick: '/' },
+        { id: 'footSurgery', onclick: '/surgeries.html' },
+        { id: 'footOtorhinolaryngology', onclick: '/otorhinolaryngology.html' },
+        { id: 'footAboutUs', onclick: '/us.html' },
+        { id: 'footLocation', onclick: '/location.html' },
+        { id: 'footFrequentQuestions', onclick: '/faq.html' },
+        { id: 'footTermsAndConditions', onclick: '/termsAndConditions.html' },
+        { id: 'footLegal', onclick: '/legal.html' },
+        { id: 'footPrivacyPolicy', onclick: '/privacyPolicy.html' },
+      ];
+      links.forEach(value => {
+        new LinkTo({ id: value.id, onclick: value.onclick });
+        (function () {
+          var options = {
+            whatsapp: "525561335418",
+            call_to_action: "Envíanos un mensaje",
+            position: "right",
+          };
+          var proto = document.location.protocol, host = "getbutton.io", url = proto + "//static." + host;
+          var s = document.createElement('script');
+          s.type = 'text/javascript';
+          s.async = true;
+          s.src = url + '/widget-send-button/js/init.js';
+          s.onload = function () {
+            WhWidgetSendButton.init(host, proto, options);
+          };
+          var x = document.getElementsByTagName('script')[0];
+          x.parentNode.insertBefore(s, x);
+        })();
+      });
+    };
+    window.addEventListener('load', initFoot, false);
+  }
+
+</script>
+</head>
+
+
+</html>
+
+<body>
+  <section>
+  <section class="full" id="language">
+    <div class="container">
+      <div id="world"></div>
+      <div class="text" id="changeLanguage"></div>
+    </div>
+  </section>
+  <section class="centered" id="header">
+    <div id="logo"><img src="images/logoHeader.png"/></div>
+    <div class="space"><a class="textButton" href="https://www.doctoralia.com.mx/clinicas/otorrinolaringologia-condesa?utm_source=widget-facility-16108&utm_medium=facility_big&utm_campaign=&utm_content=&widget=1&fid=16108#highlight-calendar" id="freeValuation" target="_blank"></a></div>
+  </section>
+  <section id="menu">
+  <div class="burger" id="menuButton">
+    <div class="patty"></div>
+    <div class="patty"></div>
+    <div class="patty"></div>
+  </div>
+  <div class="buoy">
+    <div id="itemsContainer">
+      <div class="items" id="items"></div>
+    </div>
+  </div>
+</section>
+</section>
+  <section class="centered">
+    <div class="appContainer">
+      <h1 id="legalTitle"></h1>
+      <p id="p_1"></p>
+      <p id="p_2"></p>
+      <p id="p_3"></p>
+    </div>
+  </section>
+  <section class="full" id="foot">
+  <div class="links">
+    <div class="linkGroup">
+      <div class="title" id="footExploreTitle"></div>
+      <div class="link" id="footHome"></div>
+      <div class="link" id="footSurgery"></div>
+      <div class="link" id="footOtorhinolaryngology"></div>
+      <div class="link" id="footAboutUs"></div>
+      <div class="link" id="footLocation"></div>
+      <div class="link" id="footFrequentQuestions"></div>
+    </div>
+    <div class="linkGroup">
+      <div class="title" id="footLegalTitle"></div>
+      <div class="link" id="footTermsAndConditions"></div>
+      <div class="link" id="footLegal"></div>
+      <div class="link" id="footPrivacyPolicy"></div>
+    </div>
+    <div class="linkGroup">
+      <div class="title" id="footContactTitle"></div>
+      <div class="text" id="footStreet"></div>
+      <div class="text" id="footFloor"></div>
+      <div class="text" id="footNeighborhood"></div>
+      <div class="text" id="footPC"></div>
+      <div class="link" id="footFirstTel"><a href="tel:+52-55-8526-6777">55 8526 6777</a></div>
+      <div class="link" id="footSecondTel"><a href="tel:+52-55-8804-9376">55 8804 9376</a></div>
+      <div class="link" id="footWhats"><a href="https://wa.me/525561335418" target="_blank">55 6133 5418 <img src="/images/whatsapp.png" width="12px"/></a></div>
+      <div class="link" id="footMail"><a href="mailto:drorlcondesa@gmail.com" target="_blank">drorlcondesa@gmail.com</a></div>
+    </div>
+    <div class="linkGroup">
+      <div class="title" id="footSocialMediaTitle"></div>
+      <div class="text" id="footCheckOurSocialMedia"></div>
+      <div class="socialMedia" id="socialMedia">
+        <a href="https://www.facebook.com/orl.condesa" target="_blank">
+          <div class="socialMediaIcon facebook" id="socialMediaFacebook"></div>
+        </a>
+        <a href="https://www.instagram.com/orlcondesa/" target="_blank">
+          <div class="socialMediaIcon instagram" id="socialMediaInstagram"></div>
+        </a>
+      </div>
+      <div>#orlcondesa</div>
+    </div>
+  </div>
+  <div class="text">
+    <div class="cards"></div>
+    <div class="copy" id="footCopy"></div>
+  </div>
+</section>
+</body>
+

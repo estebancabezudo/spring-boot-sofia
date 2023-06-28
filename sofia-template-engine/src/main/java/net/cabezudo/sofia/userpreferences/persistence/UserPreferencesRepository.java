@@ -3,7 +3,6 @@ package net.cabezudo.sofia.userpreferences.persistence;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.persistence.DatabaseManager;
-import net.cabezudo.sofia.sites.Site;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +18,10 @@ public class UserPreferencesRepository {
   private static final Logger log = LoggerFactory.getLogger(AccountRepository.class);
   private @Autowired DatabaseManager databaseManager;
 
-  public String get(Site site, int userId, String name) {
+  public String get(int userId, String name) {
     log.debug("Get preference " + name + " for user " + userId);
 
-    List<String> list = databaseManager.getJDBCTemplate(site).query(
+    List<String> list = databaseManager.getJDBCTemplate().query(
         "SELECT value FROM user_preferences WHERE user_id = ? AND `name` = ?",
         (resultSet, rowNum) -> resultSet.getString("value")
         , userId, name);
@@ -35,7 +34,7 @@ public class UserPreferencesRepository {
     return list.get(0);
   }
 
-  public void update(Site site, int userId, String name, String value) {
+  public void update(int userId, String name, String value) {
     PreparedStatementCreator preparedStatementCreator = connection -> {
       String query = "UPDATE user_preferences SET value = ? WHERE user_id = ? AND name = ?";
       PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
@@ -44,10 +43,10 @@ public class UserPreferencesRepository {
       ps.setString(3, name);
       return ps;
     };
-    databaseManager.getJDBCTemplate(site).update(preparedStatementCreator);
+    databaseManager.getJDBCTemplate().update(preparedStatementCreator);
   }
 
-  public void create(Site site, int userId, String name, String value) {
+  public void create(int userId, String name, String value) {
     PreparedStatementCreator preparedStatementCreator = connection -> {
       String query = "INSERT INTO user_preferences (user_id, name, value) VALUES (?, ?, ?)";
       PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
@@ -56,6 +55,6 @@ public class UserPreferencesRepository {
       ps.setString(3, value);
       return ps;
     };
-    databaseManager.getJDBCTemplate(site).update(preparedStatementCreator);
+    databaseManager.getJDBCTemplate().update(preparedStatementCreator);
   }
 }

@@ -4,6 +4,8 @@ import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
 import net.cabezudo.sofia.math.Numbers;
 import net.cabezudo.sofia.sites.Site;
+import net.cabezudo.sofia.sites.SiteManager;
+import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.users.SofiaUser;
 import net.cabezudo.sofia.users.service.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ public class UrlAuthenticationFilter extends OncePerRequestFilter {
 
   private @Autowired UserManager userManager;
   private @Autowired AccountRepository accountRepository;
+  private @Autowired SiteManager siteManager;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -37,15 +40,20 @@ public class UrlAuthenticationFilter extends OncePerRequestFilter {
       String accountParameter = request.getParameter(ACCOUNT_PARAMETER);
 
       SofiaUser user;
-      Site site = (Site) request.getSession().getAttribute("site");
       if (Numbers.isInteger(accountParameter)) {
         int id = Integer.parseInt(accountParameter);
-        AccountEntity accountEntity = accountRepository.get(site, id);
-        user = userManager.findByAccountId(site, accountEntity.id(), email);
+        AccountEntity accountEntity = accountRepository.get(id);
+        user = userManager.findById(accountEntity.getId(), email);
       } else {
+        Site site = null;
+        try {
+          site = siteManager.get(request.getServerName());
+        } catch (SiteNotFoundException e) {
+          response.sendError(400, "Invalid host: " + request.getServerName());
+        }
         // TODO create a find by email for user without search first the account for the email
-        AccountEntity accountEntity = accountRepository.getAccountFor(site, email);
-        user = userManager.findByAccountId(site, accountEntity.id(), email);
+        AccountEntity accountEntity = accountRepository.getAccountByEMail(email, site.getId());
+        user = userManager.findById(accountEntity.getId(), email);
       }
 
       Authentication auth = new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());

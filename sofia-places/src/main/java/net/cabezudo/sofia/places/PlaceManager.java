@@ -14,7 +14,6 @@ import net.cabezudo.sofia.places.persistence.AdministrativeDivisionTypeEntity;
 import net.cabezudo.sofia.places.persistence.AdministrativeDivisionTypeRepository;
 import net.cabezudo.sofia.places.persistence.PlaceEntity;
 import net.cabezudo.sofia.places.persistence.PlacesRepository;
-import net.cabezudo.sofia.sites.Site;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +34,8 @@ public class PlaceManager {
   private @Resource AdministrativeDivisionNameRepository administrativeDivisionNameRepository;
   private @Resource AdministrativeDivisionTypeRepository administrativeDivisionTypeRepository;
 
-  public PlaceList findAll(Site site, Account account, boolean includeAdministrativeDivisions) {
-    final EntityList<PlaceEntity> entityList = placesRepository.findAll(site, account.id());
+  public PlaceList findAll(Account account, boolean includeAdministrativeDivisions) {
+    final EntityList<PlaceEntity> entityList = placesRepository.findAll(account.getId());
 
     if (includeAdministrativeDivisions) {
       List<Integer> placeIds = new ArrayList<>();
@@ -46,85 +45,83 @@ public class PlaceManager {
       }
 
       AdministrativeDivisionEntityList administrativeDivisionEntityList =
-          administrativeDivisionRepository.findByPlaces(site, placeIds);
+          administrativeDivisionRepository.findByPlaces(placeIds);
       return entityToBusinessPlaceListMapper.map(entityList, administrativeDivisionEntityList);
     }
 
     return entityToBusinessPlaceListMapper.map(entityList, null);
   }
 
-  public Place get(Site site, Account account, Integer id) {
-    final PlaceEntity placeEntity = placesRepository.get(site, account.id(), id);
+  public Place get(Account account, Integer id) {
+    final PlaceEntity placeEntity = placesRepository.get(account.getId(), id);
     AdministrativeDivisionEntityList administrativeDivisionEntityList =
-        administrativeDivisionRepository.findAll(site, id);
+        administrativeDivisionRepository.findAll(id);
 
     return entityToBusinessPlaceMapper.map(placeEntity, administrativeDivisionEntityList);
   }
 
-  public Place create(Site site, Account account, Place placeToSave) {
+  public Place create(Account account, Place placeToSave) {
     PlaceEntity placeEntityToSave = businessToEntityPlaceMapper.map(account, placeToSave);
 
-    final PlaceEntity placeEntity = placesRepository.create(site, placeEntityToSave);
+    final PlaceEntity placeEntity = placesRepository.create(placeEntityToSave);
 
-    AdministrativeDivisionList administrativeDivisionListToSave = placeToSave.administrativeDivisionList();
+    AdministrativeDivisionList administrativeDivisionListToSave = placeToSave.getAdministrativeDivisionList();
     AdministrativeDivisionEntityList administrativeDivisionEntityList =
-        createAdministrativeDivisions(site, administrativeDivisionListToSave, placeEntity);
+        createAdministrativeDivisions(administrativeDivisionListToSave, placeEntity);
 
     return entityToBusinessPlaceMapper.map(placeEntity, administrativeDivisionEntityList);
   }
 
-  public Place update(Site site, Account account, Integer id, Place updatedPlace) {
+  public Place update(Account account, Integer id, Place updatedPlace) {
     BusinessToEntityPlaceMapper businessToEntityPlaceMapper = new BusinessToEntityPlaceMapper();
     PlaceEntity placeEntityToSave = businessToEntityPlaceMapper.map(account, updatedPlace);
     placeEntityToSave.setId(id);
 
-    final PlaceEntity placeEntity = placesRepository.update(site, placeEntityToSave);
+    final PlaceEntity placeEntity = placesRepository.update(placeEntityToSave);
 
-    administrativeDivisionRepository.delete(site, placeEntity.getId());
+    administrativeDivisionRepository.delete(placeEntity.getId());
 
     // Create all the administrative division again
-    AdministrativeDivisionList administrativeDivisionListToSave = updatedPlace.administrativeDivisionList();
-    AdministrativeDivisionEntityList administrativeDivisionEntityList =
-        createAdministrativeDivisions(site, administrativeDivisionListToSave, placeEntity);
+    AdministrativeDivisionList administrativeDivisionListToSave = updatedPlace.getAdministrativeDivisionList();
+    AdministrativeDivisionEntityList administrativeDivisionEntityList = createAdministrativeDivisions(administrativeDivisionListToSave, placeEntity);
 
     return entityToBusinessPlaceMapper.map(placeEntity, administrativeDivisionEntityList);
   }
 
-  private AdministrativeDivisionEntityList createAdministrativeDivisions(
-      Site site, AdministrativeDivisionList administrativeDivisionListToSave, PlaceEntity placeEntity) {
+  private AdministrativeDivisionEntityList createAdministrativeDivisions(AdministrativeDivisionList administrativeDivisionListToSave, PlaceEntity placeEntity) {
     // Make sure that all the administrative division types exists in database
 
 
     AdministrativeDivisionEntityList administrativeDivisionEntityList = new AdministrativeDivisionEntityList();
     for (AdministrativeDivision entry : administrativeDivisionListToSave) {
-      String name = entry.name();
+      String name = entry.getName();
 
-      AdministrativeDivisionNameEntity databaseNameEntity = administrativeDivisionNameRepository.findByName(site, name);
+      AdministrativeDivisionNameEntity databaseNameEntity = administrativeDivisionNameRepository.findByName(name);
       AdministrativeDivisionNameEntity nameEntity;
       if (databaseNameEntity == null) {
-        nameEntity = administrativeDivisionNameRepository.create(site, name);
+        nameEntity = administrativeDivisionNameRepository.create(name);
       } else {
         nameEntity = databaseNameEntity;
       }
 
-      String typeName = entry.administrativeDivisionType().getName();
+      String typeName = entry.getAdministrativeDivisionType().getName();
 
       AdministrativeDivisionTypeEntity databaseTypeEntity =
-          administrativeDivisionTypeRepository.findByName(site, typeName);
+          administrativeDivisionTypeRepository.findByName(typeName);
 
       AdministrativeDivisionTypeEntity typeEntity;
       if (databaseTypeEntity == null) {
-        typeEntity = administrativeDivisionTypeRepository.create(site, typeName);
+        typeEntity = administrativeDivisionTypeRepository.create(typeName);
       } else {
         typeEntity = databaseTypeEntity;
       }
 
       AdministrativeDivisionEntity databaseAdministrativeDivisionEntity =
-          administrativeDivisionRepository.findByPlaceNameAndType(site, placeEntity, name, typeEntity);
+          administrativeDivisionRepository.findByPlaceNameAndType(placeEntity, name, typeEntity);
 
       AdministrativeDivisionEntity administrativeDivisionEntity;
       if (databaseAdministrativeDivisionEntity == null) {
-        administrativeDivisionEntity = administrativeDivisionRepository.create(site, placeEntity, typeEntity, nameEntity);
+        administrativeDivisionEntity = administrativeDivisionRepository.create(placeEntity, typeEntity, nameEntity);
       } else {
         administrativeDivisionEntity = databaseAdministrativeDivisionEntity;
       }
@@ -133,7 +130,7 @@ public class PlaceManager {
     return administrativeDivisionEntityList;
   }
 
-  public void delete(Site site, Account account, Integer id) {
-    placesRepository.delete(site, account.id(), id);
+  public void delete(Account account, Integer id) {
+    placesRepository.delete(account.getId(), id);
   }
 }

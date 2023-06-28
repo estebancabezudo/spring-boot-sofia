@@ -5,7 +5,6 @@ import net.cabezudo.sofia.core.rest.ListRestResponse;
 import net.cabezudo.sofia.core.rest.RestList;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
-import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.users.Group;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -34,10 +33,9 @@ public class CountriesController extends SofiaAuthorizedController {
     ListRestResponse<String> listRestResponse;
 
     Account account = super.getAccount();
-    Site site = super.getSite();
 
     ResponseEntity result;
-    if ((result = super.checkPermissionFor(site, account, Group.ADMIN)) != null) {
+    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
       return result;
     }
 

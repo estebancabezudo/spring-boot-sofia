@@ -1,6 +1,6 @@
 package net.cabezudo.sofia.creator;
 
-import net.cabezudo.html.nodes.Position;
+import net.cabezudo.html.nodes.FilePosition;
 import net.cabezudo.json.JSONPair;
 import net.cabezudo.json.exceptions.DuplicateKeyException;
 import net.cabezudo.json.exceptions.JSONParseException;
@@ -10,8 +10,6 @@ import net.cabezudo.sofia.core.SofiaEnvironment;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,15 +20,16 @@ import java.util.List;
  * @author <a href="http://cabezudo.net">Esteban Cabezudo</a>
  * @version 0.01.00, 2019.05.30
  */
-@Component
+
 public class TemplateVariables {
   private static final Logger log = LoggerFactory.getLogger(TemplateVariables.class);
 
   private final JSONObject jsonObject;
-  private @Autowired SofiaEnvironment sofiaEnvironment;
+  private final SofiaEnvironment sofiaEnvironment;
 
-  public TemplateVariables() {
+  public TemplateVariables(SofiaEnvironment sofiaEnvironment) {
     jsonObject = new JSONObject();
+    this.sofiaEnvironment = sofiaEnvironment;
   }
 
   public void add(Path basePath, Path filePath) throws IOException, JSONParseException, UndefinedLiteralException, DuplicateKeyException {
@@ -88,7 +87,7 @@ public class TemplateVariables {
         if (sofiaEnvironment.isDevelopment()) {
           log.info(jsonObject.toString());
         }
-        throw new UndefinedLiteralException(name, new Position(lineNumber, i + 3), e);
+        throw new UndefinedLiteralException(name, new FilePosition(null, lineNumber, i + 3), e);
       }
       log.debug("Replace template variable " + name + " with " + value);
       sb.append(value);

@@ -11,18 +11,18 @@ public class BusinessToRestPlaceMapper {
   private @Autowired BusinessToRestAdminitrativeDivisionListMapper businessToRestAdminitrativeDivisionListMapper;
 
   public RestPlace map(Place p) {
-    int id = p.id();
-    String name = p.name();
-    String street = p.street();
-    String number = p.number();
-    String interiorNumber = p.interiorNumber();
-    String references = p.references();
-    String postalCode = p.postalCode();
-    int countryId = p.country().id();
-    String countryCode = p.country().code();
+    int id = p.getId();
+    String name = p.getName();
+    String street = p.getStreet();
+    String number = p.getNumber();
+    String interiorNumber = p.getInteriorNumber();
+    String references = p.getReferences();
+    String postalCode = p.getPostalCode();
+    int countryId = p.getCountry().id();
+    String countryCode = p.getCountry().code();
 
     AdministrativeDivisionsRestList administrativeDivisionList
-        = businessToRestAdminitrativeDivisionListMapper.map(p.administrativeDivisionList());
+        = businessToRestAdminitrativeDivisionListMapper.map(p.getAdministrativeDivisionList());
 
     return new RestPlace(id, name, street, number, interiorNumber, references, postalCode, countryId, countryCode, administrativeDivisionList);
   }

@@ -3,7 +3,6 @@ package net.cabezudo.sofia.places.persistence;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.persistence.DatabaseManager;
 import net.cabezudo.sofia.places.mappers.AdministrativeDivisionNameRowMapper;
-import net.cabezudo.sofia.sites.Site;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +18,10 @@ public class AdministrativeDivisionNameRepository {
   private static final Logger log = LoggerFactory.getLogger(AdministrativeDivisionNameRepository.class);
   private @Autowired DatabaseManager databaseManager;
 
-  public AdministrativeDivisionNameEntity findByName(Site site, String name) {
+  public AdministrativeDivisionNameEntity findByName(String name) {
     log.debug("Search administrative division name " + name);
 
-    List<AdministrativeDivisionNameEntity> list = databaseManager.getJDBCTemplate(site).query(
+    List<AdministrativeDivisionNameEntity> list = databaseManager.getJDBCTemplate().query(
         "SELECT id, name " +
             "FROM administrative_division_names AS a " +
             "WHERE name = ?",
@@ -36,14 +35,15 @@ public class AdministrativeDivisionNameRepository {
     throw new SofiaRuntimeException("More than one register in query");
   }
 
-  public AdministrativeDivisionNameEntity create(Site site, String name) {
+  public AdministrativeDivisionNameEntity create(String name) {
     String sqlQuery = "INSERT INTO administrative_division_names (name) VALUES (?)";
     KeyHolder keyHolder = new GeneratedKeyHolder();
-    databaseManager.getJDBCTemplate(site).update(connection -> {
+    databaseManager.getJDBCTemplate().update(connection -> {
       PreparedStatement ps = connection.prepareStatement(sqlQuery, new String[]{"id"});
       ps.setString(1, name);
       return ps;
     }, keyHolder);
+    // FIX Method invocation 'intValue' may produce 'NullPointerException'
     int id = keyHolder.getKey().intValue();
     return new AdministrativeDivisionNameEntity(id, name);
   }

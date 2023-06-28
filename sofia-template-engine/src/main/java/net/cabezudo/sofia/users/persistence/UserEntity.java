@@ -1,6 +1,7 @@
 package net.cabezudo.sofia.users.persistence;
 
 import net.cabezudo.sofia.emails.persistence.EMailEntity;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.Column;
 
@@ -12,14 +13,16 @@ public class UserEntity {
   private final String password;
   private final GroupsEntity groupsEntity = new GroupsEntity();
   private final boolean enabled;
+  private final String locale;
   private int accountUserId;
 
-  public UserEntity(int id, int siteId, int accountUserId, EMailEntity eMailEntity, String password, boolean enabled) {
+  public UserEntity(int id, int siteId, int accountUserId, @NotNull EMailEntity eMailEntity, String password, @NotNull String locale, boolean enabled) {
     this.id = id;
     this.siteId = siteId;
     this.accountUserId = accountUserId;
     this.eMailEntity = eMailEntity;
     this.password = password;
+    this.locale = locale;
     this.enabled = enabled;
   }
 
@@ -57,5 +60,9 @@ public class UserEntity {
 
   public void add(GroupEntity group) {
     this.groupsEntity.add(group);
+  }
+
+  public String getLocale() {
+    return locale;
   }
 }

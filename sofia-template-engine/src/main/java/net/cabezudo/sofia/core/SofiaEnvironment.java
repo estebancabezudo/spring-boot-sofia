@@ -15,6 +15,8 @@ import net.cabezudo.sofia.sites.SiteNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
@@ -46,6 +48,8 @@ public class SofiaEnvironment {
   public static final String TEXTS_FOLDER_NAME = "texts";
   private static final String SOFIA_CONFIGURATION_FILENAME = "sofia.yml";
   private static final Logger log = LoggerFactory.getLogger(SofiaEnvironment.class);
+  private static final String DATA_DIRECTORY_NAME = "data";
+  private static final String TEMPLATES_DIRECTORY_NAME = "templates";
   private final List<Path> sourcePaths = new ArrayList<>();
   private @Autowired PermissionManager permissionManager;
   private @Autowired SiteManager siteManager;
@@ -54,7 +58,11 @@ public class SofiaEnvironment {
   private Path basePath;
   private Path sitesPath;
   private Path systemLibraryPath;
+  private Path systemDataPath;
+  private Path systemTemplatesPath;
   private @Autowired ContentManager contentManager;
+  @Value("${sofia.security.active}")
+  private boolean sofiaSecurityActive;
 
   private Path checkForDirectoryAndCreate(Path path) throws ConfigurationException, IOException {
     if (!Files.exists(path)) {
@@ -86,6 +94,7 @@ public class SofiaEnvironment {
     log.debug("Sofia environment set to: " + name);
   }
 
+  @Bean
   public boolean isDevelopment() {
     return DEV.equals(name);
   }
@@ -113,6 +122,8 @@ public class SofiaEnvironment {
       throw new ConfigurationException("The system library path is is not a directory: " + sourcePaths);
     }
     log.debug("System library path: " + getSystemLibraryPath());
+    systemDataPath = basePath.resolve(DATA_DIRECTORY_NAME);
+    systemTemplatesPath = systemDataPath.resolve(TEMPLATES_DIRECTORY_NAME);
   }
 
   private void setSourcesPaths() throws ConfigurationException {
@@ -154,7 +165,7 @@ public class SofiaEnvironment {
       log.info("Trying with resources");
       URL url = classLoader.getResource(SOFIA_DIRECTORY_NAME);
       if (url == null) {
-        throw new ConfigurationException("Resource for base directory not found: " + SOFIA_DIRECTORY_NAME);
+        throw new ConfigurationException("Resource for system base path not found: " + SOFIA_DIRECTORY_NAME);
       }
 
       String urlFile = url.getFile();
@@ -197,17 +208,22 @@ public class SofiaEnvironment {
     }
   }
 
-  private void addPermissions(ConfigurationFileYAMLData configurationFileYAMLData) throws SiteNotFoundException {
+  private void addPermissions(ConfigurationFileYAMLData configurationFileYAMLData) {
     log.debug("Create permissions with data in configuration file.");
     List<ConfigurationFileYAMLSiteData> sites = configurationFileYAMLData.getSites();
     for (ConfigurationFileYAMLSiteData siteData : sites) {
-      Site site = siteManager.get(siteData.getName());
+      Site site;
+      try {
+        site = siteManager.get(siteData.getName());
+      } catch (SiteNotFoundException e) {
+        continue;
+      }
       log.debug("Site: " + site.getName());
 
       List<String> apis = siteData.getAPI();
       for (String api : apis) {
-        contentManager.add(api);
-        String permissionString = "all:all:grant:" + api + "/**";
+        contentManager.add(site, api);
+        String permissionString = "all:all:grant:" + api + ("/".equals(api) ? "**" : "/**");
         Permission permission = new Permission(permissionString);
         permissionManager.add(site, permission);
         log.debug("Add " + permissionString + " to site " + site.getName());
@@ -230,7 +246,7 @@ public class SofiaEnvironment {
       log.debug("Found data for site: " + configurationFileYAMLSiteData.getName());
       configurationFileYAMLSiteData.getHosts().forEach(hostname -> {
         Host host = new Host(hostname);
-        siteManager.add(configurationFileYAMLSiteData, host);
+        siteManager.add(configurationFileYAMLSiteData, host, isSecurityActive());
       });
     }
   }
@@ -249,5 +265,13 @@ public class SofiaEnvironment {
 
   public Path getSystemLibraryPath() {
     return systemLibraryPath;
+  }
+
+  public Path getSystemTemplatesPath() {
+    return systemTemplatesPath;
+  }
+
+  public boolean isSecurityActive() {
+    return sofiaSecurityActive;
   }
 }

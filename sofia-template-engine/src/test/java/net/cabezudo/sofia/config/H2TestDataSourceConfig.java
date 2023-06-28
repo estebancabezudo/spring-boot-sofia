@@ -13,7 +13,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableJpaRepositories(basePackages = {"net.cabezudo.sofia"})
-@PropertySource("application-test.yml")
+@PropertySource("sofia/application-test.yml")
 @EnableTransactionManagement
 public class H2TestDataSourceConfig {
 

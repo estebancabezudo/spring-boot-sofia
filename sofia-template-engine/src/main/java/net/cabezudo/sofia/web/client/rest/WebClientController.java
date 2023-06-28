@@ -2,21 +2,21 @@ package net.cabezudo.sofia.web.client.rest;
 
 import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
-import net.cabezudo.sofia.security.SofiaSecurityManager;
-import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
 import net.cabezudo.sofia.users.SofiaUser;
-import net.cabezudo.sofia.users.rest.BusinessToRestUserMapper;
 import net.cabezudo.sofia.web.client.Language;
 import net.cabezudo.sofia.web.client.WebClientData;
+import net.cabezudo.sofia.web.client.WebClientDataManager;
 import net.cabezudo.sofia.web.client.mappers.BusinessToRestWebClientMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,46 +27,43 @@ public class WebClientController extends SofiaAuthorizedController {
 
   private static final Logger log = LoggerFactory.getLogger(WebClientController.class);
 
-  private @Autowired SofiaSecurityManager securityManager;
   private @Autowired BusinessToRestWebClientMapper businessToRestWebClientMapper;
 
-  private @Autowired BusinessToRestUserMapper businessToRestUserMapper;
   private @Autowired UserPreferencesManager userPreferencesManager;
+  private @Autowired WebClientDataManager webClientDataManager;
 
   public WebClientController(HttpServletRequest request) {
     super(request);
   }
 
-  @GetMapping("/v1/web/clients/actual/details")
-  public ResponseEntity<?> login(HttpServletRequest request) {
+  @RequestMapping(value = "/v1/web/clients/actual/details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<RestWebClientData> clientDetails() {
     log.debug("Run /v1/web/clients/actual/details");
-
-    HttpSession session = super.getRequest().getSession();
-    WebClientData webClientData = (WebClientData) session.getAttribute(WebClientData.OBJECT_NAME_IN_SESSION);
+    WebClientData webClientData = super.getWebClientData();
     RestWebClientData restWebClient = businessToRestWebClientMapper.map(webClientData);
     log.debug("Web client data: " + restWebClient);
     return ResponseEntity.ok(restWebClient);
   }
 
+  // Cambia el lenguaje por defecto del sitio
   @PutMapping("/v1/web/clients/actual/languages/default")
-  public ResponseEntity<?> setLanguage(HttpServletRequest request, @RequestBody RestLanguage restLanguage) {
+  public ResponseEntity<RestWebClientData> setLanguage(HttpServletRequest request, @RequestBody RestLanguage restLanguage) {
     log.debug("Run /v1/web/clients/actual/languages/default");
 
     HttpSession session = super.getRequest().getSession();
 
-    WebClientData webClientData = (WebClientData) session.getAttribute(WebClientData.OBJECT_NAME_IN_SESSION);
-    Site site = super.getSite();
+    WebClientData webClientData = super.getWebClientData();
 
     WebClientData responseWebClient;
-    if (restLanguage != null && !restLanguage.equals(webClientData.getLanguage())) {
+    if (restLanguage != null && !restLanguage.getCode().equals(webClientData.getLanguage().getCode())) {
       Language languageToSet = new Language(restLanguage.getCode());
       Account account = webClientData.getAccount();
       SofiaUser user = webClientData.getUser();
 
-      WebClientData newWebClient = new WebClientData(languageToSet, account);
-      request.getSession().setAttribute(WebClientData.OBJECT_NAME_IN_SESSION, newWebClient);
-      userPreferencesManager.setLanguage(site, account, user, languageToSet);
-      responseWebClient = newWebClient;
+      WebClientData newWebClientData = new WebClientData(languageToSet, account);
+      webClientDataManager.set(request, newWebClientData);
+      userPreferencesManager.setLanguage(account, user, languageToSet);
+      responseWebClient = newWebClientData;
     } else {
       responseWebClient = webClientData;
     }

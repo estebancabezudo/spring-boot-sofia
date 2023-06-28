@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 public class BusinessToEntityPlaceMapper {
   public PlaceEntity map(Account account, Place p) {
 
-    int id = p.id();
-    String name = p.name();
-    String street = p.street();
-    String number = p.number();
-    String interiorNumber = p.interiorNumber();
-    String references = p.references();
-    String postalCode = p.postalCode();
-    int countryId = p.country().id();
+    int id = p.getId();
+    String name = p.getName();
+    String street = p.getStreet();
+    String number = p.getNumber();
+    String interiorNumber = p.getInteriorNumber();
+    String references = p.getReferences();
+    String postalCode = p.getPostalCode();
+    int countryId = p.getCountry().id();
 
-    return new PlaceEntity(id, account.id(), name, street, number, interiorNumber, references, postalCode, countryId);
+    return new PlaceEntity(id, account.getId(), name, street, number, interiorNumber, references, postalCode, countryId);
   }
 }

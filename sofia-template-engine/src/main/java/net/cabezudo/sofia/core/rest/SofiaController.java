@@ -5,6 +5,9 @@ import net.cabezudo.sofia.sites.Host;
 import net.cabezudo.sofia.sites.HostNotFoundException;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteManager;
+import net.cabezudo.sofia.sites.SiteNotFoundException;
+import net.cabezudo.sofia.web.client.WebClientData;
+import net.cabezudo.sofia.web.client.WebClientDataManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -14,33 +17,35 @@ import javax.servlet.http.HttpServletRequest;
 public abstract class SofiaController {
   private final HttpServletRequest request;
   private @Autowired SiteManager siteManager;
-  private Site site;
-  private Host host;
+  private @Autowired WebClientDataManager webClientDataManager;
 
   public SofiaController(HttpServletRequest request) {
     this.request = request;
   }
 
   protected Site getSite() {
-    if (site == null) {
-      site = (Site) request.getSession().getAttribute("site");
+    try {
+      String serverName = request.getServerName();
+      return siteManager.getByHostname(serverName);
+    } catch (SiteNotFoundException e) {
+      throw new SofiaRuntimeException(e);
     }
-    return site;
   }
 
   protected Host getHost() {
-    if (host == null) {
-      String serverName = request.getServerName();
-      try {
-        host = siteManager.getHostByName(serverName);
-      } catch (HostNotFoundException e) {
-        throw new SofiaRuntimeException(e);
-      }
+    String serverName = request.getServerName();
+    try {
+      return siteManager.getHostByName(serverName);
+    } catch (HostNotFoundException e) {
+      throw new SofiaRuntimeException(e);
     }
-    return host;
   }
 
   protected HttpServletRequest getRequest() {
     return request;
+  }
+
+  protected WebClientData getWebClientData() {
+    return webClientDataManager.getFromSession(request);
   }
 }

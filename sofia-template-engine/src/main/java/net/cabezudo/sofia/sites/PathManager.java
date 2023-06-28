@@ -51,6 +51,6 @@ public class PathManager {
   }
 
   public Path getVersionedSourcesLibraryPath(Site site, String version) {
-    return getSourcesPath(site).resolve(site.getName()).resolve(version).resolve(SofiaEnvironment.LIBS_DIRECTORY_NAME);
+    return getSourcesPath(site).resolve(version).resolve(SofiaEnvironment.LIBS_DIRECTORY_NAME);
   }
 }

@@ -1,0 +1,22 @@
+{
+  "delete": {
+    "es": "Borrar",
+    "en": "Delete"
+  },
+  "edit": {
+    "es": "Editar",
+    "en": "Edit"
+  },
+  "password": {
+    "es": "Contraseña",
+    "en": "Password"
+  },
+  "passwordUpdated": {
+    "es": "La nueva contraseña ha sido enviada",
+    "en": "The new password was sent"
+  },
+  "textForAddUser": {
+    "es": "Agregar usuario",
+    "en": "Add user"
+  }
+}

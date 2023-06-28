@@ -1,10 +1,12 @@
 package net.cabezudo.sofia.users;
 
 import net.cabezudo.sofia.accounts.Account;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Locale;
 
 public class SofiaUser implements UserDetails {
   private final int id;
@@ -12,36 +14,30 @@ public class SofiaUser implements UserDetails {
   private final String password;
   private final Groups groups;
   private final boolean enabled;
-  private int accountId;
-  private Account account;
+  private final Locale locale;
+  private final Account account;
+  private final int accountId;
 
-  public SofiaUser(int id, Account account, String username, String password, Groups groups, boolean enabled) {
+  public SofiaUser(int id, @NotNull Account account, @NotNull String username, String password, @NotNull Groups groups, Locale locale, boolean enabled) {
     this.id = id;
-    this.accountId = account.id();
+    this.accountId = account.getId();
     this.account = account;
     this.username = username;
     this.password = password;
     this.groups = groups;
+    this.locale = locale;
     this.enabled = enabled;
   }
 
 
-  public SofiaUser(int id, Account account, String username, String password, Collection<GrantedAuthority> authorities, boolean enabled) {
+  public SofiaUser(int id, @NotNull Account account, @NotNull String username, String password, @NotNull Collection<GrantedAuthority> authorities, @NotNull Locale locale, boolean enabled) {
     this.id = id;
-    this.accountId = account.id();
+    this.accountId = account.getId();
     this.account = account;
     this.username = username;
     this.password = password;
     this.groups = new Groups(authorities);
-    this.enabled = enabled;
-  }
-
-  public SofiaUser(int id, int accountId, String username, String password, Groups groups, boolean enabled) {
-    this.id = id;
-    this.accountId = accountId;
-    this.username = username;
-    this.password = password;
-    this.groups = groups;
+    this.locale = locale;
     this.enabled = enabled;
   }
 
@@ -51,6 +47,7 @@ public class SofiaUser implements UserDetails {
         "id=" + id +
         ", username='" + username + '\'' +
         ", groups=" + groups +
+        ", locale=" + locale +
         ", enabled=" + enabled +
         ", accountId=" + accountId +
         ", account=" + account +
@@ -108,8 +105,7 @@ public class SofiaUser implements UserDetails {
     return account;
   }
 
-  public void setAccount(Account account) {
-    this.account = account;
-    this.accountId = account.id();
+  public Locale getLocale() {
+    return locale;
   }
 }

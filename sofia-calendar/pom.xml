@@ -22,12 +22,6 @@
       <version>1.0.0</version>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-      <groupId>net.cabezudo.sofia</groupId>
-      <artifactId>sofia-security</artifactId>
-      <version>1.0.0</version>
-      <scope>compile</scope>
-    </dependency>
   </dependencies>
 
   <parent>

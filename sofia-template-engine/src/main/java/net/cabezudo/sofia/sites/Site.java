@@ -23,13 +23,13 @@ public class Site implements Comparable<Site> {
   private final String name;
   private final List<Locale> siteLocales = new ArrayList<>(); // TODO Load site languages from data created using site sources files
   private final int id;
-  private final Database database;
-  private Locale locale;
+  private final String replyAddress;
+  private final Locale locale = new Locale("en"); // TODO  Change to use the language of the constructor, the one defined for the site in the configuration, or English.
 
-  public Site(int id, String name, String databaseUrl) {
+  public Site(int id, String name, String replyAddress) {
     this.id = id;
     this.name = name;
-    this.database = new Database(databaseUrl);
+    this.replyAddress = replyAddress;
   }
 
   public int getId() {
@@ -38,6 +38,10 @@ public class Site implements Comparable<Site> {
 
   public Locale getLocale() {
     return locale;
+  }
+
+  public String getReplyAddress() {
+    return replyAddress;
   }
 
   public String getName() {
@@ -74,7 +78,4 @@ public class Site implements Comparable<Site> {
     return "[ name=" + getName() + ", locale=" + getDefaultLocale() + ", locales=" + getSiteLocales() + "]";
   }
 
-  public Database getDatabase() {
-    return database;
-  }
 }

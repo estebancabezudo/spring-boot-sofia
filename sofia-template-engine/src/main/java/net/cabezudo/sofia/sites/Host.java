@@ -1,6 +1,7 @@
 package net.cabezudo.sofia.sites;
 
 import net.cabezudo.sofia.core.InvalidParameterException;
+import org.jetbrains.annotations.NotNull;
 
 public class Host {
   private final String name;
@@ -12,7 +13,7 @@ public class Host {
 
   }
 
-  public Host(String hostname) {
+  public Host(@NotNull String hostname) {
     // TODO validate hostname format y values
     int i = hostname.indexOf(":");
     if (i == 0) {

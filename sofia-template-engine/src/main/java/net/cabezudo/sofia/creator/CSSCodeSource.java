@@ -1,6 +1,7 @@
 package net.cabezudo.sofia.creator;
 
 import net.cabezudo.html.nodes.Element;
+import net.cabezudo.html.nodes.FilePosition;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -38,10 +39,14 @@ class CSSCodeSource extends CodeSource {
     int lineNumber = 0;
     for (String line : linesFromFile) {
       lineNumber++;
-      if (line.startsWith("@import url")) {
-        imports.append(templateVariables.replace(id, lineNumber, line)).append('\n');
-      } else {
-        code.append(templateVariables.replace(id, lineNumber, line)).append('\n');
+      try {
+        if (line.startsWith("@import url")) {
+          imports.append(templateVariables.replace(id, lineNumber, line)).append('\n');
+        } else {
+          code.append(templateVariables.replace(id, lineNumber, line)).append('\n');
+        }
+      } catch (UndefinedLiteralException e) {
+        throw new UndefinedLiteralException(e.getUndefinedLiteral(), new FilePosition(filePath, e.getPosition()), e.getCause());
       }
     }
   }

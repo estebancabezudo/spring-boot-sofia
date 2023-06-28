@@ -70,11 +70,11 @@ public class SofiaFile {
   private final PathManager pathManager;
   private final SiteManager siteManager;
   private final TemplateVariables templateVariables;
+  private final PermissionManager permissionManager;
   SofiaEnvironment sofiaEnvironment;
   private boolean hasDocType = false;
   private Document document;
   private Element head;
-  private final PermissionManager permissionManager;
 
   public SofiaFile(HttpServletRequest request, SofiaEnvironment sofiaEnvironment, SiteManager siteManager, PathManager pathManager, TemplateVariables templateVariables, PermissionManager permissionManager) throws SiteNotFoundException, HostNotFoundException {
     this.sofiaEnvironment = sofiaEnvironment;
@@ -359,7 +359,8 @@ public class SofiaFile {
   }
 
   private void processElement(Path requestFilePath, Node node, Caller caller) throws SiteCreationException, HostNotFoundException {
-    if (node instanceof Element element) {
+    if (node instanceof Element) {
+      Element element = (Element) node;
       try {
         switch (node.getTagName()) {
           case TagName.TITLE:

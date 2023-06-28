@@ -1,10 +1,11 @@
 package net.cabezudo.sofia.sites;
 
+import net.cabezudo.sofia.config.ConfigurationFileYAMLMailData;
 import net.cabezudo.sofia.config.ConfigurationFileYAMLSiteData;
-import net.cabezudo.sofia.config.DatabaseConfiguration;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,41 +18,41 @@ import java.util.TreeMap;
  */
 @Service
 public class SiteManager {
+  private static final Logger log = LoggerFactory.getLogger(SiteManager.class);
   private final Map<String, Site> siteByName = new TreeMap<>();
   private final Map<String, Site> siteByHostname = new TreeMap<>();
   private final Map<String, Host> hostByHostname = new TreeMap<>();
-  private Boolean databaseManaged;
-  private @Autowired ApplicationContext applicationContext;
+  private final Map<Integer, Site> siteById = new TreeMap<>();
   private @Autowired SiteRepository siteRepository;
 
-  public void add(ConfigurationFileYAMLSiteData configurationFileYAMLSiteData, @NotNull Host host) {
+  public void add(ConfigurationFileYAMLSiteData configurationFileYAMLSiteData, @NotNull Host host, boolean toDatabase) {
     String siteName = configurationFileYAMLSiteData.getName();
-    String url;
-    if (configurationFileYAMLSiteData.getDatabase() == null || configurationFileYAMLSiteData.getDatabase().getUrl() == null) {
-      url = DatabaseConfiguration.DEFAULT_SCHEMA;
-    } else {
-      url = configurationFileYAMLSiteData.getDatabase().getUrl();
-    }
+    ConfigurationFileYAMLMailData mail = configurationFileYAMLSiteData.getMail();
     Site siteFound = siteByName.get(siteName);
     Site site;
-    // TODO verify for the values of the site and change if someone change on the configuration file
     if (siteFound == null) {
-      int id = 0;
-      SiteEntity siteEntity = siteRepository.findByName(siteName);
-      id = siteEntity.id();
-      site = new Site(id, siteName, url);
+      int id;
+      if (toDatabase) {
+        SiteEntity siteEntity = siteRepository.findByName(siteName);
+        if (siteEntity == null) {
+          log.warn("The site " + siteName + " was not added.");
+          return;
+        }
+        id = siteEntity.id();
+      } else {
+        id = siteByName.size();
+      }
+      site = new Site(id, siteName, mail.getReplyAddress());
       siteByName.put(siteName, site);
     } else {
       site = siteFound;
     }
     hostByHostname.put(host.getName(), host);
     siteByHostname.put(host.getName(), site);
+    siteById.put(site.getId(), site);
   }
 
   public Site get(HttpServletRequest request) throws SiteNotFoundException {
-    if (request == null) {
-      return null;
-    }
     return getByHostname(request.getServerName());
   }
 
@@ -77,5 +78,9 @@ public class SiteManager {
       throw new HostNotFoundException("Host not found: " + hostname);
     }
     return host;
+  }
+
+  public Site get(int id) {
+    return siteById.get(id);
   }
 }

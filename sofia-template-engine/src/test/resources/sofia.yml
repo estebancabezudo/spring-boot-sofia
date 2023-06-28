@@ -3,6 +3,7 @@ sites:
   - name: localhost
     hosts:
       - localhost:1
+      - local.cabezudo.net:1
     permissions:
       - all:all:grant:/v1/calendars/weeks
       - all:all:grant:/login
