@@ -44,6 +44,10 @@
     margin: 0 auto;
 }
 
+.adminLabel {
+    font-weight: bold;
+}
+
 .cell {
     width: 245px;
     background-color: white;
@@ -75,6 +79,12 @@
 
 .deleteGroup {
     cursor: pointer;
+}
+
+.listContainer {
+    border: 1px solid rgb(207, 207, 207);
+    border-radius: 5px;
+    padding: 8px;
 }
 
 @media all and (min-width: 554px) {
@@ -1171,14 +1181,25 @@ class LinkTo {
         };
         this.element = getElement(configuration.id, configuration.element);
         this.element.classList.add('linkTo');
-        this.element.addEventListener('click', event => {
+        const click = (event, newWindow) => {
             if (this.enable && Core.isString(configuration.onclick)) {
-                location.href = configuration.onclick;
+                if (newWindow === true) {
+                    window.open(configuration.onclick, '_blank');
+                } else {
+                    location.href = configuration.onclick;
+                }
                 return;
             }
             if (Core.isFunction(configuration.onclick)) {
                 configuration.onclick(event);
                 return;
+            }
+        };
+
+        this.element.addEventListener('click', click);
+        this.element.addEventListener('mouseup', event => {
+            if (event.button === 1) {
+                click(event, true);
             }
         });
         if (configuration.disabled) {

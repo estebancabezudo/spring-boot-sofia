@@ -222,7 +222,6 @@ INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (2, 2, true);
 INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (3, 3, true);
 INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (4, 4, true);
 INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (1, 2, false);
-INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (2, 2, false);
 INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (3, 1, false);
 INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (3, 2, false);
 INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (3, 4, false);
