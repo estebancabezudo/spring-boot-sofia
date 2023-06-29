@@ -1328,9 +1328,11 @@ class TwoLanguageFlag {
             setTimeout(hideMessage, 8000);
         });
         Core.subscribeTo('core:webClientDataChange', data => {
-            username = data.user.username;
-            accountName = data.account.name;
-            document.getElementById('headerMenuUsername').innerHTML = `${username} (${accountName})`;
+            if (data !== null && data.user !== null) {
+                username = data.user.username;
+                accountName = data.account.name;
+                document.getElementById('headerMenuUsername').innerHTML = `${username} (${accountName})`;
+            }
         });
     }
 

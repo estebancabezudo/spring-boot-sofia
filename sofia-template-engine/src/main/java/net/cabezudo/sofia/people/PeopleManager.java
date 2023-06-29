@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
+import java.sql.Date;
 
 @Service
 @Transactional
@@ -40,5 +41,22 @@ public class PeopleManager {
       return null;
     }
     return entityToBusinessPersonMapper.map(personEntity);
+  }
+
+  public Person getByEMail(String email) {
+    PersonEntity personEntity = peopleRepository.findByEMail(email);
+    if (personEntity == null) {
+      return null;
+    }
+    return entityToBusinessPersonMapper.map(personEntity);
+  }
+
+  public Person create(String name, String secondName, String lastName, String secondLastName, Date dateOfBirth) {
+    PersonEntity personEntity = peopleRepository.create(name, secondName, lastName, secondLastName, dateOfBirth);
+    return entityToBusinessPersonMapper.map(personEntity);
+  }
+
+  public void relate(SofiaUser user, Person person) {
+    peopleRepository.relatePersonToUser(user.getId(), person.getId());
   }
 }

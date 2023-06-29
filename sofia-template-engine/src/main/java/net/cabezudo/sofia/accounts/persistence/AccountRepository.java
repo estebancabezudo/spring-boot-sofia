@@ -25,10 +25,11 @@ public class AccountRepository {
 
   public AccountEntity create(Site site, String username) {
     KeyHolder keyHolder = new GeneratedKeyHolder();
-    String sqlQuery = "INSERT INTO accounts (site_id) VALUES (?)";
+    String sqlQuery = "INSERT INTO accounts (site_id, name) VALUES (?, ?)";
     PreparedStatementCreator preparedStatementCreator = connection -> {
       PreparedStatement ps = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
       ps.setInt(1, site.getId());
+      ps.setString(2, username);
       return ps;
     };
     databaseManager.getJDBCTemplate().update(preparedStatementCreator, keyHolder);

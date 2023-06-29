@@ -516,6 +516,11 @@ input.error {
         background-image: url(/images/burgerMenu/1.00/close.svg);
     }
 
+    #headerMenuUsername {
+        font-family: Gotham;
+        font-size: 10px;
+    }
+
     .messages {
         display: flex;
         color: white;
@@ -1326,7 +1331,7 @@ class TwoLanguageFlag {
     };
 }
 
-// Code from script tag on header.html:140:2 called by file attribute on header on header.html:13:6
+// Code from script tag on header.html:145:2 called by file attribute on header on header.html:13:6
 
     const initHeader = () => {
         const burgerMenu = new BurgerMenu(
@@ -1336,23 +1341,28 @@ class TwoLanguageFlag {
                 closeMenuElementId: 'headerBurgerMenuActivator',
                 items: [
                     {
-                        id: 'users',
+                        id: 'headerMenuUsername',
+                        hide: ['status:notLogged'],
+                        show: ['status:logged'],
+                    },
+                    {
+                        id: 'headerMenuItemUsers',
                         hide: ['page:/admin/users/list.html'],
                         onclick: '/admin/users/list.html'
                     },
                     {
-                        id: 'places',
+                        id: 'headerMenuItemPlaces',
                         hide: ['page:/admin/places/list.html'],
                         onclick: '/admin/places/list.html'
                     },
                     {
-                        id: 'login',
+                        id: 'headerMenuItemLogin',
                         hide: ['status:logged', 'page:/login.html'],
                         show: ['status:notLogged'],
                         onclick: '/login.html'
                     },
                     {
-                        id: 'logout',
+                        id: 'headerMenuItemLogout',
                         hide: ['status:notLogged'],
                         show: ['status:logged'],
                         onclick: '/logout'
@@ -1388,6 +1398,13 @@ class TwoLanguageFlag {
             element.innerHTML = Core.getText(data.message);
             element.classList.add('message');
             setTimeout(hideMessage, 8000);
+        });
+        Core.subscribeTo('core:webClientDataChange', data => {
+            if (data !== null && data.user !== null) {
+                username = data.user.username;
+                accountName = data.account.name;
+                document.getElementById('headerMenuUsername').innerHTML = `${username} (${accountName})`;
+            }
         });
     }
 
@@ -1549,16 +1566,17 @@ Core.setReportSystemErrorFunction(error => {
     <div id="headerContainer">
         <div class="burguerMenuContainer" id="headerMenuContainer">
             <div class="menuItems">
-                <div class="menuItem" id="users">
+                <div class="menuItem" id="headerMenuUsername"></div>
+                <div class="menuItem" id="headerMenuItemUsers">
                     <span id="s1"></span>
                 </div>
-                <div class="menuItem" id="places">
+                <div class="menuItem" id="headerMenuItemPlaces">
                     <span id="s2"></span>
                 </div>
-                <div class="menuItem" id="login">
+                <div class="menuItem" id="headerMenuItemLogin">
                     <span id="s3"></span>
                 </div>
-                <div class="menuItem" id="logout">
+                <div class="menuItem" id="headerMenuItemLogout">
                     <span id="s4"></span>
                 </div>
                 <div class="menuItem" id="twoLanguageFlag"></div>

@@ -22,7 +22,7 @@ DROP TABLE IF EXISTS `countries`;
 DROP TABLE IF EXISTS `phone_formats`;
 DROP TABLE IF EXISTS `phones`;
 DROP TABLE IF EXISTS `person_phones`;
-DROP TABLE IF EXISTS `people_users`;
+DROP TABLE IF EXISTS `users_people`;
 
 CREATE TABLE `sites` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
@@ -147,10 +147,10 @@ CREATE TABLE `administrative_divisions` (
 CREATE TABLE `people` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
-  `second_name` VARCHAR(100) NOT NULL,
+  `second_name` VARCHAR(100) DEFAULT NULL,
   `last_name` VARCHAR(100) NOT NULL,
-  `second_last_name` VARCHAR(100) NOT NULL,
-  `date_of_birth` DATE NOT NULL,
+  `second_last_name` VARCHAR(100) DEFAULT NULL,
+  `date_of_birth` DATE DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -189,12 +189,6 @@ CREATE TABLE `person_phones` (
   `phone_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_person_phone` (`person_id`, `phone_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `people_users` (
-  `person_id` INT(11) NOT NULL,
-  `user_id` INT(11) NOT NULL,
-  PRIMARY KEY (`person_id`, `user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `sofia`.`sites` (name) VALUES ('localhost');
@@ -342,4 +336,4 @@ INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_bi
 INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Elisabet', 'Noelia', 'Otero', 'Martinez', '1992-6-21');
 INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Esther', 'Paloma', 'Amador', 'Mercado', '1994-5-22');
 
-INSERT INTO `people_users` (person_id, user_id) VALUES (1, 1);
+INSERT INTO `users_people` (user_id, person_id) VALUES (1, 1);

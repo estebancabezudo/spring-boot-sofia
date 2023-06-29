@@ -14,6 +14,8 @@ public class PathManager {
   public static final String IMAGES_FOLDER_NAME = "images";
   public static final String TEXTS_FOLDER_NAME = "texts";
   public static final String LIBS_DIRECTORY_NAME = "libs";
+  public static final String PROTECTED_IMAGE_FOLDER_NAME = "images";
+  public static final String PROTECTED_IMAGE_PEOPLE_FOLDER_NAME = "people";
   private final Map<String, Path> sourcePaths = new TreeMap<>();
   private @Autowired SofiaEnvironment sofiaEnvironment;
 
@@ -52,5 +54,9 @@ public class PathManager {
 
   public Path getVersionedSourcesLibraryPath(Site site, String version) {
     return getSourcesPath(site).resolve(version).resolve(SofiaEnvironment.LIBS_DIRECTORY_NAME);
+  }
+
+  public Path getProtectedPersonImagesPath(Site site) {
+    return sofiaEnvironment.getSitesPath().resolve(site.getName()).resolve(PROTECTED_IMAGE_FOLDER_NAME).resolve(PROTECTED_IMAGE_PEOPLE_FOLDER_NAME);
   }
 }

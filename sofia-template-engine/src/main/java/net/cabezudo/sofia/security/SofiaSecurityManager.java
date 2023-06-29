@@ -7,6 +7,10 @@ import net.cabezudo.sofia.accounts.persistence.AccountRepository;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.emails.persistence.EMailEntity;
 import net.cabezudo.sofia.emails.persistence.EMailRepository;
+import net.cabezudo.sofia.people.OAuth2PersonAdapter;
+import net.cabezudo.sofia.people.OAuthPersonData;
+import net.cabezudo.sofia.people.PeopleManager;
+import net.cabezudo.sofia.people.Person;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteManager;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
@@ -45,6 +49,8 @@ public class SofiaSecurityManager {
   private @Autowired UserPreferencesManager userPreferencesManager;
   private @Autowired WebClientDataManager webClientDataManager;
   private @Autowired SiteManager siteManager;
+  private @Autowired OAuth2PersonAdapter oAuth2PersonAdapter;
+  private @Autowired PeopleManager peopleManager;
 
   @Transactional
   public SofiaUser getLoggedUser() {
@@ -69,28 +75,43 @@ public class SofiaSecurityManager {
     if (authentication instanceof OAuth2AuthenticationToken) {
       OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
       OAuth2User principal = oAuth2AuthenticationToken.getPrincipal();
-      String email = principal.getAttribute("email");
+
       Site site;
+      SofiaUser user;
       try {
         site = siteManager.getByHostname(request.getServerName());
       } catch (SiteNotFoundException e) {
         throw new SofiaRuntimeException(e);
       }
+
+      OAuthPersonData oAuthPersonData = oAuth2PersonAdapter.build(site, oAuth2AuthenticationToken);
+      String email = oAuthPersonData.getEmail();
+
       // TODO Get the account from the stored as default for the user with that email
       AccountEntity accountEntity = accountRepository.getAccountByEMail(email, site.getId());
       if (accountEntity == null) {
         SofiaUser newUser = newUser(site, webClientData.getLanguage().toLocale(), email);
         setUserInWebClientData(webClientData, newUser);
-        return newUser;
+        user = newUser;
       } else {
         final UserEntity userEntity = userRepository.findByEmail(accountEntity.getId(), email);
         if (userEntity == null) {
           throw new UsernameNotFoundException(email);
         }
-        SofiaUser user = entityToBusinessUserMapper.map(accountEntity, userEntity);
+        user = entityToBusinessUserMapper.map(accountEntity, userEntity);
         setUserInWebClientData(webClientData, user);
-        return user;
       }
+
+      Person personFromDataBase = peopleManager.getByEMail(email);
+      if (personFromDataBase == null) {
+        String name = oAuthPersonData.getName();
+        String secondName = oAuthPersonData.getSecondName();
+        String lastName = oAuthPersonData.getLastName();
+        String secondLastName = oAuthPersonData.getSecondLlastName();
+        Person person = peopleManager.create(name, secondName, lastName, secondLastName, null);
+        peopleManager.relate(user, person);
+      }
+      return user;
     }
     return null;
   }
