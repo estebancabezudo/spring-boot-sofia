@@ -1,4 +1,4 @@
-package net.cabezudo.sofia.people;
+package net.cabezudo.sofia.people.persistence;
 
 import java.util.Date;
 

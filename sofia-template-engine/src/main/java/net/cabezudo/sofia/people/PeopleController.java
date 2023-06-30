@@ -5,6 +5,9 @@ import net.cabezudo.sofia.core.rest.ListRestResponse;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
 import net.cabezudo.sofia.people.mappers.BusinessToRestPersonListMapper;
 import net.cabezudo.sofia.people.mappers.BusinessToRestPersonMapper;
+import net.cabezudo.sofia.people.rest.PeopleRestResponse;
+import net.cabezudo.sofia.people.rest.RestPerson;
+import net.cabezudo.sofia.people.rest.RestPersonList;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.users.Group;
 import org.slf4j.Logger;
@@ -21,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 @ResponseBody
 public class PeopleController extends SofiaAuthorizedController {
-
   private static final Logger log = LoggerFactory.getLogger(PeopleController.class);
 
   private @Autowired PeopleManager peopleManager;

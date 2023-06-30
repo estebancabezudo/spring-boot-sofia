@@ -84,8 +84,8 @@ public class SofiaSecurityManager {
         throw new SofiaRuntimeException(e);
       }
 
-      OAuthPersonData oAuthPersonData = oAuth2PersonAdapter.build(site, oAuth2AuthenticationToken);
-      String email = oAuthPersonData.getEmail();
+      String email = principal.getAttribute("email");
+      OAuthPersonData oAuthPersonData = oAuth2PersonAdapter.build(site, email, oAuth2AuthenticationToken);
 
       // TODO Get the account from the stored as default for the user with that email
       AccountEntity accountEntity = accountRepository.getAccountByEMail(email, site.getId());
@@ -94,7 +94,7 @@ public class SofiaSecurityManager {
         setUserInWebClientData(webClientData, newUser);
         user = newUser;
       } else {
-        final UserEntity userEntity = userRepository.findByEmail(accountEntity.getId(), email);
+        final UserEntity userEntity = userRepository.findByEmailAndAccount(accountEntity.getId(), email);
         if (userEntity == null) {
           throw new UsernameNotFoundException(email);
         }
@@ -120,7 +120,7 @@ public class SofiaSecurityManager {
     webClientData.setUser(user);
     log.debug("Web client data=" + webClientData);
     if (webClientData.getAccount() == null) {
-      Account preferredAccount = userPreferencesManager.getAccount(user);
+      Account preferredAccount = userPreferencesManager.getAccountByUserId(user.getId());
       log.debug("Account recovered from user preferences=" + preferredAccount);
       if (preferredAccount == null) {
         log.debug("The user don't have a preferred account. Set the user account " + user.getAccount() + " as preferred in web client data session object.");
@@ -142,7 +142,7 @@ public class SofiaSecurityManager {
       emailForAccount = emailEntityFromRepository;
     }
     UserEntity userEntity = userRepository.create(emailForAccount, locale.toString(), true);
-    AccountEntity newAccountEntity = accountRepository.create(site, emailForAccount.getEmail());
+    AccountEntity newAccountEntity = accountRepository.create(site.getId(), emailForAccount.getEmail());
     accountRepository.create(newAccountEntity.getId(), userEntity.getId(), true);
     UserEntity newUser = userRepository.get(newAccountEntity.getId(), userEntity.getId());
     SofiaUser user = entityToBusinessUserMapper.map(newAccountEntity, newUser);

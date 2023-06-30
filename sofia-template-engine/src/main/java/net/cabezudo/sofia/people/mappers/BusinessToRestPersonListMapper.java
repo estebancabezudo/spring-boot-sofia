@@ -2,7 +2,7 @@ package net.cabezudo.sofia.people.mappers;
 
 import net.cabezudo.sofia.people.PeopleList;
 import net.cabezudo.sofia.people.Person;
-import net.cabezudo.sofia.people.RestPersonList;
+import net.cabezudo.sofia.people.rest.RestPersonList;
 
 public class BusinessToRestPersonListMapper {
 

@@ -1,6 +1,6 @@
 package net.cabezudo.sofia.people.mappers;
 
-import net.cabezudo.sofia.people.PersonEntity;
+import net.cabezudo.sofia.people.persistence.PersonEntity;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.Date;

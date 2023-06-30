@@ -5,7 +5,6 @@ import net.cabezudo.sofia.config.DatabaseConfiguration;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.core.persistence.InvalidKey;
 import net.cabezudo.sofia.persistence.DatabaseManager;
-import net.cabezudo.sofia.sites.Site;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +22,13 @@ public class AccountRepository {
   private static final Logger log = LoggerFactory.getLogger(AccountRepository.class);
   private @Autowired DatabaseManager databaseManager;
 
-  public AccountEntity create(Site site, String username) {
+  public AccountEntity create(int siteId, String name) {
     KeyHolder keyHolder = new GeneratedKeyHolder();
     String sqlQuery = "INSERT INTO accounts (site_id, name) VALUES (?, ?)";
     PreparedStatementCreator preparedStatementCreator = connection -> {
       PreparedStatement ps = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
-      ps.setInt(1, site.getId());
-      ps.setString(2, username);
+      ps.setInt(1, siteId);
+      ps.setString(2, name);
       return ps;
     };
     databaseManager.getJDBCTemplate().update(preparedStatementCreator, keyHolder);
@@ -38,18 +37,18 @@ public class AccountRepository {
     if (key == null) {
       throw new InvalidKey("key from key holder is null");
     }
-    return new AccountEntity(key.intValue(), site.getId(), username);
+    return new AccountEntity(key.intValue(), siteId, name);
   }
 
-  public AccountUserRelationEntity find(int accountId, int userId, int siteId) {
-    log.debug("Check if exists a relation between account " + accountId + " and user " + userId);
+  public AccountUserRelationEntity find(int accountId, int userId) {
+    log.debug("Check if exists a relation between account " + accountId);
 
     List<AccountUserRelationEntity> list = databaseManager.getJDBCTemplate().query(
         "SELECT au.id AS id, a.id AS account_id, a.site_id AS site_id, au.owner AS owner " +
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON au.user_id = u.id " +
-            "WHERE a.id = ? AND u.id = ? AND a.site_id = ?", new AccountUserRelationRowMapper(), accountId, userId, siteId);
+            "WHERE a.id = ? AND u.id = ?", new AccountUserRelationRowMapper(), accountId, userId);
     if (list.size() == 0) {
       return null;
     }

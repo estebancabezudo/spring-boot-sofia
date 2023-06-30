@@ -1,5 +1,7 @@
 package net.cabezudo.sofia.people;
 
+import net.cabezudo.sofia.people.persistence.PersonEntity;
+
 import java.util.Date;
 
 public class Person {

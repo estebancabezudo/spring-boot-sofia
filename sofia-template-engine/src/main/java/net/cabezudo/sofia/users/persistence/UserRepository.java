@@ -28,8 +28,8 @@ public class UserRepository {
   private @Autowired DatabaseManager databaseManager;
 
   @Transactional
-  public UserEntity findByEmail(int account_id, String email) {
-    log.debug("Search user for account " + account_id + " and " + email);
+  public UserEntity findByEmailAndAccount(int account_id, String email) {
+    log.debug("Search users for account " + account_id + " and " + email);
 
     List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate().queryForList(
         "SELECT u.id AS id, a.site_id, a.id AS account_user_id, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
@@ -46,7 +46,6 @@ public class UserRepository {
 
     Map<String, Object> firstRecord = list.get(0);
     EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
-    // TODO user a row mapper
     UserEntity userEntity = newUserEntity(firstRecord, eMailEntity);
     for (Map<String, Object> rs : list) {
       String groupName = (String) rs.get("authority");
@@ -173,10 +172,6 @@ public class UserRepository {
       return null;
     }
 
-    if (list.size() == 1) {
-      throw new RuntimeException("I found more than one user entity.");
-    }
-
     Map<String, Object> firstRecord = list.get(0);
 
     EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
@@ -252,5 +247,33 @@ public class UserRepository {
       return ps;
     };
     databaseManager.getJDBCTemplate().update(preparedStatementCreator);
+  }
+
+  public UserEntity findByEmail(String email) {
+    log.debug("Search user for email " + email);
+
+    List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate().queryForList(
+        "SELECT u.id AS id, a.site_id, a.id AS account_user_id, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
+            "FROM accounts AS a " +
+            "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
+            "LEFT JOIN users AS u ON u.id = au.user_id " +
+            "LEFT JOIN `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
+            "WHERE u.email_id = e.id AND au.owner = true AND e.email = ?", email));
+
+    if (list.size() == 0) {
+      return null;
+    }
+
+    Map<String, Object> firstRecord = list.get(0);
+    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
+    UserEntity userEntity = newUserEntity(firstRecord, eMailEntity);
+    for (Map<String, Object> rs : list) {
+      String groupName = (String) rs.get("authority");
+      if (groupName != null) {
+        userEntity.add(new GroupEntity((int) firstRecord.get("id"), groupName));
+      }
+    }
+    return userEntity;
   }
 }

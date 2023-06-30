@@ -2,7 +2,7 @@ package net.cabezudo.sofia.people.mappers;
 
 import net.cabezudo.sofia.core.persistence.EntityList;
 import net.cabezudo.sofia.people.PeopleList;
-import net.cabezudo.sofia.people.PersonEntity;
+import net.cabezudo.sofia.people.persistence.PersonEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

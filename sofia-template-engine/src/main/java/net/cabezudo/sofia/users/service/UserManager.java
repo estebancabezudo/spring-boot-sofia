@@ -65,7 +65,7 @@ public class UserManager {
   public SofiaUser loadUserByUsername(String email) throws UsernameNotFoundException {
     Account account = (Account) request.getSession().getAttribute("account");
 
-    final UserEntity userEntity = userRepository.findByEmail(account.getId(), email);
+    final UserEntity userEntity = userRepository.findByEmailAndAccount(account.getId(), email);
     if (userEntity == null) {
       throw new UsernameNotFoundException(email);
     }
@@ -115,7 +115,7 @@ public class UserManager {
 
     UserEntity userEntity = userRepository.create(usernameToUse, locale.toString(), enabled);
 
-    AccountEntity accountEntity = accountRepository.create(site, usernameToUse.getEmail());
+    AccountEntity accountEntity = accountRepository.create(site.getId(), usernameToUse.getEmail());
 
     AccountUserRelationEntity accountUserRelationEntity = accountRepository.create(accountEntity.getId(), userEntity.getId(), true);
 
@@ -141,6 +141,10 @@ public class UserManager {
     log.debug("Using email with id " + usernameToUse);
 
     UserEntity userEntity = userRepository.create(usernameToUse, locale.toString(), enabled);
+
+    Site site = account.getSite();
+    AccountEntity newAccountEntity = accountRepository.create(site.getId(), eMailAddress);
+    AccountUserRelationEntity ownAccountUserRelationEntity = accountRepository.create(newAccountEntity.getId(), userEntity.getId(), true);
 
     AccountUserRelationEntity accountUserRelationEntity = accountRepository.create(account.getId(), userEntity.getId(), false);
     userEntity.setAccountUserId(accountUserRelationEntity.id());

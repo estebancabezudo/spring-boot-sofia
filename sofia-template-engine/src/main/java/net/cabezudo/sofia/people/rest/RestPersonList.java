@@ -1,4 +1,4 @@
-package net.cabezudo.sofia.people;
+package net.cabezudo.sofia.people.rest;
 
 import net.cabezudo.sofia.core.rest.RestList;
 

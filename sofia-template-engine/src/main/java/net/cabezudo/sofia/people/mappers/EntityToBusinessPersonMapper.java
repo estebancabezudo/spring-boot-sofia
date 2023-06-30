@@ -1,7 +1,7 @@
 package net.cabezudo.sofia.people.mappers;
 
 import net.cabezudo.sofia.people.Person;
-import net.cabezudo.sofia.people.PersonEntity;
+import net.cabezudo.sofia.people.persistence.PersonEntity;
 import org.springframework.stereotype.Component;
 
 @Component

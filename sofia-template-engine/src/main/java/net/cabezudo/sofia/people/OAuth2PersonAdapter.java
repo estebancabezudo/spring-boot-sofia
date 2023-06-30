@@ -6,6 +6,7 @@ import net.cabezudo.sofia.sites.Site;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
@@ -24,17 +25,24 @@ public class OAuth2PersonAdapter {
   private static final Logger log = LoggerFactory.getLogger(OAuth2PersonAdapter.class);
   private @Autowired PeopleManager peopleManager;
   private @Autowired PathManager pathManager;
+  private @Autowired OAuth2AuthorizedClientService authorizedClientService;
 
-  public OAuthPersonData build(Site site, OAuth2AuthenticationToken oAuth2User) {
+  public OAuthPersonData build(Site site, String email, OAuth2AuthenticationToken oAuth2User) {
     String registrationId = oAuth2User.getAuthorizedClientRegistrationId();
     OAuth2User principal = oAuth2User.getPrincipal();
+    String name;
+    String secondName;
+    String lastName;
+    String secondLastName;
+    Locale locale;
+    Date dateOfBirth;
     switch (registrationId) {
       case "google":
-        String name = principal.getAttribute("given_name");
-        String secondName = null;
-        String lastName = principal.getAttribute("family_name");
-        String secondLlastName = null;
-        String email = principal.getAttribute("email");
+        authorizedClientService.loadAuthorizedClient("google", email);
+        name = principal.getAttribute("given_name");
+        secondName = null;
+        lastName = principal.getAttribute("family_name");
+        secondLastName = null;
         // TODO Save picture on disk using a name from the email. Protect the image from read using the user access in the controller.
         String imageURLFromAttribute = principal.getAttribute("picture");
         if (imageURLFromAttribute != null) {
@@ -50,11 +58,51 @@ public class OAuth2PersonAdapter {
           }
         }
         String localeFromPrincipal = principal.getAttribute("locale");
-        Locale locale = localeFromPrincipal == null ? null : new Locale(localeFromPrincipal);
-        Date dateOfBirth = null;
-        return new OAuthPersonData(email, name, secondName, lastName, secondLlastName, dateOfBirth, locale);
+        locale = localeFromPrincipal == null ? null : new Locale(localeFromPrincipal);
+        dateOfBirth = null;
+        return new OAuthPersonData(email, name, secondName, lastName, secondLastName, dateOfBirth, locale);
       case "facebook":
-//        return new Person();
+        authorizedClientService.loadAuthorizedClient("facebook", email);
+        String nameFromFacebook = principal.getAttribute("name");
+        if (nameFromFacebook == null) {
+          name = null;
+          secondName = null;
+          lastName = null;
+          secondLastName = null;
+          dateOfBirth = null;
+          locale = null;
+        } else {
+          String[] names = nameFromFacebook.split(" ");
+          switch (names.length) {
+            case 1:
+              name = names[0];
+              secondName = null;
+              lastName = null;
+              secondLastName = null;
+              break;
+            case 2:
+              name = names[0];
+              secondName = null;
+              lastName = names[1];
+              secondLastName = null;
+              break;
+            case 3:
+              name = names[0];
+              secondName = null;
+              lastName = names[1];
+              secondLastName = names[2];
+              break;
+            default:
+              name = names[0];
+              secondName = names[1];
+              lastName = names[2];
+              secondLastName = names[3];
+              break;
+          }
+          dateOfBirth = null;
+          locale = null;
+        }
+        return new OAuthPersonData(email, name, secondName, lastName, secondLastName, dateOfBirth, locale);
       default:
         throw new SofiaRuntimeException("Invalid oauth client registrator id: " + registrationId);
     }

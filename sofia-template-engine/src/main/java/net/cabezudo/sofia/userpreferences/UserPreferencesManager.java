@@ -28,15 +28,15 @@ public class UserPreferencesManager {
     if (account == null) {
       return;
     }
-    AccountUserRelationEntity accountUserRelationEntity = accountRepository.find(account.getId(), user.getId(), account.getSite().getId());
+    AccountUserRelationEntity accountUserRelationEntity = accountRepository.find(account.getId(), user.getId());
 
     UserPreferences userPreferences = accountPreferencesRepository.get(accountUserRelationEntity.id(), LANGUAGE);
     // TODO set user preferences
   }
 
   @Transactional
-  public Account getAccount(SofiaUser user) {
-    String result = userPreferencesRepository.get(user.getId(), ACCOUNT);
+  public Account getAccountByUserId(int userId) {
+    String result = userPreferencesRepository.get(userId, ACCOUNT);
     if (result == null) {
       return null;
     }

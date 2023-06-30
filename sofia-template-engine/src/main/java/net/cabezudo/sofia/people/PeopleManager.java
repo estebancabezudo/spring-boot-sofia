@@ -4,6 +4,7 @@ import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.core.persistence.EntityList;
 import net.cabezudo.sofia.people.mappers.EntityToBusinessPersonListMapper;
 import net.cabezudo.sofia.people.mappers.EntityToBusinessPersonMapper;
+import net.cabezudo.sofia.people.persistence.PersonEntity;
 import net.cabezudo.sofia.users.SofiaUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,9 +17,7 @@ import java.sql.Date;
 @Service
 @Transactional
 public class PeopleManager {
-
-  @Resource
-  private PeopleRepository peopleRepository;
+  private @Resource PeopleRepository peopleRepository;
 
   private @Autowired EntityToBusinessPersonMapper entityToBusinessPersonMapper;
 
