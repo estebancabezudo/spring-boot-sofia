@@ -172,28 +172,34 @@
   font-family: Gotham;
   src: url('/fonts/gotham-light.otf');
   font-weight: 100;
-  font-display: fallback;
+  font-display: block;
 }
 
 @font-face {
   font-family: Gotham;
   src: url('/fonts/gotham-book.otf');
   font-weight: 300;
-  font-display: fallback;
+  font-display: block;
 }
 
 @font-face {
   font-family: Gotham;
   src: url('/fonts/gotham-medium.otf');
   font-weight: 600;
-  font-display: fallback;
+  font-display: block;
 }
 
 @font-face {
   font-family: Gotham;
   src: url('/fonts/gotham-bold.otf');
   font-weight: 800;
-  font-display: fallback;
+  font-display: block;
+}
+
+@font-face {
+  font-family: Ubuntu;
+  src: url('/fonts/ubuntu/Ubuntu-Regular.ttf');
+  font-display: block;
 }
 
 body,
@@ -510,6 +516,8 @@ input.error {
         display: flex;
         flex-direction: row;
         align-items: center;
+        font-weight: normal;
+        font-size: 14px;
     }
 
     .menuItem>span {
@@ -1368,7 +1376,7 @@ class TwoLanguageFlag {
     };
 }
 
-// Code from script tag on header.html:147:2 called by file attribute on header on header.html:14:6
+// Code from script tag on header.html:149:2 called by file attribute on header on header.html:14:6
 
     const initHeader = () => {
         const burgerMenu = new BurgerMenu(
