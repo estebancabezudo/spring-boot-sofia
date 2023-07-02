@@ -37,7 +37,7 @@ public class PeopleController extends SofiaAuthorizedController {
     log.debug("Get list of people");
     ListRestResponse<RestPerson> listRestResponse;
 
-    Account account = super.getAccount();
+    Account account = super.getWebClientData().getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -56,7 +56,7 @@ public class PeopleController extends SofiaAuthorizedController {
     log.debug("/v1/people/{id}");
     PeopleRestResponse peopleRestResponse;
 
-    Account account = super.getAccount();
+    Account account = super.getWebClientData().getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {

@@ -9,11 +9,13 @@ public final class RestWebClientData {
   private final String language;
   private final Account account;
   private final RestUser user;
+  private final String message;
 
-  public RestWebClientData(String language, Account account, RestUser user) {
+  public RestWebClientData(String language, Account account, RestUser user, String message) {
     this.language = language;
     this.account = account;
     this.user = user;
+    this.message = message;
   }
 
   public String getLanguage() {
@@ -26,6 +28,10 @@ public final class RestWebClientData {
 
   public RestUser getUser() {
     return user;
+  }
+
+  public String getMessage() {
+    return message;
   }
 
   @Override
@@ -48,7 +54,8 @@ public final class RestWebClientData {
     return "RestWebClientData[" +
         "language=" + language + ", " +
         "account=" + account + ", " +
-        "user=" + user + ']';
+        "user=" + user + ", " +
+        "message=" + message + ']';
   }
 
 }

@@ -55,7 +55,7 @@ class Input {
                 if (!this.validator(value)) {
                     console.log(`${value} doesn't match the regex validation.`);
                     this.setInvalid(true);
-                    Core.showErrorMessage(this.invalidCharacterMessageKey);
+                    Core.showErrorMessage(Core.getText(this.invalidCharacterMessageKey));
                     runFunctionAfterValidation();
                     Core.publish('core:hideWait');
                     return;
@@ -70,12 +70,12 @@ class Input {
                             this.setInvalid(false);
                         } else {
                             this.setInvalid(true);
-                            Core.showErrorMessage(jsonResponse.message);
+                            Core.showErrorMessage(Core.getText(jsonResponse.message));
                         }
                         runFunctionAfterValidation(value);
                     })
                     .catch(error => {
-                        Core.showErrorMessage(error.message);
+                        Core.showErrorMessage(Core.getText(error.message));
                         Core.reportSystemError(error);
                     });
             }, 2000);

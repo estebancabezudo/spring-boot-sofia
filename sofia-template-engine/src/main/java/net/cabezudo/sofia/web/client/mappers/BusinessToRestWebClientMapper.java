@@ -18,6 +18,6 @@ public class BusinessToRestWebClientMapper {
     Account account = c == null ? null : c.getAccount();
     SofiaUser user = c == null ? null : c.getUser();
     RestUser restUser = user == null ? null : businessToRestUserMapper.map(user);
-    return new RestWebClientData(language, account, restUser);
+    return new RestWebClientData(language, account, restUser, c.getMessage());
   }
 }

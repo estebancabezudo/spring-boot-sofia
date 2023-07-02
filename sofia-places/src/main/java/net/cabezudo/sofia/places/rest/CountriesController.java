@@ -32,7 +32,7 @@ public class CountriesController extends SofiaAuthorizedController {
     log.debug("Get list of codes for " + countryCode);
     ListRestResponse<String> listRestResponse;
 
-    Account account = super.getAccount();
+    Account account = super.getWebClientData().getAccount();
 
     ResponseEntity result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {

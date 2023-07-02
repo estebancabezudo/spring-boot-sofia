@@ -125,7 +125,7 @@ public class UsersController extends SofiaAuthorizedController {
   public ResponseEntity<?> getUser(@PathVariable Integer id) {
     log.debug("Run /v1/users/{id}");
 
-    Account account = super.getAccount();
+    Account account = super.getWebClientData().getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -150,7 +150,7 @@ public class UsersController extends SofiaAuthorizedController {
   public ResponseEntity<?> exists(@PathVariable Integer id) {
     log.debug("Run /v1/users/{id}");
 
-    Account account = super.getAccount();
+    Account account = super.getWebClientData().getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -175,7 +175,7 @@ public class UsersController extends SofiaAuthorizedController {
   public ResponseEntity<?> validateUsername(@PathVariable String username) {
     log.debug("Run /v1/users/usernames/{value}/info for validate username");
 
-    Account account = super.getAccount();
+    Account account = super.getWebClientData().getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -201,7 +201,7 @@ public class UsersController extends SofiaAuthorizedController {
   public ResponseEntity<?> validateUsernameForEdit(@PathVariable Integer id, @PathVariable String username) {
     log.debug("Run /v1/users/{id}/usernames/{username}/info for validate username");
 
-    Account account = super.getAccount();
+    Account account = super.getWebClientData().getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -233,7 +233,7 @@ public class UsersController extends SofiaAuthorizedController {
   public ResponseEntity<?> getUsers() {
     log.debug("Get list of users");
 
-    Account account = super.getAccount();
+    Account account = super.getWebClientData().getAccount();
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
       return result;
@@ -250,9 +250,9 @@ public class UsersController extends SofiaAuthorizedController {
   public ResponseEntity<?> create(@RequestBody RestUser restUserToSave) throws IOException {
     log.debug("Create a new user");
 
-    Account account = super.getAccount();
+    Account account = super.getWebClientData().getAccount();
 
-    restUserToSave.setAccount(super.getAccount());
+    restUserToSave.setAccount(account);
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -273,7 +273,7 @@ public class UsersController extends SofiaAuthorizedController {
   public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody RestUser restUserToUpdate) throws IOException {
     log.debug("Update an existing user");
 
-    Account account = super.getAccount();
+    Account account = super.getWebClientData().getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -294,7 +294,7 @@ public class UsersController extends SofiaAuthorizedController {
   public ResponseEntity<?> delete(@PathVariable Integer id) throws IOException {
     log.debug("Delete a user");
 
-    Account account = super.getAccount();
+    Account account = super.getWebClientData().getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -310,7 +310,7 @@ public class UsersController extends SofiaAuthorizedController {
   public ResponseEntity<SofiaRestResponse<?>> info(@PathVariable Integer id) {
     log.debug("/v1/users/" + id);
 
-    Account account = super.getAccount();
+    Account account = super.getWebClientData().getAccount();
     Site site = super.getSite();
 
     ResponseEntity<SofiaRestResponse<?>> result;

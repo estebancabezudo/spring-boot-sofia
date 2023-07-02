@@ -546,17 +546,28 @@ input.error {
 <script>const siteLanguages = ['en', 'es'];
 
 const templateVariables = { "header": { "height": "60px" } };
+// Code from library core:1.00 on login.html
+// core:setTexts
+// core:webClientDataChange
+// core:showMessage
+// core:showErrorMessage
+
 'use strict';
+
 class User {
     constructor(data) {
         this.username = data.username;
+        console.log(`Core::User: data.groups:`, data.groups, Core.isArray(data.groups));
         if (Core.isArray(data.groups)) {
             this.groups = data.groups;
         } else {
             this.groups = [];
+            console.log(`Groups not found in user data.`, data);
         }
+
     };
 }
+
 const Core = {
     PLACEHOLDER: 1,
     VALUE: 2,
@@ -566,8 +577,11 @@ const Core = {
     requestId: 0,
     topics: [],
     reportSystemErrorFunction: null,
+
     queryParameters: new URLSearchParams(location.search),
+
     getActualWebClientDetails: () => {
+        console.log(`core::getActualWebClientDetails`);
         fetch('/v1/web/clients/actual/details', {
             method: 'GET'
         })
@@ -579,9 +593,29 @@ const Core = {
                 } else {
                     Core.user = new User(user);
                 }
+
+                Core.subscribeTo('core:setTexts', data => {
+                    if (jsonData.message) {
+                        const message = jsonData.message;
+                        if (message) {
+                            console.log(message);
+                            const jsonMessage = JSON.parse(message);
+                            console.log(jsonMessage);
+                            if (jsonMessage.type === 'error') {
+                                Core.showErrorMessage(jsonMessage.data);
+                            } else {
+                                Core.showMessage(jsonMessage.data);
+                            }
+
+                        }
+                    }
+                });
+
+                console.log(`commons.js::getActualWebClientDetails: `, jsonData);
                 Core.publish('core:webClientDataChange', jsonData);
             });
     },
+
     getPreferredLanguage: () => {
         const defaultFromSiteLanguages = () => {
             if (siteLanguages.includes("en") || siteLanguages.length == 0) {
@@ -589,6 +623,7 @@ const Core = {
             }
             return siteLanguages[0];
         };
+
         const browserLocale = window.navigator.userLanguage || window.navigator.language;
         if (siteLanguages.includes(browserLocale)) {
             return browserLocale;
@@ -605,6 +640,7 @@ const Core = {
         }
         return defaultFromSiteLanguages();
     },
+
     getGeoLocation: async () => {
         if (navigator.geolocation) {
             try {
@@ -627,6 +663,7 @@ const Core = {
                 };
             }
         } else {
+            console.log("*** get end without support");
             return {
                 status: "NOT_SUPPORTED",
                 message: "Geolocation is not supported by this browser.",
@@ -652,6 +689,7 @@ const Core = {
     getNextRequestId: () => {
         return Core.requestId++;
     },
+
     getText: (key, values) => {
         if (!key) {
             console.trace();
@@ -659,6 +697,7 @@ const Core = {
         }
         let text = texts[key];
         if (!text) {
+            console.log(`No text for key: ${key}`);
             text = `[${key}]`;
         }
         if (values) {
@@ -676,15 +715,19 @@ const Core = {
         }
         return text;
     },
+
     getTimezoneOffset: () => {
         return (new Date()).getTimezoneOffset();
     },
+
     isArray: v => {
         return Object.prototype.toString.call(v) === '[object Array]';
     },
+
     isFunction: v => {
         return Object.prototype.toString.call(v) === '[object Function]';
     },
+
     isLogged: () => {
         const user = Core.user;
         if (user === undefined || user === null) {
@@ -699,6 +742,7 @@ const Core = {
     isString: v => {
         return Object.prototype.toString.call(v) === '[object String]';
     },
+
     isHTMLDivElement: v => {
         try {
             return v instanceof HTMLElement;
@@ -706,36 +750,47 @@ const Core = {
             return Object.prototype.toString.call(v) === '[object HTMLDivElement]';
         }
     },
+
     isValid: list => {
         if (!list || list === null) {
             return false;
         }
         for (let i = 0; i < list.length; i++) {
             const value = list[i];
+            console.log(`Core::isValid: Value to check: ${value}`);
             if (value === 'status:logged' && Core.isLogged()) {
+                console.log(`Core::isValid: The user is logged`);
                 return true;
             }
             if (value === 'status:notLogged' && Core.isNotLogged()) {
+                console.log(`Core::isValid: The user is not logged`);
                 return true;
             }
             if (value.startsWith("page:")) {
                 const page = value.substr(5);
                 if (page.endsWith('**')) {
+                    console.log(`${window.location.pathname} start with ${page.substring(0, page.length - 2)}: ${window.location.pathname === page.substring(0, -2)}`);
                     if (window.location.pathname.startsWith(page.substring(0, page.length - 2))) {
+                        console.log(`Core::isValid: The page is correct: ${page}`);
                         return true;
                     }
                 } else {
+                    console.log(`${window.location.pathname} === ${page}: ${window.location.pathname === page}`);
                     if (window.location.pathname === page) {
+                        console.log(`Core::isValid: The page is correct: ${page}`);
                         return true;
                     }
                 }
             }
             if (value.startsWith("group:")) {
                 const group = value.substr(6);
+                console.log(`Core::isValid: search for group: ${group}`);
                 if (Core.user === null) {
                     return false;
                 }
+                console.log('Core::isValid: user: ', Core.user);
                 const groups = Core.user.groups;
+                console.log('Core::isValid: groups: ', groups);
                 for (g of groups) {
                     if (group === g.name) {
                         return true;
@@ -744,11 +799,14 @@ const Core = {
                 return false;
             }
             if (value === 'default') {
+                console.log(`It is true by default`);
                 return true;
             }
         };
+        console.log(`   false`);
         return false;
     },
+
     loadLanguage: languageCode => {
         let fetchLanguage;
         if (siteLanguages.includes(languageCode)) {
@@ -766,16 +824,22 @@ const Core = {
             })
                 .then(response => response.json())
                 .then(jsonData => {
+                    console.log(jsonData.data);
                     texts = JSON.parse(jsonData.data);
+                    console.log(jsonData);
+                    console.log(texts);
                     Core.actualLanguage = fetchLanguage;
                     Core.setTexts(texts);
                 })
+
                 ;
         } else {
             throw Error(`Invalid language: ${languageCode}`);
         }
     },
+
     publish: (topicsName, data) => {
+        console.log(`Publish on ${topicsName}`, data);
         const functions = Core.topics[topicsName];
         if (functions && Core.isArray(functions)) {
             functions.forEach(func => {
@@ -794,6 +858,8 @@ const Core = {
     // This function avoid the race condition if the asignation of the text 
     // to the element is before the text web service is called
     setText: (element, key, options) => {
+        console.log(`Core::setText:`, element, key);
+
         Core.subscribeTo('core:setTexts', () => {
             Core.setTextToElement(element, Core.texts[key], options);
         });
@@ -813,6 +879,7 @@ const Core = {
         } else {
             jsonMessage = errorMessage;
         }
+        console.log(`Core::showErrorMessage:`, jsonMessage);
         Core.publish('core:showErrorMessage', jsonMessage);
     },
     showMessage: message => {
@@ -822,9 +889,11 @@ const Core = {
         } else {
             jsonMessage = errorMessage;
         }
+        console.log(`Core::showMessage: ${jsonMessage}`, jsonMessage);
         Core.publish('core:showMessage', jsonMessage);
     },
     setTextsById: () => {
+        console.log(`Core::setTextsById: Set text by id`);
         for (const [key, value] of Object.entries(Core.texts)) {
             const element = document.getElementById(key);
             Core.setTextToElement(element, value);
@@ -832,19 +901,23 @@ const Core = {
     },
     setTextToElement: (element, text, options) => {
         if (Core.isHTMLDivElement(element)) {
+            console.log(`Core::setTextToElement: Trying to set text to ${element.id} (${element.constructor.name})`);
             do {
                 if (
                     element instanceof HTMLSpanElement || element instanceof HTMLDivElement || element instanceof HTMLButtonElement || element instanceof HTMLOptionElement || element instanceof HTMLAnchorElement ||
                     element instanceof HTMLTitleElement || element instanceof HTMLParagraphElement || element instanceof HTMLHeadingElement) {
+                    console.log(`Core::setTextToElement: Set text ${text} to element with id ${element.id}`);
                     const childNodes = element.childNodes;
                     const write = childNodes.length === 0 || (childNodes.length === 1 && childNodes[0].nodeType === Node.TEXT_NODE && element.textContent !== text);
                     if (write) {
                         element.innerHTML = text;
                     } else {
+                        console.log(`Core::setTextToElement: WARNING. The element with the id ${element.id} is not empty.`, element);
                     }
                     break;
                 }
                 if (element instanceof HTMLInputElement) {
+                    console.log(`Core::setTextToElement: element type: ${element.type}`);
                     switch (element.type) {
                         case 'submit':
                             element.value = text;
@@ -861,6 +934,7 @@ const Core = {
                             element.placeholder = text;
                             break;
                         default:
+                            console.log(`Core::setTextsById: WARNING. Can't manage the type for the input element ${key}.`, element);
                     }
                     break;
                 }
@@ -871,6 +945,7 @@ const Core = {
             } while (false);
         }
     },
+
     subscribeTo: (topicsName, functionToExecute) => {
         let functions = Core.topics[topicsName];
         if (!functions) {
@@ -880,15 +955,18 @@ const Core = {
         functions.push(functionToExecute);
     }
 }
+
 const pageLoaded = async () => {
+    console.log(`Core::pageLoaded::templateVariables: `, templateVariables);
     Core.getActualWebClientDetails();
     Core.subscribeTo('core:setTexts', data => {
         const message = Core.queryParameters.get('message');
         if (message) {
-            Core.showMessage(message);
+            Core.showMessage(Core.getText(message));
         }
     });
     Core.subscribeTo('core:webClientDataChange', data => {
+        console.log('Data from core:webClientDataChange topic: ', data);
         if (data.language === undefined || data.language === null) {
             Core.loadLanguage(Core.getPreferredLanguage());
         } else {
@@ -896,7 +974,10 @@ const pageLoaded = async () => {
         }
     })
 }
+
 window.addEventListener('load', pageLoaded, false);
+
+// Code from library burgerMenu:1.00 on header.html called by file attribute on header on header.html:13:4
 class BurgerMenu {
     constructor(configuration) {
         this.beforeShow = configuration.beforeShow;
@@ -918,10 +999,13 @@ class BurgerMenu {
         const createGUI = (items) => {
             this.subMenus = new Array();
             this.menuVisible = false;
+
             this.openMenuButton.addEventListener('click', event => {
+                console.log(`BurguerMenu::constructor::createGUI: Click on ${event.target.id}`);
                 if (this.menuVisible) {
                     this.hide();
                     event.stopPropagation();
+
                 } else {
                     this.show();
                     event.stopPropagation();
@@ -929,17 +1013,21 @@ class BurgerMenu {
             });
             if (openMenuButtonId != closeMenuButtonId) {
                 this.closeMenuButton.addEventListener('click', event => {
+                    console.log(`BurguerMenu::constructor::createGUI: Click on ${event.target.id}`);
                     this.hide();
                     event.stopPropagation();
                 });
             }
             document.addEventListener('click', event => {
+                console.log(`BurguerMenu::constructor::createGUI: Click on ${event.target.id}`);
                 this.hide();
                 event.stopPropagation();
             });
             const showItem = item => {
+                console.log(`BurguerMenu::constructor::createGUI::showItem: Show item`);
                 const element = document.getElementById(item.id);
                 element.addEventListener('click', event => {
+                    console.log(`BurguerMenu::constructor::createGUI::showItem: Click on ${event.target.id}`);
                     if (Core.isString(item.onclick)) {
                         location.href = item.onclick;
                     }
@@ -947,6 +1035,7 @@ class BurgerMenu {
                 element.classList.remove('burgerMenuHiddenMenuItem');
             }
             const hideItem = item => {
+                console.log(`BurguerMenu::constructor::createGUI::hideItem: Hide item`);
                 const element = document.getElementById(item.id);
                 element.classList.add('burgerMenuHiddenMenuItem');
             }
@@ -955,17 +1044,30 @@ class BurgerMenu {
                     hideItem(item);
                 }
             });
+
             Core.subscribeTo('core:webClientDataChange', () => {
                 items.forEach(item => {
+                    console.log('item: ', item);
+                    console.log('burguerMenu::constructor::createGUI::subscribeTo: item.show ', item.show);
+                    console.log('burguerMenu::constructor::createGUI::subscribeTo: item.show is valid', Core.isValid(item.show));
+                    console.log('burguerMenu::constructor::createGUI::subscribeTo: item.hide ', item.show);
+                    console.log('burguerMenu::constructor::createGUI::subscribeTo: item.hide is valid', Core.isValid(item.hide));
+
                     if (item.hide && Core.isValid(item.hide)) {
+                        console.log('burguerMenu::constructor::createGUI::subscribeTo: Configured to show item ');
                         hideItem(item);
                         return;
                     }
+
                     if (item.show && Core.isValid(item.show)) {
+                        console.log('burguerMenu::constructor::createGUI::subscribeTo: Configured to hide item');
                         showItem(item);
                         return;
                     }
+
+                    console.log('burguerMenu::constructor::createGUI::subscribeTo: Nothing match. Show item');
                     showItem(item);
+
                 });
             });
         };
@@ -973,6 +1075,7 @@ class BurgerMenu {
         const openMenuButtonId = configuration.openMenuElementId;
         const closeMenuButtonId = configuration.closeMenuElementId;
         const items = configuration.items;
+
         validateElements(menuContainerId, openMenuButtonId, closeMenuButtonId);
         createGUI(items);
     };
@@ -995,6 +1098,8 @@ class BurgerMenu {
         }
     };
 }
+
+// Code from library linkTo:1.00 on header.html called by file attribute on header on header.html:13:4
 /**
  * Configuration
  * id - The element to link to.
@@ -1006,6 +1111,7 @@ class BurgerMenu {
  * hide - hide when is login, or not login or in a certain page
  * 
  *  */
+
 class LinkTo {
     constructor(configuration) {
         const getElement = (id, element) => {
@@ -1013,6 +1119,7 @@ class LinkTo {
                 throw new Error('You MUST specify an id or element to apply the link to.');
             }
             if (Core.isString(id)) {
+                console.log(`Linking the id ${id}`);
                 const element = document.getElementById(id);
                 if (element === null || element === undefined) {
                     throw new Error(`Element NOT FOUND: ${id}`);
@@ -1020,6 +1127,7 @@ class LinkTo {
                 return element;
             }
             if (Core.isHTMLDivElement(element)) {
+                console.log(`Linking the element `, element);
                 return element;
             }
         };
@@ -1039,6 +1147,7 @@ class LinkTo {
                 return;
             }
         };
+
         this.element.addEventListener('click', click);
         this.element.addEventListener('mouseup', event => {
             if (event.button === 1) {
@@ -1051,58 +1160,77 @@ class LinkTo {
             this.enable();
         }
         Core.subscribeTo('core:webClientDataChange', () => {
+            console.log(`linkTo::webClientDataChange: Change the status of the link ${this.element.id}`);
+
             do {
                 if (configuration.show && Core.isValid(configuration.show)) {
                     this.show();
                     break;
                 }
+
                 if (configuration.hide && Core.isValid(configuration.hide)) {
                     this.hide();
                     break;
                 }
             } while (false);
+
             do {
                 if (configuration.enable && Core.isValid(configuration.enable)) {
                     this.enable();
                     break;
                 }
+
                 if (configuration.disable && Core.isValid(configuration.disable)) {
                     this.disable();
                     break;
                 }
             } while (false);
+
             if (configuration.mark && Core.isValid(configuration.mark)) {
                 this.mark();
                 return;
             }
         });
     }
+
     mark() {
+        console.log('linkTo::marked');
         this.element.classList.add('marked')
     }
+
     show() {
+        console.log('linkTo::show');
         this.element.classList.add('visible')
         this.element.classList.remove('hide')
     }
+
     hide() {
+        console.log('linkTo::hide');
         this.element.classList.add('hide')
         this.element.classList.remove('visible')
     }
+
     disable() {
+        console.log('linkTo::disable');
         this.isDisable = true;
         this.element.classList.add('disabled')
         this.element.classList.remove('enabled')
     }
+
     enable() {
+        console.log('linkTo::enable');
         this.isDisable = false;
         this.element.classList.add('enabled')
         this.element.classList.remove('disabled')
     }
 }
+
+// Code from library twoLanguageFlag:1.00 on header.html called by file attribute on header on header.html:13:4
 /*
  * Created on: 11/05/2021
  * Author:     Esteban Cabezudo
  */
+
 class TwoLanguageFlag {
     constructor(configuration) {
         this.languages = configuration.languages;
@@ -1149,6 +1277,9 @@ class TwoLanguageFlag {
         return Core.actualLanguage;
     };
 }
+
+// Code from script tag on header.html:147:2 called by file attribute on header on header.html:13:4
+
     const initHeader = () => {
         const burgerMenu = new BurgerMenu(
             {
@@ -1202,20 +1333,22 @@ class TwoLanguageFlag {
             languages: [{ code: 'en' }, { code: 'es' }]
         });
         Core.subscribeTo('core:showErrorMessage', data => {
+            console.log(`header.html::initHeader::showErrorMessage::data: `, data);
             const hideMessage = () => {
                 element.classList.remove('errorMessage');
             };
             const element = document.getElementById('messages');
-            element.innerHTML = Core.getText(data.errorMessage);
+            element.innerHTML = data.errorMessage;
             element.classList.add('errorMessage');
             setTimeout(hideMessage, 3000);
         });
         Core.subscribeTo('core:showMessage', data => {
+            console.log(`header.html::initHeader::showMessage::data: `, data);
             const hideMessage = () => {
                 element.classList.remove('message');
             };
             const element = document.getElementById('messages');
-            element.innerHTML = Core.getText(data.message);
+            element.innerHTML = data.message;
             element.classList.add('message');
             setTimeout(hideMessage, 8000);
         });
@@ -1228,7 +1361,10 @@ class TwoLanguageFlag {
             }
         });
     }
+
     window.addEventListener('load', initHeader);
+
+// Code from library login:socialButtons:base:1.00 on loginForm.html called by file attribute on div on loginForm.html:14:4
 class SocialButton {
     constructor(options) {
         this.url = options.url;
@@ -1238,6 +1374,7 @@ class SocialButton {
             }
             if (Core.isString(target)) {
                 const id = target;
+                console.log(`Using the id ${id}`);
                 const element = document.getElementById(id);
                 if (element === null || element === undefined) {
                     throw new Error(`Element NOT FOUND: ${target}`);
@@ -1245,6 +1382,7 @@ class SocialButton {
                 return element;
             }
             if (Core.isHTMLDivElement(target)) {
+                console.log(`Using the element `, target);
                 this.element = target;
                 return element;
             }
@@ -1253,28 +1391,36 @@ class SocialButton {
         const socialButtonContainer = document.createElement('div');
         socialButtonContainer.className = 'socialButtonContainer';
         this.element.appendChild(socialButtonContainer);
+
         const socialButtonLogoContainer = document.createElement('div');
         socialButtonLogoContainer.className = 'socialButtonLogoContainer'
         socialButtonContainer.appendChild(socialButtonLogoContainer);
+
         const socialButtonLogo = document.createElement('div');
         socialButtonLogo.className = 'socialButtonLogo'
         socialButtonLogo.style.backgroundImage = `url(${options.image})`;
         socialButtonLogoContainer.appendChild(socialButtonLogo);
+
         const socialButtonTextContainer = document.createElement('div');
         socialButtonTextContainer.className = 'socialButtonTextContainer'
         socialButtonContainer.appendChild(socialButtonTextContainer);
+
         const socialButtonText = document.createElement('div');
         socialButtonText.className = 'socialButtonText'
         socialButtonText.id = options.textKey;
         socialButtonTextContainer.appendChild(socialButtonText);
+
         Core.subscribeTo('core:setTexts', () => {
             socialButtonText.innerText = Core.getText(options.textKey);
         });
+
         this.element.addEventListener('click', event => {
             location.href = this.url;
         });
     }
 }
+
+// Code from library login:socialButtons:google:1.00 on loginForm.html called by file attribute on div on loginForm.html:14:4
 class GoogleSocialButton extends SocialButton {
     constructor(options) {
         super({
@@ -1285,6 +1431,8 @@ class GoogleSocialButton extends SocialButton {
         });
     }
 }
+
+// Code from library login:socialButtons:facebook:1.00 on loginForm.html called by file attribute on div on loginForm.html:14:4
 class FacebookSocialButton extends SocialButton {
     constructor(options) {
         super({
@@ -1295,6 +1443,9 @@ class FacebookSocialButton extends SocialButton {
         });
     }
 }
+
+// Code from script tag on loginForm.html:5:2 called by file attribute on div on loginForm.html:14:4
+
     const initLogin = async () => {
         const loginForm = document.getElementById('loginForm');
         const loginMessageContainer = document.getElementById('loginMessageContainer');
@@ -1302,14 +1453,17 @@ class FacebookSocialButton extends SocialButton {
         const loginPasswordInput = document.getElementById('loginPasswordInput');
         new GoogleSocialButton({ element: 'googleLoginButton' });
         new FacebookSocialButton({ element: 'facebookLoginButton' });
+
         loginForm.onsubmit = async (e) => {
             e.preventDefault();
+
             const response = fetch('/v1/login', {
                 method: 'POST',
                 body: new FormData(loginForm)
             })
                 .then(response => response.json())
                 .then(jsonData => {
+                    console.log('loginForm.html::initLogin::jsonData', jsonData);
                     if (jsonData.status === 'ok') {
                         if (jsonData.redirection == null) {
                             window.location.href = '/';
@@ -1334,13 +1488,18 @@ class FacebookSocialButton extends SocialButton {
             deleteMessageContainer();
         });
         loginUsernameInput.focus();
+
         Core.subscribeTo('core:webClientDataChange', () => {
             if (Core.isLogged()) {
                 window.location.href = '/';
             }
         });
     }
+
     window.addEventListener('load', initLogin);
+
+// Code from script tag on footer.html:138:2 called by file attribute on footer on footer.html:15:4
+
     const initFooter = () => {
         new LinkTo({
             id: 'footerItemLogin',
@@ -1348,11 +1507,15 @@ class FacebookSocialButton extends SocialButton {
             hideWhen: ['status:logged', 'page:/login.html']
         });
     }
+
     window.addEventListener('load', initFooter);
+
+// Code from :/home/esteban/Documents/trabajo/sofia/site/sources/localhost/1:commons.js: called by system 
 Core.setReportSystemErrorFunction(error => {
     Core.showErrorMessage(error.message);
     throw error;
 });
+
 </script>
 </head>
 

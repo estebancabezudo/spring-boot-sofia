@@ -40,6 +40,7 @@ public class WebClientController extends SofiaAuthorizedController {
     log.debug("Run /v1/web/clients/actual/details");
     WebClientData webClientData = super.getWebClientData();
     RestWebClientData restWebClient = businessToRestWebClientMapper.map(webClientData);
+    webClientData.clearMessage();
     log.debug("Web client data: " + restWebClient);
     return ResponseEntity.ok(restWebClient);
   }

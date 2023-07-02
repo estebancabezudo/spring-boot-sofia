@@ -38,12 +38,4 @@ public abstract class SofiaAuthorizedController extends SofiaController {
     }
     return null;
   }
-
-  protected Account getAccount() {
-    SofiaUser user = sofiaSecurityManager.getLoggedUser();
-    if (user == null) {
-      return null;
-    }
-    return user.getAccount();
-  }
 }

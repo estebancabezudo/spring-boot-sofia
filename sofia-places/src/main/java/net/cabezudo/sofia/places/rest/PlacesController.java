@@ -47,7 +47,7 @@ public class PlacesController extends SofiaAuthorizedController {
     log.debug("Get list of places");
     ListRestResponse<RestPlace> listRestResponse;
 
-    Account account = super.getAccount();
+    Account account = super.getWebClientData().getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -64,7 +64,7 @@ public class PlacesController extends SofiaAuthorizedController {
   public ResponseEntity<?> create(@RequestBody RestPlace restPlaceToSave) {
     log.debug("Create a new place");
 
-    Account account = super.getAccount();
+    Account account = super.getWebClientData().getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -84,7 +84,7 @@ public class PlacesController extends SofiaAuthorizedController {
     log.debug("Get the place with id=" + id);
     PlacesRestResponse placesRestResponse;
 
-    Account account = super.getAccount();
+    Account account = super.getWebClientData().getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -106,7 +106,7 @@ public class PlacesController extends SofiaAuthorizedController {
   public ResponseEntity<?> update(ServletWebRequest request, @PathVariable Integer id, @RequestBody RestPlace restPlaceToSave) {
     log.debug("Update an existing place");
 
-    Account account = super.getAccount();
+    Account account = super.getWebClientData().getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -122,7 +122,7 @@ public class PlacesController extends SofiaAuthorizedController {
   public ResponseEntity<?> delete(ServletWebRequest request, @PathVariable Integer id) {
     log.debug("Delete an existing place");
 
-    Account account = super.getAccount();
+    Account account = super.getWebClientData().getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {

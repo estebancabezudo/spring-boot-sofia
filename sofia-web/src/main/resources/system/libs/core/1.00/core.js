@@ -45,6 +45,23 @@ const Core = {
                     Core.user = new User(user);
                 }
 
+                Core.subscribeTo('core:setTexts', data => {
+                    if (jsonData.message) {
+                        const message = jsonData.message;
+                        if (message) {
+                            console.log(message);
+                            const jsonMessage = JSON.parse(message);
+                            console.log(jsonMessage);
+                            if (jsonMessage.type === 'error') {
+                                Core.showErrorMessage(jsonMessage.data);
+                            } else {
+                                Core.showMessage(jsonMessage.data);
+                            }
+
+                        }
+                    }
+                });
+
                 console.log(`commons.js::getActualWebClientDetails: `, jsonData);
                 Core.publish('core:webClientDataChange', jsonData);
             });
@@ -396,7 +413,7 @@ const pageLoaded = async () => {
     Core.subscribeTo('core:setTexts', data => {
         const message = Core.queryParameters.get('message');
         if (message) {
-            Core.showMessage(message);
+            Core.showMessage(Core.getText(message));
         }
     });
     Core.subscribeTo('core:webClientDataChange', data => {

@@ -7,6 +7,7 @@ public class WebClientData {
   private final Language language;
   private Account account;
   private SofiaUser user;
+  private String message;
 
   public WebClientData(Language language, Account account) {
     this.language = language;
@@ -40,5 +41,17 @@ public class WebClientData {
 
   public void setUser(SofiaUser user) {
     this.user = user;
+  }
+
+  public void clearMessage() {
+    this.message = null;
+  }
+
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
   }
 }
