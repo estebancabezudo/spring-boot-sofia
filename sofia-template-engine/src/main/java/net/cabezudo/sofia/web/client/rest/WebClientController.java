@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 @RestController
 public class WebClientController extends SofiaAuthorizedController {
@@ -49,8 +48,6 @@ public class WebClientController extends SofiaAuthorizedController {
   @PutMapping("/v1/web/clients/actual/languages/default")
   public ResponseEntity<RestWebClientData> setLanguage(HttpServletRequest request, @RequestBody RestLanguage restLanguage) {
     log.debug("Run /v1/web/clients/actual/languages/default");
-
-    HttpSession session = super.getRequest().getSession();
 
     WebClientData webClientData = super.getWebClientData();
 

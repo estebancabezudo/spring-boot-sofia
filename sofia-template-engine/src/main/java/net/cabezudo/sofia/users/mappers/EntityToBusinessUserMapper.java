@@ -17,19 +17,16 @@ public class EntityToBusinessUserMapper {
 
   private @Autowired EntityToBusinessAccountMapper entityToBusinessAccountMapper;
 
-  public SofiaUser map(AccountEntity accountEntity, UserEntity userEntity) {
-    Account account = entityToBusinessAccountMapper.map(accountEntity);
-    return map(account, userEntity);
-  }
-
-  public SofiaUser map(Account account, UserEntity userEntity) {
+  public SofiaUser map(UserEntity userEntity) {
     EntityToBusinessGroupsMapper mapper = new EntityToBusinessGroupsMapper();
     int id = userEntity.getId();
     EMailEntity eMailEntity = userEntity.getEMailEntity();
     String password = userEntity.getPassword();
-    Groups groups = mapper.map(userEntity.getEntityGroups());
+    Groups groups = mapper.map(userEntity.getGroups());
     boolean isEnabled = userEntity.isEnabled();
     Locale locale = new Locale(userEntity.getLocale());
+    AccountEntity accountEntity = userEntity.getAccount();
+    Account account = entityToBusinessAccountMapper.map(accountEntity);
     return new SofiaUser(id, account, eMailEntity.getEmail(), password, groups, locale, isEnabled);
   }
 }

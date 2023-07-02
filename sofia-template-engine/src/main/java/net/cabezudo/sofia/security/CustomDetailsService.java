@@ -15,6 +15,8 @@ import net.cabezudo.sofia.users.persistence.GroupEntity;
 import net.cabezudo.sofia.users.persistence.GroupsEntity;
 import net.cabezudo.sofia.users.persistence.UserEntity;
 import net.cabezudo.sofia.users.persistence.UserRepository;
+import net.cabezudo.sofia.web.client.WebClientData;
+import net.cabezudo.sofia.web.client.WebClientDataManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -41,6 +43,7 @@ public class CustomDetailsService implements UserDetailsService {
   private @Autowired SiteManager siteManager;
   private @Autowired AccountManager accountManager;
   private @Autowired UserPreferencesManager userPreferencesManager;
+  private @Autowired WebClientDataManager webClientDataManager;
 
   @Override
   public SofiaUser loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -48,23 +51,31 @@ public class CustomDetailsService implements UserDetailsService {
     try {
       Site site = siteManager.get(request);
 
-      UserEntity userEntityToGetId = userRepository.findByEmail(email);
-      if (userEntityToGetId == null) {
+      UserEntity userLogged = userRepository.findByEmail(email);
+      if (userLogged == null) {
         throw new UsernameNotFoundException(email);
       }
-      int userId = userEntityToGetId.getId();
+      int userId = userLogged.getId();
       Account accountToSet = accountManager.getActualAccount(accountFromSession, email, site, userId);
+      WebClientData webClientData = webClientDataManager.getFromSession(request);
+      if (webClientData.getAccount() == null || accountToSet.getId() != webClientData.getAccount().getId()) {
+        webClientData.setAccount(accountToSet);
+        userPreferencesManager.setAccount(userId, accountToSet);
+      }
+      webClientDataManager.set(request, webClientData);
 
-      UserEntity userEntity = userRepository.get(accountToSet.getId(), userId);
-      SofiaUser sofiaUser = entityToBusinessUserMapper.map(accountToSet, userEntity);
-      return sofiaUser;
+      UserEntity userEntity = userRepository.getForAccount(accountToSet.getId(), userId);
+      userLogged.setGroups(userEntity.getGroups());
+
+      SofiaUser sofiaUserLogged = entityToBusinessUserMapper.map(userLogged);
+      return sofiaUserLogged;
     } catch (SiteNotFoundException e) {
       throw new SofiaRuntimeException(e);
     }
   }
 
   private Collection<GrantedAuthority> getAuthorities(UserEntity userEntity) {
-    GroupsEntity groupsEntity = userEntity.getEntityGroups();
+    GroupsEntity groupsEntity = userEntity.getGroups();
     Collection<GrantedAuthority> authorities = new ArrayList<>(groupsEntity.size());
     for (GroupEntity groupEntity : groupsEntity) {
       authorities.add(new SimpleGrantedAuthority(groupEntity.getName()));

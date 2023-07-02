@@ -98,7 +98,7 @@ public class SofiaSecurityManager {
         if (userEntity == null) {
           throw new UsernameNotFoundException(email);
         }
-        user = entityToBusinessUserMapper.map(accountEntity, userEntity);
+        user = entityToBusinessUserMapper.map(userEntity);
         setUserInWebClientData(webClientData, user);
       }
 
@@ -144,8 +144,8 @@ public class SofiaSecurityManager {
     UserEntity userEntity = userRepository.create(emailForAccount, locale.toString(), true);
     AccountEntity newAccountEntity = accountRepository.create(site.getId(), emailForAccount.getEmail());
     accountRepository.create(newAccountEntity.getId(), userEntity.getId(), true);
-    UserEntity newUser = userRepository.get(newAccountEntity.getId(), userEntity.getId());
-    SofiaUser user = entityToBusinessUserMapper.map(newAccountEntity, newUser);
+    UserEntity newUser = userRepository.get(userEntity.getId());
+    SofiaUser user = entityToBusinessUserMapper.map(newUser);
     return user;
   }
 }

@@ -35,22 +35,29 @@ public class PermissionManager {
 
   public boolean hasPermission(Site site, Account account, SofiaUser user, String group, boolean isSecurityActive) {
     AccountUserRelationEntity relation = accountManager.findRelation(site, account, user);
-    return user.hasPermission(group) || (relation != null && relation.owner());
+    return user.hasPermission(group) || (relation != null && relation.getOwner());
   }
 
   public boolean hasPermission(SofiaUser user, Site site, Account account, String requestURI) {
-    logger.debug("Authorize user=" + user + ", requestURI=" + requestURI);
+    logger.debug("Try to authorize user");
+    logger.debug("Actual user=" + user);
+    logger.debug("Actual site=" + site);
+    logger.debug("Actual account=" + account);
+    logger.debug("Actual requestURI=" + requestURI);
 
     String username = user == null ? null : user.getUsername();
 
-    if (accountManager.ownsTheAccount(account, user)) {
+    if (accountManager.ownsTheAccount(user, account)) {
       return true;
+    } else {
+      logger.debug("The user DO NOT own the account.");
     }
 
     Collection<GrantedAuthority> authorities = user == null ? new ArrayList<>() : user.getAuthorities();
 
     Permissions sitePermissions = permissionBySite.get(site);
     if (sitePermissions == null) {
+      logger.debug("The site DO NOT have permissions.");
       return false;
     }
     // TODO Improve this search
@@ -89,7 +96,7 @@ public class PermissionManager {
           return true;
         }
         logger.debug(grantPermission.getUser() + " " + authorities + " contain(" + grantPermission.getGroup() + ")=" + authorities.contains(grantPermission.getGroup()) + " " + grantPermission.getAccess());
-        if (grantPermission.getUser().equals(Permission.USER_ALL) && contains(authorities, grantPermission.getGroup()) && grantPermission.getAccess().equals(Permission.ACCESS_GRANT)) {
+        if (contains(authorities, grantPermission.getGroup()) && grantPermission.getUser().equals(Permission.USER_ALL) && grantPermission.getAccess().equals(Permission.ACCESS_GRANT)) {
           logger.debug("Authorized because the user is all, the group match and is granted for " + requestURI + ".");
           return true;
         }
@@ -97,7 +104,7 @@ public class PermissionManager {
           logger.debug("Authorized because the user match, the group is all is granted for " + requestURI + ".");
           return true;
         }
-        if (grantPermission.getUser().equals(username) && contains(authorities, grantPermission.getGroup()) && grantPermission.getAccess().equals(Permission.ACCESS_GRANT)) {
+        if (contains(authorities, grantPermission.getGroup()) && grantPermission.getUser().equals(username) && grantPermission.getAccess().equals(Permission.ACCESS_GRANT)) {
           logger.debug("Authorized because the user is all, the group match and is granted for " + requestURI + ".");
           return true;
         }

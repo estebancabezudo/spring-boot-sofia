@@ -39,7 +39,7 @@ public class AccountManager {
     return accounts;
   }
 
-  public boolean ownsTheAccount(Account account, SofiaUser user) {
+  public boolean ownsTheAccount(SofiaUser user, Account account) {
     if (account == null) {
       return false;
     }

@@ -1,10 +1,12 @@
 package net.cabezudo.sofia.users.service;
 
 import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.accounts.mappers.BusinessToEntityAccountMapper;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
 import net.cabezudo.sofia.accounts.persistence.AccountUserRelationEntity;
 import net.cabezudo.sofia.config.mail.SendEMailException;
+import net.cabezudo.sofia.core.hostname.HostnameManager;
 import net.cabezudo.sofia.emails.EMail;
 import net.cabezudo.sofia.emails.EMailManager;
 import net.cabezudo.sofia.emails.persistence.EMailEntity;
@@ -60,7 +62,8 @@ public class UserManager {
   private @Autowired AccountRepository accountRepository;
   private @Autowired EMailManager eMailManager;
   private @Autowired PeopleManager peopleManager;
-  private @Autowired net.cabezudo.sofia.core.hostname.HostnameManager hostnameManager;
+  private @Autowired HostnameManager hostnameManager;
+  private @Autowired BusinessToEntityAccountMapper businessToEntityAccountMapper;
 
   public SofiaUser loadUserByUsername(String email) throws UsernameNotFoundException {
     Account account = (Account) request.getSession().getAttribute("account");
@@ -69,11 +72,11 @@ public class UserManager {
     if (userEntity == null) {
       throw new UsernameNotFoundException(email);
     }
-    return new SofiaUser(userEntity.getId(), account, userEntity.getEMailEntity().getEmail(), userEntity.getPassword(), getAuthorities(userEntity), new Locale(userEntity.getLocale()), userEntity.isEnabled());
+    return entityToBusinessUserMapper.map(userEntity);
   }
 
   private Collection<GrantedAuthority> getAuthorities(UserEntity userEntity) {
-    GroupsEntity userGroups = userEntity.getEntityGroups();
+    GroupsEntity userGroups = userEntity.getGroups();
     Collection<GrantedAuthority> authorities = new ArrayList<>(userGroups.size());
     for (GroupEntity groupEntity : userGroups) {
       authorities.add(new SimpleGrantedAuthority(groupEntity.getName().toUpperCase()));
@@ -86,19 +89,25 @@ public class UserManager {
     return entityToBusinessUserListMapper.map(account, entityList);
   }
 
-  public SofiaUser findById(int accountId, Integer id) {
-    final UserEntity userEntity = userRepository.get(accountId, id);
-    AccountEntity accountEntity = accountRepository.getAccountByUserId(accountId);
-    return entityToBusinessUserMapper.map(accountEntity, userEntity);
+  public SofiaUser findById(int accountId, int userId) {
+    AccountUserRelationEntity accountUserRelationEntity = accountRepository.find(accountId, userId);
+    if (accountUserRelationEntity == null) {
+      return null;
+    }
+    final UserEntity userEntity = userRepository.get(userId);
+    return entityToBusinessUserMapper.map(userEntity);
   }
 
   public SofiaUser findById(int accountId, String username) {
-    final UserEntity userEntity = userRepository.get(accountId, username);
+    final UserEntity userEntity = userRepository.get(username);
     if (userEntity == null) {
       return null;
     }
-    AccountEntity accountEntity = accountRepository.get(accountId);
-    return entityToBusinessUserMapper.map(accountEntity, userEntity);
+    AccountUserRelationEntity relation = accountRepository.find(accountId, userEntity.getId());
+    if (relation == null) {
+      return null;
+    }
+    return entityToBusinessUserMapper.map(userEntity);
   }
 
   @Transactional
@@ -119,12 +128,12 @@ public class UserManager {
 
     AccountUserRelationEntity accountUserRelationEntity = accountRepository.create(accountEntity.getId(), userEntity.getId(), true);
 
-    GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(accountUserRelationEntity.id(), groups);
+    GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(accountUserRelationEntity.getId(), groups);
     for (GroupEntity groupEntity : groupsEntity) {
       groupsRepository.create(userEntity.getId(), groupEntity.getName());
     }
 
-    return entityToBusinessUserMapper.map(accountEntity, userEntity);
+    return entityToBusinessUserMapper.map(userEntity);
   }
 
   @Transactional
@@ -147,19 +156,20 @@ public class UserManager {
     AccountUserRelationEntity ownAccountUserRelationEntity = accountRepository.create(newAccountEntity.getId(), userEntity.getId(), true);
 
     AccountUserRelationEntity accountUserRelationEntity = accountRepository.create(account.getId(), userEntity.getId(), false);
-    userEntity.setAccountUserId(accountUserRelationEntity.id());
+    AccountEntity accountEntity = businessToEntityAccountMapper.map(account);
+    userEntity.setAccount(accountEntity);
 
-    GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(accountUserRelationEntity.id(), groups);
+    GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(accountUserRelationEntity.getId(), groups);
     for (GroupEntity groupEntity : groupsEntity) {
-      groupsRepository.create(userEntity.getAccountUserId(), groupEntity.getName());
+      groupsRepository.create(userEntity.getAccount().getId(), groupEntity.getName());
     }
 
-    return entityToBusinessUserMapper.map(account, userEntity);
+    return entityToBusinessUserMapper.map(userEntity);
   }
 
   @Transactional
-  public SofiaUser update(Account account, int id, SofiaUser user) {
-    UserEntity userInDatabase = userRepository.get(account.getId(), id);
+  public SofiaUser update(int id, SofiaUser user) {
+    UserEntity userInDatabase = userRepository.get(id);
 
     String eMail = user.getUsername();
 
@@ -171,16 +181,14 @@ public class UserManager {
       eMailToUse = userFromDatabase;
     }
     String locale = user.getLocale().toString();
-    UserEntity newEntity = new UserEntity(
-        id, user.getAccount().getId(), userInDatabase.getAccountUserId(), eMailToUse, null, locale, user.isEnabled()
-    );
+    UserEntity newEntity = new UserEntity(id, userInDatabase.getAccount(), eMailToUse, null, locale, user.isEnabled());
 
     final UserEntity updatedEntity = userRepository.update(newEntity);
 
-    groupsRepository.deleteGroupsFor(userInDatabase.getAccountUserId());
-    GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(userInDatabase.getAccountUserId(), user.getGroups());
+    groupsRepository.deleteGroupsFor(userInDatabase.getAccount().getId());
+    GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(userInDatabase.getAccount().getId(), user.getGroups());
     for (GroupEntity groupEntity : groupsEntity) {
-      GroupEntity newGroupEntity = groupsRepository.create(updatedEntity.getAccountUserId(), groupEntity.getName());
+      GroupEntity newGroupEntity = groupsRepository.create(updatedEntity.getAccount().getId(), groupEntity.getName());
       updatedEntity.add(newGroupEntity);
     }
 
@@ -189,12 +197,12 @@ public class UserManager {
       eMailRepository.delete(eMailToDelete);
     }
 
-    return entityToBusinessUserMapper.map(account, updatedEntity);
+    return entityToBusinessUserMapper.map(updatedEntity);
   }
 
   public void delete(int accountId, int userId) {
-    UserEntity user = userRepository.get(accountId, userId);
-    groupsRepository.deleteGroupsFor(user.getAccountUserId());
+    UserEntity user = userRepository.get(userId);
+    groupsRepository.deleteGroupsFor(user.getAccount().getId());
 
     accountRepository.delete(accountId, userId);
 
@@ -219,8 +227,8 @@ public class UserManager {
     PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     Password encodedPassword = new Password(encoder.encode(rawPassword));
     userRepository.update(userId, encodedPassword);
-    UserEntity userEntity = userRepository.get(account.getId(), userId);
-    SofiaUser user = entityToBusinessUserMapper.map(account, userEntity);
+    UserEntity userEntity = userRepository.get(userId);
+    SofiaUser user = entityToBusinessUserMapper.map(userEntity);
     Person person = peopleManager.getByUser(user);
     Locale userLocale = user.getLocale();
     EMail to = new EMail(user.getUsername());

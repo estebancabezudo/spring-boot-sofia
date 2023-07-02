@@ -15,19 +15,19 @@ public final class AccountUserRelationEntity {
     this.owner = owner;
   }
 
-  public int id() {
+  public int getId() {
     return id;
   }
 
-  public int accountId() {
+  public int getAccountId() {
     return accountId;
   }
 
-  public int userId() {
+  public int getUserId() {
     return userId;
   }
 
-  public boolean owner() {
+  public boolean getOwner() {
     return owner;
   }
 

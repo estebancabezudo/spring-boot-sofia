@@ -33,7 +33,7 @@ public abstract class SofiaAuthorizedController extends SofiaController {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new SofiaRestResponse<>(SofiaRestResponse.ERROR, "Not logged"));
     }
     if (!permissionManager.hasPermission(account.getSite(), account, user, group, sofiaEnvironment.isSecurityActive())) {
-      log.debug("The user(" + user + ") has not permission(group=" + group + ") for th account (" + account + ")");
+      log.debug("The user(" + user.getUsername() + ") HAS NOT not permission(group=" + group + ") for th account (" + account.getName() + "(" + account.getId() + "))");
       return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new SofiaRestResponse<>(SofiaRestResponse.ERROR, "The user(" + user + ") has not permission(group=" + group + ") for th account (" + account + ")"));
     }
     return null;

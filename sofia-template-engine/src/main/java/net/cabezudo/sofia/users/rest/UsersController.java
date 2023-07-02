@@ -98,7 +98,7 @@ public class UsersController extends SofiaAuthorizedController {
     Account account = user.getAccount();
 
     ResponseEntity<?> result;
-    if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
+    if ((result = super.checkPermissionFor(account, Group.USER)) != null) {
       return result;
     }
 
@@ -283,7 +283,7 @@ public class UsersController extends SofiaAuthorizedController {
     restUserToUpdate.setAccount(account);
 
     SofiaUser userToUpdate = restToBusinessUserMapper.map(restUserToUpdate);
-    SofiaUser updatedUser = userManager.update(account, id, userToUpdate);
+    SofiaUser updatedUser = userManager.update(id, userToUpdate);
     RestUser restUser = businessToRestUserMapper.map(updatedUser);
     restUser.setAccount(account);
     UserRestResponse userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Retrieve user " + id, restUser);

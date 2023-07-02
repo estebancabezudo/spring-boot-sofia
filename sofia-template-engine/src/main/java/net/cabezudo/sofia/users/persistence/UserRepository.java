@@ -32,7 +32,7 @@ public class UserRepository {
     log.debug("Search users for account " + account_id + " and " + email);
 
     List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate().queryForList(
-        "SELECT u.id AS id, a.site_id, a.id AS account_user_id, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
+        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON u.id = au.user_id " +
@@ -56,14 +56,16 @@ public class UserRepository {
     return userEntity;
   }
 
-  private UserEntity newUserEntity(Map<String, Object> firstRecord, EMailEntity eMailEntity) {
+  private UserEntity newUserEntity(Map<String, Object> map, EMailEntity eMailEntity) {
     return new UserEntity(
-        (int) firstRecord.get("id"),
-        (Integer) firstRecord.get("site_id"),
-        (Integer) firstRecord.get("account_user_id"),
-        eMailEntity, (String) firstRecord.get("password"),
-        (String) firstRecord.get("locale"),
-        (boolean) firstRecord.get("enabled")
+        (int) map.get("id"),
+        (Integer) map.get("accountId"),
+        (Integer) map.get("accountSiteId"),
+        (String) map.get("accountName"),
+        eMailEntity,
+        (String) map.get("password"),
+        (String) map.get("locale"),
+        (boolean) map.get("enabled")
     );
   }
 
@@ -74,7 +76,7 @@ public class UserRepository {
     Map<Integer, UserEntity> map = new TreeMap<>();
     UserEntityList list = new UserEntityList();
     databaseManager.getJDBCTemplate().queryForList(
-        "SELECT u.id AS id, a.site_id, au.id AS account_user_id, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
+        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
             "FROM users AS u " +
             "LEFT JOIN accounts_users AS au ON u.id = au.user_id " +
             "LEFT JOIN accounts AS a ON au.account_id = a.id " +
@@ -90,15 +92,7 @@ public class UserRepository {
       if (userEntityFromMap == null) {
         // TODO user a row mapper
         EMailEntity eMailEntity = new EMailEntity((int) rs.get("eMailId"), (String) rs.get("email"));
-        newUserEntity = new UserEntity(
-            (int) rs.get("id"),
-            (Integer) rs.get("site_id"),
-            (Integer) rs.get("account_user_id"),
-            eMailEntity,
-            (String) rs.get("password"),
-            (String) rs.get("locale"),
-            (boolean) rs.get("enabled")
-        );
+        newUserEntity = newUserEntity(rs, eMailEntity);
         map.put(id, newUserEntity);
         list.add(newUserEntity);
         String authority = (String) rs.get("authority");
@@ -116,18 +110,17 @@ public class UserRepository {
     return list;
   }
 
-  public UserEntity get(int accountId, int userId) {
-    log.debug("Search user with id " + userId + " in " + accountId + " account");
+  public UserEntity get(int id) {
+    log.debug("Search user for with id " + id);
 
     List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate().queryForList(
-        "SELECT u.id AS id, a.site_id, au.id AS account_user_id, e.id AS email_id, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
+        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON au.user_id = u.id " +
-            "LEFT JOIN emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e ON u.email_id = e.id " +
             "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
-            "WHERE a.id = ? AND u.id = ?", accountId, userId
-    ));
+            "WHERE au.owner = true AND u.id = ?", id));
 
     if (list.size() == 0) {
       return null;
@@ -135,17 +128,8 @@ public class UserRepository {
 
     Map<String, Object> firstRecord = list.get(0);
 
-    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("email_id"), (String) firstRecord.get("email"));
-    // TODO user a row mapper
-    UserEntity userEntity = new UserEntity(
-        (int) firstRecord.get("id"),
-        (Integer) firstRecord.get("site_id"),
-        (Integer) firstRecord.get("account_user_id"),
-        eMailEntity,
-        (String) firstRecord.get("password"),
-        (String) firstRecord.get("locale"),
-        (boolean) firstRecord.get("enabled")
-    );
+    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
+    UserEntity userEntity = newUserEntity(firstRecord, eMailEntity);
     for (Map<String, Object> rs : list) {
       String authority = (String) rs.get("authority");
       if (authority != null) {
@@ -155,18 +139,17 @@ public class UserRepository {
     return userEntity;
   }
 
-  public UserEntity get(int accountId, String eMail) {
-    log.debug("Search user for account " + accountId + " with e-mail " + eMail);
+  public UserEntity getForAccount(int accountId, int userId) {
+    log.debug("Search user for account " + accountId + " with id " + userId);
 
     List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate().queryForList(
-        "SELECT u.id AS id, a.site_id, au.id AS account_user_id, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
+        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON au.user_id = u.id " +
             "LEFT JOIN `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e ON u.email_id = e.id " +
             "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
-            "WHERE a.id = ? AND email = ?",
-        accountId, eMail));
+            "WHERE a.id = ? AND u.id = ?", accountId, userId));
 
     if (list.size() == 0) {
       return null;
@@ -175,15 +158,36 @@ public class UserRepository {
     Map<String, Object> firstRecord = list.get(0);
 
     EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
-    UserEntity userEntity = new UserEntity(
-        (int) firstRecord.get("id"),
-        (Integer) firstRecord.get("site_id"),
-        (Integer) firstRecord.get("account_user_id"),
-        eMailEntity,
-        (String) firstRecord.get("password"),
-        (String) firstRecord.get("locale"),
-        (boolean) firstRecord.get("enabled")
-    );
+    UserEntity userEntity = newUserEntity(firstRecord, eMailEntity);
+    for (Map<String, Object> rs : list) {
+      String authority = (String) rs.get("authority");
+      if (authority != null) {
+        userEntity.add(new GroupEntity(userEntity.getId(), authority));
+      }
+    }
+    return userEntity;
+  }
+
+  public UserEntity get(String eMail) {
+    log.debug("Search user for account with e-mail " + eMail);
+
+    List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate().queryForList(
+        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
+            "FROM accounts AS a " +
+            "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
+            "LEFT JOIN users AS u ON au.user_id = u.id " +
+            "LEFT JOIN `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
+            "WHERE au.owner = true AND email = ?", eMail));
+
+    if (list.size() == 0) {
+      return null;
+    }
+
+    Map<String, Object> firstRecord = list.get(0);
+
+    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
+    UserEntity userEntity = newUserEntity(firstRecord, eMailEntity);
     for (Map<String, Object> rs : list) {
       String authority = (String) rs.get("authority");
       if (authority != null) {
@@ -204,12 +208,11 @@ public class UserRepository {
       return ps;
     };
     databaseManager.getJDBCTemplate().update(preparedStatementCreator, keyHolder);
-    return new UserEntity(Objects.requireNonNull(keyHolder.getKey()).intValue(), 0, 0, eMailEntity, null, locale, enabled);
+    return new UserEntity(Objects.requireNonNull(keyHolder.getKey()).intValue(), 0, 0, null, eMailEntity, null, locale, enabled);
   }
 
   public UserEntity update(UserEntity entity) {
     int id = entity.getId();
-    int accountId = entity.getSiteId();
     EMailEntity eMailEntity = entity.getEMailEntity();
     String password = entity.getPassword();
     String locale = entity.getLocale();
@@ -225,7 +228,7 @@ public class UserRepository {
     };
     databaseManager.getJDBCTemplate().update(preparedStatementCreator);
 
-    return new UserEntity(id, accountId, entity.getAccountUserId(), eMailEntity, password, locale, enabled);
+    return new UserEntity(id, entity.getAccount(), eMailEntity, password, locale, enabled);
   }
 
   public void delete(Integer id) {
@@ -253,7 +256,7 @@ public class UserRepository {
     log.debug("Search user for email " + email);
 
     List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate().queryForList(
-        "SELECT u.id AS id, a.site_id, a.id AS account_user_id, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
+        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON u.id = au.user_id " +

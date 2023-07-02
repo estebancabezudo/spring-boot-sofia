@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public final class Group implements Comparable<Group> {
   public static final String ADMIN = "admin";
+  public static final String USER = "user";
   private final String name;
 
   public Group(String name) {
@@ -15,7 +16,7 @@ public final class Group implements Comparable<Group> {
     return this.name.compareTo(o.name);
   }
 
-  public String name() {
+  public String getName() {
     return name;
   }
 

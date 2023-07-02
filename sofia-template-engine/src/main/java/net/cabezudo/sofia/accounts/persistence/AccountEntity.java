@@ -7,7 +7,7 @@ public final class AccountEntity {
   private final int siteId;
   private final String name;
 
-  AccountEntity(int id, int siteId, String name) {
+  public AccountEntity(int id, int siteId, String name) {
     this.id = id;
     this.siteId = siteId;
     this.name = name;

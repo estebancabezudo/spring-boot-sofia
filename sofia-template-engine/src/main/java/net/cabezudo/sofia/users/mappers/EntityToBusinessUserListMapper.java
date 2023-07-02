@@ -20,7 +20,7 @@ public class EntityToBusinessUserListMapper {
     UserList list = new UserList(total, start, size);
 
     for (UserEntity userEntity : entityList) {
-      list.add(entityToBusinessUserMapper.map(accountEntity, userEntity));
+      list.add(entityToBusinessUserMapper.map(userEntity));
     }
     return list;
   }
@@ -32,7 +32,7 @@ public class EntityToBusinessUserListMapper {
     UserList list = new UserList(total, start, size);
 
     for (UserEntity userEntity : entityList) {
-      list.add(entityToBusinessUserMapper.map(account, userEntity));
+      list.add(entityToBusinessUserMapper.map(userEntity));
     }
     return list;
   }

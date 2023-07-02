@@ -407,13 +407,13 @@ public class SofiaFile {
         log.debug("No groups found in tag");
       } else {
         for (Group group : groups) {
-          log.debug("Found group: " + group.name());
+          log.debug("Found group: " + group.getName());
           String fileResource = '/' + requestFilePath.toString();
-          Permission filePermission = new Permission(group.name(), Permission.USER_ALL, Permission.ACCESS_GRANT, fileResource);
+          Permission filePermission = new Permission(group.getName(), Permission.USER_ALL, Permission.ACCESS_GRANT, fileResource);
           permissionManager.add(site, filePermission);
           // Add to the list of permissions the page
           String textsResource = "/texts/" + voidRootFilePath.toString() + "/**";
-          Permission textsPermission = new Permission(group.name(), Permission.USER_ALL, Permission.ACCESS_GRANT, textsResource);
+          Permission textsPermission = new Permission(group.getName(), Permission.USER_ALL, Permission.ACCESS_GRANT, textsResource);
           permissionManager.add(site, textsPermission);
         }
       }

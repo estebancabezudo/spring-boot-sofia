@@ -12,6 +12,7 @@ import net.cabezudo.sofia.sites.Host;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteManager;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -178,7 +179,11 @@ public class SofiaEnvironment {
 
     try {
       log.debug("Sites final code: " + basePath);
-      sitesPath = checkForDirectoryAndCreate(basePath.resolve(SITES_DIRECTORY_NAME));
+      sitesPath = basePath.resolve(SITES_DIRECTORY_NAME);
+      if (Files.exists(sitesPath)) {
+        FileUtils.forceDelete(sitesPath.toFile());
+      }
+      Files.createDirectories(sitesPath);
     } catch (IOException e) {
       throw new ConfigurationException(e);
     }

@@ -58,7 +58,7 @@ public class Groups implements Iterable<Group> {
   }
 
   public boolean add(Group group) {
-    boolean isSet = set.add(group.name());
+    boolean isSet = set.add(group.getName());
     if (isSet) {
       list.add(group);
     }
@@ -69,11 +69,20 @@ public class Groups implements Iterable<Group> {
     if (this.authorities == null) {
       authorities = new ArrayList<>();
       for (Group group : list) {
-        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(group.name());
+        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(group.getName());
         authorities.add(grantedAuthority);
       }
     }
     return authorities;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    for (Group group : list) {
+      sb.append(group.getName()).append(", ");
+    }
+    return sb.toString();
   }
 
   public boolean contains(String groupName) {

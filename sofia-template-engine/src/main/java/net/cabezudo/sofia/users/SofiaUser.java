@@ -16,11 +16,9 @@ public class SofiaUser implements UserDetails {
   private final boolean enabled;
   private final Locale locale;
   private final Account account;
-  private final int accountId;
 
   public SofiaUser(int id, @NotNull Account account, @NotNull String username, String password, @NotNull Groups groups, Locale locale, boolean enabled) {
     this.id = id;
-    this.accountId = account.getId();
     this.account = account;
     this.username = username;
     this.password = password;
@@ -32,7 +30,6 @@ public class SofiaUser implements UserDetails {
 
   public SofiaUser(int id, @NotNull Account account, @NotNull String username, String password, @NotNull Collection<GrantedAuthority> authorities, @NotNull Locale locale, boolean enabled) {
     this.id = id;
-    this.accountId = account.getId();
     this.account = account;
     this.username = username;
     this.password = password;
@@ -45,11 +42,11 @@ public class SofiaUser implements UserDetails {
   public String toString() {
     return "SofiaUser{" +
         "id=" + id +
+        ", account='" + account + '\'' +
         ", username='" + username + '\'' +
         ", groups=" + groups +
         ", locale=" + locale +
         ", enabled=" + enabled +
-        ", accountId=" + accountId +
         ", account=" + account +
         '}';
   }

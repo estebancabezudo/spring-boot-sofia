@@ -12,7 +12,7 @@ public class BusinessToEntityGroupsMapper {
   public GroupsEntity map(int accountUserRelationId, Groups groups) {
     GroupsEntity groupsEntity = new GroupsEntity();
     for (Group group : groups) {
-      GroupEntity groupEntity = new GroupEntity(accountUserRelationId, group.name());
+      GroupEntity groupEntity = new GroupEntity(accountUserRelationId, group.getName());
       groupsEntity.add(groupEntity);
     }
     return groupsEntity;

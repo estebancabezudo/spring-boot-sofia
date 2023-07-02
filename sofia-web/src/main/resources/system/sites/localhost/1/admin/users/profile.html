@@ -524,9 +524,11 @@ input.error {
         background-image: url(/images/burgerMenu/1.00/close.svg);
     }
 
-    #headerMenuUsername {
+    #headerMenuUsername,
+    #headerMenuAccountName {
         font-family: Gotham;
         font-size: 10px;
+        margin: 0 0 0 4px;
     }
 
     .messages {
@@ -1345,7 +1347,7 @@ class TwoLanguageFlag {
     };
 }
 
-// Code from script tag on header.html:145:2 called by file attribute on header on header.html:20:6
+// Code from script tag on header.html:147:2 called by file attribute on header on header.html:20:6
 
     const initHeader = () => {
         const burgerMenu = new BurgerMenu(
@@ -1384,6 +1386,12 @@ class TwoLanguageFlag {
                 ]
             }
         );
+        const headerMenuAccountNameElement = document.getElementById('headerMenuAccountName');
+        new LinkTo({
+            element: headerMenuAccountNameElement,
+            onclick: '/users/accounts.html',
+            show: ['page:/'],
+        });
         new LinkTo({
             id: 'headerLogo',
             onclick: '/',
@@ -1417,7 +1425,8 @@ class TwoLanguageFlag {
             if (data !== null && data.user !== null) {
                 username = data.user.username;
                 accountName = data.account.name;
-                document.getElementById('headerMenuUsername').innerHTML = `${username} (${accountName})`;
+                document.getElementById('headerMenuUsername').innerHTML = `${username}`;
+                headerMenuAccountNameElement.innerHTML = ` (${accountName})`;
             }
         });
     }
@@ -1481,12 +1490,13 @@ Core.setReportSystemErrorFunction(error => {
 
 
 
-<body groups="admin">
+<body groups="users">
     <header>
     <div id="headerContainer">
         <div class="burguerMenuContainer" id="headerMenuContainer">
             <div class="menuItems">
                 <div class="menuItem" id="headerMenuUsername"></div>
+                <div class="menuItem" id="headerMenuAccountName"></div>
                 <div class="menuItem" id="headerMenuItemUsers">
                     <span id="s1"></span>
                 </div>

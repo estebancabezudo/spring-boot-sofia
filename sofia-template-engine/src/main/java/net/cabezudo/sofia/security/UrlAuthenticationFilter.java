@@ -41,9 +41,8 @@ public class UrlAuthenticationFilter extends OncePerRequestFilter {
 
       SofiaUser user;
       if (Numbers.isInteger(accountParameter)) {
-        int id = Integer.parseInt(accountParameter);
-        AccountEntity accountEntity = accountRepository.get(id);
-        user = userManager.findById(accountEntity.getId(), email);
+        int accountId = Integer.parseInt(accountParameter);
+        user = userManager.findById(accountId, email);
       } else {
         Site site = null;
         try {

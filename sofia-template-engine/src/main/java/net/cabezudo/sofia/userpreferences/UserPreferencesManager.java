@@ -30,7 +30,7 @@ public class UserPreferencesManager {
     }
     AccountUserRelationEntity accountUserRelationEntity = accountRepository.find(account.getId(), user.getId());
 
-    UserPreferences userPreferences = accountPreferencesRepository.get(accountUserRelationEntity.id(), LANGUAGE);
+    UserPreferences userPreferences = accountPreferencesRepository.get(accountUserRelationEntity.getId(), LANGUAGE);
     // TODO set user preferences
   }
 
@@ -46,8 +46,8 @@ public class UserPreferencesManager {
     return entityToBusinessAccountMapper.map(accountEntity);
   }
 
-  public void setAccount(SofiaUser user, Account account) {
-    userPreferencesRepository.update(user.getId(), ACCOUNT, Integer.toString(account.getId()));
+  public void setAccount(int userId, Account account) {
+    userPreferencesRepository.update(userId, ACCOUNT, Integer.toString(account.getId()));
   }
 
   public void createAccount(SofiaUser user, Account account) {

@@ -32,8 +32,6 @@ public class SofiaAuthorizationManager implements AuthorizationManager<RequestAu
 
   @Override
   public AuthorizationDecision check(Supplier<Authentication> supplier, RequestAuthorizationContext context) {
-    log.debug("SofiaAuthorizationManager");
-
     if (supplier == null) {
       return new AuthorizationDecision(false);
     }
@@ -53,10 +51,12 @@ public class SofiaAuthorizationManager implements AuthorizationManager<RequestAu
     } catch (SiteNotFoundException e) {
       throw new SofiaRuntimeException(e);
     }
+
     if (sofiaEnvironment.isSecurityActive()) {
       SofiaUser user = sofiaSecurityManager.getLoggedUser();
       WebClientData webClientData = webClientDataManager.getFromSession(request);
       Account account = webClientData.getAccount();
+      log.debug("Check authorization permissions for " + requestURI + "  using " + (user == null ? "NOT LOGGED" : user.getUsername()) + " on " + site.getName() + (account == null ? null : account.getName() + " in the account " + "(" + account.getId() + ")"));
       if (site != null && permissionManager.hasPermission(user, site, account, requestURI)) {
         return new AuthorizationDecision(true);
       }
