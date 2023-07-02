@@ -94,7 +94,7 @@ public class UserManager {
     if (accountUserRelationEntity == null) {
       return null;
     }
-    final UserEntity userEntity = userRepository.get(userId);
+    final UserEntity userEntity = userRepository.findByAccount(accountId, userId);
     return entityToBusinessUserMapper.map(userEntity);
   }
 
@@ -185,10 +185,12 @@ public class UserManager {
 
     final UserEntity updatedEntity = userRepository.update(newEntity);
 
-    groupsRepository.deleteGroupsFor(userInDatabase.getAccount().getId());
-    GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(userInDatabase.getAccount().getId(), user.getGroups());
+    AccountUserRelationEntity accountUserRelation = accountRepository.find(user.getAccount().getId(), user.getId());
+
+    groupsRepository.deleteGroupsFor(accountUserRelation.getId());
+    GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(accountUserRelation.getId(), user.getGroups());
     for (GroupEntity groupEntity : groupsEntity) {
-      GroupEntity newGroupEntity = groupsRepository.create(updatedEntity.getAccount().getId(), groupEntity.getName());
+      GroupEntity newGroupEntity = groupsRepository.create(accountUserRelation.getId(), groupEntity.getName());
       updatedEntity.add(newGroupEntity);
     }
 

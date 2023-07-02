@@ -402,6 +402,7 @@ public class SofiaFile {
   private void processBodyTag(Site site, Path requestFilePath, Element body, Caller caller, Path voidRootFilePath) {
     Attribute attribute;
     if ((attribute = body.getAttribute(Attribute.GROUPS)) != null) {
+      body.removeAttribute(Attribute.GROUPS);
       Groups groups = new Groups(attribute.getValue());
       if (groups.isEmpty()) {
         log.debug("No groups found in tag");

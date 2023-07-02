@@ -139,6 +139,35 @@ public class UserRepository {
     return userEntity;
   }
 
+  public UserEntity findByAccount(int accountId, int id) {
+    log.debug("Search user for with id " + id);
+
+    List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate().queryForList(
+        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
+            "FROM accounts AS a " +
+            "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
+            "LEFT JOIN users AS u ON au.user_id = u.id " +
+            "LEFT JOIN `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
+            "WHERE a.id = ? AND u.id = ?", accountId, id));
+
+    if (list.size() == 0) {
+      return null;
+    }
+
+    Map<String, Object> firstRecord = list.get(0);
+
+    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
+    UserEntity userEntity = newUserEntity(firstRecord, eMailEntity);
+    for (Map<String, Object> rs : list) {
+      String authority = (String) rs.get("authority");
+      if (authority != null) {
+        userEntity.add(new GroupEntity(userEntity.getId(), authority));
+      }
+    }
+    return userEntity;
+  }
+
   public UserEntity getForAccount(int accountId, int userId) {
     log.debug("Search user for account " + accountId + " with id " + userId);
 
