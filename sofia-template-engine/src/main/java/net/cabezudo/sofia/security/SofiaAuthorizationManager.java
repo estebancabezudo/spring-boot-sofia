@@ -6,7 +6,7 @@ import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteManager;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
-import net.cabezudo.sofia.users.SofiaUser;
+import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
 import org.slf4j.Logger;

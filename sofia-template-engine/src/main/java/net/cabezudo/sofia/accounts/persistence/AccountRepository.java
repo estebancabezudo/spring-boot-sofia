@@ -3,6 +3,7 @@ package net.cabezudo.sofia.accounts.persistence;
 import net.cabezudo.sofia.accounts.mappers.AccountUserRelationRowMapper;
 import net.cabezudo.sofia.config.DatabaseConfiguration;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
+import net.cabezudo.sofia.core.persistence.EntityList;
 import net.cabezudo.sofia.core.persistence.InvalidKey;
 import net.cabezudo.sofia.persistence.DatabaseManager;
 import org.slf4j.Logger;
@@ -58,16 +59,37 @@ public class AccountRepository {
     return list.get(0);
   }
 
-  public List<AccountEntity> findAll(int siteId, int userId) {
+  public EntityList<AccountEntity> findAll(int siteId, int userId) {
     log.debug("Return all the account for the user " + userId);
 
-    return databaseManager.getJDBCTemplate().query(
+    List<AccountEntity> list = databaseManager.getJDBCTemplate().query(
         "SELECT a.id AS id, a.site_id AS site_id, name " +
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
-            "LEFT JOIN users AS u ON au.user_id = u.id " +
-            "WHERE u.id = ? AND a.site_id = ?",
-        new AccountRowMapper(), userId, siteId);
+            "WHERE a.site_id = ? AND au.user_id = ?",
+        new AccountRowMapper(), siteId, userId);
+    int total = list.size();
+    int pageSize = total;
+    EntityList entityList = new EntityList(total, 0, pageSize);
+    for (AccountEntity accountEntity : list) {
+      entityList.add(accountEntity);
+    }
+    return entityList;
+  }
+
+  public EntityList<AccountEntity> findAll(int siteId) {
+    log.debug("Return all the account for the site " + siteId);
+
+    List<AccountEntity> list = databaseManager.getJDBCTemplate().query(
+        "SELECT a.id AS id, a.site_id AS site_id, name FROM accounts AS a WHERE a.site_id = ?",
+        new AccountRowMapper(), siteId);
+    int total = list.size();
+    int pageSize = total;
+    EntityList entityList = new EntityList(total, 0, pageSize);
+    for (AccountEntity accountEntity : list) {
+      entityList.add(accountEntity);
+    }
+    return entityList;
   }
 
   public AccountUserRelationEntity create(int accountId, int userId, boolean owner) {

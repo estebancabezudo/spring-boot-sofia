@@ -1,7 +1,7 @@
 package net.cabezudo.sofia.web.client;
 
 import net.cabezudo.sofia.accounts.Account;
-import net.cabezudo.sofia.users.SofiaUser;
+import net.cabezudo.sofia.users.service.SofiaUser;
 
 public class WebClientData {
   private final Language language;

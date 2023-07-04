@@ -3,7 +3,7 @@ package net.cabezudo.sofia.web.client.rest;
 import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
-import net.cabezudo.sofia.users.SofiaUser;
+import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.web.client.Language;
 import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;

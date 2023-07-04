@@ -1,6 +1,6 @@
 package net.cabezudo.sofia.users.mappers;
 
-import net.cabezudo.sofia.users.SofiaUser;
+import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.users.rest.RestUserList;
 import net.cabezudo.sofia.users.service.UserList;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -7,7 +7,7 @@ import net.cabezudo.sofia.accounts.persistence.AccountRepository;
 import net.cabezudo.sofia.accounts.persistence.AccountUserRelationEntity;
 import net.cabezudo.sofia.userpreferences.persistence.AccountPreferencesRepository;
 import net.cabezudo.sofia.userpreferences.persistence.UserPreferencesRepository;
-import net.cabezudo.sofia.users.SofiaUser;
+import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.web.client.Language;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import javax.transaction.Transactional;
 
 @Service
 public class UserPreferencesManager {
-  private static final String ACCOUNT = "account";
+  public static final String ACCOUNT = "account";
   private static final String LANGUAGE = "language";
   private @Autowired UserPreferencesRepository userPreferencesRepository;
   private @Autowired AccountPreferencesRepository accountPreferencesRepository;
@@ -46,8 +46,8 @@ public class UserPreferencesManager {
     return entityToBusinessAccountMapper.map(accountEntity);
   }
 
-  public void setAccount(int userId, Account account) {
-    userPreferencesRepository.update(userId, ACCOUNT, Integer.toString(account.getId()));
+  public void setAccount(SofiaUser user, Account account) {
+    userPreferencesRepository.update(user.getId(), ACCOUNT, Integer.toString(account.getId()));
   }
 
   public void createAccount(SofiaUser user, Account account) {

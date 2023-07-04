@@ -15,7 +15,6 @@ class User {
             this.groups = [];
             console.log(`Groups not found in user data.`, data);
         }
-
     };
 }
 
@@ -28,6 +27,7 @@ const Core = {
     requestId: 0,
     topics: [],
     reportSystemErrorFunction: null,
+    screenBlocker: null,
 
     queryParameters: new URLSearchParams(location.search),
 
@@ -169,6 +169,12 @@ const Core = {
 
     getTimezoneOffset: () => {
         return (new Date()).getTimezoneOffset();
+    },
+
+    hideScreenBlocker: () => {
+        if (Core.screenBlocker != null && screenBlocker.hide) {
+            screenBlocker.hide();
+        }
     },
 
     isArray: v => {
@@ -343,6 +349,10 @@ const Core = {
         console.log(`Core::showMessage: ${jsonMessage}`, jsonMessage);
         Core.publish('core:showMessage', jsonMessage);
     },
+
+    setScreenBlocker(blocker) {
+    },
+
     setTextsById: () => {
         console.log(`Core::setTextsById: Set text by id`);
         for (const [key, value] of Object.entries(Core.texts)) {
@@ -396,7 +406,11 @@ const Core = {
             } while (false);
         }
     },
-
+    showScreenBlocker: () => {
+        if (Core.screenBlocker != null && screenBlocker.show) {
+            screenBlocker.show();
+        }
+    },
     subscribeTo: (topicsName, functionToExecute) => {
         let functions = Core.topics[topicsName];
         if (!functions) {

@@ -9,7 +9,7 @@ import net.cabezudo.sofia.core.hostname.HostnameManager;
 import net.cabezudo.sofia.core.templates.MailTemplate;
 import net.cabezudo.sofia.hostnames.DomainNameValidationException;
 import net.cabezudo.sofia.sites.Site;
-import net.cabezudo.sofia.users.Password;
+import net.cabezudo.sofia.users.service.Password;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,7 +1,7 @@
 package net.cabezudo.sofia.web.client.mappers;
 
 import net.cabezudo.sofia.accounts.Account;
-import net.cabezudo.sofia.users.SofiaUser;
+import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.users.mappers.BusinessToRestUserMapper;
 import net.cabezudo.sofia.users.rest.RestUser;
 import net.cabezudo.sofia.web.client.WebClientData;

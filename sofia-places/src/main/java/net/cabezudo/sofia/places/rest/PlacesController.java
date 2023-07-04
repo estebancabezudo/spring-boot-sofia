@@ -10,7 +10,7 @@ import net.cabezudo.sofia.places.mappers.BusinessToRestPlaceListMapper;
 import net.cabezudo.sofia.places.mappers.BusinessToRestPlaceMapper;
 import net.cabezudo.sofia.places.mappers.RestToBusinessPlaceMapper;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
-import net.cabezudo.sofia.users.Group;
+import net.cabezudo.sofia.users.service.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

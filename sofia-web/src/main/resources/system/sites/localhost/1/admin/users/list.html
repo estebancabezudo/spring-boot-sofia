@@ -662,7 +662,6 @@ class User {
             this.groups = [];
             console.log(`Groups not found in user data.`, data);
         }
-
     };
 }
 
@@ -675,6 +674,7 @@ const Core = {
     requestId: 0,
     topics: [],
     reportSystemErrorFunction: null,
+    screenBlocker: null,
 
     queryParameters: new URLSearchParams(location.search),
 
@@ -816,6 +816,12 @@ const Core = {
 
     getTimezoneOffset: () => {
         return (new Date()).getTimezoneOffset();
+    },
+
+    hideScreenBlocker: () => {
+        if (Core.screenBlocker != null && screenBlocker.hide) {
+            screenBlocker.hide();
+        }
     },
 
     isArray: v => {
@@ -990,6 +996,10 @@ const Core = {
         console.log(`Core::showMessage: ${jsonMessage}`, jsonMessage);
         Core.publish('core:showMessage', jsonMessage);
     },
+
+    setScreenBlocker(blocker) {
+    },
+
     setTextsById: () => {
         console.log(`Core::setTextsById: Set text by id`);
         for (const [key, value] of Object.entries(Core.texts)) {
@@ -1043,7 +1053,11 @@ const Core = {
             } while (false);
         }
     },
-
+    showScreenBlocker: () => {
+        if (Core.screenBlocker != null && screenBlocker.show) {
+            screenBlocker.show();
+        }
+    },
     subscribeTo: (topicsName, functionToExecute) => {
         let functions = Core.topics[topicsName];
         if (!functions) {
@@ -1690,11 +1704,11 @@ Core.setReportSystemErrorFunction(error => {
                 </a>
             </div>
             <div id="footerInformationNetworks">
-                <div class="footerIcon footerTwitter" href="https://twitter.com/" target="_blank"></div>
-                <a class="footerIcon footerInstagram" href="https://www.instagram.com/" target="_blank"></a>
-                <div class="footerIcon footerFacebook" href="https://www.facebook.com/" target="_blank"></div>
-                <a class="footerIcon footerYoutube" href="https://www.youtube.com/" target="_blank"></a>
-                <a class="footerIcon footerLinkedin" href="https://www.linkedin.com/" target="_blank"></a>
+                <div class="footerIcon footerTwitter" href="https://twitter.com/"></div>
+                <a class="footerIcon footerInstagram" href="https://www.instagram.com/"></a>
+                <div class="footerIcon footerFacebook" href="https://www.facebook.com/"></div>
+                <a class="footerIcon footerYoutube" href="https://www.youtube.com/"></a>
+                <a class="footerIcon footerLinkedin" href="https://www.linkedin.com/"></a>
             </div>
         </div>
         <div id="footerCopyright">

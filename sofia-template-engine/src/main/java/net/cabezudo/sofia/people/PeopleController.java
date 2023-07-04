@@ -9,7 +9,7 @@ import net.cabezudo.sofia.people.rest.PeopleRestResponse;
 import net.cabezudo.sofia.people.rest.RestPerson;
 import net.cabezudo.sofia.people.rest.RestPersonList;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
-import net.cabezudo.sofia.users.Group;
+import net.cabezudo.sofia.users.service.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

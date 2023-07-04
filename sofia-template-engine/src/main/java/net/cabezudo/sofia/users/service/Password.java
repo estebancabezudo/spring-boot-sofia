@@ -1,4 +1,4 @@
-package net.cabezudo.sofia.users;
+package net.cabezudo.sofia.users.service;
 
 public class Password {
   private final String value;

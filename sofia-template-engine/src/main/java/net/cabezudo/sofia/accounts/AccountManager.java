@@ -1,13 +1,15 @@
 package net.cabezudo.sofia.accounts;
 
+import net.cabezudo.sofia.accounts.mappers.EntityToBusinessAccountListMapper;
 import net.cabezudo.sofia.accounts.mappers.EntityToBusinessAccountMapper;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
 import net.cabezudo.sofia.accounts.persistence.AccountUserRelationEntity;
+import net.cabezudo.sofia.core.persistence.EntityList;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteManager;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
-import net.cabezudo.sofia.users.SofiaUser;
+import net.cabezudo.sofia.users.service.SofiaUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 @Service
 public class AccountManager {
@@ -24,19 +25,15 @@ public class AccountManager {
   private @Autowired EntityToBusinessAccountMapper entityToBusinessAccountMapper;
   private @Autowired SiteManager siteManager;
   private @Autowired UserPreferencesManager userPreferencesManager;
+  private @Autowired EntityToBusinessAccountListMapper entityToBusinessAccountListMapper;
 
   public AccountUserRelationEntity findRelation(Site site, Account account, SofiaUser user) {
     return accountRepository.find(account.getId(), user.getId());
   }
 
   public Accounts getAll(SofiaUser user) {
-    Accounts accounts = new Accounts();
-    List<AccountEntity> list = accountRepository.findAll(user.getAccount().getSite().getId(), user.getId());
-    for (AccountEntity accountEntity : list) {
-      Site site = siteManager.get(accountEntity.getSiteId());
-      accounts.add(new Account(accountEntity.getId(), site, accountEntity.getName()));
-    }
-    return accounts;
+    EntityList<AccountEntity> entityList = accountRepository.findAll(user.getAccount().getSite().getId(), user.getId());
+    return entityToBusinessAccountListMapper.map(entityList);
   }
 
   public boolean ownsTheAccount(SofiaUser user, Account account) {
@@ -81,5 +78,19 @@ public class AccountManager {
         return accountFromSession;
       }
     }
+  }
+
+  public Accounts findAll(Site site) {
+    log.debug("Get the account list for site " + site);
+    EntityList<AccountEntity> accountEntityList = accountRepository.findAll(site.getId());
+    Accounts list = entityToBusinessAccountListMapper.map(accountEntityList);
+    return list;
+  }
+
+  public Accounts findAll(Site site, SofiaUser user) {
+    log.debug("Get the account list for the user " + user + " on site " + site);
+    EntityList<AccountEntity> accountEntityList = accountRepository.findAll(site.getId(), user.getId());
+    Accounts list = entityToBusinessAccountListMapper.map(accountEntityList);
+    return list;
   }
 }

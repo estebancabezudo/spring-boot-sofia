@@ -14,6 +14,8 @@ public class ConfigurationFileYAMLSiteData {
   private List<String> permissions;
   private List<String> api;
 
+  private String root;
+
   public ConfigurationFileYAMLSiteData() {
     // Without a default constructor, Jackson will throw an exception
   }
@@ -38,6 +40,10 @@ public class ConfigurationFileYAMLSiteData {
 
   public List<String> getHosts() {
     return hosts;
+  }
+
+  public String getRoot() {
+    return root;
   }
 
   public ConfigurationFileYAMLMailData getMail() {

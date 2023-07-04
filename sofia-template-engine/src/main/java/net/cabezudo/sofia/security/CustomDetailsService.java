@@ -2,19 +2,19 @@ package net.cabezudo.sofia.security;
 
 import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.accounts.AccountManager;
-import net.cabezudo.sofia.accounts.mappers.EntityToBusinessAccountMapper;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteManager;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
-import net.cabezudo.sofia.users.SofiaUser;
+import net.cabezudo.sofia.userpreferences.persistence.UserPreferencesRepository;
 import net.cabezudo.sofia.users.mappers.EntityToBusinessUserMapper;
 import net.cabezudo.sofia.users.persistence.GroupEntity;
 import net.cabezudo.sofia.users.persistence.GroupsEntity;
 import net.cabezudo.sofia.users.persistence.UserEntity;
 import net.cabezudo.sofia.users.persistence.UserRepository;
+import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +38,10 @@ public class CustomDetailsService implements UserDetailsService {
   private @Resource UserRepository userRepository;
   private @Autowired HttpServletRequest request;
   private @Autowired EntityToBusinessUserMapper entityToBusinessUserMapper;
-
-  private @Autowired EntityToBusinessAccountMapper entityToBusinessAccountMapper;
   private @Autowired SiteManager siteManager;
   private @Autowired AccountManager accountManager;
-  private @Autowired UserPreferencesManager userPreferencesManager;
   private @Autowired WebClientDataManager webClientDataManager;
+  private @Autowired UserPreferencesRepository userPreferencesRepository;
 
   @Override
   public SofiaUser loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -60,7 +58,7 @@ public class CustomDetailsService implements UserDetailsService {
       WebClientData webClientData = webClientDataManager.getFromSession(request);
       if (webClientData.getAccount() == null || accountToSet.getId() != webClientData.getAccount().getId()) {
         webClientData.setAccount(accountToSet);
-        userPreferencesManager.setAccount(userId, accountToSet);
+        userPreferencesRepository.update(userId, UserPreferencesManager.ACCOUNT, accountToSet.getId());
       }
       webClientDataManager.set(request, webClientData);
 

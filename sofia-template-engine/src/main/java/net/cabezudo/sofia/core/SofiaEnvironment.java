@@ -51,6 +51,7 @@ public class SofiaEnvironment {
   private static final Logger log = LoggerFactory.getLogger(SofiaEnvironment.class);
   private static final String DATA_DIRECTORY_NAME = "data";
   private static final String TEMPLATES_DIRECTORY_NAME = "templates";
+  private static String rootUsername;
   private final List<Path> sourcePaths = new ArrayList<>();
   private @Autowired PermissionManager permissionManager;
   private @Autowired SiteManager siteManager;
@@ -64,7 +65,7 @@ public class SofiaEnvironment {
   private @Autowired ContentManager contentManager;
   @Value("${sofia.security.active}")
   private boolean sofiaSecurityActive;
-
+  
   private Path checkForDirectoryAndCreate(Path path) throws ConfigurationException, IOException {
     if (!Files.exists(path)) {
       Files.createDirectories(path);

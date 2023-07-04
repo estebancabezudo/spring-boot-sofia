@@ -34,6 +34,10 @@ public class UserPreferencesRepository {
     return list.get(0);
   }
 
+  public void update(int userId, String name, int value) {
+    update(userId, name, Integer.toString(value));
+  }
+
   public void update(int userId, String name, String value) {
     PreparedStatementCreator preparedStatementCreator = connection -> {
       String query = "UPDATE user_preferences SET value = ? WHERE user_id = ? AND name = ?";

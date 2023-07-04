@@ -1,4 +1,4 @@
-package net.cabezudo.sofia.users;
+package net.cabezudo.sofia.users.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.GrantedAuthority;

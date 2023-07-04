@@ -29,8 +29,8 @@ import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteManager;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.sites.SourceNotFoundException;
-import net.cabezudo.sofia.users.Group;
-import net.cabezudo.sofia.users.Groups;
+import net.cabezudo.sofia.users.service.Group;
+import net.cabezudo.sofia.users.service.Groups;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

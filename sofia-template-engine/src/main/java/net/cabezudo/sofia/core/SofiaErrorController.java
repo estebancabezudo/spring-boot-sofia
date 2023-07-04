@@ -23,6 +23,10 @@ public class SofiaErrorController implements ErrorController {
     Integer statusCode = (Integer) webRequest.getAttribute("javax.servlet.error.status_code", RequestAttributes.SCOPE_REQUEST);
     String errorMessage = (String) webRequest.getAttribute("javax.servlet.error.message", RequestAttributes.SCOPE_REQUEST);
 
+    if (statusCode == 500) {
+      return ResponseEntity.internalServerError().build();
+    }
+
     String redirectUrl = "/index.html";
     WebClientData webClientData = webClientDataManager.getFromSession(servletRequest);
     webClientData.setMessage("{ \"type\": \"error\", \"data\": \"" + statusCode + ": " + (errorMessage == null ? "" : errorMessage) + "\"}");

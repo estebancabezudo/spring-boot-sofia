@@ -3,7 +3,10 @@ package net.cabezudo.sofia.users.rest;
 import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.accounts.AccountManager;
 import net.cabezudo.sofia.accounts.Accounts;
+import net.cabezudo.sofia.accounts.mappers.BusinessToRestAccountListMapper;
 import net.cabezudo.sofia.accounts.mappers.RestToBusinessAccountsMapper;
+import net.cabezudo.sofia.accounts.rest.RestAccount;
+import net.cabezudo.sofia.accounts.rest.RestAccountList;
 import net.cabezudo.sofia.accounts.rest.RestAccounts;
 import net.cabezudo.sofia.config.mail.SendEMailException;
 import net.cabezudo.sofia.core.rest.ListRestResponse;
@@ -15,13 +18,19 @@ import net.cabezudo.sofia.people.Person;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.security.SofiaSecurityManager;
 import net.cabezudo.sofia.sites.Site;
-import net.cabezudo.sofia.users.Group;
-import net.cabezudo.sofia.users.SofiaUser;
+import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
 import net.cabezudo.sofia.users.mappers.BusinessToRestUserListMapper;
 import net.cabezudo.sofia.users.mappers.BusinessToRestUserMapper;
 import net.cabezudo.sofia.users.mappers.RestToBusinessUserMapper;
+import net.cabezudo.sofia.users.service.Group;
+import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.users.service.UserList;
 import net.cabezudo.sofia.users.service.UserManager;
+import net.cabezudo.sofia.web.client.Language;
+import net.cabezudo.sofia.web.client.WebClientData;
+import net.cabezudo.sofia.web.client.WebClientDataManager;
+import net.cabezudo.sofia.web.client.mappers.BusinessToRestWebClientMapper;
+import net.cabezudo.sofia.web.client.rest.RestWebClientData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +64,10 @@ public class UsersController extends SofiaAuthorizedController {
   private @Autowired SofiaSecurityManager sofiaSecurityManager;
   private @Autowired PeopleManager peopleManager;
   private @Autowired AccountManager accountManager;
+  private @Autowired BusinessToRestAccountListMapper businessToRestAccountListMapper;
+  private @Autowired WebClientDataManager webClientDataManager;
+  private @Autowired UserPreferencesManager userPreferencesManager;
+  private @Autowired BusinessToRestWebClientMapper businessToRestWebClientMapper;
 
   public UsersController(HttpServletRequest request) {
     super(request);
@@ -331,5 +344,48 @@ public class UsersController extends SofiaAuthorizedController {
     }
 
     return ResponseEntity.ok(new SofiaRestResponse<>(SofiaRestResponse.OK, "passwordUpdated", null));
+  }
+
+  @GetMapping("/v1/users/actual/accounts")
+  public ResponseEntity<?> listAccountsForTheActualUser() {
+    log.debug("Get list of accounts for the actual user");
+    ListRestResponse<RestAccount> listRestResponse;
+
+    Account account = super.getWebClientData().getAccount();
+    SofiaUser user = sofiaSecurityManager.getLoggedUser();
+
+    ResponseEntity<?> result;
+    if ((result = super.isLogged()) != null) {
+      return result;
+    }
+
+    Accounts accounts = accountManager.findAll(account.getSite(), user);
+    RestAccountList restAccountList = businessToRestAccountListMapper.map(accounts);
+    listRestResponse = new ListRestResponse<>(SofiaRestResponse.OK, "Retrieve list of account for site " + account.getSite().getName(), restAccountList);
+    return ResponseEntity.ok(listRestResponse);
+  }
+
+  @PutMapping("/v1/users/actual/set")
+  public ResponseEntity<?> setActualAccount(HttpServletRequest request, @RequestBody RestAccountData accountData) {
+    log.debug("Set the actual account for the actual user");
+
+    WebClientData webClientData = super.getWebClientData();
+
+    WebClientData responseWebClient;
+    if (accountData.getId() != webClientData.getAccount().getId()) {
+      SofiaUser user = webClientData.getUser();
+      Account accountToSet = accountManager.get(accountData.getId());
+      Language language = webClientData.getLanguage();
+
+      WebClientData newWebClientData = new WebClientData(language, accountToSet);
+      webClientDataManager.set(request, newWebClientData);
+      userPreferencesManager.setAccount(user, accountToSet);
+      responseWebClient = newWebClientData;
+    } else {
+      responseWebClient = webClientData;
+    }
+
+    RestWebClientData newRestWebClient = businessToRestWebClientMapper.map(responseWebClient);
+    return ResponseEntity.ok(newRestWebClient);
   }
 }

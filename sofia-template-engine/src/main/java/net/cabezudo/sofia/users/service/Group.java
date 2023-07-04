@@ -1,10 +1,11 @@
-package net.cabezudo.sofia.users;
+package net.cabezudo.sofia.users.service;
 
 import java.util.Objects;
 
 public final class Group implements Comparable<Group> {
   public static final String ADMIN = "admin";
   public static final String USER = "user";
+
   private final String name;
 
   public Group(String name) {

@@ -11,8 +11,7 @@ public class EntityToBusinessPersonListMapper {
   private @Autowired EntityToBusinessPersonMapper entityToBusinessPersonMapper;
 
   public PeopleList map(EntityList<PersonEntity> list) {
-
-
+    
     int total = list.getTotal();
     int start = list.getStart();
     int size = list.getSize();
@@ -23,6 +22,4 @@ public class EntityToBusinessPersonListMapper {
     }
     return peopleList;
   }
-
-
 }

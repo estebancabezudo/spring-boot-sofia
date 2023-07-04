@@ -1,4 +1,4 @@
-package net.cabezudo.sofia.users;
+package net.cabezudo.sofia.users.service;
 
 import net.cabezudo.sofia.accounts.Account;
 import org.jetbrains.annotations.NotNull;

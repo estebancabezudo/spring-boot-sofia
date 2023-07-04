@@ -5,7 +5,7 @@ import net.cabezudo.sofia.core.persistence.EntityList;
 import net.cabezudo.sofia.people.mappers.EntityToBusinessPersonListMapper;
 import net.cabezudo.sofia.people.mappers.EntityToBusinessPersonMapper;
 import net.cabezudo.sofia.people.persistence.PersonEntity;
-import net.cabezudo.sofia.users.SofiaUser;
+import net.cabezudo.sofia.users.service.SofiaUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;

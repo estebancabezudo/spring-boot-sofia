@@ -8,8 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
+import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class TemplateEngineConfiguration implements WebMvcConfigurer {
@@ -24,6 +27,11 @@ public class TemplateEngineConfiguration implements WebMvcConfigurer {
 
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    registry.addResourceHandler("/**").resourceChain(false).addResolver(new SofiaResourceResolver(siteManager, pathManager));
+    registry
+        .addResourceHandler("/**")
+        .setCacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)
+            .noTransform()
+            .mustRevalidate())
+        .resourceChain(false).addResolver(new SofiaResourceResolver(siteManager, pathManager));
   }
 }
