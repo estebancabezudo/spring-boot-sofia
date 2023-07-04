@@ -4,6 +4,7 @@ import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.accounts.AccountManager;
 import net.cabezudo.sofia.accounts.persistence.AccountUserRelationEntity;
 import net.cabezudo.sofia.sites.Site;
+import net.cabezudo.sofia.users.service.Group;
 import net.cabezudo.sofia.users.service.SofiaUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,10 @@ public class PermissionManager {
     List<Permission> permissions = sitePermissions.get(requestURI);
 
     for (Permission permission : permissions) {
+      logger.debug("Try to pass a logged user ");
+      if (user != null && permission.getGroup().equals(Group.USER)) {
+        return true;
+      }
       logger.debug("Try to deny with " + permission);
       if (permission.getUser().equals(Permission.USER_ALL) && permission.getGroup().equals(Permission.GROUP_ALL) && permission.getAccess().equals(Permission.ACCESS_DENY)) {
         logger.debug("Deny because group and user are all and is granted for " + requestURI + ".");
