@@ -136,32 +136,37 @@ public class UserManager {
   @Transactional
   public SofiaUser create(Account account, String eMailAddress, Groups groups, Locale locale, boolean enabled) {
 
-    EMailEntity userFromDatabase = eMailRepository.get(eMailAddress);
-    EMailEntity usernameToUse;
-    if (userFromDatabase == null) {
-      usernameToUse = eMailRepository.create(eMailAddress);
+    EMailEntity emailFromDatabase = eMailRepository.get(eMailAddress);
+    EMailEntity emailToUse;
+    if (emailFromDatabase == null) {
+      emailToUse = eMailRepository.create(eMailAddress);
     } else {
-      usernameToUse = userFromDatabase;
+      emailToUse = emailFromDatabase;
+    }
+    log.debug("Using email with id " + emailToUse);
+
+    UserEntity userToUse;
+    UserEntity userFromDatabase = userRepository.getByEMail(emailToUse.getId());
+    if (userFromDatabase == null) {
+      userToUse = userRepository.create(emailToUse, locale.toString(), enabled);
+      accountRepository.getAccountByUserId(userToUse.getId());
+      Site site = account.getSite();
+      AccountEntity newAccountEntity = accountRepository.create(site.getId(), eMailAddress);
+      accountRepository.create(newAccountEntity.getId(), userToUse.getId(), true);
+    } else {
+      userToUse = userFromDatabase;
     }
 
-    log.debug("Using email with id " + usernameToUse);
-
-    UserEntity userEntity = userRepository.create(usernameToUse, locale.toString(), enabled);
-
-    Site site = account.getSite();
-    AccountEntity newAccountEntity = accountRepository.create(site.getId(), eMailAddress);
-    AccountUserRelationEntity ownAccountUserRelationEntity = accountRepository.create(newAccountEntity.getId(), userEntity.getId(), true);
-
-    AccountUserRelationEntity accountUserRelationEntity = accountRepository.create(account.getId(), userEntity.getId(), false);
+    AccountUserRelationEntity accountUserRelationEntity = accountRepository.create(account.getId(), userToUse.getId(), false);
     AccountEntity accountEntity = businessToEntityAccountMapper.map(account);
-    userEntity.setAccount(accountEntity);
+    userToUse.setAccount(accountEntity);
 
     GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(accountUserRelationEntity.getId(), groups);
     for (GroupEntity groupEntity : groupsEntity) {
-      groupsRepository.create(userEntity.getAccount().getId(), groupEntity.getName());
+      groupsRepository.create(userToUse.getAccount().getId(), groupEntity.getName());
     }
 
-    return entityToBusinessUserMapper.map(userEntity);
+    return entityToBusinessUserMapper.map(userToUse);
   }
 
   @Transactional
@@ -201,12 +206,20 @@ public class UserManager {
 
   public void delete(int accountId, int userId) {
     UserEntity user = userRepository.get(userId);
-    groupsRepository.deleteGroupsFor(user.getAccount().getId());
-
+    AccountUserRelationEntity accountUserRelationEntity = accountRepository.find(accountId, userId);
+    groupsRepository.deleteGroupsFor(accountUserRelationEntity.getId());
     accountRepository.delete(accountId, userId);
 
     int eMailIdToDelete = user.getEMailEntity().getId();
-    userRepository.delete(userId);
+    try {
+      userRepository.delete(userId);
+    } catch (DataAccessException e) {
+      if (e.getCause() instanceof SQLIntegrityConstraintViolationException) {
+        log.debug("I can't delete the user because is used in another account.");
+      } else {
+        throw e;
+      }
+    }
 
     try {
       eMailRepository.delete(eMailIdToDelete);

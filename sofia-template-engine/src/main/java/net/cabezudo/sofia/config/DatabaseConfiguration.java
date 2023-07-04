@@ -14,8 +14,6 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 public class DatabaseConfiguration {
-  public static final String DEFAULT_SCHEMA = "sofia";
-
   @Bean
   @ConfigurationProperties(prefix = "spring.datasource")
   public DataSource mysqlDataSource() {

@@ -1,6 +1,5 @@
 package net.cabezudo.sofia.users.persistence;
 
-import net.cabezudo.sofia.config.DatabaseConfiguration;
 import net.cabezudo.sofia.emails.persistence.EMailEntity;
 import net.cabezudo.sofia.persistence.DatabaseManager;
 import net.cabezudo.sofia.users.service.Password;
@@ -36,7 +35,7 @@ public class UserRepository {
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON u.id = au.user_id " +
-            "LEFT JOIN `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN emails AS e ON u.email_id = e.id " +
             "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
             "WHERE u.email_id = e.id AND a.id = ? AND e.email = ?", account_id, email));
 
@@ -118,7 +117,7 @@ public class UserRepository {
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON au.user_id = u.id " +
-            "LEFT JOIN `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN emails AS e ON u.email_id = e.id " +
             "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
             "WHERE au.owner = true AND u.id = ?", id));
 
@@ -147,7 +146,7 @@ public class UserRepository {
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON au.user_id = u.id " +
-            "LEFT JOIN `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN emails AS e ON u.email_id = e.id " +
             "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
             "WHERE a.id = ? AND u.id = ?", accountId, id));
 
@@ -176,7 +175,7 @@ public class UserRepository {
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON au.user_id = u.id " +
-            "LEFT JOIN `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN emails AS e ON u.email_id = e.id " +
             "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
             "WHERE a.id = ? AND u.id = ?", accountId, userId));
 
@@ -205,7 +204,7 @@ public class UserRepository {
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON au.user_id = u.id " +
-            "LEFT JOIN `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN emails AS e ON u.email_id = e.id " +
             "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
             "WHERE au.owner = true AND email = ?", eMail));
 
@@ -289,9 +288,37 @@ public class UserRepository {
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON u.id = au.user_id " +
-            "LEFT JOIN `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN emails AS e ON u.email_id = e.id " +
             "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
             "WHERE u.email_id = e.id AND au.owner = true AND e.email = ?", email));
+
+    if (list.size() == 0) {
+      return null;
+    }
+
+    Map<String, Object> firstRecord = list.get(0);
+    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
+    UserEntity userEntity = newUserEntity(firstRecord, eMailEntity);
+    for (Map<String, Object> rs : list) {
+      String groupName = (String) rs.get("authority");
+      if (groupName != null) {
+        userEntity.add(new GroupEntity((int) firstRecord.get("id"), groupName));
+      }
+    }
+    return userEntity;
+  }
+
+  public UserEntity getByEMail(int id) {
+    log.debug("Search user for email " + id);
+
+    List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate().queryForList(
+        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
+            "FROM accounts AS a " +
+            "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
+            "LEFT JOIN users AS u ON u.id = au.user_id " +
+            "LEFT JOIN emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
+            "WHERE u.email_id = e.id AND au.owner = true AND e.id = ?", id));
 
     if (list.size() == 0) {
       return null;

@@ -1,7 +1,6 @@
 package net.cabezudo.sofia.accounts.persistence;
 
 import net.cabezudo.sofia.accounts.mappers.AccountUserRelationRowMapper;
-import net.cabezudo.sofia.config.DatabaseConfiguration;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.core.persistence.EntityList;
 import net.cabezudo.sofia.core.persistence.InvalidKey;
@@ -122,7 +121,7 @@ public class AccountRepository {
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON au.user_id = u.id " +
-            "LEFT JOIN `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN emails AS e ON u.email_id = e.id " +
             "WHERE owner = true AND e.email = ? AND a.site_id = ?";
 
     List<AccountEntity> list = databaseManager.getJDBCTemplate().query(sqlQuery, new AccountRowMapper(), email, siteId);
@@ -143,7 +142,7 @@ public class AccountRepository {
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON au.user_id = u.id " +
-            "LEFT JOIN `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e ON u.email_id = e.id " +
+            "LEFT JOIN emails AS e ON u.email_id = e.id " +
             "WHERE owner = true AND a.id = ?";
 
     return databaseManager.getJDBCTemplate().queryForObject(sqlQuery, new AccountRowMapper(), id);

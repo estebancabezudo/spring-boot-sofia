@@ -221,11 +221,7 @@ INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (3, 2, false);
 INSERT INTO `accounts_users` (account_id, user_id, owner) VALUES (3, 4, false);
 
 INSERT INTO `authorities` (account_user_id, authority) VALUES (1, 'admin');
-INSERT INTO `authorities` (account_user_id, authority) VALUES (1, 'user');
 INSERT INTO `authorities` (account_user_id, authority) VALUES (4, 'admin');
-INSERT INTO `authorities` (account_user_id, authority) VALUES (4, 'user');
-INSERT INTO `authorities` (account_user_id, authority) VALUES (5, 'user');
-INSERT INTO `authorities` (account_user_id, authority) VALUES (6, 'user');
 
 INSERT INTO `administrative_division_types` (name) VALUES ('state');
 INSERT INTO `administrative_division_types` (name) VALUES ('municipality');

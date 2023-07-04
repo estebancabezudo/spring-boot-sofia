@@ -1,6 +1,5 @@
 package net.cabezudo.sofia.emails.persistence;
 
-import net.cabezudo.sofia.config.DatabaseConfiguration;
 import net.cabezudo.sofia.emails.mappers.EMailMapper;
 import net.cabezudo.sofia.persistence.DatabaseManager;
 import org.slf4j.Logger;
@@ -24,7 +23,7 @@ public class EMailRepository {
   public EMailEntity get(String address) {
     log.debug("Search email with address " + address);
 
-    String query = "SELECT id, email FROM `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e WHERE email = ?";
+    String query = "SELECT id, email FROM emails AS e WHERE email = ?";
     return databaseManager.getJDBCTemplate().query(query, new EMailMapper(), address).stream().findFirst().orElse(null);
   }
 
@@ -32,12 +31,12 @@ public class EMailRepository {
   public EMailEntity get(int id) {
     log.debug("Search email with id " + id);
 
-    String query = "SELECT id, email FROM `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails AS e WHERE id = ?";
+    String query = "SELECT id, email FROM emails AS e WHERE id = ?";
     return databaseManager.getJDBCTemplate().query(query, new EMailMapper(), id).stream().findFirst().orElse(null);
   }
 
   public EMailEntity create(String email) {
-    String sqlQuery = "INSERT INTO `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails (email) VALUES (?)";
+    String sqlQuery = "INSERT INTO emails (email) VALUES (?)";
     KeyHolder keyHolder = new GeneratedKeyHolder();
     databaseManager.getJDBCTemplate().update(connection -> {
       PreparedStatement ps = connection.prepareStatement(sqlQuery, new String[]{"email"});
@@ -50,7 +49,7 @@ public class EMailRepository {
 
   public void delete(int id) {
     log.debug("Delete email with id " + id);
-    String sqlQuery = "DELETE FROM `" + DatabaseConfiguration.DEFAULT_SCHEMA + "`.emails WHERE id = ?";
+    String sqlQuery = "DELETE FROM emails WHERE id = ?";
     PreparedStatementCreator preparedStatementCreator = connection -> {
       PreparedStatement ps = connection.prepareStatement(sqlQuery);
       ps.setInt(1, id);
