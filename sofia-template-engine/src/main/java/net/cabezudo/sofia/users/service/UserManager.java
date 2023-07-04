@@ -163,7 +163,7 @@ public class UserManager {
 
     GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(accountUserRelationEntity.getId(), groups);
     for (GroupEntity groupEntity : groupsEntity) {
-      groupsRepository.create(userToUse.getAccount().getId(), groupEntity.getName());
+      groupsRepository.create(accountUserRelationEntity.getId(), groupEntity.getName());
     }
 
     return entityToBusinessUserMapper.map(userToUse);
