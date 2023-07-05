@@ -4,6 +4,8 @@ import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.accounts.AccountManager;
 import net.cabezudo.sofia.accounts.persistence.AccountUserRelationEntity;
 import net.cabezudo.sofia.sites.Site;
+import net.cabezudo.sofia.users.persistence.GroupEntity;
+import net.cabezudo.sofia.users.persistence.GroupsRepository;
 import net.cabezudo.sofia.users.service.Group;
 import net.cabezudo.sofia.users.service.SofiaUser;
 import org.slf4j.Logger;
@@ -23,6 +25,7 @@ public class PermissionManager {
   private final Logger logger = LoggerFactory.getLogger(PermissionManager.class);
   private final Map<Site, Permissions> permissionBySite = new TreeMap<>();
   private @Autowired AccountManager accountManager;
+  private @Autowired GroupsRepository groupsRepository;
 
   public void add(Site site, Permission permission) {
     logger.debug("Add permission " + permission + " to site " + site.getName());
@@ -35,8 +38,14 @@ public class PermissionManager {
   }
 
   public boolean hasPermission(Site site, Account account, SofiaUser user, String group, boolean isSecurityActive) {
+    List<GroupEntity> groups = groupsRepository.get(account.getId(), user.getId());
+    for (GroupEntity groupEntity : groups) {
+      if (group.equals(groupEntity.getName())) {
+        return true;
+      }
+    }
     AccountUserRelationEntity relation = accountManager.findRelation(site, account, user);
-    return user.hasPermission(group) || (relation != null && relation.getOwner());
+    return relation != null && relation.getOwner();
   }
 
   public boolean hasPermission(SofiaUser user, Site site, Account account, String requestURI) {

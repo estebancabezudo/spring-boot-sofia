@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.stereotype.Component;
 
 import java.sql.PreparedStatement;
+import java.util.List;
 
 @Component
 public class GroupsRepository {
@@ -36,5 +37,16 @@ public class GroupsRepository {
       return ps;
     };
     databaseManager.getJDBCTemplate().update(preparedStatementCreator);
+  }
+
+  public List<GroupEntity> get(int accountId, int userId) {
+    log.debug("Search group for user " + userId + " for the account " + accountId);
+
+    String query =
+        "SELECT a.account_user_id AS id, authority AS name " +
+            "FROM accounts_users AS au " +
+            "RIGHT JOIN authorities AS a ON au.id = a.account_user_id " +
+            "WHERE au.account_id = ? AND au.user_id = ?";
+    return databaseManager.getJDBCTemplate().query(query, new AuthorityRowMapper(), accountId, userId);
   }
 }
