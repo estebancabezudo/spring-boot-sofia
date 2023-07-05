@@ -93,4 +93,11 @@ public class AccountManager {
     Accounts list = entityToBusinessAccountListMapper.map(accountEntityList);
     return list;
   }
+
+  public Account getByName(Site site, String name) {
+    log.debug("Get the account with the name " + name);
+    AccountEntity accountEntity = accountRepository.getByName(site.getId(), name);
+    Account account = entityToBusinessAccountMapper.map(accountEntity);
+    return account;
+  }
 }

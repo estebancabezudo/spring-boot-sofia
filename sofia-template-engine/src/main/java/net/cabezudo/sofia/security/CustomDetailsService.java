@@ -46,7 +46,6 @@ public class CustomDetailsService implements UserDetailsService {
 
   @Override
   public SofiaUser loadUserByUsername(String email) throws UsernameNotFoundException {
-    Account accountFromSession = (Account) request.getSession().getAttribute("account");
     try {
       Site site = siteManager.get(request);
 
@@ -66,7 +65,7 @@ public class CustomDetailsService implements UserDetailsService {
         }
       }
 
-      Account accountToSet = accountManager.getAccountToSetForUser(accountFromSession, email, site, userId);
+      Account accountToSet = accountManager.getAccountToSetForUser(webClientData.getAccount(), email, site, userId);
       if (webClientData.getAccount() == null || accountToSet.getId() != webClientData.getAccount().getId()) {
         webClientData.setAccount(accountToSet);
         userPreferencesRepository.update(userId, UserPreferencesManager.ACCOUNT, accountToSet.getId());

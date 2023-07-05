@@ -166,4 +166,11 @@ public class AccountRepository {
     }
     throw new RuntimeException("An user only can own one account");
   }
+
+  public AccountEntity getByName(int id, String name) {
+    log.debug("Search person with id " + id);
+
+    String query = "SELECT id, site_id, name FROM accounts WHERE site_id = ? AND name = ?";
+    return databaseManager.getJDBCTemplate().query(query, new AccountRowMapper(), id, name).stream().findFirst().orElse(null);
+  }
 }

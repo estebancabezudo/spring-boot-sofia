@@ -57,14 +57,14 @@ public class PermissionManager {
 
     String username = user == null ? null : user.getUsername();
 
-    if (accountManager.ownsTheAccount(user, account)) {
+    if (user != null && account != null && accountManager.ownsTheAccount(user, account)) {
       return true;
     } else {
       logger.debug("The user DO NOT own the account.");
     }
 
     List<String> groups;
-    if (account != null) {
+    if (account != null && user != null) {
       List<GroupEntity> groupsEntity = groupsRepository.get(account.getId(), user.getId());
       groups = groupsEntity.stream().map(groupEntity -> groupEntity.getName()).collect(Collectors.toList());
     } else {

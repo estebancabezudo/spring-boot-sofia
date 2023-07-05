@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,5 +53,21 @@ public class AccountsController extends SofiaAuthorizedController {
     listRestResponse = new ListRestResponse<>(SofiaRestResponse.OK, "Retrieve list of account for site " + account.getSite().getName(), restAccountList);
     return ResponseEntity.ok(listRestResponse);
   }
+
+
+  @PutMapping("/v1/session/account/set")
+  public ResponseEntity<?> setSessionAccount(@RequestBody RestAccount restAccount) {
+    log.debug("Set the session account");
+    ListRestResponse<RestAccount> listRestResponse;
+
+    Site site = super.getSite();
+    Account account = accountManager.getByName(site, restAccount.getName());
+    super.getWebClientData().setAccount(account);
+
+    listRestResponse = new ListRestResponse<>(SofiaRestResponse.OK, "The account was defined correctly. ", null);
+    return ResponseEntity.ok(listRestResponse);
+  }
+
+
 }
 

@@ -379,7 +379,7 @@ input.error {
 
     .menuItem>span {
         cursor: pointer;
-        margin: 0 10px;
+        margin: 0 0 0 10px;
     }
 
     .headerIcon {
@@ -528,7 +528,7 @@ input.error {
 
 /* CSS code from /twoLanguageFlag.css called by file librarytwoLanguageFlag:1.00 on header.html */
 .twoLanguageFlagContainer {
-    margin: 0 0 0 10px;
+    margin: 0 0 0 14px;
     cursor: pointer;
 }
 
@@ -1375,11 +1375,15 @@ class TwoLanguageFlag {
             setTimeout(hideMessage, 8000);
         });
         Core.subscribeTo('core:webClientDataChange', data => {
-            if (data !== null && data.user !== null) {
-                username = data.user.username;
-                accountName = data.account.name;
-                document.getElementById('headerMenuUsername').innerHTML = `${username}`;
-                headerMenuAccountNameElement.innerHTML = ` (${accountName})`;
+            if (data !== null) {
+                if (data.user !== null) {
+                    username = data.user.username;
+                    document.getElementById('headerMenuUsername').innerHTML = `${username}`;
+                }
+                if (data.account != null) {
+                    accountName = data.account.name;
+                    headerMenuAccountNameElement.innerHTML = ` (${accountName})`;
+                }
             }
         });
     }
