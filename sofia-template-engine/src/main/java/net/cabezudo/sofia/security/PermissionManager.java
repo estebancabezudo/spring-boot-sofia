@@ -11,7 +11,6 @@ import net.cabezudo.sofia.users.service.SofiaUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 @Service
 public class PermissionManager {
@@ -63,7 +63,13 @@ public class PermissionManager {
       logger.debug("The user DO NOT own the account.");
     }
 
-    Collection<GrantedAuthority> authorities = user == null ? new ArrayList<>() : user.getAuthorities();
+    List<String> groups;
+    if (account != null) {
+      List<GroupEntity> groupsEntity = groupsRepository.get(account.getId(), user.getId());
+      groups = groupsEntity.stream().map(groupEntity -> groupEntity.getName()).collect(Collectors.toList());
+    } else {
+      groups = new ArrayList<>();
+    }
 
     Permissions sitePermissions = permissionBySite.get(site);
     if (sitePermissions == null) {
@@ -75,29 +81,29 @@ public class PermissionManager {
 
     for (Permission permission : permissions) {
       logger.debug("Try to pass a logged user ");
-      if (user != null && permission.getGroup().equals(Group.USER)) {
+      if (user != null && permission.getGroupName().equals(Group.USER)) {
         return true;
       }
       logger.debug("Try to deny with " + permission);
-      if (permission.getUser().equals(Permission.USER_ALL) && permission.getGroup().equals(Permission.GROUP_ALL) && permission.getAccess().equals(Permission.ACCESS_DENY)) {
+      if (permission.getUser().equals(Permission.USER_ALL) && permission.getGroupName().equals(Permission.GROUP_ALL) && permission.getAccess().equals(Permission.ACCESS_DENY)) {
         logger.debug("Deny because group and user are all and is granted for " + requestURI + ".");
         return false;
       }
-      if (permission.getUser().equals(Permission.USER_ALL) && authorities.contains(permission.getGroup()) && permission.getAccess().equals(Permission.ACCESS_DENY)) {
-        for (GrantedAuthority authority : authorities) {
-          if (authority.getAuthority().equals(permission.getGroup())) {
+      if (permission.getUser().equals(Permission.USER_ALL) && groups.contains(permission.getGroupName()) && permission.getAccess().equals(Permission.ACCESS_DENY)) {
+        for (String groupName : groups) {
+          if (groupName.equals(permission.getGroupName())) {
             logger.debug("Deny because the user is all, the group match and is granted for " + requestURI + ".");
             return false;
           }
         }
       }
-      if (permission.getGroup().equals(Permission.GROUP_ALL) && permission.getUser().equals(username) && permission.getAccess().equals(Permission.ACCESS_DENY)) {
+      if (permission.getGroupName().equals(Permission.GROUP_ALL) && permission.getUser().equals(username) && permission.getAccess().equals(Permission.ACCESS_DENY)) {
         logger.debug("Deny because the user match, the group is all is granted for " + requestURI + ".");
         return false;
       }
-      if (permission.getUser().equals(username) && contains(authorities, permission.getGroup()) && permission.getAccess().equals(Permission.ACCESS_DENY)) {
-        for (GrantedAuthority authority : authorities) {
-          if (authority.getAuthority().equals(permission.getGroup())) {
+      if (permission.getUser().equals(username) && contains(groups, permission.getGroupName()) && permission.getAccess().equals(Permission.ACCESS_DENY)) {
+        for (String groupName : groups) {
+          if (groupName.equals(permission.getGroupName())) {
             logger.debug("Deny because the user is all, the group match and is granted for " + requestURI + ".");
             return false;
           }
@@ -105,20 +111,20 @@ public class PermissionManager {
       }
       for (Permission grantPermission : permissions) {
         logger.debug("Try to authorize with " + grantPermission);
-        if (grantPermission.getUser().equals(Permission.USER_ALL) && grantPermission.getGroup().equals(Permission.GROUP_ALL) && grantPermission.getAccess().equals(Permission.ACCESS_GRANT)) {
+        if (grantPermission.getUser().equals(Permission.USER_ALL) && grantPermission.getGroupName().equals(Permission.GROUP_ALL) && grantPermission.getAccess().equals(Permission.ACCESS_GRANT)) {
           logger.debug("Authorized because group and user are all and is granted for " + requestURI + ".");
           return true;
         }
-        logger.debug(grantPermission.getUser() + " " + authorities + " contain(" + grantPermission.getGroup() + ")=" + authorities.contains(grantPermission.getGroup()) + " " + grantPermission.getAccess());
-        if (contains(authorities, grantPermission.getGroup()) && grantPermission.getUser().equals(Permission.USER_ALL) && grantPermission.getAccess().equals(Permission.ACCESS_GRANT)) {
+        logger.debug(grantPermission.getUser() + " " + groups + " contain(" + grantPermission.getGroupName() + ")=" + groups.contains(grantPermission.getGroupName()) + " " + grantPermission.getAccess());
+        if (contains(groups, grantPermission.getGroupName()) && grantPermission.getUser().equals(Permission.USER_ALL) && grantPermission.getAccess().equals(Permission.ACCESS_GRANT)) {
           logger.debug("Authorized because the user is all, the group match and is granted for " + requestURI + ".");
           return true;
         }
-        if (grantPermission.getGroup().equals(Permission.GROUP_ALL) && grantPermission.getUser().equals(username) && grantPermission.getAccess().equals(Permission.ACCESS_GRANT)) {
+        if (grantPermission.getGroupName().equals(Permission.GROUP_ALL) && grantPermission.getUser().equals(username) && grantPermission.getAccess().equals(Permission.ACCESS_GRANT)) {
           logger.debug("Authorized because the user match, the group is all is granted for " + requestURI + ".");
           return true;
         }
-        if (contains(authorities, grantPermission.getGroup()) && grantPermission.getUser().equals(username) && grantPermission.getAccess().equals(Permission.ACCESS_GRANT)) {
+        if (contains(groups, grantPermission.getGroupName()) && grantPermission.getUser().equals(username) && grantPermission.getAccess().equals(Permission.ACCESS_GRANT)) {
           logger.debug("Authorized because the user is all, the group match and is granted for " + requestURI + ".");
           return true;
         }
@@ -128,9 +134,9 @@ public class PermissionManager {
     return false;
   }
 
-  private boolean contains(Collection<? extends GrantedAuthority> authorities, String role) {
-    for (GrantedAuthority authority : authorities) {
-      if (authority.getAuthority().equals(role)) {
+  private boolean contains(Collection<String> groupsNames, String Names) {
+    for (String groupName : groupsNames) {
+      if (groupName.equals(groupName)) {
         return true;
       }
     }

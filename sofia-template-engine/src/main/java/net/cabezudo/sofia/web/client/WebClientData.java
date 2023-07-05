@@ -4,14 +4,15 @@ import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.users.service.SofiaUser;
 
 public class WebClientData {
-  private final Language language;
+  private Language language;
   private Account account;
   private SofiaUser user;
   private String message;
 
-  public WebClientData(Language language, Account account) {
+  public WebClientData(Language language, Account account, SofiaUser user) {
     this.language = language;
     this.account = account;
+    this.user = user;
   }
 
   public Account getAccount() {
@@ -33,6 +34,10 @@ public class WebClientData {
 
   public Language getLanguage() {
     return language;
+  }
+
+  public void setLanguage(Language language) {
+    this.language = language;
   }
 
   public SofiaUser getUser() {

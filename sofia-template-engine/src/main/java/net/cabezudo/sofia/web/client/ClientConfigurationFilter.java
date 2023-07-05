@@ -27,7 +27,7 @@ public class ClientConfigurationFilter extends OncePerRequestFilter {
     WebClientData webClientDataFromSession = webClientDataManager.getFromSession(request);
     if (webClientDataFromSession == null) {
       // TODO tomar la cuenta de la cuenta por defecto para el sitio
-      WebClientData newWebClientData = new WebClientData(null, null); // The language is defined when the first text is requested.
+      WebClientData newWebClientData = new WebClientData(null, null, null); // The language is defined when the first text is requested.
       log.debug("The client data is null. Create " + newWebClientData);
 
       webClientDataManager.set(request, newWebClientData);

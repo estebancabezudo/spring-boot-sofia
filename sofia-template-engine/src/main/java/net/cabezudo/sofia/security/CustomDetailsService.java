@@ -15,6 +15,7 @@ import net.cabezudo.sofia.users.persistence.GroupsEntity;
 import net.cabezudo.sofia.users.persistence.UserEntity;
 import net.cabezudo.sofia.users.persistence.UserRepository;
 import net.cabezudo.sofia.users.service.SofiaUser;
+import net.cabezudo.sofia.web.client.Language;
 import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,12 +55,23 @@ public class CustomDetailsService implements UserDetailsService {
         throw new UsernameNotFoundException(email);
       }
       int userId = userLogged.getId();
-      Account accountToSet = accountManager.getActualAccount(accountFromSession, email, site, userId);
+
       WebClientData webClientData = webClientDataManager.getFromSession(request);
+
+      String languageCodeFromDatabase = userPreferencesRepository.get(userId, UserPreferencesManager.LANGUAGE);
+      if (languageCodeFromDatabase != null) {
+        Language language = new Language(languageCodeFromDatabase);
+        if (!webClientData.getLanguage().equals(language)) {
+          webClientData.setLanguage(language);
+        }
+      }
+
+      Account accountToSet = accountManager.getAccountToSetForUser(accountFromSession, email, site, userId);
       if (webClientData.getAccount() == null || accountToSet.getId() != webClientData.getAccount().getId()) {
         webClientData.setAccount(accountToSet);
         userPreferencesRepository.update(userId, UserPreferencesManager.ACCOUNT, accountToSet.getId());
       }
+
       webClientDataManager.set(request, webClientData);
 
       UserEntity userEntity = userRepository.getForAccount(accountToSet.getId(), userId);

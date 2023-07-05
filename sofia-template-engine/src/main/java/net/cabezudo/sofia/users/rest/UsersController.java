@@ -373,11 +373,11 @@ public class UsersController extends SofiaAuthorizedController {
 
     WebClientData responseWebClient;
     if (accountData.getId() != webClientData.getAccount().getId()) {
-      SofiaUser user = webClientData.getUser();
       Account accountToSet = accountManager.get(accountData.getId());
       Language language = webClientData.getLanguage();
+      SofiaUser user = webClientData.getUser();
 
-      WebClientData newWebClientData = new WebClientData(language, accountToSet);
+      WebClientData newWebClientData = new WebClientData(language, accountToSet, user);
       webClientDataManager.set(request, newWebClientData);
       userPreferencesManager.setAccount(user, accountToSet);
       responseWebClient = newWebClientData;

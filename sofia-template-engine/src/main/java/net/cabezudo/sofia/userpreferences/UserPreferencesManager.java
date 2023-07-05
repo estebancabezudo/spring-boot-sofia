@@ -4,7 +4,6 @@ import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.accounts.mappers.EntityToBusinessAccountMapper;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
-import net.cabezudo.sofia.accounts.persistence.AccountUserRelationEntity;
 import net.cabezudo.sofia.userpreferences.persistence.AccountPreferencesRepository;
 import net.cabezudo.sofia.userpreferences.persistence.UserPreferencesRepository;
 import net.cabezudo.sofia.users.service.SofiaUser;
@@ -17,21 +16,18 @@ import javax.transaction.Transactional;
 @Service
 public class UserPreferencesManager {
   public static final String ACCOUNT = "account";
-  private static final String LANGUAGE = "language";
+  public static final String LANGUAGE = "language";
   private @Autowired UserPreferencesRepository userPreferencesRepository;
   private @Autowired AccountPreferencesRepository accountPreferencesRepository;
   private @Autowired AccountRepository accountRepository;
   private @Autowired EntityToBusinessAccountMapper entityToBusinessAccountMapper;
 
   @Transactional
-  public void setLanguage(Account account, SofiaUser user, Language language) {
-    if (account == null) {
+  public void setLanguage(SofiaUser user, Language language) {
+    if (user == null) {
       return;
     }
-    AccountUserRelationEntity accountUserRelationEntity = accountRepository.find(account.getId(), user.getId());
-
-    UserPreferences userPreferences = accountPreferencesRepository.get(accountUserRelationEntity.getId(), LANGUAGE);
-    // TODO set user preferences
+    userPreferencesRepository.update(user.getId(), LANGUAGE, language.getCode());
   }
 
   @Transactional

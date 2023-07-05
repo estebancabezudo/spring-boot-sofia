@@ -49,7 +49,7 @@ public class AccountManager {
     return entityToBusinessAccountMapper.map(accountEntity);
   }
 
-  public Account getActualAccount(Account accountFromSession, String email, Site site, int userId) {
+  public Account getAccountToSetForUser(Account accountFromSession, String email, Site site, int userId) {
     log.debug("Get the account to use with the user " + email);
     if (accountFromSession == null) {
       log.debug("There is no an account defined in the session");

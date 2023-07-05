@@ -58,9 +58,9 @@ public class WebClientController extends SofiaAuthorizedController {
       Account account = webClientData.getAccount();
       SofiaUser user = webClientData.getUser();
 
-      WebClientData newWebClientData = new WebClientData(languageToSet, account);
+      WebClientData newWebClientData = new WebClientData(languageToSet, account, user);
       webClientDataManager.set(request, newWebClientData);
-      userPreferencesManager.setLanguage(account, user, languageToSet);
+      userPreferencesManager.setLanguage(user, languageToSet);
       responseWebClient = newWebClientData;
     } else {
       responseWebClient = webClientData;

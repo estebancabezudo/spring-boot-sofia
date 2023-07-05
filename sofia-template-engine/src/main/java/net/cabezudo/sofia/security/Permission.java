@@ -42,7 +42,7 @@ public class Permission implements Comparable<Permission> {
     return data;
   }
 
-  public String getGroup() {
+  public String getGroupName() {
     return group;
   }
 
