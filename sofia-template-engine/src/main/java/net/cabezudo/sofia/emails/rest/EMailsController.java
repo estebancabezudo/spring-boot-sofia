@@ -14,18 +14,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-
 @Controller
 @ResponseBody
 public class EMailsController extends SofiaAuthorizedController {
   private static final Logger log = LoggerFactory.getLogger(EMailsController.class);
 
   private @Autowired EMailManager eMailManager;
-
-  public EMailsController(HttpServletRequest request) {
-    super(request);
-  }
 
   @GetMapping("/v1/emails/{address}/info")
   public ResponseEntity<?> info(@PathVariable String address) throws DuplicateKeyException {

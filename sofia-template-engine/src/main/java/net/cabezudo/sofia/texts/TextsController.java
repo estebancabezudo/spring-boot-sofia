@@ -14,6 +14,8 @@ import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.web.client.Language;
 import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
+import net.cabezudo.sofia.web.user.WebUserData;
+import net.cabezudo.sofia.web.user.WebUserDataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,17 +41,14 @@ public class TextsController extends SofiaController {
   private @Autowired PathManager pathManager;
   private @Autowired WebClientDataManager webClientDataManager;
   private @Autowired UserPreferencesManager userPreferencesManager;
-
-  public TextsController(HttpServletRequest request) {
-    super(request);
-  }
+  private @Autowired WebUserDataManager webUserDataManager;
 
   @RequestMapping(
       value = "/v1/pages/actual/texts",
       method = RequestMethod.GET,
       produces = "application/json"
   )
-  public ResponseEntity<? extends SofiaRestResponse> texts(HttpServletRequest request, @RequestParam(value = "language") String requestedLanguageCode, @RequestParam String page) {
+  public ResponseEntity<? extends SofiaRestResponse> texts(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "language") String requestedLanguageCode, @RequestParam String page) {
     log.debug("Run /v1/pages/actual/texts, language=" + requestedLanguageCode + ", page=" + page);
     Site site = super.getSite();
     Host host = super.getHost();
@@ -76,7 +75,7 @@ public class TextsController extends SofiaController {
       }
       String textFromFile = Files.readString(path);
 
-      WebClientData webClientData = super.getWebClientData();
+      WebClientData webClientData = webClientDataManager.getFromCookie(request);
       log.debug("Client data: " + webClientData);
       if (webClientData == null) {
         throw new SofiaRuntimeException("The client data is null");
@@ -87,18 +86,18 @@ public class TextsController extends SofiaController {
 
       if (languageFromClient == null || !languageFromClient.getCode().equals(requestedLanguageCode)) {
         Language requestedLanguage = new Language(requestedLanguageCode);
-        WebClientData newWebClientData = new WebClientData(requestedLanguage, webClientData.getAccount(), webClientData.getUser());
-        webClientDataManager.set(request, newWebClientData);
-        log.debug("Change new web client for: " + newWebClientData);
-
-        HttpSession session = super.getRequest().getSession();
-        String sessionId = session.getId();
-        log.debug("Set web client object in session " + sessionId + " for language change to " + requestedLanguageCode);
-
-        SofiaUser user = webClientData.getUser();
-        userPreferencesManager.setLanguage(user, requestedLanguage);
+        WebUserData webUserData = webUserDataManager.getFromSession(request);
+        SofiaUser user = webUserData == null ? null : webUserData.getUser();
+        if (user == null) {
+          WebClientData newWebClientData = new WebClientData(webClientData.getId(), requestedLanguage, webClientData.getAccount(), webClientData.getLastUpdate());
+          webClientDataManager.update(webClientData.getId(), newWebClientData);
+          webClientDataManager.setCookie(response, newWebClientData);
+        } else {
+          webUserData.setLanguage(requestedLanguage);
+          webUserDataManager.set(request, webUserData);
+          userPreferencesManager.setLanguage(user, requestedLanguage);
+        }
       }
-
       return ResponseEntity.ok(new TextsRestResponse(textFromFile));
     } catch (SiteNotFoundException | HostNotFoundException e) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new SofiaRestResponse(SofiaRestResponse.ERROR, e.getMessage()));

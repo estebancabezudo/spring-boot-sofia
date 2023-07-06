@@ -28,7 +28,7 @@ public class SofiaErrorController implements ErrorController {
     }
 
     String redirectUrl = "/index.html";
-    WebClientData webClientData = webClientDataManager.getFromSession(servletRequest);
+    WebClientData webClientData = webClientDataManager.getFromCookie(servletRequest);
     webClientData.setMessage("{ \"type\": \"error\", \"data\": \"" + statusCode + ": " + (errorMessage == null ? "" : errorMessage) + "\"}");
     return ResponseEntity.status(HttpStatus.FOUND)
         .header("Location", redirectUrl)

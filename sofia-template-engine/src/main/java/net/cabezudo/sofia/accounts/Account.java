@@ -10,7 +10,7 @@ public class Account implements Comparable<Account> {
   private final Site site;
   private final String name;
 
-  public Account(Integer id, Site site, String name) {
+  public Account(Integer id, @NotNull Site site, @NotNull String name) {
     this.id = id;
     this.site = site;
     this.name = name;

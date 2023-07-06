@@ -1,6 +1,7 @@
 package net.cabezudo.sofia.places.rest;
 
 import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.accounts.AccountManager;
 import net.cabezudo.sofia.core.rest.ListRestResponse;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
 import net.cabezudo.sofia.places.Place;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,17 +37,14 @@ public class PlacesController extends SofiaAuthorizedController {
   private @Autowired BusinessToRestPlaceMapper businessToRestPlaceMapper;
   private @Autowired PlaceManager placesManager;
   private @Autowired RestToBusinessPlaceMapper restToBusinessPlaceMapper;
-
-  public PlacesController(HttpServletRequest request) {
-    super(request);
-  }
+  private @Autowired AccountManager accountManager;
 
   @GetMapping("/v1/places")
-  public ResponseEntity<?> listAll(@RequestParam(defaultValue = "false") Boolean includeAdministrativeDivisionList) {
+  public ResponseEntity<?> listAll(HttpServletRequest request, @RequestParam(defaultValue = "false") Boolean includeAdministrativeDivisionList) {
     log.debug("Get list of places");
     ListRestResponse<RestPlace> listRestResponse;
 
-    Account account = super.getWebClientData().getAccount();
+    Account account = accountManager.getAccount(request);
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -61,10 +58,10 @@ public class PlacesController extends SofiaAuthorizedController {
   }
 
   @PostMapping("/v1/places")
-  public ResponseEntity<?> create(@RequestBody RestPlace restPlaceToSave) {
+  public ResponseEntity<?> create(HttpServletRequest request, @RequestBody RestPlace restPlaceToSave) {
     log.debug("Create a new place");
 
-    Account account = super.getWebClientData().getAccount();
+    Account account = accountManager.getAccount(request);
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -80,11 +77,11 @@ public class PlacesController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/places/{id}")
-  public ResponseEntity<?> login(@PathVariable Integer id) {
+  public ResponseEntity<?> login(HttpServletRequest request, @PathVariable Integer id) {
     log.debug("Get the place with id=" + id);
     PlacesRestResponse placesRestResponse;
 
-    Account account = super.getWebClientData().getAccount();
+    Account account = accountManager.getAccount(request);
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -103,10 +100,10 @@ public class PlacesController extends SofiaAuthorizedController {
   }
 
   @PutMapping("/v1/places/{id}")
-  public ResponseEntity<?> update(ServletWebRequest request, @PathVariable Integer id, @RequestBody RestPlace restPlaceToSave) {
+  public ResponseEntity<?> update(HttpServletRequest request, @PathVariable Integer id, @RequestBody RestPlace restPlaceToSave) {
     log.debug("Update an existing place");
 
-    Account account = super.getWebClientData().getAccount();
+    Account account = accountManager.getAccount(request);
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -119,10 +116,10 @@ public class PlacesController extends SofiaAuthorizedController {
   }
 
   @DeleteMapping("/v1/places/{id}")
-  public ResponseEntity<?> delete(ServletWebRequest request, @PathVariable Integer id) {
+  public ResponseEntity<?> delete(HttpServletRequest request, @PathVariable Integer id) {
     log.debug("Delete an existing place");
 
-    Account account = super.getWebClientData().getAccount();
+    Account account = accountManager.getAccount(request);
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {

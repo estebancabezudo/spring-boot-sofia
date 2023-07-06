@@ -3,6 +3,7 @@ CREATE DATABASE sofia;
 
 USE `sofia`;
 DROP TABLE IF EXISTS `accounts_users`;
+DROP TABLE IF EXISTS `web_client_data`;
 DROP TABLE IF EXISTS `accounts`;
 DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `sites`;
@@ -44,6 +45,15 @@ CREATE TABLE `accounts` (
   `name` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_accounts_site` FOREIGN KEY (`site_id`) REFERENCES `sofia`.`sites` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `web_client_data` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `language` VARCHAR(2),
+  `account_id` INT(11),
+  `last_update` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_web_client_data_account` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `users` (

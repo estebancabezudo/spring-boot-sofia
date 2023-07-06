@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,6 +39,7 @@ public class CustomDetailsService implements UserDetailsService {
   private @Resource AccountRepository accountRepository;
   private @Resource UserRepository userRepository;
   private @Autowired HttpServletRequest request;
+  private @Autowired HttpServletResponse response;
   private @Autowired EntityToBusinessUserMapper entityToBusinessUserMapper;
   private @Autowired SiteManager siteManager;
   private @Autowired AccountManager accountManager;
@@ -55,7 +57,7 @@ public class CustomDetailsService implements UserDetailsService {
       }
       int userId = userLogged.getId();
 
-      WebClientData webClientData = webClientDataManager.getFromSession(request);
+      WebClientData webClientData = webClientDataManager.getFromCookie(request);
 
       String languageCodeFromDatabase = userPreferencesRepository.get(userId, UserPreferencesManager.LANGUAGE);
       if (languageCodeFromDatabase != null) {
@@ -71,7 +73,7 @@ public class CustomDetailsService implements UserDetailsService {
         userPreferencesRepository.update(userId, UserPreferencesManager.ACCOUNT, accountToSet.getId());
       }
 
-      webClientDataManager.set(request, webClientData);
+      webClientDataManager.setCookie(response, webClientData);
 
       UserEntity userEntity = userRepository.getForAccount(accountToSet.getId(), userId);
       userLogged.setGroups(userEntity.getGroups());

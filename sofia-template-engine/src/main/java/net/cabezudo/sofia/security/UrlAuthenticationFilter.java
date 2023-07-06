@@ -2,6 +2,7 @@ package net.cabezudo.sofia.security;
 
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
+import net.cabezudo.sofia.core.SofiaEnvironment;
 import net.cabezudo.sofia.math.Numbers;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteManager;
@@ -31,12 +32,13 @@ public class UrlAuthenticationFilter extends OncePerRequestFilter {
   private @Autowired UserManager userManager;
   private @Autowired AccountRepository accountRepository;
   private @Autowired SiteManager siteManager;
+  private @Autowired SofiaEnvironment sofiaEnvironment;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
     String email = request.getParameter(USER_PARAMETER);
 
-    if (email != null && !email.isEmpty()) {
+    if (email != null && sofiaEnvironment.isDevelopment() && !email.isEmpty()) {
       String accountParameter = request.getParameter(ACCOUNT_PARAMETER);
 
       SofiaUser user;

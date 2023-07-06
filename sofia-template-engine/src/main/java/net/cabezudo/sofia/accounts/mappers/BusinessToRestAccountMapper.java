@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class BusinessToRestAccountMapper {
   public RestAccount map(Account account) {
+    if (account == null) {
+      return null;
+    }
     return new RestAccount(account.getId(), account.getName());
   }
 }

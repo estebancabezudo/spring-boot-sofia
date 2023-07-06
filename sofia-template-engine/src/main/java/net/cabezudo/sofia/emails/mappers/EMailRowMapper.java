@@ -6,7 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class EMailMapper implements RowMapper<EMailEntity> {
+public class EMailRowMapper implements RowMapper<EMailEntity> {
   @Override
   public EMailEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
     int id = rs.getInt("id");

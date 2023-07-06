@@ -1,18 +1,25 @@
 package net.cabezudo.sofia.web.client;
 
 import net.cabezudo.sofia.accounts.Account;
-import net.cabezudo.sofia.users.service.SofiaUser;
+
+import java.sql.Date;
 
 public class WebClientData {
+  private final Integer id;
+  private final Date lastUpdate;
   private Language language;
   private Account account;
-  private SofiaUser user;
   private String message;
 
-  public WebClientData(Language language, Account account, SofiaUser user) {
+  public WebClientData(Integer id, Language language, Account account, Date lastUpdate) {
+    this.id = id;
     this.language = language;
     this.account = account;
-    this.user = user;
+    this.lastUpdate = lastUpdate;
+  }
+
+  public Integer getId() {
+    return id;
   }
 
   public Account getAccount() {
@@ -23,29 +30,12 @@ public class WebClientData {
     this.account = account;
   }
 
-  @Override
-  public String toString() {
-    return "WebClientData{" +
-        "language=" + language +
-        ", account=" + account +
-        ", user=" + user +
-        '}';
-  }
-
   public Language getLanguage() {
     return language;
   }
 
   public void setLanguage(Language language) {
     this.language = language;
-  }
-
-  public SofiaUser getUser() {
-    return user;
-  }
-
-  public void setUser(SofiaUser user) {
-    this.user = user;
   }
 
   public void clearMessage() {
@@ -58,5 +48,20 @@ public class WebClientData {
 
   public void setMessage(String message) {
     this.message = message;
+  }
+
+  public Date getLastUpdate() {
+    return lastUpdate;
+  }
+
+  @Override
+  public String toString() {
+    return "WebClientData{" +
+        "id=" + id +
+        ", lastUpdate=" + lastUpdate +
+        ", language=" + language +
+        ", account=" + account +
+        ", message='" + message + '\'' +
+        '}';
   }
 }

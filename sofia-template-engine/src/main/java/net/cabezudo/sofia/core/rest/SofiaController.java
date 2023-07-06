@@ -6,7 +6,6 @@ import net.cabezudo.sofia.sites.HostNotFoundException;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteManager;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
-import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,13 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public abstract class SofiaController {
-  private final HttpServletRequest request;
   private @Autowired SiteManager siteManager;
   private @Autowired WebClientDataManager webClientDataManager;
-
-  public SofiaController(HttpServletRequest request) {
-    this.request = request;
-  }
+  private @Autowired HttpServletRequest request;
 
   protected Site getSite() {
     try {
@@ -39,13 +34,5 @@ public abstract class SofiaController {
     } catch (HostNotFoundException e) {
       throw new SofiaRuntimeException(e);
     }
-  }
-
-  protected HttpServletRequest getRequest() {
-    return request;
-  }
-
-  protected WebClientData getWebClientData() {
-    return webClientDataManager.getFromSession(request);
   }
 }

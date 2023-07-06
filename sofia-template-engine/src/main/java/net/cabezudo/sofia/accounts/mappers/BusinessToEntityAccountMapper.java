@@ -11,7 +11,9 @@ public class BusinessToEntityAccountMapper {
   private @Autowired SiteManager siteManager;
 
   public AccountEntity map(Account account) {
-
+    if (account == null) {
+      return null;
+    }
     return new AccountEntity(account.getId(), account.getSite().getId(), account.getName());
   }
 }

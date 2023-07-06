@@ -8,14 +8,14 @@ import java.util.Objects;
 public final class RestWebClientData {
   private final String language;
   private final Account account;
-  private final RestUser user;
   private final String message;
+  private final RestUser user;
 
-  public RestWebClientData(String language, Account account, RestUser user, String message) {
+  public RestWebClientData(String language, Account account, String message, RestUser user) {
     this.language = language;
     this.account = account;
-    this.user = user;
     this.message = message;
+    this.user = user;
   }
 
   public String getLanguage() {
@@ -26,12 +26,12 @@ public final class RestWebClientData {
     return account;
   }
 
-  public RestUser getUser() {
-    return user;
-  }
-
   public String getMessage() {
     return message;
+  }
+
+  public RestUser getUser() {
+    return user;
   }
 
   @Override
@@ -40,13 +40,12 @@ public final class RestWebClientData {
     if (obj == null || obj.getClass() != this.getClass()) return false;
     var that = (RestWebClientData) obj;
     return Objects.equals(this.language, that.language) &&
-        Objects.equals(this.account, that.account) &&
-        Objects.equals(this.user, that.user);
+        Objects.equals(this.account, that.account);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(language, account, user);
+    return Objects.hash(language, account);
   }
 
   @Override

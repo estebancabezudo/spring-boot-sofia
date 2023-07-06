@@ -1,6 +1,6 @@
 package net.cabezudo.sofia.emails.persistence;
 
-import net.cabezudo.sofia.emails.mappers.EMailMapper;
+import net.cabezudo.sofia.emails.mappers.EMailRowMapper;
 import net.cabezudo.sofia.persistence.DatabaseManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ public class EMailRepository {
     log.debug("Search email with address " + address);
 
     String query = "SELECT id, email FROM emails AS e WHERE email = ?";
-    return databaseManager.getJDBCTemplate().query(query, new EMailMapper(), address).stream().findFirst().orElse(null);
+    return databaseManager.getJDBCTemplate().query(query, new EMailRowMapper(), address).stream().findFirst().orElse(null);
   }
 
 
@@ -32,7 +32,7 @@ public class EMailRepository {
     log.debug("Search email with id " + id);
 
     String query = "SELECT id, email FROM emails AS e WHERE id = ?";
-    return databaseManager.getJDBCTemplate().query(query, new EMailMapper(), id).stream().findFirst().orElse(null);
+    return databaseManager.getJDBCTemplate().query(query, new EMailRowMapper(), id).stream().findFirst().orElse(null);
   }
 
   public EMailEntity create(String email) {

@@ -8,6 +8,8 @@ import net.cabezudo.sofia.web.client.Language;
 import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
 import net.cabezudo.sofia.web.client.mappers.BusinessToRestWebClientMapper;
+import net.cabezudo.sofia.web.user.WebUserData;
+import net.cabezudo.sofia.web.user.WebUserDataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 public class WebClientController extends SofiaAuthorizedController {
@@ -30,43 +33,52 @@ public class WebClientController extends SofiaAuthorizedController {
 
   private @Autowired UserPreferencesManager userPreferencesManager;
   private @Autowired WebClientDataManager webClientDataManager;
-
-  public WebClientController(HttpServletRequest request) {
-    super(request);
-  }
+  private @Autowired HttpServletRequest request;
+  private @Autowired WebUserDataManager webUserDataManager;
 
   @RequestMapping(value = "/v1/web/clients/actual/details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<RestWebClientData> clientDetails() {
+  public ResponseEntity<FullRestWebClientData> clientDetails() {
     log.debug("Run /v1/web/clients/actual/details");
-    WebClientData webClientData = super.getWebClientData();
-    RestWebClientData restWebClient = businessToRestWebClientMapper.map(webClientData);
+    WebClientData webClientData = webClientDataManager.getFromCookie(request);
+    WebUserData webUserData = webUserDataManager.getFromSession(request);
+    RestWebClientData restWebClient = businessToRestWebClientMapper.map(webClientData, webUserData);
     webClientData.clearMessage();
-    log.debug("Web client data: " + restWebClient);
-    return ResponseEntity.ok(restWebClient);
+
+    FullRestWebClientData fullRestWebClientData = new FullRestWebClientData(webClientData, webUserData);
+    log.debug("Full web client data: " + fullRestWebClientData);
+    return ResponseEntity.ok(fullRestWebClientData);
   }
 
   // Cambia el lenguaje por defecto del sitio
   @PutMapping("/v1/web/clients/actual/languages/default")
-  public ResponseEntity<RestWebClientData> setLanguage(HttpServletRequest request, @RequestBody RestLanguage restLanguage) {
+  public ResponseEntity<FullRestWebClientData> setLanguage(HttpServletRequest request, HttpServletResponse response, @RequestBody RestLanguage restLanguage) {
     log.debug("Run /v1/web/clients/actual/languages/default");
 
-    WebClientData webClientData = super.getWebClientData();
+    FullRestWebClientData fullRestWebClientData;
 
-    WebClientData responseWebClient;
-    if (restLanguage != null && !restLanguage.getCode().equals(webClientData.getLanguage().getCode())) {
-      Language languageToSet = new Language(restLanguage.getCode());
-      Account account = webClientData.getAccount();
-      SofiaUser user = webClientData.getUser();
-
-      WebClientData newWebClientData = new WebClientData(languageToSet, account, user);
-      webClientDataManager.set(request, newWebClientData);
-      userPreferencesManager.setLanguage(user, languageToSet);
-      responseWebClient = newWebClientData;
+    WebUserData webUserData = webUserDataManager.getFromSession(request);
+    WebClientData webClientDataFromCookie = webClientDataManager.getFromCookie(request);
+    if (webUserData.getUser() == null) {
+      if (restLanguage != null && !restLanguage.getCode().equals(webClientDataFromCookie.getLanguage().getCode())) {
+        int id = webClientDataFromCookie.getId();
+        Language language = new Language(restLanguage.getCode());
+        Account account = webClientDataFromCookie.getAccount();
+        WebClientData webClientData = new WebClientData(id, language, account, null);
+        webClientDataManager.setCookie(response, webClientData);
+        fullRestWebClientData = new FullRestWebClientData(webClientData, webUserData);
+      } else {
+        fullRestWebClientData = new FullRestWebClientData(webClientDataFromCookie, webUserData);
+      }
     } else {
-      responseWebClient = webClientData;
+      if (restLanguage != null && !restLanguage.getCode().equals(webUserData.getLanguage().getCode())) {
+        Language language = new Language(restLanguage.getCode());
+        webUserData.setLanguage(language);
+        webUserDataManager.set(request, webUserData);
+        SofiaUser user = webUserData.getUser();
+        userPreferencesManager.setLanguage(user, language);
+      }
+      fullRestWebClientData = new FullRestWebClientData(webClientDataFromCookie, webUserData);
     }
-
-    RestWebClientData newRestWebClient = businessToRestWebClientMapper.map(responseWebClient);
-    return ResponseEntity.ok(newRestWebClient);
+    return ResponseEntity.ok(fullRestWebClientData);
   }
 }

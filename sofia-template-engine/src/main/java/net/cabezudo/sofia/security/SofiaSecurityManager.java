@@ -15,12 +15,15 @@ import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteManager;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
-import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.users.mappers.EntityToBusinessUserMapper;
 import net.cabezudo.sofia.users.persistence.UserEntity;
 import net.cabezudo.sofia.users.persistence.UserRepository;
+import net.cabezudo.sofia.users.service.SofiaUser;
+import net.cabezudo.sofia.web.client.Language;
 import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
+import net.cabezudo.sofia.web.user.WebUserData;
+import net.cabezudo.sofia.web.user.WebUserDataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,24 +54,26 @@ public class SofiaSecurityManager {
   private @Autowired SiteManager siteManager;
   private @Autowired OAuth2PersonAdapter oAuth2PersonAdapter;
   private @Autowired PeopleManager peopleManager;
+  private @Autowired WebUserDataManager webUserDataManager;
 
   @Transactional
   public SofiaUser getLoggedUser() {
     log.debug("Get the logged user");
-    WebClientData webClientData = webClientDataManager.getFromSession(request);
-    if (webClientData == null) {
-      throw new SofiaRuntimeException("The web client data is null");
+    WebClientData webClientData = webClientDataManager.getFromCookie(request);
+    WebUserData webUserData = webUserDataManager.getFromSession(request);
+    if (webUserData == null) {
+      return null;
     }
-    SofiaUser userFromRequest = webClientData.getUser();
+    SofiaUser userFromSession = webUserData.getUser();
 
-    if (userFromRequest != null) {
-      return userFromRequest;
+    if (userFromSession != null) {
+      return userFromSession;
     }
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication instanceof UsernamePasswordAuthenticationToken) {
       UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = (UsernamePasswordAuthenticationToken) authentication;
       SofiaUser user = (SofiaUser) usernamePasswordAuthenticationToken.getPrincipal();
-      setUserInWebClientData(webClientData, user);
+      setUserInWebUserData(webClientData, webUserData, user);
       return user;
     }
 
@@ -90,8 +95,8 @@ public class SofiaSecurityManager {
       // TODO Get the account from the stored as default for the user with that email
       AccountEntity accountEntity = accountRepository.getAccountByEMail(email, site.getId());
       if (accountEntity == null) {
-        SofiaUser newUser = newUser(site, webClientData.getLanguage().toLocale(), email);
-        setUserInWebClientData(webClientData, newUser);
+        SofiaUser newUser = newUser(site, webUserData.getLanguage().toLocale(), email);
+        setUserInWebUserData(webClientData, webUserData, newUser);
         user = newUser;
       } else {
         final UserEntity userEntity = userRepository.findByEmailAndAccount(accountEntity.getId(), email);
@@ -99,7 +104,7 @@ public class SofiaSecurityManager {
           throw new UsernameNotFoundException(email);
         }
         user = entityToBusinessUserMapper.map(userEntity);
-        setUserInWebClientData(webClientData, user);
+        setUserInWebUserData(webClientData, webUserData, user);
       }
 
       Person personFromDataBase = peopleManager.getByEMail(email);
@@ -116,20 +121,34 @@ public class SofiaSecurityManager {
     return null;
   }
 
-  private void setUserInWebClientData(WebClientData webClientData, SofiaUser user) {
-    webClientData.setUser(user);
-    log.debug("Web client data=" + webClientData);
-    if (webClientData.getAccount() == null) {
+  private void setUserInWebUserData(WebClientData webClientData, WebUserData webUserData, SofiaUser user) {
+    webUserData.setUser(user);
+    log.debug("Web user data " + webUserData);
+
+    if (webUserData.getAccount() == null) {
       Account preferredAccount = userPreferencesManager.getAccountByUserId(user.getId());
       log.debug("Account recovered from user preferences=" + preferredAccount);
+
       if (preferredAccount == null) {
         log.debug("The user don't have a preferred account. Set the user account " + user.getAccount() + " as preferred in web client data session object.");
-        webClientData.setAccount(user.getAccount());
-        userPreferencesManager.createAccount(webClientData.getUser(), webClientData.getAccount());
+        webUserData.setAccount(user.getAccount());
+        userPreferencesManager.setAccount(webUserData.getUser(), webUserData.getAccount());
       } else {
         log.debug("Setting the user preferred account " + user.getAccount() + " in web client data session object.");
-        webClientData.setAccount(user.getAccount());
+        webUserData.setAccount(preferredAccount);
       }
+    }
+
+    if (webUserData.getLanguage() == null) {
+      Language language;
+      Language languageFromPreferences = userPreferencesManager.getLanguageByUserId(user.getId());
+      if (languageFromPreferences == null) {
+        language = webClientData.getLanguage();
+        userPreferencesManager.setLanguage(user, language);
+      } else {
+        language = languageFromPreferences;
+      }
+      webUserData.setLanguage(language);
     }
   }
 

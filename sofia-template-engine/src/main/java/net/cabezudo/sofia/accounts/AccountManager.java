@@ -10,6 +10,10 @@ import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteManager;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
 import net.cabezudo.sofia.users.service.SofiaUser;
+import net.cabezudo.sofia.web.client.WebClientData;
+import net.cabezudo.sofia.web.client.WebClientDataManager;
+import net.cabezudo.sofia.web.user.WebUserData;
+import net.cabezudo.sofia.web.user.WebUserDataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +21,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class AccountManager {
@@ -26,6 +31,8 @@ public class AccountManager {
   private @Autowired SiteManager siteManager;
   private @Autowired UserPreferencesManager userPreferencesManager;
   private @Autowired EntityToBusinessAccountListMapper entityToBusinessAccountListMapper;
+  private @Autowired WebClientDataManager webClientDataManager;
+  private @Autowired WebUserDataManager webUserDataManager;
 
   public AccountUserRelationEntity findRelation(Site site, Account account, SofiaUser user) {
     return accountRepository.find(account.getId(), user.getId());
@@ -98,6 +105,19 @@ public class AccountManager {
     log.debug("Get the account with the name " + name);
     AccountEntity accountEntity = accountRepository.getByName(site.getId(), name);
     Account account = entityToBusinessAccountMapper.map(accountEntity);
+    return account;
+  }
+
+  public Account getAccount(HttpServletRequest request) {
+    WebClientData webClientData = webClientDataManager.getFromCookie(request);
+    Account accountFromClientData = webClientData.getAccount();
+    Account account;
+    if (accountFromClientData == null) {
+      WebUserData webUserData = webUserDataManager.getFromSession(request);
+      account = webUserData.getAccount();
+    } else {
+      account = accountFromClientData;
+    }
     return account;
   }
 }

@@ -1,6 +1,7 @@
 package net.cabezudo.sofia.places.rest;
 
 import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.accounts.AccountManager;
 import net.cabezudo.sofia.core.rest.ListRestResponse;
 import net.cabezudo.sofia.core.rest.RestList;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
@@ -9,12 +10,12 @@ import net.cabezudo.sofia.users.service.Group;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,17 +23,14 @@ import javax.servlet.http.HttpServletRequest;
 @ResponseBody
 public class CountriesController extends SofiaAuthorizedController {
   private static final Logger log = LoggerFactory.getLogger(CountriesController.class);
-
-  public CountriesController(HttpServletRequest request) {
-    super(request);
-  }
+  private @Autowired AccountManager accountManager;
 
   @GetMapping("/v1/countries/codes/{countryCode}/codes")
-  public ResponseEntity<?> listAll(ServletWebRequest request, @PathVariable @NotNull String countryCode) {
+  public ResponseEntity<?> listAll(HttpServletRequest request, @PathVariable @NotNull String countryCode) {
     log.debug("Get list of codes for " + countryCode);
     ListRestResponse<String> listRestResponse;
 
-    Account account = super.getWebClientData().getAccount();
+    Account account = accountManager.getAccount(request);
 
     ResponseEntity result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {

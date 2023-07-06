@@ -21,16 +21,17 @@ import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
 import net.cabezudo.sofia.users.mappers.BusinessToRestUserListMapper;
 import net.cabezudo.sofia.users.mappers.BusinessToRestUserMapper;
+import net.cabezudo.sofia.users.mappers.BusinessToRestWebUserMapper;
 import net.cabezudo.sofia.users.mappers.RestToBusinessUserMapper;
 import net.cabezudo.sofia.users.service.Group;
 import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.users.service.UserList;
 import net.cabezudo.sofia.users.service.UserManager;
 import net.cabezudo.sofia.web.client.Language;
-import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
 import net.cabezudo.sofia.web.client.mappers.BusinessToRestWebClientMapper;
-import net.cabezudo.sofia.web.client.rest.RestWebClientData;
+import net.cabezudo.sofia.web.user.WebUserData;
+import net.cabezudo.sofia.web.user.WebUserDataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,10 +69,8 @@ public class UsersController extends SofiaAuthorizedController {
   private @Autowired WebClientDataManager webClientDataManager;
   private @Autowired UserPreferencesManager userPreferencesManager;
   private @Autowired BusinessToRestWebClientMapper businessToRestWebClientMapper;
-
-  public UsersController(HttpServletRequest request) {
-    super(request);
-  }
+  private @Autowired WebUserDataManager webUserDataManager;
+  private @Autowired BusinessToRestWebUserMapper businessToRestWebUserMapper;
 
   @PostMapping("/v1/login")
   public ResponseEntity<?> login() {
@@ -104,10 +103,10 @@ public class UsersController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/users/actual/profile")
-  public ResponseEntity<?> getProfile() {
+  public ResponseEntity<?> getProfile(HttpServletRequest request) {
     log.debug("Run /v1/users/actual/profile");
 
-    SofiaUser user = super.getWebClientData().getUser();
+    SofiaUser user = webUserDataManager.getFromSession(request).getUser();
     Account account = user.getAccount();
 
     ResponseEntity<?> result;
@@ -135,10 +134,10 @@ public class UsersController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/users/{id}")
-  public ResponseEntity<?> getUser(@PathVariable Integer id) {
+  public ResponseEntity<?> getUser(HttpServletRequest request, @PathVariable Integer id) {
     log.debug("Run /v1/users/{id}");
 
-    Account account = super.getWebClientData().getAccount();
+    Account account = accountManager.getAccount(request);
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -160,10 +159,10 @@ public class UsersController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/users/{id}/exists")
-  public ResponseEntity<?> exists(@PathVariable Integer id) {
+  public ResponseEntity<?> exists(HttpServletRequest request, @PathVariable Integer id) {
     log.debug("Run /v1/users/{id}");
 
-    Account account = super.getWebClientData().getAccount();
+    Account account = accountManager.getAccount(request);
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -185,10 +184,10 @@ public class UsersController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/users/usernames/{username}/info")
-  public ResponseEntity<?> validateUsername(@PathVariable String username) {
+  public ResponseEntity<?> validateUsername(HttpServletRequest request, @PathVariable String username) {
     log.debug("Run /v1/users/usernames/{value}/info for validate username");
 
-    Account account = super.getWebClientData().getAccount();
+    Account account = accountManager.getAccount(request);
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -211,10 +210,10 @@ public class UsersController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/users/{id}/usernames/{username}/info")
-  public ResponseEntity<?> validateUsernameForEdit(@PathVariable Integer id, @PathVariable String username) {
+  public ResponseEntity<?> validateUsernameForEdit(HttpServletRequest request, @PathVariable Integer id, @PathVariable String username) {
     log.debug("Run /v1/users/{id}/usernames/{username}/info for validate username");
 
-    Account account = super.getWebClientData().getAccount();
+    Account account = accountManager.getAccount(request);
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -243,10 +242,10 @@ public class UsersController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/users")
-  public ResponseEntity<?> getUsers() {
+  public ResponseEntity<?> getUsers(HttpServletRequest request) {
     log.debug("Get list of users");
 
-    Account account = super.getWebClientData().getAccount();
+    Account account = accountManager.getAccount(request);
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
       return result;
@@ -260,10 +259,10 @@ public class UsersController extends SofiaAuthorizedController {
   }
 
   @PostMapping("/v1/users")
-  public ResponseEntity<?> create(@RequestBody RestUser restUserToSave) throws IOException {
+  public ResponseEntity<?> create(HttpServletRequest request, @RequestBody RestUser restUserToSave) throws IOException {
     log.debug("Create a new user");
 
-    Account account = super.getWebClientData().getAccount();
+    Account account = accountManager.getAccount(request);
 
     restUserToSave.setAccount(account);
 
@@ -283,10 +282,10 @@ public class UsersController extends SofiaAuthorizedController {
   }
 
   @PutMapping("/v1/users/{id}")
-  public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody RestUser restUserToUpdate) throws IOException {
+  public ResponseEntity<?> update(HttpServletRequest request, @PathVariable Integer id, @RequestBody RestUser restUserToUpdate) throws IOException {
     log.debug("Update an existing user");
 
-    Account account = super.getWebClientData().getAccount();
+    Account account = accountManager.getAccount(request);
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -304,10 +303,10 @@ public class UsersController extends SofiaAuthorizedController {
   }
 
   @DeleteMapping("/v1/users/{id}")
-  public ResponseEntity<?> delete(@PathVariable Integer id) throws IOException {
+  public ResponseEntity<?> delete(HttpServletRequest request, @PathVariable Integer id) throws IOException {
     log.debug("Delete a user");
 
-    Account account = super.getWebClientData().getAccount();
+    Account account = accountManager.getAccount(request);
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -320,10 +319,10 @@ public class UsersController extends SofiaAuthorizedController {
   }
 
   @PutMapping("/v1/users/{id}/password")
-  public ResponseEntity<SofiaRestResponse<?>> info(@PathVariable Integer id) {
+  public ResponseEntity<SofiaRestResponse<?>> info(HttpServletRequest request, @PathVariable Integer id) {
     log.debug("/v1/users/" + id);
 
-    Account account = super.getWebClientData().getAccount();
+    Account account = accountManager.getAccount(request);
     Site site = super.getSite();
 
     ResponseEntity<SofiaRestResponse<?>> result;
@@ -347,11 +346,11 @@ public class UsersController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/users/actual/accounts")
-  public ResponseEntity<?> listAccountsForTheActualUser() {
+  public ResponseEntity<?> listAccountsForTheActualUser(HttpServletRequest request) {
     log.debug("Get list of accounts for the actual user");
     ListRestResponse<RestAccount> listRestResponse;
 
-    Account account = super.getWebClientData().getAccount();
+    Account account = accountManager.getAccount(request);
     SofiaUser user = sofiaSecurityManager.getLoggedUser();
 
     ResponseEntity<?> result;
@@ -365,27 +364,28 @@ public class UsersController extends SofiaAuthorizedController {
     return ResponseEntity.ok(listRestResponse);
   }
 
-  @PutMapping("/v1/users/actual/set")
+  @PutMapping("/v1/users/actual/account/set")
   public ResponseEntity<?> setActualAccount(HttpServletRequest request, @RequestBody RestAccountData accountData) {
     log.debug("Set the actual account for the actual user");
 
-    WebClientData webClientData = super.getWebClientData();
+    Account account = accountManager.getAccount(request);
+    WebUserData webUserData = webUserDataManager.getFromSession(request);
 
-    WebClientData responseWebClient;
-    if (accountData.getId() != webClientData.getAccount().getId()) {
+    WebUserData responseWebUser;
+    if (accountData.getId() != account.getId()) {
       Account accountToSet = accountManager.get(accountData.getId());
-      Language language = webClientData.getLanguage();
-      SofiaUser user = webClientData.getUser();
+      SofiaUser user = webUserData.getUser();
+      Language language = webUserData.getLanguage();
 
-      WebClientData newWebClientData = new WebClientData(language, accountToSet, user);
-      webClientDataManager.set(request, newWebClientData);
+      WebUserData newWebUserData = new WebUserData(language, accountToSet, user);
+      webUserDataManager.set(request, newWebUserData);
       userPreferencesManager.setAccount(user, accountToSet);
-      responseWebClient = newWebClientData;
+      responseWebUser = newWebUserData;
     } else {
-      responseWebClient = webClientData;
+      responseWebUser = webUserData;
     }
 
-    RestWebClientData newRestWebClient = businessToRestWebClientMapper.map(responseWebClient);
+    RestWebUserData newRestWebClient = businessToRestWebUserMapper.map(responseWebUser);
     return ResponseEntity.ok(newRestWebClient);
   }
 }

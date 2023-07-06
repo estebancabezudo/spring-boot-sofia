@@ -1,6 +1,7 @@
 package net.cabezudo.sofia.people;
 
 import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.accounts.AccountManager;
 import net.cabezudo.sofia.core.rest.ListRestResponse;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
 import net.cabezudo.sofia.people.mappers.BusinessToRestPersonListMapper;
@@ -27,17 +28,14 @@ public class PeopleController extends SofiaAuthorizedController {
   private static final Logger log = LoggerFactory.getLogger(PeopleController.class);
 
   private @Autowired PeopleManager peopleManager;
-
-  public PeopleController(HttpServletRequest request) {
-    super(request);
-  }
+  private @Autowired AccountManager accountManager;
 
   @GetMapping("/v1/people")
-  public ResponseEntity<?> listAll() {
+  public ResponseEntity<?> listAll(HttpServletRequest request) {
     log.debug("Get list of people");
     ListRestResponse<RestPerson> listRestResponse;
 
-    Account account = super.getWebClientData().getAccount();
+    Account account = accountManager.getAccount(request);
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -52,11 +50,11 @@ public class PeopleController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/people/{id}")
-  public ResponseEntity<?> login(@PathVariable Integer id) {
+  public ResponseEntity<?> login(HttpServletRequest request, @PathVariable Integer id) {
     log.debug("/v1/people/{id}");
     PeopleRestResponse peopleRestResponse;
 
-    Account account = super.getWebClientData().getAccount();
+    Account account = accountManager.getAccount(request);
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {

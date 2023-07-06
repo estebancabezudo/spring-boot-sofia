@@ -23,6 +23,15 @@ public class UserPreferencesManager {
   private @Autowired EntityToBusinessAccountMapper entityToBusinessAccountMapper;
 
   @Transactional
+  public Language getLanguageByUserId(int userId) {
+    String languageCode = userPreferencesRepository.get(userId, LANGUAGE);
+    if (languageCode == null) {
+      return null;
+    }
+    return new Language(languageCode);
+  }
+
+  @Transactional
   public void setLanguage(SofiaUser user, Language language) {
     if (user == null) {
       return;
@@ -44,9 +53,5 @@ public class UserPreferencesManager {
 
   public void setAccount(SofiaUser user, Account account) {
     userPreferencesRepository.update(user.getId(), ACCOUNT, Integer.toString(account.getId()));
-  }
-
-  public void createAccount(SofiaUser user, Account account) {
-    userPreferencesRepository.create(user.getId(), ACCOUNT, Integer.toString(account.getId()));
   }
 }
