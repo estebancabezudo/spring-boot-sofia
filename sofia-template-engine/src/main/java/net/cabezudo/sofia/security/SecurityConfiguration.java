@@ -75,8 +75,6 @@ public class SecurityConfiguration {
         .oauth2Login()
         .successHandler(new SofiaOAuth2AuthenticationSuccessHandler())
         .failureHandler(new SofiaOAuth2AuthenticationFailureHandler())
-        //.and()
-        //.exceptionHandling().accessDeniedPage("/")
         .and()
         .authorizeHttpRequests((authorize) -> {
               try {

@@ -29,6 +29,9 @@ public class TemplateEngineConfiguration implements WebMvcConfigurer {
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
     registry
         .addResourceHandler("/**")
+        .resourceChain(false).addResolver(new SofiaResourceResolver(siteManager, pathManager));
+    registry
+        .addResourceHandler("/images/**")
         .setCacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)
             .noTransform()
             .mustRevalidate())
