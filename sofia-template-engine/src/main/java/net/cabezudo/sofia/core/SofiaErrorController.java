@@ -1,6 +1,5 @@
 package net.cabezudo.sofia.core;
 
-import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -12,14 +11,16 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class SofiaErrorController implements ErrorController {
 
   private @Autowired WebClientDataManager webClientDataManager;
+  private @Autowired WebMessageManager webMessageManager;
 
   @RequestMapping("/error")
-  public ResponseEntity<?> redirectToError(WebRequest webRequest, HttpServletRequest servletRequest) {
+  public ResponseEntity<?> redirectToError(WebRequest webRequest, HttpServletRequest request, HttpServletResponse response) {
     Integer statusCode = (Integer) webRequest.getAttribute("javax.servlet.error.status_code", RequestAttributes.SCOPE_REQUEST);
     String errorMessage = (String) webRequest.getAttribute("javax.servlet.error.message", RequestAttributes.SCOPE_REQUEST);
 
@@ -28,8 +29,7 @@ public class SofiaErrorController implements ErrorController {
     }
 
     String redirectUrl = "/index.html";
-    WebClientData webClientData = webClientDataManager.getFromCookie(servletRequest);
-    webClientData.setMessage("{ \"type\": \"error\", \"data\": \"" + statusCode + ": " + (errorMessage == null ? "" : errorMessage) + "\"}");
+    webMessageManager.setMessage("{ \"type\": \"error\", \"data\": \"" + statusCode + ": " + (errorMessage == null ? "" : errorMessage) + "\"}");
     return ResponseEntity.status(HttpStatus.FOUND)
         .header("Location", redirectUrl)
         .build();

@@ -56,34 +56,19 @@ public class AccountManager {
     return entityToBusinessAccountMapper.map(accountEntity);
   }
 
-  public Account getAccountToSetForUser(Account accountFromSession, String email, Site site, int userId) {
+  public Account getAccountToSetForUser(String email, Site site, int userId) {
     log.debug("Get the account to use with the user " + email);
-    if (accountFromSession == null) {
-      log.debug("There is no an account defined in the session");
-      Account accountFromPreferences = userPreferencesManager.getAccountByUserId(userId);
-      if (accountFromPreferences == null) {
-        log.debug("Account from preferences is null");
-        AccountEntity accountEntity = accountRepository.getAccountByEMail(email, site.getId());
-        if (accountEntity == null) {
-          throw new UsernameNotFoundException(email);
-        }
-        return entityToBusinessAccountMapper.map(accountEntity);
-      } else {
-        log.debug("FOUND account in preferences. Select account from preferences");
-        return accountFromPreferences;
+    Account accountFromPreferences = userPreferencesManager.getAccountByUserId(userId);
+    if (accountFromPreferences == null) {
+      log.debug("Account from preferences is null");
+      AccountEntity accountEntity = accountRepository.getAccountByEMail(email, site.getId());
+      if (accountEntity == null) {
+        throw new UsernameNotFoundException(email);
       }
-      // There is an account in the session
+      return entityToBusinessAccountMapper.map(accountEntity);
     } else {
-      log.debug("FOUND account in session. Search for relation with the user");
-      AccountUserRelationEntity relation = accountRepository.find(accountFromSession.getId(), userId);
-      if (relation == null) {
-        log.debug("Relation with user NOT FOUND. Using the account for the user");
-        AccountEntity userOwnedAccount = accountRepository.getAccountByUserId(userId);
-        return entityToBusinessAccountMapper.map(userOwnedAccount);
-      } else {
-        log.debug("FOUND relation between account and user. Use account from session");
-        return accountFromSession;
-      }
+      log.debug("FOUND account in preferences. Select account from preferences");
+      return accountFromPreferences;
     }
   }
 
@@ -110,14 +95,40 @@ public class AccountManager {
 
   public Account getAccount(HttpServletRequest request) {
     WebClientData webClientData = webClientDataManager.getFromCookie(request);
-    Account accountFromClientData = webClientData.getAccount();
+
+    WebUserData webUserData = webUserDataManager.getFromSession(request);
+    Account accountFromUser = webUserData.getAccount();
+
+
     Account account;
-    if (accountFromClientData == null) {
-      WebUserData webUserData = webUserDataManager.getFromSession(request);
-      account = webUserData.getAccount();
+    if (accountFromUser == null) {
+      account = webClientData.getAccount();
     } else {
-      account = accountFromClientData;
+      account = accountFromUser;
     }
     return account;
+  }
+
+  public void setSiteAccount(HttpServletRequest request, Site site, String name) {
+    Account account = getByName(site, name);
+    WebClientData webClientData = webClientDataManager.getFromCookie(request);
+    webClientData.setAccount(account);
+    webClientDataManager.update(webClientData.getId(), webClientData);
+  }
+
+  public void setUserAccount(HttpServletRequest request, Site site, String name) {
+    Account account = getByName(site, name);
+    WebUserData webUserData = webUserDataManager.getFromSession(request);
+    webUserData.setAccount(account);
+  }
+
+  // If the client have an account, change the webClientData. If the client doesn't have account and there is a user logged change the user account
+  public void setSessionAccount(HttpServletRequest request, Site site, String name) {
+    WebClientData webClientData = webClientDataManager.getFromCookie(request);
+    if (webClientData.getAccount() == null) {
+      setUserAccount(request, site, name);
+    } else {
+      setSiteAccount(request, site, name);
+    }
   }
 }

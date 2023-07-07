@@ -4,7 +4,7 @@ import net.cabezudo.sofia.accounts.Account;
 import net.cabezudo.sofia.accounts.mappers.EntityToBusinessAccountMapper;
 import net.cabezudo.sofia.web.client.Language;
 import net.cabezudo.sofia.web.client.WebClientData;
-import net.cabezudo.sofia.web.client.repository.WebClientDataEntity;
+import net.cabezudo.sofia.web.client.persistence.WebClientDataEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

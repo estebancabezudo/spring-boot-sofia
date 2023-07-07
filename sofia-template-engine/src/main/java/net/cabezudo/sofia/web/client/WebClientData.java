@@ -9,7 +9,6 @@ public class WebClientData {
   private final Date lastUpdate;
   private Language language;
   private Account account;
-  private String message;
 
   public WebClientData(Integer id, Language language, Account account, Date lastUpdate) {
     this.id = id;
@@ -37,19 +36,7 @@ public class WebClientData {
   public void setLanguage(Language language) {
     this.language = language;
   }
-
-  public void clearMessage() {
-    this.message = null;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
-  }
-
+  
   public Date getLastUpdate() {
     return lastUpdate;
   }
@@ -60,8 +47,7 @@ public class WebClientData {
         "id=" + id +
         ", lastUpdate=" + lastUpdate +
         ", language=" + language +
-        ", account=" + account +
-        ", message='" + message + '\'' +
+        ", account=" + account + '\'' +
         '}';
   }
 }

@@ -1,8 +1,7 @@
-package net.cabezudo.sofia.web.client;
+package net.cabezudo.sofia.web.client.persistence;
 
+import net.cabezudo.sofia.core.Stopwatch;
 import net.cabezudo.sofia.persistence.DatabaseManager;
-import net.cabezudo.sofia.web.client.repository.WebClientDataEntity;
-import net.cabezudo.sofia.web.client.repository.WebClientDataRowMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +20,30 @@ public class WebClientDataRepository {
   private static final Logger log = LoggerFactory.getLogger(WebClientDataRepository.class);
   private @Autowired DatabaseManager databaseManager;
 
+  private @Autowired WebClientDataEntityCacheById webClientDataEntityCacheById;
+
   public WebClientDataEntity get(Integer id) {
     log.debug("Get the web client data for id " + id);
 
-    String query =
-        "SELECT w.id AS id, w.language AS language, a.id AS account_id, a.site_id AS site_id, a.name AS name, w.last_update AS last_update " +
-            "FROM web_client_data AS w " +
-            "LEFT JOIN accounts AS a ON w.account_id = a.id " +
-            "WHERE w.id = ?";
-    return databaseManager.getJDBCTemplate().query(query, new WebClientDataRowMapper(), id).stream().findFirst().orElse(null);
+    Stopwatch sc = new Stopwatch().start();
+    WebClientDataEntity webClientDataEntityCached = webClientDataEntityCacheById.get(id);
+    log.debug("Time spent in cache: " + sc.stop().getValue());
 
+    WebClientDataEntity webClientDataEntity;
+    if (webClientDataEntityCached == null) {
+      Stopwatch s = new Stopwatch().start();
+      String query =
+          "SELECT w.id AS id, w.language AS language, a.id AS account_id, a.site_id AS site_id, a.name AS name, w.last_update AS last_update " +
+              "FROM web_client_data AS w " +
+              "LEFT JOIN accounts AS a ON w.account_id = a.id " +
+              "WHERE w.id = ?";
+      webClientDataEntity = databaseManager.getJDBCTemplate().query(query, new WebClientDataRowMapper(), id).stream().findFirst().orElse(null);
+      webClientDataEntityCacheById.put(id, webClientDataEntity);
+      log.debug("Time spent in database: " + s.stop().getValue());
+    } else {
+      webClientDataEntity = webClientDataEntityCached;
+    }
+    return webClientDataEntity;
   }
 
   public WebClientDataEntity create(WebClientDataEntity data) {
@@ -52,7 +65,10 @@ public class WebClientDataRepository {
     }, keyHolder);
     Integer id = keyHolder.getKey() == null ? null : keyHolder.getKey().intValue();
     Date now = new Date(Calendar.getInstance().getTime().getTime());
-    return new WebClientDataEntity(id, data.getLanguage(), data.getAccount(), now);
+    WebClientDataEntity webClientDataEntity = new WebClientDataEntity(id, data.getLanguage(), data.getAccount(), now);
+
+    webClientDataEntityCacheById.put(id, webClientDataEntity);
+    return webClientDataEntity;
   }
 
   public void update(int id, WebClientDataEntity data) {
@@ -70,5 +86,7 @@ public class WebClientDataRepository {
       return ps;
     };
     databaseManager.getJDBCTemplate().update(preparedStatementCreator);
+
+    webClientDataEntityCacheById.put(data.getId(), data);
   }
 }

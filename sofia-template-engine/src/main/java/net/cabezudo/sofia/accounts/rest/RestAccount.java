@@ -1,7 +1,7 @@
 package net.cabezudo.sofia.accounts.rest;
 
 public class RestAccount {
-  private final int id;
+  private final Integer id;
   private final String name;
 
   public RestAccount(int id, String name) {
@@ -9,7 +9,7 @@ public class RestAccount {
     this.name = name;
   }
 
-  public int getId() {
+  public Integer getId() {
     return id;
   }
 

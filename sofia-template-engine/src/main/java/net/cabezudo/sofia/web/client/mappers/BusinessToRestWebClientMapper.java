@@ -17,6 +17,6 @@ public class BusinessToRestWebClientMapper {
     String language = c == null || c.getLanguage() == null ? null : c.getLanguage().getCode();
     Account account = c == null ? null : c.getAccount();
     RestUser restUser = businessToRestUserMapper.map(u.getUser());
-    return new RestWebClientData(language, account, c.getMessage(), restUser);
+    return new RestWebClientData(language, account, restUser);
   }
 }

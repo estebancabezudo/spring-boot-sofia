@@ -8,13 +8,11 @@ import java.util.Objects;
 public final class RestWebClientData {
   private final String language;
   private final Account account;
-  private final String message;
   private final RestUser user;
 
-  public RestWebClientData(String language, Account account, String message, RestUser user) {
+  public RestWebClientData(String language, Account account, RestUser user) {
     this.language = language;
     this.account = account;
-    this.message = message;
     this.user = user;
   }
 
@@ -26,9 +24,6 @@ public final class RestWebClientData {
     return account;
   }
 
-  public String getMessage() {
-    return message;
-  }
 
   public RestUser getUser() {
     return user;
@@ -53,8 +48,7 @@ public final class RestWebClientData {
     return "RestWebClientData[" +
         "language=" + language + ", " +
         "account=" + account + ", " +
-        "user=" + user + ", " +
-        "message=" + message + ']';
+        "user=" + user + ']';
   }
 
 }

@@ -1,4 +1,4 @@
-package net.cabezudo.sofia.web.client.repository;
+package net.cabezudo.sofia.web.client.persistence;
 
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 
@@ -9,6 +9,7 @@ public class WebClientDataEntity {
   private final String language;
   private final AccountEntity account;
   private final Date lastUpdate;
+
   public WebClientDataEntity(Integer id, String language, AccountEntity accountEntity, Date last_update) {
     this.id = id;
     this.language = language;

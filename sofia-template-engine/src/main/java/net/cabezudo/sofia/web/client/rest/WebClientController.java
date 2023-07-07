@@ -1,6 +1,8 @@
 package net.cabezudo.sofia.web.client.rest;
 
 import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.accounts.AccountManager;
+import net.cabezudo.sofia.core.WebMessageManager;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
 import net.cabezudo.sofia.users.service.SofiaUser;
@@ -33,18 +35,18 @@ public class WebClientController extends SofiaAuthorizedController {
 
   private @Autowired UserPreferencesManager userPreferencesManager;
   private @Autowired WebClientDataManager webClientDataManager;
-  private @Autowired HttpServletRequest request;
   private @Autowired WebUserDataManager webUserDataManager;
+  private @Autowired WebMessageManager webMessageManager;
+  private @Autowired AccountManager accountManager;
 
   @RequestMapping(value = "/v1/web/clients/actual/details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<FullRestWebClientData> clientDetails() {
+  public ResponseEntity<FullRestWebClientData> clientDetails(HttpServletRequest request) {
     log.debug("Run /v1/web/clients/actual/details");
     WebClientData webClientData = webClientDataManager.getFromCookie(request);
     WebUserData webUserData = webUserDataManager.getFromSession(request);
-    RestWebClientData restWebClient = businessToRestWebClientMapper.map(webClientData, webUserData);
-    webClientData.clearMessage();
 
-    FullRestWebClientData fullRestWebClientData = new FullRestWebClientData(webClientData, webUserData);
+    Account account = accountManager.getAccount(request);
+    FullRestWebClientData fullRestWebClientData = new FullRestWebClientData(account, webMessageManager, webClientData, webUserData);
     log.debug("Full web client data: " + fullRestWebClientData);
     return ResponseEntity.ok(fullRestWebClientData);
   }
@@ -65,9 +67,9 @@ public class WebClientController extends SofiaAuthorizedController {
         Account account = webClientDataFromCookie.getAccount();
         WebClientData webClientData = new WebClientData(id, language, account, null);
         webClientDataManager.setCookie(response, webClientData);
-        fullRestWebClientData = new FullRestWebClientData(webClientData, webUserData);
+        fullRestWebClientData = new FullRestWebClientData(accountManager.getAccount(request), webMessageManager, webClientData, webUserData);
       } else {
-        fullRestWebClientData = new FullRestWebClientData(webClientDataFromCookie, webUserData);
+        fullRestWebClientData = new FullRestWebClientData(accountManager.getAccount(request), webMessageManager, webClientDataFromCookie, webUserData);
       }
     } else {
       if (restLanguage != null && !restLanguage.getCode().equals(webUserData.getLanguage().getCode())) {
@@ -77,7 +79,7 @@ public class WebClientController extends SofiaAuthorizedController {
         SofiaUser user = webUserData.getUser();
         userPreferencesManager.setLanguage(user, language);
       }
-      fullRestWebClientData = new FullRestWebClientData(webClientDataFromCookie, webUserData);
+      fullRestWebClientData = new FullRestWebClientData(accountManager.getAccount(request), webMessageManager, webClientDataFromCookie, webUserData);
     }
     return ResponseEntity.ok(fullRestWebClientData);
   }

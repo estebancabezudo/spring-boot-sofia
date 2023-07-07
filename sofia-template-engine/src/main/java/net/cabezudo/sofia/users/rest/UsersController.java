@@ -27,10 +27,8 @@ import net.cabezudo.sofia.users.service.Group;
 import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.users.service.UserList;
 import net.cabezudo.sofia.users.service.UserManager;
-import net.cabezudo.sofia.web.client.Language;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
 import net.cabezudo.sofia.web.client.mappers.BusinessToRestWebClientMapper;
-import net.cabezudo.sofia.web.user.WebUserData;
 import net.cabezudo.sofia.web.user.WebUserDataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -362,30 +360,5 @@ public class UsersController extends SofiaAuthorizedController {
     RestAccountList restAccountList = businessToRestAccountListMapper.map(accounts);
     listRestResponse = new ListRestResponse<>(SofiaRestResponse.OK, "Retrieve list of account for site " + account.getSite().getName(), restAccountList);
     return ResponseEntity.ok(listRestResponse);
-  }
-
-  @PutMapping("/v1/users/actual/account/set")
-  public ResponseEntity<?> setActualAccount(HttpServletRequest request, @RequestBody RestAccountData accountData) {
-    log.debug("Set the actual account for the actual user");
-
-    Account account = accountManager.getAccount(request);
-    WebUserData webUserData = webUserDataManager.getFromSession(request);
-
-    WebUserData responseWebUser;
-    if (accountData.getId() != account.getId()) {
-      Account accountToSet = accountManager.get(accountData.getId());
-      SofiaUser user = webUserData.getUser();
-      Language language = webUserData.getLanguage();
-
-      WebUserData newWebUserData = new WebUserData(language, accountToSet, user);
-      webUserDataManager.set(request, newWebUserData);
-      userPreferencesManager.setAccount(user, accountToSet);
-      responseWebUser = newWebUserData;
-    } else {
-      responseWebUser = webUserData;
-    }
-
-    RestWebUserData newRestWebClient = businessToRestWebUserMapper.map(responseWebUser);
-    return ResponseEntity.ok(newRestWebClient);
   }
 }

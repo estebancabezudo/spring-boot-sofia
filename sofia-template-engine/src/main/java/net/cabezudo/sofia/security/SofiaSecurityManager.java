@@ -1,7 +1,6 @@
 package net.cabezudo.sofia.security;
 
 import net.cabezudo.sofia.accounts.Account;
-import net.cabezudo.sofia.accounts.mappers.EntityToBusinessAccountMapper;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
@@ -46,7 +45,6 @@ public class SofiaSecurityManager {
   private @Autowired AccountRepository accountRepository;
   private @Autowired UserRepository userRepository;
   private @Autowired EntityToBusinessUserMapper entityToBusinessUserMapper;
-  private @Autowired EntityToBusinessAccountMapper entityToBusinessAccountMapper;
   private @Autowired EMailRepository emailRepository;
   private @Autowired HttpServletRequest request;
   private @Autowired UserPreferencesManager userPreferencesManager;
