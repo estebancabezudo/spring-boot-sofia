@@ -1,6 +1,6 @@
 package net.cabezudo.sofia.security;
 
-import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
 import net.cabezudo.sofia.web.user.WebUserData;

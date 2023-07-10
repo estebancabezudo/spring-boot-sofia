@@ -1,6 +1,6 @@
 package net.cabezudo.sofia.people;
 
-import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.core.persistence.EntityList;
 import net.cabezudo.sofia.people.mappers.EntityToBusinessPersonListMapper;
 import net.cabezudo.sofia.people.mappers.EntityToBusinessPersonMapper;

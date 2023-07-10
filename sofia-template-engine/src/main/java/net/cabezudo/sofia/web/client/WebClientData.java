@@ -1,6 +1,6 @@
 package net.cabezudo.sofia.web.client;
 
-import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.accounts.service.Account;
 
 import java.sql.Date;
 
@@ -36,7 +36,7 @@ public class WebClientData {
   public void setLanguage(Language language) {
     this.language = language;
   }
-  
+
   public Date getLastUpdate() {
     return lastUpdate;
   }

@@ -1,15 +1,15 @@
-package net.cabezudo.sofia;
+package net.cabezudo.sofia.accounts.rest;
 
+import net.cabezudo.sofia.web.client.WebClientDataManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ApplicationTest {
+public class AccountsControllerTest {
 
   @Value(value = "${local.server.port}")
   private int port;
@@ -17,13 +17,12 @@ public class ApplicationTest {
   @Autowired
   private TestRestTemplate restTemplate;
 
-  @Test
-  public void contextLoads() {
-  }
+  @MockBean
+  private WebClientDataManager webClientDataManager;
 
   @Test
-  public void greetingShouldReturnDefaultMessage() throws Exception {
-    assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/", String.class)).contains("<div id=\"contentContainer\">");
+  public void testSetSessionAccount() throws Exception {
+    System.out.println(this.restTemplate.getForObject("http://localhost:" + port + "/v1/session/account/set", String.class));
   }
 
 }

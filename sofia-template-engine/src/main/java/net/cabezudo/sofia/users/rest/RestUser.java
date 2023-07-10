@@ -1,7 +1,7 @@
 package net.cabezudo.sofia.users.rest;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.accounts.service.Account;
 
 public class RestUser {
   private final int id;

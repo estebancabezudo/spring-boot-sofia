@@ -1,8 +1,8 @@
 package net.cabezudo.sofia.users.rest;
 
-import net.cabezudo.sofia.accounts.Account;
-import net.cabezudo.sofia.accounts.AccountManager;
-import net.cabezudo.sofia.accounts.Accounts;
+import net.cabezudo.sofia.accounts.service.Account;
+import net.cabezudo.sofia.accounts.service.AccountManager;
+import net.cabezudo.sofia.accounts.service.Accounts;
 import net.cabezudo.sofia.accounts.mappers.BusinessToRestAccountListMapper;
 import net.cabezudo.sofia.accounts.mappers.RestToBusinessAccountsMapper;
 import net.cabezudo.sofia.accounts.rest.RestAccount;

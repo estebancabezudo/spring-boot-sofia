@@ -1,7 +1,7 @@
 package net.cabezudo.sofia.web.client.rest;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.mappers.BusinessToRestAccountMapper;
 import net.cabezudo.sofia.accounts.rest.RestAccount;
 import net.cabezudo.sofia.core.WebMessageManager;
@@ -25,7 +25,7 @@ public class FullRestWebClientData {
     message = webMessageManager.getMessage();
     webMessageManager.clearMessage();
     this.account = businessToRestAccountMapper.map(account);
-    
+
     if (u != null && u.getUser() != null) {
       Language languageFromWebUserData = u.getLanguage();
       if (languageFromWebUserData == null) {

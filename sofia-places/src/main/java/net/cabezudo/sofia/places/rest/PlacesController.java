@@ -1,7 +1,7 @@
 package net.cabezudo.sofia.places.rest;
 
-import net.cabezudo.sofia.accounts.Account;
-import net.cabezudo.sofia.accounts.AccountManager;
+import net.cabezudo.sofia.accounts.service.Account;
+import net.cabezudo.sofia.accounts.service.AccountManager;
 import net.cabezudo.sofia.core.rest.ListRestResponse;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
 import net.cabezudo.sofia.places.Place;

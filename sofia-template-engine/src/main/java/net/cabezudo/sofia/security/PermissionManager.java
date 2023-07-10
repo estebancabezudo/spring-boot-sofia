@@ -1,7 +1,7 @@
 package net.cabezudo.sofia.security;
 
-import net.cabezudo.sofia.accounts.Account;
-import net.cabezudo.sofia.accounts.AccountManager;
+import net.cabezudo.sofia.accounts.service.Account;
+import net.cabezudo.sofia.accounts.service.AccountManager;
 import net.cabezudo.sofia.accounts.persistence.AccountUserRelationEntity;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.users.persistence.GroupEntity;

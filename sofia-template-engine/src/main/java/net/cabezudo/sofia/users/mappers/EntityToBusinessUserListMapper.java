@@ -1,6 +1,6 @@
 package net.cabezudo.sofia.users.mappers;
 
-import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.core.persistence.EntityList;
 import net.cabezudo.sofia.users.persistence.UserEntity;

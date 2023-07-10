@@ -1,7 +1,7 @@
 package net.cabezudo.sofia.security;
 
-import net.cabezudo.sofia.accounts.Account;
-import net.cabezudo.sofia.accounts.AccountManager;
+import net.cabezudo.sofia.accounts.service.Account;
+import net.cabezudo.sofia.accounts.service.AccountManager;
 import net.cabezudo.sofia.core.SofiaEnvironment;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.sites.Site;

@@ -1,6 +1,6 @@
 package net.cabezudo.sofia.security;
 
-import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.core.SofiaEnvironment;
 import net.cabezudo.sofia.core.rest.SofiaController;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;

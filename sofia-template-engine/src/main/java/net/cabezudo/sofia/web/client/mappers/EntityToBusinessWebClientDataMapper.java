@@ -1,6 +1,6 @@
 package net.cabezudo.sofia.web.client.mappers;
 
-import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.mappers.EntityToBusinessAccountMapper;
 import net.cabezudo.sofia.web.client.Language;
 import net.cabezudo.sofia.web.client.WebClientData;

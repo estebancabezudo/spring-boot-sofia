@@ -1,6 +1,6 @@
 package net.cabezudo.sofia.places;
 
-import net.cabezudo.sofia.accounts.Account;
+import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.core.persistence.EntityList;
 import net.cabezudo.sofia.places.mappers.BusinessToEntityPlaceMapper;
 import net.cabezudo.sofia.places.mappers.EntityToBusinessPlaceListMapper;

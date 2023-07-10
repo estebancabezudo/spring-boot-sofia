@@ -1,7 +1,7 @@
 package net.cabezudo.sofia.web.client.rest;
 
-import net.cabezudo.sofia.accounts.Account;
-import net.cabezudo.sofia.accounts.AccountManager;
+import net.cabezudo.sofia.accounts.service.Account;
+import net.cabezudo.sofia.accounts.service.AccountManager;
 import net.cabezudo.sofia.core.WebMessageManager;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;

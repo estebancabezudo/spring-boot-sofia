@@ -1,4 +1,4 @@
-package net.cabezudo.sofia.accounts;
+package net.cabezudo.sofia.accounts.service;
 
 import net.cabezudo.sofia.core.service.BusinessList;
 
