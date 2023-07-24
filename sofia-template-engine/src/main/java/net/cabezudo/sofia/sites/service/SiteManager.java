@@ -1,7 +1,14 @@
-package net.cabezudo.sofia.sites;
+package net.cabezudo.sofia.sites.service;
 
 import net.cabezudo.sofia.config.ConfigurationFileYAMLMailData;
 import net.cabezudo.sofia.config.ConfigurationFileYAMLSiteData;
+import net.cabezudo.sofia.core.SofiaRuntimeException;
+import net.cabezudo.sofia.sites.Host;
+import net.cabezudo.sofia.sites.HostNotFoundException;
+import net.cabezudo.sofia.sites.Site;
+import net.cabezudo.sofia.sites.SiteEntity;
+import net.cabezudo.sofia.sites.SiteNotFoundException;
+import net.cabezudo.sofia.sites.persistence.SiteRepository;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,5 +89,14 @@ public class SiteManager {
 
   public Site get(int id) {
     return siteById.get(id);
+  }
+
+  public Site getSite(HttpServletRequest request) {
+    try {
+      String serverName = request.getServerName();
+      return getByHostname(serverName);
+    } catch (SiteNotFoundException e) {
+      throw new SofiaRuntimeException(e);
+    }
   }
 }

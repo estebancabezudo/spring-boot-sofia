@@ -1,8 +1,7 @@
-package net.cabezudo.sofia.people;
+package net.cabezudo.sofia.people.persistence;
 
 import net.cabezudo.sofia.core.persistence.EntityList;
 import net.cabezudo.sofia.people.mappers.PersonRowMapper;
-import net.cabezudo.sofia.people.persistence.PersonEntity;
 import net.cabezudo.sofia.persistence.DatabaseManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

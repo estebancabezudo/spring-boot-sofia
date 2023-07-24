@@ -1,18 +1,18 @@
 package net.cabezudo.sofia.security;
 
-import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
+import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.emails.persistence.EMailEntity;
 import net.cabezudo.sofia.emails.persistence.EMailRepository;
 import net.cabezudo.sofia.people.OAuth2PersonAdapter;
 import net.cabezudo.sofia.people.OAuthPersonData;
-import net.cabezudo.sofia.people.PeopleManager;
 import net.cabezudo.sofia.people.Person;
+import net.cabezudo.sofia.people.service.PeopleManager;
 import net.cabezudo.sofia.sites.Site;
-import net.cabezudo.sofia.sites.SiteManager;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
+import net.cabezudo.sofia.sites.service.SiteManager;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
 import net.cabezudo.sofia.users.mappers.EntityToBusinessUserMapper;
 import net.cabezudo.sofia.users.persistence.UserEntity;

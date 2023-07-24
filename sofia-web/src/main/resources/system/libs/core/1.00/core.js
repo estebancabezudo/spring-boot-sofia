@@ -21,6 +21,9 @@ class User {
 const Core = {
     PLACEHOLDER: 1,
     VALUE: 2,
+    socket: null,
+    socketTimeoutHandler: null,
+    socketTimeoutTime: 40000,
     texts: {},
     actualLanguage: null,
     user: null,
@@ -30,6 +33,57 @@ const Core = {
     screenBlocker: null,
 
     queryParameters: new URLSearchParams(location.search),
+
+    initSocket: () => {
+        const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+        const host = window.location.host;
+        const port = window.location.port ? `:${window.location.port}` : "";
+        const url = `${protocol}${host}${port}/v1/websocket`;
+        console.log(`core::initSocket: Connect to ${url}`);
+        Core.socket = new WebSocket(url);
+
+        Core.socket.onopen = function (e) {
+            console.log("core::initSocket: Connection established");
+            clearTimeout(Core.socketTimeoutHandler);
+            console.log(Core.socket);
+        };
+
+        Core.socket.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+            console.log(`core::initSocket: Data received from the server`, data);
+            if (data.type === 'NOTIFICATION') {
+                // Verificar si el navegador soporta el API de Notificaciones
+                if ('Notification' in window) {
+                    // Pedir permiso al usuario para mostrar notificaciones
+                    Notification.requestPermission().then(function (permission) {
+                        if (permission === 'granted') {
+                            // Si el usuario otorgó el permiso, mostrar la notificación
+                            const notificationOptions = {
+                                title: 'Título de la notificación',
+                                body: data.message,
+                                icon: 'ruta/del/icono.png' // Ruta a una imagen para el icono de la notificación (opcional)
+                            };
+
+                            const notification = new Notification(notificationOptions.title, notificationOptions);
+                        }
+                    });
+                } else {
+                    console.log('El navegador no soporta el API de Notificaciones.');
+                }
+            }
+        };
+
+        Core.socket.onclose = function (event) {
+            console.log(`core::initSocket: Connection shutdown. code=${event.code} reason=${event.reason}`);
+            Core.socketTimeoutHandler = setTimeout(() => {
+                Core.initSocket();
+            }, Core.socketTimeoutTime);
+        };
+
+        Core.socket.onerror = function (error) {
+            console.log(`[error]`, error);
+        };
+    },
 
     getActualWebClientDetails: () => {
         console.log(`core::getActualWebClientDetails`);
@@ -124,6 +178,7 @@ const Core = {
                 ;
         }
     },
+
     getCookie: name => {
         const stringToFind = `${name}=`;
         const uriDecoded = decodeURIComponent(document.cookie);
@@ -137,6 +192,7 @@ const Core = {
             }
         })
     },
+
     getNextRequestId: () => {
         return Core.requestId++;
     },
@@ -193,6 +249,7 @@ const Core = {
         const username = user.username;
         return username !== undefined && username !== null;
     },
+
     isNotLogged: () => {
         return !Core.isLogged();
     },
@@ -304,15 +361,18 @@ const Core = {
             });
         }
     },
+
     reportSystemError: error => {
         if (Core.isFunction(Core.reportSystemErrorFunction)) {
             Core.reportSystemErrorFunction(error);
         }
     },
+
     setReportSystemErrorFunction: reportSystemErrorFunction => {
         Core.reportSystemErrorFunction = reportSystemErrorFunction;
     },
-    // This function avoid the race condition if the asignation of the text 
+
+    // This function avoid the race condition if the asignation of the text
     // to the element is before the text web service is called
     setText: (element, key, options) => {
         console.log(`Core::setText:`, element, key);
@@ -324,11 +384,13 @@ const Core = {
             Core.setTextToElement(element, Core.texts[key], options);
         };
     },
+
     setTexts: ts => {
         texts = Object.assign(Core.texts, ts);
         Core.setTextsById();
         Core.publish('core:setTexts', { language: Core.actualLanguage });
     },
+
     showErrorMessage: errorMessage => {
         let jsonMessage;
         if (Core.isString(errorMessage)) {
@@ -339,6 +401,7 @@ const Core = {
         console.log(`Core::showErrorMessage:`, jsonMessage);
         Core.publish('core:showErrorMessage', jsonMessage);
     },
+
     showMessage: message => {
         let jsonMessage;
         if (Core.isString(message)) {
@@ -348,6 +411,14 @@ const Core = {
         }
         console.log(`Core::showMessage: ${jsonMessage}`, jsonMessage);
         Core.publish('core:showMessage', jsonMessage);
+    },
+
+    sendMessage: message => {
+        if (socket.readyState === 1) {
+            socket.send(message);
+        } else {
+            console.warn(`Socket closed`);
+        }
     },
 
     setScreenBlocker(blocker) {
@@ -423,6 +494,7 @@ const Core = {
 
 const pageLoaded = async () => {
     console.log(`Core::pageLoaded::templateVariables: `, templateVariables);
+    Core.initSocket();
     Core.getActualWebClientDetails();
     Core.subscribeTo('core:setTexts', data => {
         const message = Core.queryParameters.get('message');

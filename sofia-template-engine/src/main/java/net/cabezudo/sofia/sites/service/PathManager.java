@@ -1,6 +1,10 @@
-package net.cabezudo.sofia.sites;
+package net.cabezudo.sofia.sites.service;
 
 import net.cabezudo.sofia.core.SofiaEnvironment;
+import net.cabezudo.sofia.sites.HostNotFoundException;
+import net.cabezudo.sofia.sites.Site;
+import net.cabezudo.sofia.sites.SiteNotFoundException;
+import net.cabezudo.sofia.sites.SourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

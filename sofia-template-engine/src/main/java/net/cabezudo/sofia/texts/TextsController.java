@@ -6,9 +6,10 @@ import net.cabezudo.sofia.core.rest.SofiaRestResponse;
 import net.cabezudo.sofia.files.FileHelper;
 import net.cabezudo.sofia.sites.Host;
 import net.cabezudo.sofia.sites.HostNotFoundException;
-import net.cabezudo.sofia.sites.PathManager;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
+import net.cabezudo.sofia.sites.service.PathManager;
+import net.cabezudo.sofia.sites.service.SiteManager;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
 import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.web.client.Language;
@@ -42,6 +43,7 @@ public class TextsController extends SofiaController {
   private @Autowired WebClientDataManager webClientDataManager;
   private @Autowired UserPreferencesManager userPreferencesManager;
   private @Autowired WebUserDataManager webUserDataManager;
+  private @Autowired SiteManager siteManager;
 
   @RequestMapping(
       value = "/v1/pages/actual/texts",
@@ -50,7 +52,7 @@ public class TextsController extends SofiaController {
   )
   public ResponseEntity<? extends SofiaRestResponse> texts(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "language") String requestedLanguageCode, @RequestParam String page) {
     log.debug("Run /v1/pages/actual/texts, language=" + requestedLanguageCode + ", page=" + page);
-    Site site = super.getSite();
+    Site site = siteManager.getSite(request);
     Host host = super.getHost();
     String version = host.getVersion();
     try {

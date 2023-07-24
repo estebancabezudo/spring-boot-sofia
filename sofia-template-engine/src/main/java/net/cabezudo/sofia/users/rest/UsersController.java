@@ -1,34 +1,31 @@
 package net.cabezudo.sofia.users.rest;
 
-import net.cabezudo.sofia.accounts.service.Account;
-import net.cabezudo.sofia.accounts.service.AccountManager;
-import net.cabezudo.sofia.accounts.service.Accounts;
 import net.cabezudo.sofia.accounts.mappers.BusinessToRestAccountListMapper;
 import net.cabezudo.sofia.accounts.mappers.RestToBusinessAccountsMapper;
 import net.cabezudo.sofia.accounts.rest.RestAccount;
 import net.cabezudo.sofia.accounts.rest.RestAccountList;
 import net.cabezudo.sofia.accounts.rest.RestAccounts;
+import net.cabezudo.sofia.accounts.service.Account;
+import net.cabezudo.sofia.accounts.service.AccountManager;
+import net.cabezudo.sofia.accounts.service.Accounts;
 import net.cabezudo.sofia.config.mail.SendEMailException;
 import net.cabezudo.sofia.core.rest.ListRestResponse;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
 import net.cabezudo.sofia.emails.EMailAddressValidationException;
 import net.cabezudo.sofia.emails.EMailManager;
-import net.cabezudo.sofia.people.PeopleManager;
 import net.cabezudo.sofia.people.Person;
+import net.cabezudo.sofia.people.service.PeopleManager;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.security.SofiaSecurityManager;
 import net.cabezudo.sofia.sites.Site;
-import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
+import net.cabezudo.sofia.sites.service.SiteManager;
 import net.cabezudo.sofia.users.mappers.BusinessToRestUserListMapper;
 import net.cabezudo.sofia.users.mappers.BusinessToRestUserMapper;
-import net.cabezudo.sofia.users.mappers.BusinessToRestWebUserMapper;
 import net.cabezudo.sofia.users.mappers.RestToBusinessUserMapper;
 import net.cabezudo.sofia.users.service.Group;
 import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.users.service.UserList;
 import net.cabezudo.sofia.users.service.UserManager;
-import net.cabezudo.sofia.web.client.WebClientDataManager;
-import net.cabezudo.sofia.web.client.mappers.BusinessToRestWebClientMapper;
 import net.cabezudo.sofia.web.user.WebUserDataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,17 +55,13 @@ public class UsersController extends SofiaAuthorizedController {
   private @Autowired RestToBusinessAccountsMapper restToBusinessAccountsMapper;
   private @Autowired BusinessToRestUserMapper businessToRestUserMapper;
   private @Autowired UserManager userManager;
-
   private @Autowired EMailManager eMailManager;
   private @Autowired SofiaSecurityManager sofiaSecurityManager;
   private @Autowired PeopleManager peopleManager;
   private @Autowired AccountManager accountManager;
   private @Autowired BusinessToRestAccountListMapper businessToRestAccountListMapper;
-  private @Autowired WebClientDataManager webClientDataManager;
-  private @Autowired UserPreferencesManager userPreferencesManager;
-  private @Autowired BusinessToRestWebClientMapper businessToRestWebClientMapper;
   private @Autowired WebUserDataManager webUserDataManager;
-  private @Autowired BusinessToRestWebUserMapper businessToRestWebUserMapper;
+  private @Autowired SiteManager siteManager;
 
   @PostMapping("/v1/login")
   public ResponseEntity<?> login() {
@@ -321,7 +314,7 @@ public class UsersController extends SofiaAuthorizedController {
     log.debug("/v1/users/" + id);
 
     Account account = accountManager.getAccount(request);
-    Site site = super.getSite();
+    Site site = siteManager.getSite(request);
 
     ResponseEntity<SofiaRestResponse<?>> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {

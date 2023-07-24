@@ -2,10 +2,10 @@ package net.cabezudo.sofia.core;
 
 import net.cabezudo.sofia.sites.Host;
 import net.cabezudo.sofia.sites.HostNotFoundException;
-import net.cabezudo.sofia.sites.PathManager;
 import net.cabezudo.sofia.sites.Site;
-import net.cabezudo.sofia.sites.SiteManager;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
+import net.cabezudo.sofia.sites.service.PathManager;
+import net.cabezudo.sofia.sites.service.SiteManager;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -20,12 +20,12 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>sofia-people</artifactId>
+      <artifactId>sofia-places</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>sofia-places</artifactId>
+      <artifactId>sofia-stomp-notification</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

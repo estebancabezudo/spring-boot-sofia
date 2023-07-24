@@ -1,14 +1,14 @@
-package net.cabezudo.sofia.people;
+package net.cabezudo.sofia.people.rest;
 
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.service.AccountManager;
 import net.cabezudo.sofia.core.rest.ListRestResponse;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
+import net.cabezudo.sofia.people.PeopleList;
+import net.cabezudo.sofia.people.Person;
 import net.cabezudo.sofia.people.mappers.BusinessToRestPersonListMapper;
 import net.cabezudo.sofia.people.mappers.BusinessToRestPersonMapper;
-import net.cabezudo.sofia.people.rest.PeopleRestResponse;
-import net.cabezudo.sofia.people.rest.RestPerson;
-import net.cabezudo.sofia.people.rest.RestPersonList;
+import net.cabezudo.sofia.people.service.PeopleManager;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.users.service.Group;
 import org.slf4j.Logger;

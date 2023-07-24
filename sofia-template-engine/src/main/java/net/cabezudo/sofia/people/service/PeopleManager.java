@@ -1,9 +1,12 @@
-package net.cabezudo.sofia.people;
+package net.cabezudo.sofia.people.service;
 
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.core.persistence.EntityList;
+import net.cabezudo.sofia.people.PeopleList;
+import net.cabezudo.sofia.people.Person;
 import net.cabezudo.sofia.people.mappers.EntityToBusinessPersonListMapper;
 import net.cabezudo.sofia.people.mappers.EntityToBusinessPersonMapper;
+import net.cabezudo.sofia.people.persistence.PeopleRepository;
 import net.cabezudo.sofia.people.persistence.PersonEntity;
 import net.cabezudo.sofia.users.service.SofiaUser;
 import org.springframework.beans.factory.annotation.Autowired;

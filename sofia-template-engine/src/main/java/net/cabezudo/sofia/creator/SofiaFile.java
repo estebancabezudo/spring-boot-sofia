@@ -24,11 +24,11 @@ import net.cabezudo.sofia.security.Permission;
 import net.cabezudo.sofia.security.PermissionManager;
 import net.cabezudo.sofia.sites.Host;
 import net.cabezudo.sofia.sites.HostNotFoundException;
-import net.cabezudo.sofia.sites.PathManager;
 import net.cabezudo.sofia.sites.Site;
-import net.cabezudo.sofia.sites.SiteManager;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.sites.SourceNotFoundException;
+import net.cabezudo.sofia.sites.service.PathManager;
+import net.cabezudo.sofia.sites.service.SiteManager;
 import net.cabezudo.sofia.users.service.Group;
 import net.cabezudo.sofia.users.service.Groups;
 import org.slf4j.Logger;
@@ -423,10 +423,11 @@ public class SofiaFile {
     }
   }
 
-  private void processLink(Path requestFilePath, Element script, Caller caller) throws SiteCreationException, IOException, JSONParseException, SourceAlreadyAdded, SofiaFileNotFoundException, SiteNotFoundException, HostNotFoundException {
+  private void processLink(Path requestFilePath, Element link, Caller caller) throws SiteCreationException, IOException, JSONParseException, SourceAlreadyAdded, SofiaFileNotFoundException, SiteNotFoundException, HostNotFoundException {
     Attribute attribute;
-    if ((attribute = script.getAttribute(Attribute.LIB)) != null) {
+    if ((attribute = link.getAttribute(Attribute.LIB)) != null) {
       processLinkToLibrary(requestFilePath, attribute, caller);
+      link.remove();
     }
   }
 

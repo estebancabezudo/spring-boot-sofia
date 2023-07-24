@@ -29,6 +29,7 @@
     <module>sofia-template-engine</module>
     <module>sofia-web</module>
     <module>sofia-places</module>
+    <module>sofia-stomp-notification</module>
   </modules>
 
   <dependencies>

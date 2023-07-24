@@ -1,8 +1,9 @@
 package net.cabezudo.sofia.people;
 
 import net.cabezudo.sofia.core.SofiaRuntimeException;
-import net.cabezudo.sofia.sites.PathManager;
+import net.cabezudo.sofia.people.service.PeopleManager;
 import net.cabezudo.sofia.sites.Site;
+import net.cabezudo.sofia.sites.service.PathManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,8 @@
-package net.cabezudo.sofia.sites;
+package net.cabezudo.sofia.sites.persistence;
 
 import net.cabezudo.sofia.persistence.DatabaseManager;
+import net.cabezudo.sofia.sites.SiteEntity;
+import net.cabezudo.sofia.sites.mappers.SiteRowMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,10 @@
-package net.cabezudo.sofia.sites;
+package net.cabezudo.sofia.sites.mappers;
 
 import net.cabezudo.sofia.core.SofiaRuntimeException;
+import net.cabezudo.sofia.sites.Site;
+import net.cabezudo.sofia.sites.SiteEntity;
+import net.cabezudo.sofia.sites.SiteNotFoundException;
+import net.cabezudo.sofia.sites.service.SiteManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

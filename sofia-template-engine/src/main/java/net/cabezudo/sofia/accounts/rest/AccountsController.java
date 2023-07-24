@@ -1,14 +1,15 @@
 package net.cabezudo.sofia.accounts.rest;
 
+import net.cabezudo.sofia.accounts.mappers.BusinessToRestAccountListMapper;
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.service.AccountManager;
 import net.cabezudo.sofia.accounts.service.Accounts;
-import net.cabezudo.sofia.accounts.mappers.BusinessToRestAccountListMapper;
 import net.cabezudo.sofia.core.SofiaBadRequest;
 import net.cabezudo.sofia.core.rest.ListRestResponse;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.sites.Site;
+import net.cabezudo.sofia.sites.service.SiteManager;
 import net.cabezudo.sofia.users.service.Group;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
 import net.cabezudo.sofia.web.user.WebUserDataManager;
@@ -34,13 +35,14 @@ public class AccountsController extends SofiaAuthorizedController {
   private @Autowired HttpServletRequest request;
   private @Autowired WebUserDataManager webUserDataManager;
   private @Autowired WebClientDataManager webClientDataManager;
+  private @Autowired SiteManager siteManager;
 
   @GetMapping("/v1/accounts")
   public ResponseEntity<?> listAll() {
     log.debug("Get list of accounts for all site");
     ListRestResponse<RestAccount> listRestResponse;
 
-    Site site = super.getSite();
+    Site site = siteManager.getSite(request);
 
     Account account = accountManager.getAccount(request);
 
@@ -73,7 +75,7 @@ public class AccountsController extends SofiaAuthorizedController {
     log.debug("Set the site account");
     ListRestResponse<RestAccount> listRestResponse;
 
-    Site site = super.getSite();
+    Site site = siteManager.getSite(request);
 
     try {
       String name = getName(restAccount);
@@ -92,7 +94,7 @@ public class AccountsController extends SofiaAuthorizedController {
     log.debug("Set the user account");
     ListRestResponse<RestAccount> listRestResponse;
 
-    Site site = super.getSite();
+    Site site = siteManager.getSite(request);
 
     try {
       String name = getName(restAccount);
@@ -111,7 +113,7 @@ public class AccountsController extends SofiaAuthorizedController {
     log.debug("Set the session account");
     ListRestResponse<RestAccount> listRestResponse;
 
-    Site site = super.getSite();
+    Site site = siteManager.getSite(request);
 
     try {
       String name = getName(restAccount);

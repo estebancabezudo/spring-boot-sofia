@@ -7,7 +7,6 @@ import net.cabezudo.sofia.accounts.persistence.AccountRepository;
 import net.cabezudo.sofia.accounts.persistence.AccountUserRelationEntity;
 import net.cabezudo.sofia.core.persistence.EntityList;
 import net.cabezudo.sofia.sites.Site;
-import net.cabezudo.sofia.sites.SiteManager;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
 import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.web.client.WebClientData;
@@ -28,7 +27,6 @@ public class AccountManager {
   private static final Logger log = LoggerFactory.getLogger(AccountManager.class);
   private @Resource AccountRepository accountRepository;
   private @Autowired EntityToBusinessAccountMapper entityToBusinessAccountMapper;
-  private @Autowired SiteManager siteManager;
   private @Autowired UserPreferencesManager userPreferencesManager;
   private @Autowired EntityToBusinessAccountListMapper entityToBusinessAccountListMapper;
   private @Autowired WebClientDataManager webClientDataManager;

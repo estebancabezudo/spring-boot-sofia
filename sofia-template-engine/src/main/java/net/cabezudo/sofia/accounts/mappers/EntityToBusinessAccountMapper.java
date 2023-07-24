@@ -1,9 +1,9 @@
 package net.cabezudo.sofia.accounts.mappers;
 
-import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
+import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.sites.Site;
-import net.cabezudo.sofia.sites.SiteManager;
+import net.cabezudo.sofia.sites.service.SiteManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

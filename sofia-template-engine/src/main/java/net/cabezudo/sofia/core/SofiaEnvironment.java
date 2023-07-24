@@ -10,8 +10,8 @@ import net.cabezudo.sofia.security.Permission;
 import net.cabezudo.sofia.security.PermissionManager;
 import net.cabezudo.sofia.sites.Host;
 import net.cabezudo.sofia.sites.Site;
-import net.cabezudo.sofia.sites.SiteManager;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
+import net.cabezudo.sofia.sites.service.SiteManager;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +65,7 @@ public class SofiaEnvironment {
   private @Autowired ContentManager contentManager;
   @Value("${sofia.security.active}")
   private boolean sofiaSecurityActive;
-  
+
   private Path checkForDirectoryAndCreate(Path path) throws ConfigurationException, IOException {
     if (!Files.exists(path)) {
       Files.createDirectories(path);

@@ -3,9 +3,9 @@ package net.cabezudo.sofia.creator;
 import net.cabezudo.html.nodes.Element;
 import net.cabezudo.html.nodes.FilePosition;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
-import net.cabezudo.sofia.sites.PathManager;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SourceNotFoundException;
+import net.cabezudo.sofia.sites.service.PathManager;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

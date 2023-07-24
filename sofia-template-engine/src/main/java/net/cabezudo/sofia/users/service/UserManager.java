@@ -1,18 +1,18 @@
 package net.cabezudo.sofia.users.service;
 
-import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.mappers.BusinessToEntityAccountMapper;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
 import net.cabezudo.sofia.accounts.persistence.AccountUserRelationEntity;
+import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.config.mail.SendEMailException;
 import net.cabezudo.sofia.core.hostname.HostnameManager;
 import net.cabezudo.sofia.emails.EMail;
 import net.cabezudo.sofia.emails.EMailManager;
 import net.cabezudo.sofia.emails.persistence.EMailEntity;
 import net.cabezudo.sofia.emails.persistence.EMailRepository;
-import net.cabezudo.sofia.people.PeopleManager;
 import net.cabezudo.sofia.people.Person;
+import net.cabezudo.sofia.people.service.PeopleManager;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.users.PasswordGenerator;
 import net.cabezudo.sofia.users.mappers.BusinessToEntityGroupsMapper;
