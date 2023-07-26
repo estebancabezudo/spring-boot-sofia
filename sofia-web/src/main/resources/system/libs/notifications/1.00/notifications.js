@@ -1,14 +1,27 @@
-const initNotifications = () => {
+const initNotifications = async () => {
     console.log(`'Notification' in window: ${'Notification' in window}`);
     if ('Notification' in window) {
         // Pedir permiso al usuario para mostrar notificaciones
-        Notification.requestPermission()
-            .then(permission => {
-                console.log(`permission: ${permission}`);
-                if (permission === 'granted') {
-                    // Si el usuario otorgó el permiso, mostrar la notificación
-                }
-            });
+
+
+        const permission = await navigator.permissions.query({ name: "notifications" });
+        if (permission.state === "granted") {
+            // TODO agregar en una variable global que fué aceptado
+        }
+
+
+
+        const handler = setTimeout(() => {
+            const img = "/images/icons/places.png";
+            const text = `HEY! Your task is now overdue.`;
+            const notification = new Notification("To do list", { body: text, icon: img });
+            clearTimeout(handler);
+        }, 5000);
+
+
+
+
+
     } else {
         console.log('El navegador no soporta el API de Notificaciones.');
     }
