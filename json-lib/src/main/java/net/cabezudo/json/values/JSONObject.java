@@ -1951,14 +1951,14 @@ public class JSONObject extends JSONValue<JSONObject> implements Iterable<JSONPa
   }
 
   @Override
-  public void toFormatedString(StringBuilder sb, int indent, boolean includeFirst) {
+  public void toFormattedString(StringBuilder sb, int indent, boolean includeFirst) {
     if (includeFirst) {
       sb.append(JSON.getIndent(indent));
     }
     sb.append("{\n");
     list.forEach(entry -> {
       sb.append(JSON.getIndent(indent + 1));
-      entry.toFormatedString(sb, indent + 1, false);
+      entry.toFormattedString(sb, indent + 1, false);
       sb.append(",\n");
     });
     sb.setLength(Math.max(sb.length() - 2, 0));

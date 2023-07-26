@@ -64,13 +64,13 @@ public class JSONBooleanTest {
   @Test
   public void testIsArray() {
     JSONBoolean jsonBoolean = JSONBoolean.TRUE;
-    assertEquals(false, jsonBoolean.isArray());
+    assertFalse(jsonBoolean.isArray());
   }
 
   @Test
   public void testIsBoolean() {
     JSONBoolean jsonBoolean = JSONBoolean.TRUE;
-    assertEquals(true, jsonBoolean.isBoolean());
+    assertTrue(jsonBoolean.isBoolean());
   }
 
   @Test
@@ -112,43 +112,43 @@ public class JSONBooleanTest {
   @Test
   public void testIsNotReferenceable() {
     JSONBoolean jsonBoolean = JSONBoolean.TRUE;
-    assertEquals(true, jsonBoolean.isNotReferenceable());
+    assertTrue(jsonBoolean.isNotReferenceable());
   }
 
   @Test
   public void testIsNull() {
     JSONBoolean jsonBoolean = JSONBoolean.TRUE;
-    assertEquals(false, jsonBoolean.isNull());
+    assertFalse(jsonBoolean.isNull());
   }
 
   @Test
   public void testIsNumber() {
     JSONBoolean jsonBoolean = JSONBoolean.TRUE;
-    assertEquals(false, jsonBoolean.isNumber());
+    assertFalse(jsonBoolean.isNumber());
   }
 
   @Test
   public void testIsObject() {
     JSONBoolean jsonBoolean = JSONBoolean.TRUE;
-    assertEquals(false, jsonBoolean.isObject());
+    assertFalse(jsonBoolean.isObject());
   }
 
   @Test
   public void testIsReferenceable() {
     JSONBoolean jsonBoolean = JSONBoolean.TRUE;
-    assertEquals(false, jsonBoolean.isReferenceable());
+    assertFalse(jsonBoolean.isReferenceable());
   }
 
   @Test
   public void testIsString() {
     JSONBoolean jsonBoolean = JSONBoolean.TRUE;
-    assertEquals(false, jsonBoolean.isString());
+    assertFalse(jsonBoolean.isString());
   }
 
   @Test
   public void testIsValue() {
     JSONBoolean jsonBoolean = JSONBoolean.TRUE;
-    assertEquals(true, jsonBoolean.isValue());
+    assertTrue(jsonBoolean.isValue());
   }
 
   @Test
@@ -291,7 +291,7 @@ public class JSONBooleanTest {
   public void testToList() {
     JSONBoolean b = JSONBoolean.TRUE;
 
-    List<JSONValue> list = b.toList();
+    List<JSONValue<?>> list = b.toList();
 
     assertEquals(1, list.size());
     assertEquals(JSONBoolean.TRUE, list.get(0));

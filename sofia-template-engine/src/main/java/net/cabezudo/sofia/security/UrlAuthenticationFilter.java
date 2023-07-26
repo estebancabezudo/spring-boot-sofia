@@ -48,7 +48,7 @@ public class UrlAuthenticationFilter extends OncePerRequestFilter {
       } else {
         Site site = null;
         try {
-          site = siteManager.get(request.getServerName());
+          site = siteManager.getByName(request.getServerName());
         } catch (SiteNotFoundException e) {
           response.sendError(400, "Invalid host: " + request.getServerName());
         }

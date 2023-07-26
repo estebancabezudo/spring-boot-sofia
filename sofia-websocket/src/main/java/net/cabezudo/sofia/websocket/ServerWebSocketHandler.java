@@ -8,7 +8,6 @@ import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.sites.Site;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.SubProtocolCapable;
@@ -18,7 +17,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import javax.websocket.EncodeException;
 import java.io.IOException;
-import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,19 +24,20 @@ import java.util.List;
 public class ServerWebSocketHandler extends TextWebSocketHandler implements SubProtocolCapable {
   private static final Logger log = LoggerFactory.getLogger(ServerWebSocketHandler.class);
   private static final ClientSockets clientSockets = new ClientSockets();
-
+  private static final String MESSAGE_TYPE_INFO = "info";
+  private static final String MESSAGE_TYPE_NOTIFICATION = "notification";
   private Site site;
   private Account account;
 
-  private void broadcast(WebSocketSession session, TextMessage message) throws IOException, EncodeException {
+  private void broadcast(WebSocketSession session, TextMessage message) {
     clientSockets.forEach(socket -> {
       if (!session.isOpen()) {
         return;
       }
-      if (site != null && site.getId() != socket.getSite().getId()) {
+      if (site == null || site.getId() != socket.getSite().getId()) {
         return;
       }
-      if (account != null && account.getId() != socket.getAccount().getId()) {
+      if (account == null || account.getId() != socket.getAccount().getId()) {
         return;
       }
       if (session.getId().equals(socket.getSession().getId())) {
@@ -47,23 +46,26 @@ public class ServerWebSocketHandler extends TextWebSocketHandler implements SubP
       try {
         socket.send(message.getPayload());
       } catch (IOException | EncodeException e) {
+        // TODO Do something meaningful with this
         e.printStackTrace();
       }
     });
   }
 
   public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-    site = (Site) session.getAttributes().get("site");
-    account = (Account) session.getAttributes().get("account");
+    site = (Site) session.getAttributes().get("websocket.site");
+    account = (Account) session.getAttributes().get("websocket.account");
+
     ClientSocket clientSocket = new ClientSocket(site, account, session);
     clientSockets.add(clientSocket);
 
-    clientSocket.send(prepareMessage("Connected..."));
+    clientSocket.send(prepareMessage(MESSAGE_TYPE_INFO, "Connected..."));
   }
 
-  private String prepareMessage(String message) {
+  private String prepareMessage(String type, String message) {
     JSONObject jsonMessage = new JSONObject();
     try {
+      jsonMessage.add(new JSONPair("type", type));
       jsonMessage.add(new JSONPair("message", message));
     } catch (DuplicateKeyException e) {
       throw new SofiaRuntimeException(e);
@@ -79,19 +81,13 @@ public class ServerWebSocketHandler extends TextWebSocketHandler implements SubP
   @Override
   public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws EncodeException, IOException, DuplicateKeyException {
     clientSockets.remove(session);
-    JSONObject message = new JSONObject(new JSONPair("message", "Disconnected! Users: " + clientSockets.size()));
-    broadcast(session, new TextMessage(message.toString()));
+    String message = prepareMessage(MESSAGE_TYPE_INFO, "Disconnected! Users: " + clientSockets.size());
+    broadcast(session, new TextMessage(message));
   }
 
   @Override
   public void handleTransportError(WebSocketSession session, Throwable cause) {
     cause.printStackTrace();
-  }
-
-  @Scheduled(fixedRate = 10000)
-  void sendPeriodicMessages() throws IOException, EncodeException, DuplicateKeyException {
-    JSONObject message = new JSONObject(new JSONPair("message", "server periodic message " + LocalTime.now()));
-    broadcast(null, new TextMessage(message.toString()));
   }
 
   @Override

@@ -125,7 +125,7 @@ public class JSONNumber extends JSONValue<JSONNumber> {
    * Construct a {@link net.cabezudo.json.values.JSONNumber} using a {@code BigDecimal} value. The method also takes a {@link Position} in order to save the position in origin and
    * give it when a parse error is thrown.
    *
-   * @param value a {@code BigDecimal} with the number.
+   * @param value    a {@code BigDecimal} with the number.
    * @param position the position of the value in the source.
    */
   public JSONNumber(BigDecimal value, Position position) {
@@ -153,7 +153,6 @@ public class JSONNumber extends JSONValue<JSONNumber> {
    * Compares two {@link net.cabezudo.json.values.JSONNumber} objects.
    *
    * @param jsonNumber the {@link net.cabezudo.json.values.JSONNumber} to be compared.
-   *
    * @return the value {@code 0} if {@code this} {@link net.cabezudo.json.values.JSONNumber} is equal to the argument {@link net.cabezudo.json.values.JSONNumber}; a value less than
    * {@code 0} if {@code this} {@link net.cabezudo.json.values.JSONNumber} is less than the argument {@link net.cabezudo.json.values.JSONNumber}; and a value greater than {@code 0}
    * if {@code this} {@link net.cabezudo.json.values.JSONNumber} is greater than the argument {@link net.cabezudo.json.values.JSONNumber}.
@@ -363,8 +362,8 @@ public class JSONNumber extends JSONValue<JSONNumber> {
    * @return a {@code List} of {@link net.cabezudo.json.values.JSONValue} with {@code this} element.
    */
   @Override
-  public List<JSONValue> toList() {
-    List<JSONValue> list = new ArrayList<>();
+  public List<JSONValue<?>> toList() {
+    List<JSONValue<?>> list = new ArrayList<>();
     list.add(this);
     return list;
   }
@@ -413,7 +412,7 @@ public class JSONNumber extends JSONValue<JSONNumber> {
   }
 
   @Override
-  public void toFormatedString(StringBuilder sb, int indent, boolean inclueFisrt) {
+  public void toFormattedString(StringBuilder sb, int indent, boolean inclueFisrt) {
     sb.append(value.toPlainString());
   }
 

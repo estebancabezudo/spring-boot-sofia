@@ -15,7 +15,7 @@ public class EntityToBusinessSiteMapper {
   public Site map(SiteEntity siteEntity) {
     Site site;
     try {
-      site = siteManager.get(siteEntity.name());
+      site = siteManager.getByName(siteEntity.name());
     } catch (SiteNotFoundException e) {
       throw new SofiaRuntimeException(e);
     }

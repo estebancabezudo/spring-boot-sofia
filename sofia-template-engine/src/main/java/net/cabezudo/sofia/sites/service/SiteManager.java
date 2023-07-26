@@ -63,7 +63,7 @@ public class SiteManager {
     return getByHostname(request.getServerName());
   }
 
-  public Site get(String name) throws SiteNotFoundException {
+  public Site getByName(String name) throws SiteNotFoundException {
     Site site = siteByName.get(name);
     if (site == null) {
       throw new SiteNotFoundException("Site not found: " + name);
@@ -87,7 +87,7 @@ public class SiteManager {
     return host;
   }
 
-  public Site get(int id) {
+  public Site getById(int id) {
     return siteById.get(id);
   }
 

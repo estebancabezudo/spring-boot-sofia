@@ -15,7 +15,7 @@ public class EntityToBusinessAccountMapper {
     if (entity == null) {
       return null;
     }
-    Site site = siteManager.get(entity.getSiteId());
+    Site site = siteManager.getById(entity.getSiteId());
     return new Account(entity.getId(), site, entity.getName());
   }
 }

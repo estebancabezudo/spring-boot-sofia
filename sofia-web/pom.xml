@@ -25,7 +25,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>sofia-stomp-notification</artifactId>
+      <artifactId>sofia-websocket</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

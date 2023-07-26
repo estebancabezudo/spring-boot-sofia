@@ -220,7 +220,7 @@ public class SofiaEnvironment {
     for (ConfigurationFileYAMLSiteData siteData : sites) {
       Site site;
       try {
-        site = siteManager.get(siteData.getName());
+        site = siteManager.getByName(siteData.getName());
       } catch (SiteNotFoundException e) {
         continue;
       }

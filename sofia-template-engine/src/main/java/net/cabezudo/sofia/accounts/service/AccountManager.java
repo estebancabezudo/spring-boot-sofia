@@ -32,6 +32,16 @@ public class AccountManager {
   private @Autowired WebClientDataManager webClientDataManager;
   private @Autowired WebUserDataManager webUserDataManager;
 
+  private Account getAccount(Account accountFromUser, Account accountFromClientData) {
+    Account account;
+    if (accountFromUser == null) {
+      account = accountFromClientData;
+    } else {
+      account = accountFromUser;
+    }
+    return account;
+  }
+
   public AccountUserRelationEntity findRelation(Site site, Account account, SofiaUser user) {
     return accountRepository.find(account.getId(), user.getId());
   }
@@ -91,22 +101,6 @@ public class AccountManager {
     return account;
   }
 
-  public Account getAccount(HttpServletRequest request) {
-    WebClientData webClientData = webClientDataManager.getFromCookie(request);
-
-    WebUserData webUserData = webUserDataManager.getFromSession(request);
-    Account accountFromUser = webUserData.getAccount();
-
-
-    Account account;
-    if (accountFromUser == null) {
-      account = webClientData.getAccount();
-    } else {
-      account = accountFromUser;
-    }
-    return account;
-  }
-
   public void setSiteAccount(HttpServletRequest request, Site site, String name) {
     Account account = getByName(site, name);
     WebClientData webClientData = webClientDataManager.getFromCookie(request);
@@ -128,5 +122,15 @@ public class AccountManager {
     } else {
       setSiteAccount(request, site, name);
     }
+  }
+
+  public Account getAccount(HttpServletRequest request) {
+    WebUserData webUserData = webUserDataManager.getFromSession(request);
+    WebClientData webClientData = webClientDataManager.getFromCookie(request);
+
+    Account accountFromUser = webUserData.getAccount();
+    Account accountFromClientData = webClientData.getAccount();
+
+    return getAccount(accountFromUser, accountFromClientData);
   }
 }

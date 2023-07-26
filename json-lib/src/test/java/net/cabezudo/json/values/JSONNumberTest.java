@@ -6,11 +6,13 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -21,17 +23,13 @@ public class JSONNumberTest {
 
   @Test
   public void testJSONNumberWithNullValueParameterAndPosition() {
-    IllegalArgumentException illegalArgumentException = Assertions.assertThrows(IllegalArgumentException.class, () -> {
-      new JSONNumber(null, null);
-    });
+    IllegalArgumentException illegalArgumentException = Assertions.assertThrows(IllegalArgumentException.class, () -> new JSONNumber(null, null));
     Assertions.assertNotNull(illegalArgumentException);
   }
 
   @Test
   public void testJSONNumberWithNullBigIntegerValueParameter() {
-    IllegalArgumentException illegalArgumentException = Assertions.assertThrows(IllegalArgumentException.class, () -> {
-      new JSONNumber((BigInteger) null);
-    });
+    IllegalArgumentException illegalArgumentException = Assertions.assertThrows(IllegalArgumentException.class, () -> new JSONNumber((BigInteger) null));
     Assertions.assertNotNull(illegalArgumentException);
   }
 
@@ -49,20 +47,20 @@ public class JSONNumberTest {
   public void testEquals() {
     JSONNumber a = new JSONNumber(10);
     JSONNumber b = new JSONNumber(10);
-    assertTrue(a.equals(b));
+    assertEquals(a, b);
   }
 
   @Test
   public void testEqualsWitNull() {
     JSONNumber a = new JSONNumber(10);
-    assertFalse(a.equals(null));
+    assertNotEquals(null, a);
   }
 
   @Test
   public void testEqualsWithAnotherObject() {
     JSONNumber a = new JSONNumber(10);
     String b = "ten";
-    assertFalse(a.equals(b));
+    assertNotEquals(a.toString(), b);
   }
 
   @Test
@@ -85,7 +83,7 @@ public class JSONNumberTest {
   }
 
   @Test
-  public void testIsNotReferenceable() {
+  public void testIsNotReferencable() {
     JSONNumber jsonNumber = new JSONNumber(1);
     assertTrue(jsonNumber.isNotReferenceable());
   }
@@ -116,7 +114,7 @@ public class JSONNumberTest {
   }
 
   @Test
-  public void testIsReferenceable() {
+  public void testIsReferencable() {
     JSONNumber jsonNumber = new JSONNumber(1);
     assertFalse(jsonNumber.isReferenceable());
   }
@@ -137,7 +135,7 @@ public class JSONNumberTest {
   public void testToBigDecimal() {
     JSONNumber jsonNumber = new JSONNumber(1.2);
     BigDecimal b = jsonNumber.toBigDecimal();
-    assertEquals(new BigDecimal("1.2").setScale(6).stripTrailingZeros(), b);
+    assertEquals(new BigDecimal("1.2").setScale(6, RoundingMode.HALF_UP).stripTrailingZeros(), b);
   }
 
   @Test
@@ -168,7 +166,7 @@ public class JSONNumberTest {
     Calendar calendar = jsonNumber.toCalendar();
 
     Calendar expectedCalendar = Calendar.getInstance();
-    expectedCalendar.set(1974, 0, 30, 14, 20, 12);
+    expectedCalendar.set(1974, Calendar.JANUARY, 30, 14, 20, 12);
     expectedCalendar.set(Calendar.MILLISECOND, 125);
 
     assertEquals(expectedCalendar, calendar);
@@ -227,7 +225,7 @@ public class JSONNumberTest {
   @Test
   public void testToList() {
     JSONNumber jsonNumber = new JSONNumber(69);
-    List<JSONValue> array = jsonNumber.toList();
+    List<JSONValue<?>> array = jsonNumber.toList();
     assertEquals(1, array.size());
     assertEquals(new JSONNumber(69), array.get(0));
   }

@@ -23,7 +23,7 @@ const Core = {
     VALUE: 2,
     socket: null,
     socketTimeoutHandler: null,
-    socketTimeoutTime: 40000,
+    socketTimeoutTime: 10000,
     texts: {},
     actualLanguage: null,
     user: null,

@@ -23,7 +23,11 @@
  */
 package net.cabezudo.json;
 
-import net.cabezudo.json.values.*;
+import net.cabezudo.json.values.JSONArray;
+import net.cabezudo.json.values.JSONNull;
+import net.cabezudo.json.values.JSONObject;
+import net.cabezudo.json.values.JSONString;
+import net.cabezudo.json.values.JSONValue;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -42,12 +46,11 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
   private final JSONValue value;
 
   /**
-   *
-   * @param key the name for the key pair part
-   * @param object the object that represents the value. The constructor converts, if possible, the object to a {@link net.cabezudo.json.values.JSONValue} using
-   * {@link net.cabezudo.json.JSON#toJSONTree(java.lang.Object) toJSONTree} method.
+   * @param key      the name for the key pair part
+   * @param object   the object that represents the value. The constructor converts, if possible, the object to a {@link net.cabezudo.json.values.JSONValue} using
+   *                 {@link net.cabezudo.json.JSON#toJSONTree(java.lang.Object) toJSONTree} method.
    * @param position the position of the pair in the JSON source code. Using for locate the new created pair in the source file. It can be null but is encouraged to use the
-   * constructor without the parameter instead,
+   *                 constructor without the parameter instead,
    */
   public JSONPair(String key, Object object, Position position) {
     super(position);
@@ -60,10 +63,9 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
   }
 
   /**
-   *
-   * @param key the name for the key pair part
+   * @param key    the name for the key pair part
    * @param object the object to use like value. The constructor convert, if possible, the object to a {@link net.cabezudo.json.values.JSONValue} using
-   * {@link JSON#toJSONTree(java.lang.Object)} method.
+   *               {@link JSON#toJSONTree(java.lang.Object)} method.
    */
   public JSONPair(String key, Object object) {
     this(key, object, null);
@@ -92,9 +94,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
    * true} if and only if the argument is not {@code null} and is a {@link net.cabezudo.json.JSONPair} object has equals key and value.
    *
    * @param o The object to compare this {@link net.cabezudo.json.JSONPair} against
-   *
    * @return {@code true} if the given object represents a {@link net.cabezudo.json.JSONPair} has an equal key and an equal value, {@code false} otherwise.
-   *
    */
   @Override
   public boolean equals(Object o) {
@@ -116,7 +116,6 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
   }
 
   /**
-   *
    * @return the key part of the {@link net.cabezudo.json.JSONPair}
    */
   public String getKey() {
@@ -160,7 +159,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
 
   /**
    * Convert the value of this {@link net.cabezudo.json.JSONPair} into a {@code BigDecimal}. If the value can't be converted the method throws a runtime exception
-   * {@link net.cabezudo.json.exceptions.JSONConvertionException}. The rules for conversion depends of the type of value.
+   * {@link net.cabezudo.json.exceptions.JSONConversionException}. The rules for conversion depends of the type of value.
    *
    * @return a {@code BigDecimal} with the conversion of value.
    */
@@ -170,7 +169,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
 
   /**
    * Convert the value of this {@link net.cabezudo.json.JSONPair} into a {@code Boolean}. If the value can't be converted the method throws a runtime exception
-   * {@link net.cabezudo.json.exceptions.JSONConvertionException}. The rules for conversion depends of the type of value.
+   * {@link net.cabezudo.json.exceptions.JSONConversionException}. The rules for conversion depends of the type of value.
    *
    * @return a {@code Boolean} with the conversion of value.
    */
@@ -180,7 +179,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
 
   /**
    * Convert the value of this {@link net.cabezudo.json.JSONPair} into a {@code Byte}. If the value can't be converted the method throws a runtime exception
-   * {@link net.cabezudo.json.exceptions.JSONConvertionException}. The rules for conversion depends of the type of value.
+   * {@link net.cabezudo.json.exceptions.JSONConversionException}. The rules for conversion depends of the type of value.
    *
    * @return a {@code Byte} with the conversion of value.
    */
@@ -190,7 +189,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
 
   /**
    * Convert the value of this {@link net.cabezudo.json.JSONPair} into a {@code Character}. If the value can't be converted the method throws a runtime exception
-   * {@link net.cabezudo.json.exceptions.JSONConvertionException}. The rules for conversion depends of the type of value.
+   * {@link net.cabezudo.json.exceptions.JSONConversionException}. The rules for conversion depend on the type of value.
    *
    * @return a {@code Character} with the conversion of value.
    */
@@ -200,7 +199,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
 
   /**
    * Convert the value of this {@link net.cabezudo.json.JSONPair} into a {@code Double}. If the value can't be converted the method throws a runtime exception
-   * {@link net.cabezudo.json.exceptions.JSONConvertionException}. The rules for conversion depends of the type of value.
+   * {@link net.cabezudo.json.exceptions.JSONConversionException}. The rules for conversion depend on the type of value.
    *
    * @return a {@code Double} with the conversion of value.
    */
@@ -210,7 +209,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
 
   /**
    * Convert the value of this {@link net.cabezudo.json.JSONPair} to a {@code Float}. If the value can't be converted the method throws a runtime exception
-   * {@link net.cabezudo.json.exceptions.JSONConvertionException}. The rules for conversion depends of the type of value.
+   * {@link net.cabezudo.json.exceptions.JSONConversionException}. The rules for conversion depend on the type of value.
    *
    * @return a {@code Float} with the conversion of value.
    */
@@ -220,7 +219,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
 
   /**
    * Convert the value of this {@link net.cabezudo.json.JSONPair} to a {@code Integer}. If the value can't be converted the method throws a runtime exception
-   * {@link net.cabezudo.json.exceptions.JSONConvertionException}. The rules for conversion depends of the type of value.
+   * {@link net.cabezudo.json.exceptions.JSONConversionException}. The rules for conversion depend on the type of value.
    *
    * @return a {@code Integer} with the conversion of value.
    */
@@ -248,7 +247,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
 
   /**
    * Convert the value of this {@link net.cabezudo.json.JSONPair} into a {@link net.cabezudo.json.values.JSONArray}. If the value can't be converted the method throws a runtime
-   * exception {@link net.cabezudo.json.exceptions.JSONConvertionException}. The rules for conversion depends of the type of value.
+   * exception {@link net.cabezudo.json.exceptions.JSONConversionException}. The rules for conversion depend on the type of value.
    *
    * @return a {@link net.cabezudo.json.values.JSONArray} with the conversion of value.
    */
@@ -258,7 +257,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
 
   /**
    * Convert the value of this {@link net.cabezudo.json.JSONPair} into a {@link net.cabezudo.json.values.JSONString}. If the value can't be converted the method throws a runtime
-   * exception {@link net.cabezudo.json.exceptions.JSONConvertionException}. The rules for conversion depends of the type of value.
+   * exception {@link net.cabezudo.json.exceptions.JSONConversionException}. The rules for conversion depend on the type of value.
    *
    * @return a {@link net.cabezudo.json.values.JSONString} with the conversion of value.
    */
@@ -278,7 +277,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
 
   /**
    * Convert the value of this {@link net.cabezudo.json.JSONPair} into a {@link java.util.List}. If the value can't be converted the method throws a runtime exception
-   * {@link net.cabezudo.json.exceptions.JSONConvertionException}. The rules for conversion depends of the type of value.
+   * {@link net.cabezudo.json.exceptions.JSONConversionException}. The rules for conversion depend on the type of value.
    *
    * @return a {@link java.util.List } with the conversion of value.
    */
@@ -288,7 +287,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
 
   /**
    * Convert the value of this {@link net.cabezudo.json.JSONPair} into a {@link java.lang.Long}. If the value can't be converted the method throws a runtime exception
-   * {@link net.cabezudo.json.exceptions.JSONConvertionException}. The rules for conversion depends of the type of value.
+   * {@link net.cabezudo.json.exceptions.JSONConversionException}. The rules for conversion depend on the type of value.
    *
    * @return a {@link java.lang.Long} with the conversion of value.
    */
@@ -298,7 +297,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
 
   /**
    * Convert the value of this {@link net.cabezudo.json.JSONPair} into a {@link net.cabezudo.json.values.JSONObject}. If the value can't be converted the method throws a runtime
-   * exception {@link net.cabezudo.json.exceptions.JSONConvertionException}. The rules for conversion depends of the type of value.
+   * exception {@link net.cabezudo.json.exceptions.JSONConversionException}. The rules for conversion depend on the type of value.
    *
    * @return a {@link JSONObject} with the conversion of value.
    */
@@ -308,7 +307,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
 
   /**
    * Convert the value of this {@link net.cabezudo.json.JSONPair} into a {@link java.lang.Short }. If the value can't be converted the method throws a runtime exception
-   * {@link net.cabezudo.json.exceptions.JSONConvertionException}. The rules for conversion depends of the type of value.
+   * {@link net.cabezudo.json.exceptions.JSONConversionException}. The rules for conversion depend on the type of value.
    *
    * @return a {@link java.lang.Short} with the conversion of value.
    */
@@ -329,7 +328,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
 
   /**
    * Convert the value of this {@link net.cabezudo.json.JSONPair} to an native array of strings and return it. If the value can't be converted the method throw a runtime exception
-   * {@link net.cabezudo.json.exceptions.JSONConvertionException}. The rules for conversion depends of the type of value.
+   * {@link net.cabezudo.json.exceptions.JSONConversionException}. The rules for conversion depend on the type of value.
    *
    * @return a {@code String[]} with the conversion of value.
    */
@@ -338,8 +337,8 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
   }
 
   @Override
-  public void toFormatedString(StringBuilder sb, int indent, boolean includeFirst) {
+  public void toFormattedString(StringBuilder sb, int indent, boolean includeFirst) {
     sb.append("\"").append(key).append("\": ");
-    value.toFormatedString(sb, indent, false);
+    value.toFormattedString(sb, indent, false);
   }
 }

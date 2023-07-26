@@ -15,7 +15,7 @@
  * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -43,9 +43,9 @@ public class JSONParseException extends Exception {
    * Constructs a {@link net.cabezudo.json.exceptions.JSONParseException} with a specified detail message, a cause, and a {@link net.cabezudo.json.Position}. The position is used
    * to store a position of the property in a source in order to search the misspelled property.
    *
-   * @param message the detail message.
-   * @param cause The cause (which is saved for later retrieval by the {@link java.lang.Throwable#getCause()} method. (A null value is permitted, and indicates that the cause is
-   * nonexistent or unknown.)
+   * @param message  the detail message.
+   * @param cause    The cause which is saved for later retrieval by the {@link java.lang.Throwable#getCause()} method. (A null value is permitted, and indicates that the cause is
+   *                 nonexistent or unknown.)
    * @param position the position to store.
    */
   public JSONParseException(String message, Throwable cause, Position position) {
@@ -57,7 +57,7 @@ public class JSONParseException extends Exception {
    * Constructs a {@link net.cabezudo.json.exceptions.JSONParseException} with a specified detail message, and a {@link net.cabezudo.json.Position}. The position is used to store a
    * position of the property in a source in order to search the misspelled property.
    *
-   * @param message the detail message.
+   * @param message  the detail message.
    * @param position the position to store.
    */
   public JSONParseException(String message, Position position) {

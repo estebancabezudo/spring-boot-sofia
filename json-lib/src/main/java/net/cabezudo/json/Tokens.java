@@ -45,7 +45,7 @@ class Tokens implements Iterable<Token> {
     if (token == null || token.empty()) {
       return false;
     }
-    token.clasify();
+    token.classify();
 
     TokenType tokenType = token.getType();
     if (SPACE.equals(tokenType)) {

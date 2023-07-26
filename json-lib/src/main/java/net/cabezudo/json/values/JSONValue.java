@@ -38,8 +38,8 @@ import java.util.List;
  * <p>
  * The class also provides additional default methods for implementing a concrete object value and the default type conversions.
  *
- * @author <a href="http://cabezudo.net">Esteban Cabezudo</a>
  * @param <T> the type of elements in this list
+ * @author <a href="http://cabezudo.net">Esteban Cabezudo</a>
  * @version 0.9, 10/01/2014
  */
 public abstract class JSONValue<T> extends JSONElement implements Comparable<T> {
@@ -64,7 +64,7 @@ public abstract class JSONValue<T> extends JSONElement implements Comparable<T> 
    *
    * @return an array of {@link net.cabezudo.json.values.JSONValue} object if the conversion is possible.
    */
-  public JSONValue[] toArray() {
+  public JSONValue<?>[] toArray() {
     throw new JSONConversionException("I can't convert a " + this.getClass().getName() + " to a JSONValue array.");
   }
 
@@ -110,7 +110,7 @@ public abstract class JSONValue<T> extends JSONElement implements Comparable<T> 
 
   /**
    * This method implements the default behavior to convert a value to an array of {@code byte}
-   *
+   * <p>
    * object. The default behavior is to throw a {@link net.cabezudo.json.exceptions.JSONConversionException} Each class that implements a value may have a different behavior so it
    * could override this method.
    *
@@ -122,7 +122,7 @@ public abstract class JSONValue<T> extends JSONElement implements Comparable<T> 
 
   /**
    * This method implements the default behavior to convert a value to an array of {@code double}
-   *
+   * <p>
    * object. The default behavior is to throw a {@link net.cabezudo.json.exceptions.JSONConversionException} Each class that implements a value may have a different behavior so it
    * could override this method.
    *
@@ -134,7 +134,7 @@ public abstract class JSONValue<T> extends JSONElement implements Comparable<T> 
 
   /**
    * This method implements the default behavior to convert a value to an array of {@code int}
-   *
+   * <p>
    * object. The default behavior is to throw a {@link net.cabezudo.json.exceptions.JSONConversionException} Each class that implements a value may have a different behavior so it
    * could override this method.
    *
@@ -157,7 +157,6 @@ public abstract class JSONValue<T> extends JSONElement implements Comparable<T> 
   /**
    * This method implements the default behavior to convert a value to a {@code Calendar} object. The default behavior is to throw a
    * {@link net.cabezudo.json.exceptions.JSONConversionException} Each class that implements a value may have a different behavior so it could override this method.
-   *
    *
    * @param pattern the patter to use for the conversion
    * @return a {@code Calendar} object if the conversion is possible.
@@ -241,7 +240,7 @@ public abstract class JSONValue<T> extends JSONElement implements Comparable<T> 
    * @return a {@link net.cabezudo.json.values.JSONValue} object with the JSON structure with the representation of {@code this} object if the conversion is possible.
    */
   @Override
-  public JSONValue toJSONTree() {
+  public JSONValue<?> toJSONTree() {
     return this;
   }
 
@@ -251,7 +250,7 @@ public abstract class JSONValue<T> extends JSONElement implements Comparable<T> 
    *
    * @return a {@code List} of {@link net.cabezudo.json.values.JSONValue} objects if the conversion is possible.
    */
-  public List<JSONValue> toList() {
+  public List<JSONValue<?>> toList() {
     throw new JSONConversionException("I can't convert a " + this.getClass().getName() + " to a List");
   }
 

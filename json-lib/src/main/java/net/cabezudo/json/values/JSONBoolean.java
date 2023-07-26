@@ -230,8 +230,8 @@ public class JSONBoolean extends JSONValue<JSONBoolean> {
    * @return a {@code List} of {@link JSONValue} with {@code this} element.
    */
   @Override
-  public List<JSONValue> toList() {
-    List<JSONValue> list = new ArrayList<>();
+  public List<JSONValue<?>> toList() {
+    List<JSONValue<?>> list = new ArrayList<>();
     list.add(this);
     return list;
   }
@@ -269,7 +269,7 @@ public class JSONBoolean extends JSONValue<JSONBoolean> {
   }
 
   @Override
-  public void toFormatedString(StringBuilder sb, int indent, boolean includeFirst) {
+  public void toFormattedString(StringBuilder sb, int indent, boolean includeFirst) {
     sb.append(value.toString());
   }
 }

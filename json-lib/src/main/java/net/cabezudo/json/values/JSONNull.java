@@ -81,7 +81,6 @@ public class JSONNull extends JSONValue<JSONNull> {
    * Compares two {@link net.cabezudo.json.values.JSONNull} objects.
    *
    * @param jsonNull the {@link net.cabezudo.json.values.JSONNull} to be compared.
-   *
    * @return the value {@code 0}.
    */
   @Override
@@ -157,8 +156,8 @@ public class JSONNull extends JSONValue<JSONNull> {
    * @return a {@code List} of {@link JSONValue} with only {@code this} element.
    */
   @Override
-  public List<JSONValue> toList() {
-    List<JSONValue> list = new ArrayList<>();
+  public List<JSONValue<?>> toList() {
+    List<JSONValue<?>> list = new ArrayList<>();
     list.add(this);
     return list;
   }
@@ -206,7 +205,7 @@ public class JSONNull extends JSONValue<JSONNull> {
   }
 
   @Override
-  public void toFormatedString(StringBuilder sb, int indent, boolean includeFirst) {
+  public void toFormattedString(StringBuilder sb, int indent, boolean includeFirst) {
     sb.append(NULL);
   }
 }

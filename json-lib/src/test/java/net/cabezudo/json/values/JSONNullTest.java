@@ -106,7 +106,7 @@ public class JSONNullTest {
   @Test
   public void testToList() {
     JSONNull jsonNull = new JSONNull();
-    List<JSONValue> array = jsonNull.toList();
+    List<JSONValue<?>> array = jsonNull.toList();
     assertEquals(1, array.size());
     assertEquals(new JSONNull(), array.get(0));
   }

@@ -279,7 +279,7 @@ public class JSONStringTest {
   public void testToList() {
     JSONString s = new JSONString("Esteban");
 
-    List<JSONValue> list = s.toList();
+    List<JSONValue<?>> list = s.toList();
 
     assertEquals(1, list.size());
 

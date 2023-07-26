@@ -31,7 +31,11 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * A {@link net.cabezudo.json.values.JSONString} is an object extended from {@link JSONValue} object in order to represent a JSON string that can be used to create JSON structures.
@@ -55,7 +59,7 @@ public class JSONString extends JSONValue<JSONString> {
   /**
    * Initializes a newly created {@link net.cabezudo.json.values.JSONString} object so that it represents the same string as the argument.
    *
-   * @param value A {@code String}
+   * @param value    A {@code String}
    * @param position The position of the {@code String} in origen
    */
   public JSONString(String value, Position position) {
@@ -121,7 +125,6 @@ public class JSONString extends JSONValue<JSONString> {
    * String} object that represents the same sequence of characters as this object.
    *
    * @param object The object to compare this {@code String} against
-   *
    * @return {@code true} if the given object represents a {@code String} equivalent to this string, {@code false} otherwise
    */
   @Override
@@ -276,8 +279,7 @@ public class JSONString extends JSONValue<JSONString> {
    * object created with the first character of the value {@code String}.
    *
    * @return a {@code Character}.
-   * @exception IndexOutOfBoundsException if the value {@code String} length is less than one.
-   *
+   * @throws IndexOutOfBoundsException if the value {@code String} length is less than one.
    */
   @Override
   public Character toCharacter() {
@@ -375,8 +377,8 @@ public class JSONString extends JSONValue<JSONString> {
    * @return an {@code ArrayList} of {@link net.cabezudo.json.values.JSONValue} objects.
    */
   @Override
-  public List<JSONValue> toList() {
-    List<JSONValue> list = new ArrayList<>();
+  public List<JSONValue<?>> toList() {
+    List<JSONValue<?>> list = new ArrayList<>();
     list.add(this);
     return list;
   }
@@ -492,7 +494,7 @@ public class JSONString extends JSONValue<JSONString> {
   }
 
   @Override
-  public void toFormatedString(StringBuilder sb, int indent, boolean includeFirst) {
+  public void toFormattedString(StringBuilder sb, int indent, boolean includeFirst) {
     sb.append("\"").append(value).append("\"");
   }
 }

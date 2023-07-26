@@ -35,7 +35,7 @@ public class JSONArrayTest {
     jsonArray.add(jsonNumber);
     size = jsonArray.size();
     assertEquals(1, size);
-    JSONValue jsonValue = jsonArray.getValue(0);
+    JSONValue<?> jsonValue = jsonArray.getValue(0);
     assertEquals(new JSONNumber(10), jsonValue);
   }
 
@@ -80,7 +80,7 @@ public class JSONArrayTest {
 
     assertEquals(1, jsonArray.size());
 
-    JSONValue element = jsonArray.getValue(0);
+    JSONValue<?> element = jsonArray.getValue(0);
     assertEquals(new JSONString("Esteban"), element);
   }
 
@@ -93,11 +93,11 @@ public class JSONArrayTest {
     JSONString jsonString = new JSONString("Esteban");
     jsonArray.add(jsonString);
 
-    List<JSONValue> list = jsonArray.toList();
+    List<JSONValue<?>> list = jsonArray.toList();
 
     assertEquals(2, list.size());
 
-    JSONValue element;
+    JSONValue<?> element;
 
     element = jsonArray.getNullValue(0);
     assertEquals(new JSONNumber(1), element);
@@ -119,11 +119,11 @@ public class JSONArrayTest {
 
     JSONArray referencedElement = jsonArray.toReferencedElement();
 
-    JSONValue c = referencedElement.getValue(0);
+    JSONValue<?> c = referencedElement.getValue(0);
     long d = c.toInteger();
     assertEquals(2, d);
 
-    JSONValue e = referencedElement.getValue(1);
+    JSONValue<?> e = referencedElement.getValue(1);
     long f = e.toInteger();
     assertEquals(1, f);
   }
@@ -137,11 +137,11 @@ public class JSONArrayTest {
     JSONString jsonString = new JSONString("Esteban");
     jsonArray.add(jsonString);
 
-    List<JSONValue> list = jsonArray.toList();
+    List<JSONValue<?>> list = jsonArray.toList();
 
     assertEquals(2, list.size());
 
-    JSONValue element;
+    JSONValue<?> element;
 
     element = jsonArray.getValue(0);
     assertEquals(new JSONNumber(1), element);
@@ -161,7 +161,7 @@ public class JSONArrayTest {
     JSONString jsonString = new JSONString("Esteban");
     jsonArray.add(jsonString);
 
-    List<JSONValue> list = jsonArray.toList();
+    List<JSONValue<?>> list = jsonArray.toList();
 
     assertEquals(2, list.size());
 
@@ -184,7 +184,7 @@ public class JSONArrayTest {
     jsonArray.add(jsonString);
 
     int i = 0;
-    for (JSONValue jsonValue : jsonArray) {
+    for (JSONValue<?> jsonValue : jsonArray) {
       switch (i) {
         case 0:
           assertEquals(new JSONNumber(1), jsonValue);
@@ -211,7 +211,7 @@ public class JSONArrayTest {
     jsonString = new JSONString("Ismael");
     jsonArray.setValue(0, jsonString);
 
-    JSONValue element;
+    JSONValue<?> element;
 
     element = jsonArray.getValue(0);
     assertEquals(new JSONString("Ismael"), element);
@@ -229,10 +229,10 @@ public class JSONArrayTest {
     JSONString jsonString = new JSONString("Esteban");
     jsonArray.add(jsonString);
 
-    JSONValue[] array = jsonArray.toArray();
+    JSONValue<?>[] array = jsonArray.toArray();
 
-    JSONValue a = array[0];
-    JSONValue b = array[1];
+    JSONValue<?> a = array[0];
+    JSONValue<?> b = array[1];
 
     assertEquals(2, array.length);
     assertEquals(new JSONNumber(1), a);
@@ -264,11 +264,11 @@ public class JSONArrayTest {
 
     JSONArray otherJSONArray = jsonArray.toJSONArray();
 
-    JSONValue n1 = jsonArray.getValue(0);
-    JSONValue s1 = jsonArray.getValue(1);
+    JSONValue<?> n1 = jsonArray.getValue(0);
+    JSONValue<?> s1 = jsonArray.getValue(1);
 
-    JSONValue n2 = otherJSONArray.getValue(0);
-    JSONValue s2 = otherJSONArray.getValue(1);
+    JSONValue<?> n2 = otherJSONArray.getValue(0);
+    JSONValue<?> s2 = otherJSONArray.getValue(1);
 
     assertEquals(jsonArray.size(), otherJSONArray.size());
     assertEquals(n1, n2);
@@ -286,11 +286,11 @@ public class JSONArrayTest {
 
     JSONArray jsonTree = (JSONArray) jsonArray.toJSONTree();
 
-    JSONValue n1 = jsonArray.getValue(0);
-    JSONValue s1 = jsonArray.getValue(1);
+    JSONValue<?> n1 = jsonArray.getValue(0);
+    JSONValue<?> s1 = jsonArray.getValue(1);
 
-    JSONValue n2 = jsonTree.getValue(0);
-    JSONValue s2 = jsonTree.getValue(1);
+    JSONValue<?> n2 = jsonTree.getValue(0);
+    JSONValue<?> s2 = jsonTree.getValue(1);
 
     assertEquals(jsonArray.size(), jsonTree.size());
     assertEquals(n1, n2);
@@ -306,10 +306,10 @@ public class JSONArrayTest {
     JSONString jsonString = new JSONString("Esteban");
     jsonArray.add(jsonString);
 
-    List<JSONValue> list = jsonArray.toList();
+    List<JSONValue<?>> list = jsonArray.toList();
 
-    JSONValue a = list.get(0);
-    JSONValue b = list.get(1);
+    JSONValue<?> a = list.get(0);
+    JSONValue<?> b = list.get(1);
 
     assertEquals(new JSONNumber(1), a);
     assertEquals(new JSONString("Esteban"), b);
@@ -353,8 +353,7 @@ public class JSONArrayTest {
   public void testGetBoolean() throws JSONParseException, ElementNotExistException {
     JSONArray jsonArray = JSON.parse("", "[ true ]").toJSONArray();
     Boolean value = jsonArray.getBoolean(0);
-    Boolean expectedValue = Boolean.TRUE;
-    assertEquals(expectedValue, value);
+    assertEquals(true, value);
   }
 
   @Test
@@ -371,7 +370,7 @@ public class JSONArrayTest {
     Calendar value = jsonArray.getCalendar(0);
     Calendar expectedValue = Calendar.getInstance();
     expectedValue.set(Calendar.MILLISECOND, 222);
-    expectedValue.set(2017, 0, 23, 11, 20, 32);
+    expectedValue.set(2017, Calendar.JANUARY, 23, 11, 20, 32);
     assertEquals(expectedValue, value);
   }
 
@@ -398,7 +397,7 @@ public class JSONArrayTest {
   public void testGetFloat() throws JSONParseException, ElementNotExistException {
     JSONArray jsonArray = JSON.parse("", "[ 123456.789 ]").toJSONArray();
     Float value = jsonArray.getFloat(0);
-    Float expectedValue = Float.valueOf("123456.789");
+    float expectedValue = Float.parseFloat("123456.789");
     assertEquals(expectedValue, value, 3);
   }
 
@@ -463,8 +462,7 @@ public class JSONArrayTest {
   public void testGetNullBoolean() throws JSONParseException {
     JSONArray jsonArray = JSON.parse("", "[ true ]").toJSONArray();
     Boolean value = jsonArray.getNullBoolean(0);
-    Boolean expectedValue = Boolean.TRUE;
-    assertEquals(expectedValue, value);
+    assertEquals(true, value);
   }
 
   @Test
@@ -481,7 +479,7 @@ public class JSONArrayTest {
     Calendar value = jsonArray.getNullCalendar(0);
     Calendar expectedValue = Calendar.getInstance();
     expectedValue.set(Calendar.MILLISECOND, 222);
-    expectedValue.set(2017, 0, 23, 11, 20, 32);
+    expectedValue.set(2017, Calendar.JANUARY, 23, 11, 20, 32);
     assertEquals(expectedValue, value);
   }
 
@@ -508,7 +506,7 @@ public class JSONArrayTest {
   public void testGetNullFloat() throws JSONParseException {
     JSONArray jsonArray = JSON.parse("", "[ 123456.789 ]").toJSONArray();
     Float value = jsonArray.getNullFloat(0);
-    Float expectedValue = Float.valueOf("123456.789");
+    float expectedValue = Float.parseFloat("123456.789");
     assertEquals(expectedValue, value, 3);
   }
 
@@ -573,8 +571,7 @@ public class JSONArrayTest {
   public void testDigBoolean() throws JSONParseException, PropertyNotExistException {
     JSONArray jsonArray = JSON.parse("", "[ true ]").toJSONArray();
     Boolean value = jsonArray.digBoolean("[0]");
-    Boolean expectedValue = Boolean.TRUE;
-    assertEquals(expectedValue, value);
+    assertEquals(true, value);
   }
 
   @Test
@@ -591,7 +588,7 @@ public class JSONArrayTest {
     Calendar value = jsonArray.digCalendar("[0]");
     Calendar expectedValue = Calendar.getInstance();
     expectedValue.set(Calendar.MILLISECOND, 222);
-    expectedValue.set(2017, 0, 23, 11, 20, 32);
+    expectedValue.set(2017, Calendar.JANUARY, 23, 11, 20, 32);
     assertEquals(expectedValue, value);
   }
 
@@ -618,7 +615,7 @@ public class JSONArrayTest {
   public void testDigFloat() throws JSONParseException, PropertyNotExistException {
     JSONArray jsonArray = JSON.parse("", "[ 123456.789 ]").toJSONArray();
     Float value = jsonArray.digFloat("[0]");
-    Float expectedValue = Float.valueOf("123456.789");
+    float expectedValue = Float.parseFloat("123456.789");
     assertEquals(expectedValue, value, 3);
   }
 
@@ -683,8 +680,7 @@ public class JSONArrayTest {
   public void testDigNullBoolean() throws JSONParseException {
     JSONArray jsonArray = JSON.parse("", "[ true ]").toJSONArray();
     Boolean value = jsonArray.digNullBoolean("[0]");
-    Boolean expectedValue = Boolean.TRUE;
-    assertEquals(expectedValue, value);
+    assertEquals(true, value);
   }
 
   @Test
@@ -701,7 +697,7 @@ public class JSONArrayTest {
     Calendar value = jsonArray.digNullCalendar("[0]");
     Calendar expectedValue = Calendar.getInstance();
     expectedValue.set(Calendar.MILLISECOND, 222);
-    expectedValue.set(2017, 0, 23, 11, 20, 32);
+    expectedValue.set(2017, Calendar.JANUARY, 23, 11, 20, 32);
     assertEquals(expectedValue, value);
   }
 
@@ -728,7 +724,7 @@ public class JSONArrayTest {
   public void testDigNullFloat() throws JSONParseException {
     JSONArray jsonArray = JSON.parse("", "[ 123456.789 ]").toJSONArray();
     Float value = jsonArray.digNullFloat("[0]");
-    Float expectedValue = Float.valueOf("123456.789");
+    float expectedValue = Float.parseFloat("123456.789");
     assertEquals(expectedValue, value, 3);
   }
 
@@ -775,9 +771,7 @@ public class JSONArrayTest {
 
   @Test
   public void testToJSONReferencedArray() {
-    Log.debug("Create a refered JSONArray using Java objects.");
-
-    String expectedString = "{ \"version\": 1, \"countryId\": 1, \"countryName\": { \"version\": 1, \"language\": 97, \"nameType\": 1, \"word\": 2 } }";
+    Log.debug("Create a referred JSONArray using Java objects.");
 
     BookList bookList = new BookList();
     Book book;

@@ -15,7 +15,7 @@
  * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -56,7 +56,7 @@ class Token {
     sb.append(c);
   }
 
-  void clasify() throws UnexpectedElementException {
+  void classify() throws UnexpectedElementException {
     String s = sb.toString();
 
     switch (s.length()) {
@@ -109,11 +109,10 @@ class Token {
           type = TokenType.NULL;
           break;
         default:
-          do {
-            if (s.startsWith("\"") && s.endsWith("\"")) {
-              type = TokenType.STRING;
-              break;
-            }
+          if (s.startsWith("\"") && s.endsWith("\"")) {
+            type = TokenType.STRING;
+            break;
+          } else {
             try {
               BigDecimal number = new BigDecimal(s);
               type = TokenType.NUMBER;
@@ -122,8 +121,7 @@ class Token {
             } catch (NumberFormatException e) {
               throw new UnexpectedElementException(s, position);
             }
-          } while (false);
-          break;
+          }
       }
     }
   }
