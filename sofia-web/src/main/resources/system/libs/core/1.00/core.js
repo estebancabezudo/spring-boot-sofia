@@ -53,6 +53,7 @@ const Core = {
             console.log(`core::initSocket: Data received from the server`, data);
             if (data.type === 'NOTIFICATION') {
                 // Verificar si el navegador soporta el API de Notificaciones
+                console.log(`'Notification' in window: ${'Notification' in window}`);
                 if ('Notification' in window) {
                     // Pedir permiso al usuario para mostrar notificaciones
                     Notification.requestPermission().then(function (permission) {
@@ -271,13 +272,10 @@ const Core = {
         }
         for (let i = 0; i < list.length; i++) {
             const value = list[i];
-            console.log(`Core::isValid: Value to check: ${value}`);
             if (value === 'status:logged' && Core.isLogged()) {
-                console.log(`Core::isValid: The user is logged`);
                 return true;
             }
             if (value === 'status:notLogged' && Core.isNotLogged()) {
-                console.log(`Core::isValid: The user is not logged`);
                 return true;
             }
             if (value.startsWith("page:")) {
@@ -285,26 +283,20 @@ const Core = {
                 if (page.endsWith('**')) {
                     console.log(`${window.location.pathname} start with ${page.substring(0, page.length - 2)}: ${window.location.pathname === page.substring(0, -2)}`);
                     if (window.location.pathname.startsWith(page.substring(0, page.length - 2))) {
-                        console.log(`Core::isValid: The page is correct: ${page}`);
                         return true;
                     }
                 } else {
-                    console.log(`${window.location.pathname} === ${page}: ${window.location.pathname === page}`);
                     if (window.location.pathname === page) {
-                        console.log(`Core::isValid: The page is correct: ${page}`);
                         return true;
                     }
                 }
             }
             if (value.startsWith("group:")) {
                 const group = value.substr(6);
-                console.log(`Core::isValid: search for group: ${group}`);
                 if (Core.user === null) {
                     return false;
                 }
-                console.log('Core::isValid: user: ', Core.user);
                 const groups = Core.user.groups;
-                console.log('Core::isValid: groups: ', groups);
                 for (g of groups) {
                     if (group === g.name) {
                         return true;
@@ -317,7 +309,6 @@ const Core = {
                 return true;
             }
         };
-        console.log(`   false`);
         return false;
     },
 
@@ -433,12 +424,10 @@ const Core = {
     },
     setTextToElement: (element, text, options) => {
         if (Core.isHTMLDivElement(element)) {
-            console.log(`Core::setTextToElement: Trying to set text to ${element.id} (${element.constructor.name})`);
             do {
                 if (
                     element instanceof HTMLSpanElement || element instanceof HTMLDivElement || element instanceof HTMLButtonElement || element instanceof HTMLOptionElement || element instanceof HTMLAnchorElement ||
                     element instanceof HTMLTitleElement || element instanceof HTMLParagraphElement || element instanceof HTMLHeadingElement) {
-                    console.log(`Core::setTextToElement: Set text ${text} to element with id ${element.id}`);
                     const childNodes = element.childNodes;
                     const write = childNodes.length === 0 || (childNodes.length === 1 && childNodes[0].nodeType === Node.TEXT_NODE && element.textContent !== text);
                     if (write) {
@@ -449,7 +438,6 @@ const Core = {
                     break;
                 }
                 if (element instanceof HTMLInputElement) {
-                    console.log(`Core::setTextToElement: element type: ${element.type}`);
                     switch (element.type) {
                         case 'submit':
                             element.value = text;

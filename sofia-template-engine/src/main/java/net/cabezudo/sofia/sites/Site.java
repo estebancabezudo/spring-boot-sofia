@@ -19,6 +19,7 @@ public class Site implements Comparable<Site> {
   public static final String COMMONS_CSS_FILE_NAME = "commons.css";
   public static final String COMMONS_SCRIPT_FILE_NAME = "commons.js";
   public static final String TEXTS_FILE_NAME = "texts.json";
+  public static final String COMMONS_LIBRARIES_FILE_NAME = "libs.txt";
   private static final Logger log = LoggerFactory.getLogger(Site.class);
   private final String name;
   private final List<Locale> siteLocales = new ArrayList<>(); // TODO Load site languages from data created using site sources files

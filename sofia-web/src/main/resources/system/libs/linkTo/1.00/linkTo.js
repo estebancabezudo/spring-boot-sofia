@@ -17,7 +17,6 @@ class LinkTo {
                 throw new Error('You MUST specify an id or element to apply the link to.');
             }
             if (Core.isString(id)) {
-                console.log(`Linking the id ${id}`);
                 const element = document.getElementById(id);
                 if (element === null || element === undefined) {
                     throw new Error(`Element NOT FOUND: ${id}`);
@@ -25,7 +24,6 @@ class LinkTo {
                 return element;
             }
             if (Core.isHTMLDivElement(element)) {
-                console.log(`Linking the element `, element);
                 return element;
             }
         };
@@ -58,7 +56,6 @@ class LinkTo {
             this.enable();
         }
         Core.subscribeTo('core:webClientDataChange', () => {
-            console.log(`linkTo::webClientDataChange: Change the status of the link ${this.element.id}`);
 
             do {
                 if (configuration.show && Core.isValid(configuration.show)) {
@@ -92,31 +89,26 @@ class LinkTo {
     }
 
     mark() {
-        console.log('linkTo::marked');
         this.element.classList.add('marked')
     }
 
     show() {
-        console.log('linkTo::show');
         this.element.classList.add('visible')
         this.element.classList.remove('hide')
     }
 
     hide() {
-        console.log('linkTo::hide');
         this.element.classList.add('hide')
         this.element.classList.remove('visible')
     }
 
     disable() {
-        console.log('linkTo::disable');
         this.isDisable = true;
         this.element.classList.add('disabled')
         this.element.classList.remove('enabled')
     }
 
     enable() {
-        console.log('linkTo::enable');
         this.isDisable = false;
         this.element.classList.add('enabled')
         this.element.classList.remove('disabled')

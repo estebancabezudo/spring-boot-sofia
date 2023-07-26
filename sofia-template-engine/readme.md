@@ -64,10 +64,11 @@ Luego, si queremos cambiar a nuestra versión en inglés, simplemente llamamos a
 Sofía lo hace por nosotros. O simplemente podemos usar una librería existente para mostrar una bandera del país donde se
 utiliza el lenguaje y que podemos presionar para cambiar el lenguaje.
 
-Cuando utilizamos Core, esto es, si lo incluimos en las librerías de la página, el lenguaje inicial mostrado por la
-página se define al terminar de cargar la página. Si la página es cargada por primera vez se toma el lenguaje preferido
-del navegador y si el lenguaje está en la lista de lenguajes definidos para el sitio se define este por defecto. CAbe
-destacar que primero se busca el lenguaje con la variante, por ejemplo `es-uy`, si no se encuentra se busca solo `es`.
+Cuando utilizamos Core, esto es, si lo incluimos en las librerías de la página o en el archivo de librerías en común
+para todo el sitio, el lenguaje inicial mostrado por la página se define al terminar de cargar la página. Si la página
+es cargada por primera vez se toma el lenguaje preferido del navegador y si el lenguaje está en la lista de lenguajes
+definidos para el sitio se define este por defecto. Cabe destacar que primero se busca el lenguaje con la variante, por
+ejemplo `es-uy`, si no se encuentra se busca solo `es`.
 
 Si no se puede definir el lenguaje con los entregados por el navegador se utilizan los lenguajes del sitio. Primero se
 busca si el inglés está en la lista de lenguajes y si no se encuentra se usa el primer lenguaje de la lista de
@@ -298,9 +299,8 @@ otra configuración con una clave que se encuentre en este archivo no va a susti
 agregar un archivo de configuración a la configuración general, si en la configuración ya existe una clave su valor no
 será sustituido por el valor en el archivo de configuración que se está agregando.
 El segundo archivo que se carga es el archivo general de textos, también se encuentra en la raíz de los archivos fuentes
-y su nombre es `texts.json`. Luego de esto se carga el archivo general para estilos.
-Este archivo es un archivo CSS con el nombre `commons.css` que se encuentra en el directorio raíz para los archivos
-fuentes del sitio.
+y su nombre es `texts.json`. Luego de esto se carga el archivo general para estilos. Este archivo es un archivo CSS con
+el nombre `commons.css` que se encuentra en el directorio raíz para los archivos fuentes del sitio.
 
 Luego se carga el archivo de configuración para la página que se está solicitando. Por ejemplo, si la página se
 llama `listaDeEmpleados.html` el archivo de configuración se llamará `listaDeEmpleados.json`.
@@ -369,9 +369,13 @@ será colocado dentro de la etiqueta contenedora.
 
 ### Final del proceso general
 
-Luego de procesar los archivos HTML se carga el archivo general de JavaScript llamado `commons.js` y se procesa, junto
-con este, todo el código JavaScript que se encontró. La razón para que se procese en este punto es porque Sofía procesa
-las librerías cargadas en todas las páginas para evitar repetir código.
+Luego de procesar los archivos HTML se carga el archivo `libs.txt` con la lista de librerías en común para todo el
+sitio. Estas librarías se cargarán para todas las páginas del sitio. Se trata de un simple archivo de texto con una
+entrada de librería en cada línea. A no ser que se comience la línea con un carácter punto y coma, la librería en la
+línea se cargará y se agregará a la lista de librerías para la página.
+Inmediatamente después se carga el archivo general de JavaScript llamado `commons.js` y se procesa, junto con este, todo
+el código JavaScript que se encontró. La razón para que se procese en este punto es porque Sofía procesa las librerías
+cargadas en todas las páginas para evitar repetir código.
 Se procesan después todos los identificadores, se busca texto en el código y se asignan identificadores nuevos a todos
 los textos encontrados para poder hacer referencia a ellos en el momento de internacionalizar.
 

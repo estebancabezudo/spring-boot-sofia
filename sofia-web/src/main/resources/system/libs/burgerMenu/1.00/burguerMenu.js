@@ -21,7 +21,6 @@ class BurgerMenu {
             this.menuVisible = false;
 
             this.openMenuButton.addEventListener('click', event => {
-                console.log(`BurguerMenu::constructor::createGUI: Click on ${event.target.id}`);
                 if (this.menuVisible) {
                     this.hide();
                     event.stopPropagation();
@@ -33,18 +32,15 @@ class BurgerMenu {
             });
             if (openMenuButtonId != closeMenuButtonId) {
                 this.closeMenuButton.addEventListener('click', event => {
-                    console.log(`BurguerMenu::constructor::createGUI: Click on ${event.target.id}`);
                     this.hide();
                     event.stopPropagation();
                 });
             }
             document.addEventListener('click', event => {
-                console.log(`BurguerMenu::constructor::createGUI: Click on ${event.target.id}`);
                 this.hide();
                 event.stopPropagation();
             });
             const showItem = item => {
-                console.log(`BurguerMenu::constructor::createGUI::showItem: Show item`);
                 const element = document.getElementById(item.id);
                 element.addEventListener('click', event => {
                     console.log(`BurguerMenu::constructor::createGUI::showItem: Click on ${event.target.id}`);
@@ -55,7 +51,6 @@ class BurgerMenu {
                 element.classList.remove('burgerMenuHiddenMenuItem');
             }
             const hideItem = item => {
-                console.log(`BurguerMenu::constructor::createGUI::hideItem: Hide item`);
                 const element = document.getElementById(item.id);
                 element.classList.add('burgerMenuHiddenMenuItem');
             }
@@ -67,25 +62,17 @@ class BurgerMenu {
 
             Core.subscribeTo('core:webClientDataChange', () => {
                 items.forEach(item => {
-                    console.log('item: ', item);
-                    console.log('burguerMenu::constructor::createGUI::subscribeTo: item.show ', item.show);
-                    console.log('burguerMenu::constructor::createGUI::subscribeTo: item.show is valid', Core.isValid(item.show));
-                    console.log('burguerMenu::constructor::createGUI::subscribeTo: item.hide ', item.show);
-                    console.log('burguerMenu::constructor::createGUI::subscribeTo: item.hide is valid', Core.isValid(item.hide));
 
                     if (item.hide && Core.isValid(item.hide)) {
-                        console.log('burguerMenu::constructor::createGUI::subscribeTo: Configured to show item ');
                         hideItem(item);
                         return;
                     }
 
                     if (item.show && Core.isValid(item.show)) {
-                        console.log('burguerMenu::constructor::createGUI::subscribeTo: Configured to hide item');
                         showItem(item);
                         return;
                     }
 
-                    console.log('burguerMenu::constructor::createGUI::subscribeTo: Nothing match. Show item');
                     showItem(item);
 
                 });
