@@ -7,6 +7,7 @@ const initNotifications = async () => {
         const permission = await navigator.permissions.query({ name: "notifications" });
         if (permission.state === "granted") {
             // TODO agregar en una variable global que fué aceptado
+            console.log(`notifications.js::initNotifications: granted`);
         }
 
 
