@@ -28,13 +28,13 @@ public class TemplateEngineConfiguration implements WebMvcConfigurer {
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
     registry
-        .addResourceHandler("/**")
-        .resourceChain(false).addResolver(new SofiaResourceResolver(siteManager, pathManager));
-    registry
-        .addResourceHandler("/images/**")
-        .setCacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)
+        .addResourceHandler("/images/**", "/fonts/**")
+        .setCacheControl(CacheControl.maxAge(20, TimeUnit.DAYS)
             .noTransform()
             .mustRevalidate())
+        .resourceChain(sofiaEnvironment.isProduction()).addResolver(new SofiaResourceResolver(siteManager, pathManager));
+    registry
+        .addResourceHandler("/**")
         .resourceChain(false).addResolver(new SofiaResourceResolver(siteManager, pathManager));
   }
 }
