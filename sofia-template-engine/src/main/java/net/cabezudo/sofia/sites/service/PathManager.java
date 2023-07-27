@@ -61,6 +61,6 @@ public class PathManager {
   }
 
   public Path getProtectedPersonImagesPath(Site site) {
-    return sofiaEnvironment.getSitesPath().resolve(site.getName()).resolve(PROTECTED_IMAGE_FOLDER_NAME).resolve(PROTECTED_IMAGE_PEOPLE_FOLDER_NAME);
+    return sofiaEnvironment.getSitesDataPath().resolve(site.getName()).resolve(PROTECTED_IMAGE_FOLDER_NAME).resolve(PROTECTED_IMAGE_PEOPLE_FOLDER_NAME);
   }
 }

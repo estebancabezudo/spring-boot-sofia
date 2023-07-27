@@ -9,3 +9,4 @@ application.properties
 application-test.yml
 application-test.properties
 sofia-web/src/main/resources/system/sites
+sofia-web/src/main/resources/system/data/sites

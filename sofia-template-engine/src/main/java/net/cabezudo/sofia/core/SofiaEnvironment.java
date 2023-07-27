@@ -62,6 +62,7 @@ public class SofiaEnvironment {
   private Path systemLibraryPath;
   private Path systemDataPath;
   private Path systemTemplatesPath;
+  private Path sitesDataPath;
   private @Autowired ContentManager contentManager;
   @Value("${sofia.security.active}")
   private boolean sofiaSecurityActive;
@@ -126,6 +127,7 @@ public class SofiaEnvironment {
     log.debug("System library path: " + getSystemLibraryPath());
     systemDataPath = basePath.resolve(DATA_DIRECTORY_NAME);
     systemTemplatesPath = systemDataPath.resolve(TEMPLATES_DIRECTORY_NAME);
+    sitesDataPath = systemDataPath.resolve(SITES_DIRECTORY_NAME);
   }
 
   private void setSourcesPaths() throws ConfigurationException {
@@ -275,6 +277,10 @@ public class SofiaEnvironment {
 
   public Path getSystemTemplatesPath() {
     return systemTemplatesPath;
+  }
+
+  public Path getSitesDataPath() {
+    return sitesDataPath;
   }
 
   public boolean isSecurityActive() {

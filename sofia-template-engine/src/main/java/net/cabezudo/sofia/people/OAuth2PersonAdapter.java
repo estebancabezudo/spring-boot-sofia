@@ -53,12 +53,12 @@ public class OAuth2PersonAdapter {
             log.debug("Reading url: " + imageURL);
             BufferedImage image = ImageIO.read(imageURL);
             Path destinationPath = pathManager.getProtectedPersonImagesPath(site);
-            File destinationFile = destinationPath.resolve(email).toFile();
-            if (Files.exists(destinationPath)) {
-              ImageIO.write(image, "jpg", destinationFile);
-            } else {
-              log.warn("Path doesn't exists: " + destinationPath);
+            File destinationFile = destinationPath.resolve(email + ".jpg").toFile();
+            if (!Files.exists(destinationPath)) {
+              // TODO Create when start the application and read the sites to avoid this condition
+              Files.createDirectories(destinationPath);
             }
+            ImageIO.write(image, "jpg", destinationFile);
           } catch (IOException e) {
             log.warn("I can't read the image URL " + imageURLFromAttribute);
           }
