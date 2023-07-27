@@ -43,7 +43,7 @@ public class AccountManager {
   }
 
   public AccountUserRelationEntity findRelation(Site site, Account account, SofiaUser user) {
-    return accountRepository.find(account.getId(), user.getId());
+    return accountRepository.getByAccountAndUser(account.getId(), user.getId());
   }
 
   public Accounts getAll(SofiaUser user) {
@@ -69,7 +69,7 @@ public class AccountManager {
     Account accountFromPreferences = userPreferencesManager.getAccountByUserId(userId);
     if (accountFromPreferences == null) {
       log.debug("Account from preferences is null");
-      AccountEntity accountEntity = accountRepository.getAccountByEMail(email, site.getId());
+      AccountEntity accountEntity = accountRepository.getAccountOwnedByEMail(site.getId(), email);
       if (accountEntity == null) {
         throw new UsernameNotFoundException(email);
       }
@@ -112,6 +112,8 @@ public class AccountManager {
     Account account = getByName(site, name);
     WebUserData webUserData = webUserDataManager.getFromSession(request);
     webUserData.setAccount(account);
+    SofiaUser user = webUserData.getUser();
+    userPreferencesManager.setAccount(user, account);
   }
 
   // If the client have an account, change the webClientData. If the client doesn't have account and there is a user logged change the user account

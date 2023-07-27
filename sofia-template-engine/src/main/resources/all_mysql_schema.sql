@@ -44,6 +44,7 @@ CREATE TABLE `accounts` (
   `site_id` INT NOT NULL,
   `name` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_site_name` (`site_id`, `name`),
   CONSTRAINT `fk_accounts_site` FOREIGN KEY (`site_id`) REFERENCES `sofia`.`sites` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

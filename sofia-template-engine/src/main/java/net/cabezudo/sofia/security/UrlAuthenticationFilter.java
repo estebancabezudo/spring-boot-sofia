@@ -53,7 +53,7 @@ public class UrlAuthenticationFilter extends OncePerRequestFilter {
           response.sendError(400, "Invalid host: " + request.getServerName());
         }
         // TODO create a find by email for user without search first the account for the email
-        AccountEntity accountEntity = accountRepository.getAccountByEMail(email, site.getId());
+        AccountEntity accountEntity = accountRepository.getAccountOwnedByEMail(site.getId(), email);
         user = userManager.findById(accountEntity.getId(), email);
       }
 

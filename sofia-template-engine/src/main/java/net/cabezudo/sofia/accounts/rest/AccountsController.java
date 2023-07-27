@@ -11,8 +11,6 @@ import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.service.SiteManager;
 import net.cabezudo.sofia.users.service.Group;
-import net.cabezudo.sofia.web.client.WebClientDataManager;
-import net.cabezudo.sofia.web.user.WebUserDataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,16 +31,12 @@ public class AccountsController extends SofiaAuthorizedController {
   private @Autowired AccountManager accountManager;
   private @Autowired BusinessToRestAccountListMapper businessToRestAccountListMapper;
   private @Autowired HttpServletRequest request;
-  private @Autowired WebUserDataManager webUserDataManager;
-  private @Autowired WebClientDataManager webClientDataManager;
   private @Autowired SiteManager siteManager;
 
   @GetMapping("/v1/accounts")
   public ResponseEntity<?> listAll() {
     log.debug("Get list of accounts for all site");
     ListRestResponse<RestAccount> listRestResponse;
-
-    Site site = siteManager.getSite(request);
 
     Account account = accountManager.getAccount(request);
 

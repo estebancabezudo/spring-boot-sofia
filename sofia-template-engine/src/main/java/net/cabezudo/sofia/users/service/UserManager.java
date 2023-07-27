@@ -93,7 +93,7 @@ public class UserManager {
   }
 
   public SofiaUser findById(int accountId, int userId) {
-    AccountUserRelationEntity accountUserRelationEntity = accountRepository.find(accountId, userId);
+    AccountUserRelationEntity accountUserRelationEntity = accountRepository.getByAccountAndUser(accountId, userId);
     if (accountUserRelationEntity == null) {
       return null;
     }
@@ -106,7 +106,7 @@ public class UserManager {
     if (userEntity == null) {
       return null;
     }
-    AccountUserRelationEntity relation = accountRepository.find(accountId, userEntity.getId());
+    AccountUserRelationEntity relation = accountRepository.getByAccountAndUser(accountId, userEntity.getId());
     if (relation == null) {
       return null;
     }
@@ -129,7 +129,7 @@ public class UserManager {
 
     AccountEntity accountEntity = accountRepository.create(site.getId(), usernameToUse.getEmail());
 
-    AccountUserRelationEntity accountUserRelationEntity = accountRepository.create(accountEntity.getId(), userEntity.getId(), true);
+    AccountUserRelationEntity accountUserRelationEntity = accountRepository.createAccountUserRelation(accountEntity.getId(), userEntity.getId(), true);
 
     GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(accountUserRelationEntity.getId(), groups);
     for (GroupEntity groupEntity : groupsEntity) {
@@ -158,12 +158,12 @@ public class UserManager {
       accountRepository.getAccountByUserId(userToUse.getId());
       Site site = account.getSite();
       AccountEntity newAccountEntity = accountRepository.create(site.getId(), eMailAddress);
-      accountRepository.create(newAccountEntity.getId(), userToUse.getId(), true);
+      accountRepository.createAccountUserRelation(newAccountEntity.getId(), userToUse.getId(), true);
     } else {
       userToUse = userFromDatabase;
     }
 
-    AccountUserRelationEntity accountUserRelationEntity = accountRepository.create(account.getId(), userToUse.getId(), false);
+    AccountUserRelationEntity accountUserRelationEntity = accountRepository.createAccountUserRelation(account.getId(), userToUse.getId(), false);
     AccountEntity accountEntity = businessToEntityAccountMapper.map(account);
     userToUse.setAccount(accountEntity);
 
@@ -193,7 +193,7 @@ public class UserManager {
 
     final UserEntity updatedEntity = userRepository.update(newEntity);
 
-    AccountUserRelationEntity accountUserRelation = accountRepository.find(user.getAccount().getId(), user.getId());
+    AccountUserRelationEntity accountUserRelation = accountRepository.getByAccountAndUser(user.getAccount().getId(), user.getId());
 
     groupsRepository.deleteGroupsFor(accountUserRelation.getId());
     GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(accountUserRelation.getId(), user.getGroups());
@@ -213,7 +213,7 @@ public class UserManager {
   public void delete(int accountId, int userId) {
     UserEntity user = userRepository.get(userId);
     userAccountPreferencesRepository.delete(userId);
-    AccountUserRelationEntity accountUserRelationEntity = accountRepository.find(accountId, userId);
+    AccountUserRelationEntity accountUserRelationEntity = accountRepository.getByAccountAndUser(accountId, userId);
     groupsRepository.deleteGroupsFor(accountUserRelationEntity.getId());
     accountRepository.delete(accountId, userId);
 

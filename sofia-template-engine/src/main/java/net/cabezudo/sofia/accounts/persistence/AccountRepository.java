@@ -40,7 +40,7 @@ public class AccountRepository {
     return new AccountEntity(key.intValue(), siteId, name);
   }
 
-  public AccountUserRelationEntity find(int accountId, int userId) {
+  public AccountUserRelationEntity getByAccountAndUser(int accountId, int userId) {
     log.debug("Check if exists a relation between account " + accountId);
 
     List<AccountUserRelationEntity> list = databaseManager.getJDBCTemplate().query(
@@ -91,7 +91,7 @@ public class AccountRepository {
     return entityList;
   }
 
-  public AccountUserRelationEntity create(int accountId, int userId, boolean owner) {
+  public AccountUserRelationEntity createAccountUserRelation(int accountId, int userId, boolean owner) {
     KeyHolder keyHolder = new GeneratedKeyHolder();
     String sqlQuery = "INSERT INTO accounts_users (account_id, user_id, owner) VALUES (?, ?, ?)";
     PreparedStatementCreator preparedStatementCreator = connection -> {
@@ -114,7 +114,7 @@ public class AccountRepository {
     databaseManager.getJDBCTemplate().update(sqlQuery, accountId, userId);
   }
 
-  public AccountEntity getAccountByEMail(String email, int siteId) {
+  public AccountEntity getAccountOwnedByEMail(int siteId, String email) {
     log.debug("Get the account owned by the user " + email);
     String sqlQuery =
         "SELECT a.id AS id, a.site_id AS site_id, name " +
@@ -124,14 +124,16 @@ public class AccountRepository {
             "LEFT JOIN emails AS e ON u.email_id = e.id " +
             "WHERE owner = true AND e.email = ? AND a.site_id = ?";
 
-    List<AccountEntity> list = databaseManager.getJDBCTemplate().query(sqlQuery, new AccountRowMapper(), email, siteId);
-    if (list.size() == 0) {
-      return null;
-    }
-    if (list.size() == 1) {
-      return list.get(0);
-    }
-    throw new RuntimeException("An user only can own one account");
+    return databaseManager.getJDBCTemplate().query(sqlQuery, new AccountRowMapper(), email, siteId).stream().findFirst().orElse(null);
+  }
+
+  public AccountEntity getAccountByEMail(int siteId, String email) {
+    log.debug("Get the account id for the user " + email);
+    String sqlQuery =
+        "SELECT id, site_id AS site_id, name " +
+            "FROM accounts " +
+            "WHERE name = ? AND site_id = ?";
+    return databaseManager.getJDBCTemplate().query(sqlQuery, new AccountRowMapper(), email, siteId).stream().findFirst().orElse(null);
   }
 
   public AccountEntity get(int id) {

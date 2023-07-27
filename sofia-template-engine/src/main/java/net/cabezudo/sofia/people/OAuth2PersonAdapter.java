@@ -45,7 +45,6 @@ public class OAuth2PersonAdapter {
         secondName = null;
         lastName = principal.getAttribute("family_name");
         secondLastName = null;
-        // TODO Save picture on disk using a name from the email. Protect the image from read using the user access in the controller.
         String imageURLFromAttribute = principal.getAttribute("picture");
         if (imageURLFromAttribute != null) {
           try {

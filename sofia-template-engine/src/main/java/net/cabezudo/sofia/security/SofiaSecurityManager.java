@@ -2,6 +2,7 @@ package net.cabezudo.sofia.security;
 
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
+import net.cabezudo.sofia.accounts.persistence.AccountUserRelationEntity;
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.emails.persistence.EMailEntity;
@@ -71,7 +72,7 @@ public class SofiaSecurityManager {
     if (authentication instanceof UsernamePasswordAuthenticationToken) {
       UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = (UsernamePasswordAuthenticationToken) authentication;
       SofiaUser user = (SofiaUser) usernamePasswordAuthenticationToken.getPrincipal();
-      setUserInWebUserData(webClientData, webUserData, user);
+      setUserInWebUserData(webClientData, webUserData, user, user.getAccount());
       return user;
     }
 
@@ -91,7 +92,7 @@ public class SofiaSecurityManager {
       OAuthPersonData oAuthPersonData = oAuth2PersonAdapter.build(site, email, oAuth2AuthenticationToken);
 
       // TODO Get the account from the stored as default for the user with that email
-      AccountEntity accountEntity = accountRepository.getAccountByEMail(email, site.getId());
+      AccountEntity accountEntity = accountRepository.getAccountOwnedByEMail(site.getId(), email);
       if (accountEntity == null) {
         Language language = webUserData.getLanguage();
         Locale locale;
@@ -101,15 +102,37 @@ public class SofiaSecurityManager {
           locale = language.toLocale();
         }
         SofiaUser newUser = newUser(site, locale, email);
-        setUserInWebUserData(webClientData, webUserData, newUser);
+
+        Account accountFromWebClientData = webClientData.getAccount();
+        Account account;
+        if (accountFromWebClientData == null) {
+          account = newUser.getAccount();
+        } else {
+          account = accountFromWebClientData;
+        }
+
+        AccountUserRelationEntity accountUserRelation = accountRepository.getByAccountAndUser(account.getId(), newUser.getId());
+        if (accountUserRelation == null) {
+          accountRepository.createAccountUserRelation(account.getId(), newUser.getId(), false);
+        }
+        setUserInWebUserData(webClientData, webUserData, newUser, account);
         user = newUser;
       } else {
         final UserEntity userEntity = userRepository.findByEmailAndAccount(accountEntity.getId(), email);
         if (userEntity == null) {
           throw new UsernameNotFoundException(email);
         }
+        
+        Account accountFromWebClientData = webClientData.getAccount();
+        if (accountFromWebClientData != null) {
+          AccountUserRelationEntity accountUserRelation = accountRepository.getByAccountAndUser(accountFromWebClientData.getId(), userEntity.getId());
+          if (accountUserRelation == null) {
+            accountRepository.createAccountUserRelation(accountFromWebClientData.getId(), userEntity.getId(), false);
+          }
+        }
+
         user = entityToBusinessUserMapper.map(userEntity);
-        setUserInWebUserData(webClientData, webUserData, user);
+        setUserInWebUserData(webClientData, webUserData, user, user.getAccount());
       }
 
       Person personFromDataBase = peopleManager.getByEMail(email);
@@ -126,7 +149,7 @@ public class SofiaSecurityManager {
     return null;
   }
 
-  private void setUserInWebUserData(WebClientData webClientData, WebUserData webUserData, SofiaUser user) {
+  private void setUserInWebUserData(WebClientData webClientData, WebUserData webUserData, SofiaUser user, Account account) {
     webUserData.setUser(user);
     log.debug("Web user data " + webUserData);
 
@@ -136,7 +159,7 @@ public class SofiaSecurityManager {
 
       if (preferredAccount == null) {
         log.debug("The user don't have a preferred account. Set the user account " + user.getAccount() + " as preferred in web client data session object.");
-        webUserData.setAccount(user.getAccount());
+        webUserData.setAccount(account);
         userPreferencesManager.setAccount(webUserData.getUser(), webUserData.getAccount());
       } else {
         log.debug("Setting the user preferred account " + user.getAccount() + " in web client data session object.");
@@ -157,14 +180,15 @@ public class SofiaSecurityManager {
     }
   }
 
-  private SofiaUser newUser(Site site, Locale locale, String email) {
+  private SofiaUser newUser(Site site, Locale locale, String newEMailAddress) {
     EMailEntity emailForAccount;
-    EMailEntity emailEntityFromRepository = emailRepository.get(email);
+    EMailEntity emailEntityFromRepository = emailRepository.get(newEMailAddress);
     if (emailEntityFromRepository == null) {
-      emailForAccount = emailRepository.create(email);
+      emailForAccount = emailRepository.create(newEMailAddress);
     } else {
       emailForAccount = emailEntityFromRepository;
     }
+
     int userEntityId;
     Integer userEntityIdFromDatabase = userRepository.getIdByEMail(emailForAccount.getId());
     if (userEntityIdFromDatabase == null) {
@@ -174,8 +198,18 @@ public class SofiaSecurityManager {
       userEntityId = userEntityIdFromDatabase;
     }
 
-    AccountEntity newAccountEntity = accountRepository.create(site.getId(), emailForAccount.getEmail());
-    accountRepository.create(newAccountEntity.getId(), userEntityId, true);
+    int siteId = site.getId();
+    String emailAddress = emailForAccount.getEmail();
+
+    AccountEntity userAccountEntity;
+    AccountEntity accountFromDatabase = accountRepository.getAccountByEMail(siteId, emailAddress);
+    if (accountFromDatabase == null) {
+      userAccountEntity = accountRepository.create(siteId, emailAddress);
+    } else {
+      userAccountEntity = accountFromDatabase;
+    }
+    accountRepository.createAccountUserRelation(userAccountEntity.getId(), userEntityId, true);
+
     UserEntity newUser = userRepository.get(userEntityId);
     SofiaUser user = entityToBusinessUserMapper.map(newUser);
     return user;
