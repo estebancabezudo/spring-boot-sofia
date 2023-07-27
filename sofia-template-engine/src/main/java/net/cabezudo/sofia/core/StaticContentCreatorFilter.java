@@ -88,15 +88,17 @@ public class StaticContentCreatorFilter extends OncePerRequestFilter {
             throw new RuntimeException(e);
           }
           log.debug("Search for " + sourcePath);
-          if (Files.exists(sourcePath) && !Files.isDirectory(sourcePath)) {
-            log.debug("Copy " + sourcePath + " to " + targetPath);
-            Files.createDirectories(targetPath.getParent());
-            Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
-          } else {
-            // TODO Check this. Don't have any sense. If the file do not exist in source path, don't exist in target path either. And, why return a 404. It appears like an 500.
-            if (!Files.exists(targetPath)) {
-              response.sendError(404, "File not found: " + requestURI);
-              return;
+          synchronized (this) {
+            if (Files.exists(sourcePath) && !Files.exists(targetPath) && !Files.isDirectory(sourcePath)) {
+              log.debug("Copy " + sourcePath + " to " + targetPath);
+              Files.createDirectories(targetPath.getParent());
+              Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+            } else {
+              // TODO Check this. Don't have any sense. If the file do not exist in source path, don't exist in target path either. And, why return a 404. It appears like an 500.
+              if (!Files.exists(targetPath)) {
+                response.sendError(404, "File not found: " + requestURI);
+                return;
+              }
             }
           }
         }
