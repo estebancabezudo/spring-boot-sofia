@@ -335,4 +335,9 @@ public class UserRepository {
     }
     return userEntity;
   }
+
+  public Integer getIdByEMail(int emailId) {
+    String query = "SELECT id FROM users WHERE email_id = ?";
+    return databaseManager.getJDBCTemplate().query(query, (resultSet, rowNum) -> resultSet.getInt("id"), emailId).stream().findFirst().orElse(null);
+  }
 }

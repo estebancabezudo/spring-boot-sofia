@@ -121,5 +121,15 @@ public class PeopleRepository {
     };
     databaseManager.getJDBCTemplate().update(preparedStatementCreator);
   }
+
+  public void deletePersonUserRelation(int userId) {
+    PreparedStatementCreator preparedStatementCreator = connection -> {
+      String query = "DELETE FROM `users_people` WHERE user_id = ?";
+      PreparedStatement ps = connection.prepareStatement(query);
+      ps.setInt(1, userId);
+      return ps;
+    };
+    databaseManager.getJDBCTemplate().update(preparedStatementCreator);
+  }
 }
 

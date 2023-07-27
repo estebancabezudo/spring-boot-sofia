@@ -12,8 +12,11 @@ import net.cabezudo.sofia.emails.EMailManager;
 import net.cabezudo.sofia.emails.persistence.EMailEntity;
 import net.cabezudo.sofia.emails.persistence.EMailRepository;
 import net.cabezudo.sofia.people.Person;
+import net.cabezudo.sofia.people.persistence.PeopleRepository;
 import net.cabezudo.sofia.people.service.PeopleManager;
 import net.cabezudo.sofia.sites.Site;
+import net.cabezudo.sofia.userpreferences.UserAccountPreferencesRepository;
+import net.cabezudo.sofia.userpreferences.persistence.UserPreferencesRepository;
 import net.cabezudo.sofia.users.PasswordGenerator;
 import net.cabezudo.sofia.users.mappers.BusinessToEntityGroupsMapper;
 import net.cabezudo.sofia.users.mappers.EntityToBusinessUserListMapper;
@@ -61,6 +64,9 @@ public class UserManager {
   private @Autowired PeopleManager peopleManager;
   private @Autowired HostnameManager hostnameManager;
   private @Autowired BusinessToEntityAccountMapper businessToEntityAccountMapper;
+  private @Autowired PeopleRepository peopleRepository;
+  private @Autowired UserPreferencesRepository userPreferencesRepository;
+  private @Autowired UserAccountPreferencesRepository userAccountPreferencesRepository;
 
   public SofiaUser loadUserByUsername(String email) throws UsernameNotFoundException {
     Account account = (Account) request.getSession().getAttribute("account");
@@ -206,9 +212,11 @@ public class UserManager {
 
   public void delete(int accountId, int userId) {
     UserEntity user = userRepository.get(userId);
+    userAccountPreferencesRepository.delete(userId);
     AccountUserRelationEntity accountUserRelationEntity = accountRepository.find(accountId, userId);
     groupsRepository.deleteGroupsFor(accountUserRelationEntity.getId());
     accountRepository.delete(accountId, userId);
+
 
     int eMailIdToDelete = user.getEMailEntity().getId();
     try {

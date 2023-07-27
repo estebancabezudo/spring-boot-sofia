@@ -17,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.Locale;
@@ -53,7 +54,11 @@ public class OAuth2PersonAdapter {
             BufferedImage image = ImageIO.read(imageURL);
             Path destinationPath = pathManager.getProtectedPersonImagesPath(site);
             File destinationFile = destinationPath.resolve(email).toFile();
-            ImageIO.write(image, "jpg", destinationFile);
+            if (Files.exists(destinationPath)) {
+              ImageIO.write(image, "jpg", destinationFile);
+            } else {
+              log.warn("Path doesn't exists: " + destinationPath);
+            }
           } catch (IOException e) {
             log.warn("I can't read the image URL " + imageURLFromAttribute);
           }
@@ -70,8 +75,6 @@ public class OAuth2PersonAdapter {
           secondName = null;
           lastName = null;
           secondLastName = null;
-          dateOfBirth = null;
-          locale = null;
         } else {
           String[] names = nameFromFacebook.split(" ");
           switch (names.length) {
@@ -100,9 +103,9 @@ public class OAuth2PersonAdapter {
               secondLastName = names[3];
               break;
           }
-          dateOfBirth = null;
-          locale = null;
         }
+        dateOfBirth = null;
+        locale = null;
         return new OAuthPersonData(email, name, secondName, lastName, secondLastName, dateOfBirth, locale);
       default:
         throw new SofiaRuntimeException("Invalid oauth client registrator id: " + registrationId);

@@ -145,7 +145,7 @@ public class AccountRepository {
             "LEFT JOIN emails AS e ON u.email_id = e.id " +
             "WHERE owner = true AND a.id = ?";
 
-    return databaseManager.getJDBCTemplate().queryForObject(sqlQuery, new AccountRowMapper(), id);
+    return databaseManager.getJDBCTemplate().query(sqlQuery, new AccountRowMapper(), id).stream().findFirst().orElse(null);
   }
 
   public AccountEntity getAccountByUserId(int id) {
