@@ -32,16 +32,6 @@ public class AccountManager {
   private @Autowired WebClientDataManager webClientDataManager;
   private @Autowired WebUserDataManager webUserDataManager;
 
-  private Account getAccount(Account accountFromUser, Account accountFromClientData) {
-    Account account;
-    if (accountFromUser == null) {
-      account = accountFromClientData;
-    } else {
-      account = accountFromUser;
-    }
-    return account;
-  }
-
   public AccountUserRelationEntity findRelation(Site site, Account account, SofiaUser user) {
     return accountRepository.getByAccountAndUser(account.getId(), user.getId());
   }
@@ -135,4 +125,15 @@ public class AccountManager {
 
     return getAccount(accountFromUser, accountFromClientData);
   }
+
+  private Account getAccount(Account accountFromUser, Account accountFromClientData) {
+    Account account;
+    if (accountFromClientData == null) {
+      account = accountFromUser;
+    } else {
+      account = accountFromClientData;
+    }
+    return account;
+  }
+
 }
