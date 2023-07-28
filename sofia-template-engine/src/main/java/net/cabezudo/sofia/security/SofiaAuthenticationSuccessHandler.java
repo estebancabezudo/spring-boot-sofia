@@ -11,7 +11,6 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -25,7 +24,7 @@ public class SofiaAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                      Authentication authentication) throws ServletException, IOException {
+                                      Authentication authentication) throws IOException {
 
     PrintWriter out = response.getWriter();
     if (!(authentication instanceof UsernamePasswordAuthenticationToken)) {

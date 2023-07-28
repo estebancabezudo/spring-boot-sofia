@@ -91,7 +91,6 @@ public class SofiaSecurityManager {
       String email = principal.getAttribute("email");
       OAuthPersonData oAuthPersonData = oAuth2PersonAdapter.build(site, email, oAuth2AuthenticationToken);
 
-      // TODO Get the account from the stored as default for the user with that email
       AccountEntity accountEntity = accountRepository.getAccountOwnedByEMail(site.getId(), email);
       if (accountEntity == null) {
         Language language = webUserData.getLanguage();
@@ -122,7 +121,7 @@ public class SofiaSecurityManager {
         if (userEntity == null) {
           throw new UsernameNotFoundException(email);
         }
-        
+
         Account accountFromWebClientData = webClientData.getAccount();
         if (accountFromWebClientData != null) {
           AccountUserRelationEntity accountUserRelation = accountRepository.getByAccountAndUser(accountFromWebClientData.getId(), userEntity.getId());
@@ -132,7 +131,15 @@ public class SofiaSecurityManager {
         }
 
         user = entityToBusinessUserMapper.map(userEntity);
-        setUserInWebUserData(webClientData, webUserData, user, user.getAccount());
+
+        Account accountToSetInUserData;
+        if (accountFromWebClientData == null) {
+          accountToSetInUserData = user.getAccount();
+        } else {
+          accountToSetInUserData = accountFromWebClientData;
+          userPreferencesManager.setAccount(user, accountToSetInUserData);
+        }
+        setUserInWebUserData(webClientData, webUserData, user, accountToSetInUserData);
       }
 
       Person personFromDataBase = peopleManager.getByEMail(email);
