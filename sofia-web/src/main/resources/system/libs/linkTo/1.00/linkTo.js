@@ -18,16 +18,19 @@ class LinkTo {
             }
             if (Core.isString(id)) {
                 const element = document.getElementById(id);
+                console.log('FOUND element ', element, ` using ${id}`);
                 if (element === null || element === undefined) {
                     throw new Error(`Element NOT FOUND: ${id}`);
                 }
                 return element;
             }
-            if (Core.isHTMLDivElement(element)) {
-                return element;
-            }
+            return element;
         };
         this.element = getElement(configuration.id, configuration.element);
+        if (!this.element) {
+            console.log('configuration: ', configuration, this.element);
+            throw new Error(`Element NOT FOUND`);
+        }
         this.element.classList.add('linkTo');
         const click = (event, newWindow) => {
             if (this.enable && Core.isString(configuration.onclick)) {

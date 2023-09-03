@@ -304,10 +304,10 @@ public class JSONArray extends JSONValue<JSONArray> implements Iterable<JSONValu
    * @return an array of type {@link JSONValue} with the values of {@code this} {@link net.cabezudo.json.values.JSONArray} elements.
    */
   @Override
-  public JSONValue<?>[] toArray() {
-    JSONValue<?>[] array = new JSONValue[list.size()];
+  public JSONValue<JSONArray>[] toArray() {
+    JSONValue[] array = new JSONValue[list.size()];
     int i = 0;
-    for (JSONValue<?> jsonValue : list) {
+    for (JSONValue jsonValue : list) {
       array[i] = jsonValue;
       i++;
     }

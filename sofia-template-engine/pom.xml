@@ -61,7 +61,6 @@
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <version>4.0.1</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -71,7 +70,6 @@
       <groupId>org.jetbrains</groupId>
       <artifactId>annotations</artifactId>
       <version>24.0.1</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
@@ -95,13 +93,11 @@
       <groupId>net.cabezudo</groupId>
       <artifactId>json-lib</artifactId>
       <version>0.9.7</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>net.cabezudo</groupId>
       <artifactId>html-lib</artifactId>
       <version>0.5</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -123,7 +119,6 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-test</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
@@ -137,6 +132,12 @@
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-core</artifactId>
+      <version>9.0.69</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-websocket</artifactId>
+      <version>9.0.69</version>
     </dependency>
     <dependency>
       <groupId>javax.mail</groupId>

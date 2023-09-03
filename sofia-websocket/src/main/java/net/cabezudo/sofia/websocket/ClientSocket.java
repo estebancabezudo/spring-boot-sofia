@@ -5,7 +5,6 @@ import net.cabezudo.sofia.sites.Site;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import javax.websocket.EncodeException;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -20,7 +19,7 @@ public class ClientSocket implements Comparable<ClientSocket> {
     this.session = session;
   }
 
-  public void send(String message) throws EncodeException, IOException {
+  public void send(String message) throws IOException {
     session.sendMessage(new TextMessage(message));
   }
 

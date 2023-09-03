@@ -15,7 +15,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import javax.websocket.EncodeException;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +44,7 @@ public class ServerWebSocketHandler extends TextWebSocketHandler implements SubP
       }
       try {
         socket.send(message.getPayload());
-      } catch (IOException | EncodeException e) {
+      } catch (IOException e) {
         // TODO Do something meaningful with this
         e.printStackTrace();
       }
@@ -79,7 +78,7 @@ public class ServerWebSocketHandler extends TextWebSocketHandler implements SubP
   }
 
   @Override
-  public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws EncodeException, IOException, DuplicateKeyException {
+  public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
     clientSockets.remove(session);
     String message = prepareMessage(MESSAGE_TYPE_INFO, "Disconnected! Users: " + clientSockets.size());
     broadcast(session, new TextMessage(message));

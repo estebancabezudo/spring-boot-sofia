@@ -42,7 +42,7 @@ public class SiteManager {
       if (toDatabase) {
         SiteEntity siteEntity = siteRepository.findByName(siteName);
         if (siteEntity == null) {
-          log.warn("The site " + siteName + " was not added.");
+          log.warn("The site " + siteName + " is not in database and was not added.");
           return;
         }
         id = siteEntity.id();

@@ -43,7 +43,7 @@ import java.util.Objects;
 public class JSONPair extends JSONElement implements Comparable<JSONPair> {
 
   private final String key;
-  private final JSONValue value;
+  private final JSONValue<?> value;
 
   /**
    * @param key      the name for the key pair part
@@ -58,8 +58,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
       throw new IllegalArgumentException("The parameter key is null.");
     }
     this.key = key;
-    JSONValue jsonValue = JSON.toJSONTree(object);
-    this.value = jsonValue;
+    this.value = JSON.toJSONTree(object);
   }
 
   /**
@@ -83,10 +82,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
   @Override
   public int compareTo(JSONPair jsonPair) {
     int c = this.getKey().compareTo(jsonPair.getKey());
-    if (c == 0) {
-      c = this.getValue().compareTo(jsonPair.getValue());
-    }
-    return c;
+    return c == 0 ? this.getValue().compareTo(jsonPair.getValue()) : c;
   }
 
   /**
@@ -131,8 +127,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
   @Override
   public JSONPair toReferencedElement() {
     JSONElement jsonReferencedElement = value.toReferencedElement();
-    JSONPair jsonPair = new JSONPair(key, jsonReferencedElement, getPosition());
-    return jsonPair;
+    return new JSONPair(key, jsonReferencedElement, getPosition());
   }
 
   /**
@@ -236,12 +231,8 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
    */
   @Override
   public String toJSON() {
-    JSONValue jsonValue;
-    if (value == null) {
-      jsonValue = new JSONNull();
-    } else {
-      jsonValue = value;
-    }
+    JSONValue<?> jsonValue;
+    jsonValue = Objects.requireNonNullElseGet(value, JSONNull::new);
     return "\"" + key + "\": " + jsonValue.toJSON();
   }
 
@@ -271,7 +262,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
    * @return a {@link net.cabezudo.json.JSONPair} with this object.
    */
   @Override
-  public JSONValue toJSONTree() {
+  public JSONValue<?> toJSONTree() {
     return value.toJSONTree();
   }
 
@@ -281,7 +272,7 @@ public class JSONPair extends JSONElement implements Comparable<JSONPair> {
    *
    * @return a {@link java.util.List } with the conversion of value.
    */
-  public List<JSONValue> toList() {
+  public List<JSONValue<?>> toList() {
     return value.toList();
   }
 

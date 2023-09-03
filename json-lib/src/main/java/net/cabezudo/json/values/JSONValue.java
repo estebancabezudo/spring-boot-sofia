@@ -64,7 +64,7 @@ public abstract class JSONValue<T> extends JSONElement implements Comparable<T> 
    *
    * @return an array of {@link net.cabezudo.json.values.JSONValue} object if the conversion is possible.
    */
-  public JSONValue<?>[] toArray() {
+  public JSONValue<T>[] toArray() {
     throw new JSONConversionException("I can't convert a " + this.getClass().getName() + " to a JSONValue array.");
   }
 

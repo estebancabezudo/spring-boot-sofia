@@ -272,6 +272,9 @@ const Core = {
         }
         for (let i = 0; i < list.length; i++) {
             const value = list[i];
+            if (Core.isFunction(value)) {
+                return value();
+            }
             if (value === 'status:logged' && Core.isLogged()) {
                 return true;
             }
@@ -330,7 +333,7 @@ const Core = {
                 .then(response => response.json())
                 .then(jsonData => {
                     console.log(jsonData.data);
-                    texts = JSON.parse(jsonData.data);
+                    texts = jsonData.data;
                     console.log(jsonData);
                     console.log(texts);
                     Core.actualLanguage = fetchLanguage;
@@ -430,9 +433,8 @@ const Core = {
                     element instanceof HTMLTitleElement || element instanceof HTMLParagraphElement || element instanceof HTMLHeadingElement) {
                     const childNodes = element.childNodes;
                     const write = childNodes.length === 0 || (childNodes.length === 1 && childNodes[0].nodeType === Node.TEXT_NODE && element.textContent !== text);
-                    if (write) {
-                        element.innerHTML = text;
-                    } else {
+                    element.innerHTML = text;
+                    if (!write) {
                         console.log(`Core::setTextToElement: WARNING. The element with the id ${element.id} is not empty.`, element);
                     }
                     break;
