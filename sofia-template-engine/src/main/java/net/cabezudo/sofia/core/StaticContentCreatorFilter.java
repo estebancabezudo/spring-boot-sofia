@@ -89,7 +89,7 @@ public class StaticContentCreatorFilter extends OncePerRequestFilter {
           }
           log.debug("Search for " + sourcePath);
           synchronized (this) {
-            if (Files.exists(sourcePath) && !Files.exists(targetPath) && !Files.isDirectory(sourcePath)) {
+            if (Files.exists(sourcePath) && (!Files.exists(targetPath) || sofiaEnvironment.isDevelopment()) && !Files.isDirectory(sourcePath)) {
               log.debug("Copy " + sourcePath + " to " + targetPath);
               Files.createDirectories(targetPath.getParent());
               Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);

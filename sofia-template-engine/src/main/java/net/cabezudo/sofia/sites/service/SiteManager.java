@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.sites.service;
 
+import net.cabezudo.sofia.config.ConfigurationFileYAMLLoginData;
 import net.cabezudo.sofia.config.ConfigurationFileYAMLMailData;
 import net.cabezudo.sofia.config.ConfigurationFileYAMLSiteData;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
@@ -35,6 +36,7 @@ public class SiteManager {
   public void add(ConfigurationFileYAMLSiteData configurationFileYAMLSiteData, @NotNull Host host, boolean toDatabase) {
     String siteName = configurationFileYAMLSiteData.getName();
     ConfigurationFileYAMLMailData mail = configurationFileYAMLSiteData.getMail();
+    ConfigurationFileYAMLLoginData login = configurationFileYAMLSiteData.getLogin();
     Site siteFound = siteByName.get(siteName);
     Site site;
     if (siteFound == null) {
@@ -49,7 +51,7 @@ public class SiteManager {
       } else {
         id = siteByName.size();
       }
-      site = new Site(id, siteName, mail.getReplyAddress());
+      site = new Site(id, siteName, mail.getReplyAddress(), login.getSuccessURL());
       siteByName.put(siteName, site);
     } else {
       site = siteFound;

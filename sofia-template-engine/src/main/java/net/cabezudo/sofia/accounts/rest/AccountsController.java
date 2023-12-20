@@ -3,6 +3,7 @@ package net.cabezudo.sofia.accounts.rest;
 import net.cabezudo.sofia.accounts.mappers.BusinessToRestAccountListMapper;
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.service.AccountManager;
+import net.cabezudo.sofia.accounts.service.AccountNotFoundException;
 import net.cabezudo.sofia.accounts.service.Accounts;
 import net.cabezudo.sofia.core.SofiaBadRequest;
 import net.cabezudo.sofia.core.rest.ListRestResponse;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -65,7 +67,7 @@ public class AccountsController extends SofiaAuthorizedController {
 
   @PutMapping("/v1/site/account/set")
   // Set the account only for the site. Just change the webClientData
-  public ResponseEntity<?> setSiteAccount(@RequestBody RestAccount restAccount) {
+  public ResponseEntity<?> setSiteAccount(@RequestBody RestAccount restAccount) throws AccountNotFoundException {
     log.debug("Set the site account");
     ListRestResponse<RestAccount> listRestResponse;
 
@@ -112,8 +114,26 @@ public class AccountsController extends SofiaAuthorizedController {
     try {
       String name = getName(restAccount);
       accountManager.setSessionAccount(request, site, name);
-    } catch (SofiaBadRequest e) {
+    } catch (SofiaBadRequest | AccountNotFoundException e) {
       return ResponseEntity.badRequest().build();
+    }
+
+    listRestResponse = new ListRestResponse<>(SofiaRestResponse.OK, "The account was defined correctly. ", null);
+    return ResponseEntity.ok(listRestResponse);
+  }
+
+  @GetMapping("/for/{accountName}")
+  // If the client have an account, change the webClientData. If the client doesn't have account and there is a user logged change the user account
+  public ResponseEntity<?> setSessionAccountWithURL(@PathVariable String accountName) {
+    log.debug("Set the session account");
+    ListRestResponse<RestAccount> listRestResponse;
+
+    Site site = siteManager.getSite(request);
+
+    try {
+      accountManager.setSiteAccount(request, site, accountName);
+    } catch (AccountNotFoundException e) {
+      return ResponseEntity.notFound().build();
     }
 
     listRestResponse = new ListRestResponse<>(SofiaRestResponse.OK, "The account was defined correctly. ", null);

@@ -14,13 +14,15 @@ sites:
       - /login/oauth2/code
       - /oauth2
       - /v1
-      - /app
+      - /for
     permissions:
       - all:all:grant:/login.html
       - all:all:grant:/index.html
       - all:all:grant:/texts/**
       - all:all:grant:/images/**
       - all:all:grant:/fonts/**
+    login:
+      successURL: /index.html
 
   - name: cabezudo.net
     mail:

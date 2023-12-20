@@ -651,6 +651,24 @@ debemos agregar la ruta `/login/oauth2/code` y especificar la configuración en 
             scope: profile,email
 ```
 
+### Detalle de configuración
+
+Sofia permite configurar otros detalles del acceso. Por ejemplo, la página que se carga luego de un acceso al sistema
+exitoso. El valor por defecto es el `index.html` del directorio raíz. Pero si se quiere cambiar esta página podemos
+utilizar `sofia.yml`. En este archivo podemos configurar, para cada uno de los sitios, el valor para la página luego de
+un acceso exitoso. Supongamos que tenemos un sitio llamado localhost, que tiene un host localhost para la versión 1, los
+valores para el acceso lo configuraríamos usando la clave `login`. Dentro de la clave `login`, mediante la
+clave `successURL` indicaremos la página destino luego de un acceso exitoso.
+
+```yaml
+sites:
+  - name: localhost
+    hosts:
+      - localhost:1
+    login:
+      successURL: /nuevaPagina.html
+```
+
 ## Envío de correo
 
 Si necesitamos enviar correos podemos agregar en la configuración los valores del servidor de correo. Actualmente,
@@ -694,3 +712,5 @@ información podemos ver la clase `net.cabezudo.sofia.config.mailMailClientConfi
 Si no se cierran las etiquetas correctamente, ya sea autocerrada o no se producen problemas inesperados que no son
 detectados por el parser. Un caso puede ser una etiqueta IMG, la cual normalmente no se cierra. Si esta no se cierra
 genera dos cierres para la siguiente etiqueta generando un html inválido.
+
+Si se modifican imágenes en desarrollo, no se vuelven a copiar al destino.

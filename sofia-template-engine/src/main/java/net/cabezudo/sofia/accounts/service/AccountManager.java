@@ -91,8 +91,11 @@ public class AccountManager {
     return account;
   }
 
-  public void setSiteAccount(HttpServletRequest request, Site site, String name) {
+  public void setSiteAccount(HttpServletRequest request, Site site, String name) throws AccountNotFoundException {
     Account account = getByName(site, name);
+    if (account == null) {
+      throw new AccountNotFoundException(name);
+    }
     WebClientData webClientData = webClientDataManager.getFromCookie(request);
     webClientData.setAccount(account);
     webClientDataManager.update(webClientData.getId(), webClientData);
@@ -107,7 +110,7 @@ public class AccountManager {
   }
 
   // If the client have an account, change the webClientData. If the client doesn't have account and there is a user logged change the user account
-  public void setSessionAccount(HttpServletRequest request, Site site, String name) {
+  public void setSessionAccount(HttpServletRequest request, Site site, String name) throws AccountNotFoundException {
     WebClientData webClientData = webClientDataManager.getFromCookie(request);
     if (webClientData.getAccount() == null) {
       setUserAccount(request, site, name);

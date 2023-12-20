@@ -13,8 +13,8 @@ public class ConfigurationFileYAMLSiteData {
   private List<String> hosts;
   private List<String> permissions;
   private List<String> api;
-
   private String root;
+  private final ConfigurationFileYAMLLoginData login = new ConfigurationFileYAMLLoginData();
 
   public ConfigurationFileYAMLSiteData() {
     // Without a default constructor, Jackson will throw an exception
@@ -48,5 +48,9 @@ public class ConfigurationFileYAMLSiteData {
 
   public ConfigurationFileYAMLMailData getMail() {
     return mail;
+  }
+
+  public ConfigurationFileYAMLLoginData getLogin() {
+    return login;
   }
 }

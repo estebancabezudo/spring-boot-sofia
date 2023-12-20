@@ -8,17 +8,17 @@ También tiene cierta funcionalidad básica, común a la mayoría de los sitios,
 con control de usuarios e internacionalización en minutos.
 
 La información "casi" completa del servidor la encontramos en el
-proyecto [sofia-mailTemplate-engine](https://github.com/estebancabezudo/spring-boot-sofia/tree/master/sofia-mailTemplate-engine)
+proyecto [sofia-template-engine](https://github.com/estebancabezudo/spring-boot-sofia/tree/master/sofia-template-engine)
 .
 
 # Sofia
 
-Sofia is a server based on Spring Boot, a mailTemplate engine, and a set of tools and libraries to facilitate the rapid
+Sofia is a server based on Spring Boot, a template engine, and a set of tools and libraries to facilitate the rapid
 creation of websites.
 It allows organizing templates, configuration files, and information in a way that reduces maintenance costs.
 It also has certain basic functionality, common to most sites, already implemented to allow the creation of sites with
 user control and internationalization in minutes.
 
 The "almost" complete information of the server can be found in
-the [sofia-mailTemplate-engine](https://github.com/estebancabezudo/spring-boot-sofia/tree/master/sofia-mailTemplate-engine)
+the [sofia-template-engine](https://github.com/estebancabezudo/spring-boot-sofia/tree/master/sofia-template-engine)
 project.

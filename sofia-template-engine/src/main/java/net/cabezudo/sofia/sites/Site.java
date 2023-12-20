@@ -26,11 +26,13 @@ public class Site implements Comparable<Site> {
   private final int id;
   private final String replyAddress;
   private final Locale locale = new Locale("en"); // TODO  Change to use the language of the constructor, the one defined for the site in the configuration, or English.
+  private final String loginSuccessURL;
 
-  public Site(int id, String name, String replyAddress) {
+  public Site(int id, String name, String replyAddress, String loginSuccessURL) {
     this.id = id;
     this.name = name;
     this.replyAddress = replyAddress;
+    this.loginSuccessURL = loginSuccessURL;
   }
 
   public int getId() {
@@ -79,4 +81,7 @@ public class Site implements Comparable<Site> {
     return "[ name=" + getName() + ", locale=" + getDefaultLocale() + ", locales=" + getSiteLocales() + "]";
   }
 
+  public String getLoginSuccessURL() {
+    return loginSuccessURL;
+  }
 }

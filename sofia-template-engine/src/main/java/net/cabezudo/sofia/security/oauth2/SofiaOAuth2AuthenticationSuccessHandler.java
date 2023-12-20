@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.cabezudo.sofia.security.LoginRestResponse;
 import net.cabezudo.sofia.security.SofiaSecurityConfig;
+import net.cabezudo.sofia.sites.Site;
+import net.cabezudo.sofia.sites.service.SiteManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -21,7 +23,12 @@ import java.io.PrintWriter;
 public class SofiaOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
   private static final Logger log = LoggerFactory.getLogger(SofiaOAuth2AuthenticationSuccessHandler.class);
+  private final SiteManager siteManager;
   private RequestCache requestCache = new HttpSessionRequestCache();
+
+  public SofiaOAuth2AuthenticationSuccessHandler(SiteManager siteManager) {
+    this.siteManager = siteManager;
+  }
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -37,7 +44,8 @@ public class SofiaOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthentica
 
     SavedRequest savedRequest = this.requestCache.getRequest(request, response);
     if (savedRequest == null) {
-      response.sendRedirect(SofiaSecurityConfig.DEFAULT_LOGIN_SUCCESS_URL);
+      Site site = siteManager.getSite(request);
+      response.sendRedirect(site.getLoginSuccessURL());
       return;
     }
     clearAuthenticationAttributes(request);

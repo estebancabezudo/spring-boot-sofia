@@ -3,6 +3,7 @@ package net.cabezudo.sofia.security;
 import net.cabezudo.sofia.core.SofiaEnvironment;
 import net.cabezudo.sofia.security.oauth2.SofiaOAuth2AuthenticationFailureHandler;
 import net.cabezudo.sofia.security.oauth2.SofiaOAuth2AuthenticationSuccessHandler;
+import net.cabezudo.sofia.sites.service.SiteManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ public class SecurityConfiguration {
 
   private @Autowired UrlAuthenticationFilter urlAuthenticationFilter;
   private @Autowired SofiaEnvironment sofiaEnvironment;
+  private @Autowired SiteManager siteManager;
   private @Autowired CustomDetailsService customDetailsService;
   private @Autowired SofiaAuthorizationManager sofiaAuthorizationManager;
 
@@ -65,7 +67,7 @@ public class SecurityConfiguration {
         .requestCache().requestCache(getHttpSessionRequestCache())
         .and()
         .formLogin()
-        .successHandler(new SofiaAuthenticationSuccessHandler())
+        .successHandler(new SofiaAuthenticationSuccessHandler(siteManager))
         .failureHandler(new SofiaAuthenticationFailureHandler())
         .loginPage(SofiaSecurityConfig.DEFAULT_LOGIN_PAGE)
         .loginProcessingUrl(SofiaSecurityConfig.DEFAULT_LOGIN_WEB_SERVICE).and()
@@ -73,7 +75,7 @@ public class SecurityConfiguration {
         .logoutSuccessUrl(SofiaSecurityConfig.DEFAULT_LOGOUT_SUCCESS_URL)
         .and()
         .oauth2Login()
-        .successHandler(new SofiaOAuth2AuthenticationSuccessHandler())
+        .successHandler(new SofiaOAuth2AuthenticationSuccessHandler(siteManager))
         .failureHandler(new SofiaOAuth2AuthenticationFailureHandler())
         .and()
         .authorizeHttpRequests((authorize) -> {
