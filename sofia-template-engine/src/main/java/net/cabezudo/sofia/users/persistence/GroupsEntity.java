@@ -1,6 +1,5 @@
 package net.cabezudo.sofia.users.persistence;
 
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,7 +16,6 @@ public class GroupsEntity implements Iterable<GroupEntity> {
     return groupEntities.size();
   }
 
-  @NotNull
   @Override
   public Iterator<GroupEntity> iterator() {
     return groupEntities.iterator();

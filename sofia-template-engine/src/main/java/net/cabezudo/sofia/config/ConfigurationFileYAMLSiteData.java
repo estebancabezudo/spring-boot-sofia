@@ -2,11 +2,13 @@ package net.cabezudo.sofia.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConfigurationFileYAMLSiteData {
+  private final ConfigurationFileYAMLLoginData login = new ConfigurationFileYAMLLoginData();
   private String name;
   private ConfigurationFileYAMLMailData mail;
   private String domainName;
@@ -14,7 +16,6 @@ public class ConfigurationFileYAMLSiteData {
   private List<String> permissions;
   private List<String> api;
   private String root;
-  private final ConfigurationFileYAMLLoginData login = new ConfigurationFileYAMLLoginData();
 
   public ConfigurationFileYAMLSiteData() {
     // Without a default constructor, Jackson will throw an exception

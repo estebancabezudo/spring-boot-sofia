@@ -74,8 +74,7 @@ public class JSONObject extends JSONValue<JSONObject> implements Iterable<JSONPa
   public JSONObject(String origin, String data) throws JSONParseException, DuplicateKeyException {
     super(null);
     JSONValue jsonData = JSON.parse(origin, data);
-    if (jsonData instanceof JSONObject) {
-      JSONObject jsonObject = (JSONObject) jsonData;
+    if (jsonData instanceof JSONObject jsonObject) {
       copy(jsonObject);
     } else {
       throw new JSONParseException("I can't parse the parameter to a JSONObject.", new Position(origin));

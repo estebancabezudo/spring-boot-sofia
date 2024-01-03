@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.creator;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.cabezudo.html.HTMLParser;
 import net.cabezudo.html.ParseException;
 import net.cabezudo.html.nodes.Attribute;
@@ -31,10 +32,10 @@ import net.cabezudo.sofia.sites.service.PathManager;
 import net.cabezudo.sofia.sites.service.SiteManager;
 import net.cabezudo.sofia.users.service.Group;
 import net.cabezudo.sofia.users.service.Groups;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -343,8 +344,7 @@ public class SofiaFile {
   }
 
   private void processElement(Path requestFilePath, Node node, Caller caller) throws SiteCreationException, HostNotFoundException {
-    if (node instanceof Element) {
-      Element element = (Element) node;
+    if (node instanceof Element element) {
       try {
         switch (node.getTagName()) {
           case TagName.TITLE:
@@ -397,7 +397,7 @@ public class SofiaFile {
           Permission filePermission = new Permission(group.getName(), Permission.USER_ALL, Permission.ACCESS_GRANT, fileResource);
           permissionManager.add(site, filePermission);
           // Add to the list of permissions the page
-          String textsResource = "/texts/" + voidRootFilePath.toString() + "/**";
+          String textsResource = "/texts/" + voidRootFilePath + "/**";
           Permission textsPermission = new Permission(group.getName(), Permission.USER_ALL, Permission.ACCESS_GRANT, textsResource);
           permissionManager.add(site, textsPermission);
         }

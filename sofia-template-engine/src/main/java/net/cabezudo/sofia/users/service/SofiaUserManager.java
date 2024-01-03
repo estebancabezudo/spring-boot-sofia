@@ -1,5 +1,7 @@
 package net.cabezudo.sofia.users.service;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import net.cabezudo.sofia.accounts.mappers.BusinessToEntityAccountMapper;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
@@ -24,9 +26,10 @@ import net.cabezudo.sofia.users.mappers.EntityToBusinessUserMapper;
 import net.cabezudo.sofia.users.persistence.GroupEntity;
 import net.cabezudo.sofia.users.persistence.GroupsEntity;
 import net.cabezudo.sofia.users.persistence.GroupsRepository;
-import net.cabezudo.sofia.users.persistence.UserEntity;
-import net.cabezudo.sofia.users.persistence.UserEntityList;
-import net.cabezudo.sofia.users.persistence.UserRepository;
+import net.cabezudo.sofia.users.persistence.SofiaUserEntity;
+import net.cabezudo.sofia.users.persistence.SofiaUserEntityList;
+import net.cabezudo.sofia.users.persistence.SofiaUserRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +41,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 import java.io.FileNotFoundException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
@@ -49,14 +49,14 @@ import java.util.Locale;
 
 @Service
 @Transactional
-public class UserManager {
-  private static final Logger log = LoggerFactory.getLogger(UserManager.class);
+public class SofiaUserManager {
+  private static final Logger log = LoggerFactory.getLogger(SofiaUserManager.class);
 
   private @Autowired BusinessToEntityGroupsMapper businessToEntityGroupsMapper;
   private @Autowired EntityToBusinessUserListMapper entityToBusinessUserListMapper;
   private @Autowired EntityToBusinessUserMapper entityToBusinessUserMapper;
-  private @Resource EMailRepository eMailRepository;
-  private @Resource UserRepository userRepository;
+  private @Autowired EMailRepository eMailRepository;
+  private @Autowired SofiaUserRepository sofiaUserRepository;
   private @Autowired GroupsRepository groupsRepository;
   private @Autowired HttpServletRequest request;
   private @Autowired AccountRepository accountRepository;
@@ -71,15 +71,15 @@ public class UserManager {
   public SofiaUser loadUserByUsername(String email) throws UsernameNotFoundException {
     Account account = (Account) request.getSession().getAttribute("account");
 
-    final UserEntity userEntity = userRepository.findByEmailAndAccount(account.getId(), email);
-    if (userEntity == null) {
+    final SofiaUserEntity sofiaUserEntity = sofiaUserRepository.findByEmailAndAccount(account.getId(), email);
+    if (sofiaUserEntity == null) {
       throw new UsernameNotFoundException(email);
     }
-    return entityToBusinessUserMapper.map(userEntity);
+    return entityToBusinessUserMapper.map(sofiaUserEntity);
   }
 
-  private Collection<GrantedAuthority> getAuthorities(UserEntity userEntity) {
-    GroupsEntity userGroups = userEntity.getGroups();
+  private Collection<GrantedAuthority> getAuthorities(SofiaUserEntity sofiaUserEntity) {
+    GroupsEntity userGroups = sofiaUserEntity.getGroups();
     Collection<GrantedAuthority> authorities = new ArrayList<>(userGroups.size());
     for (GroupEntity groupEntity : userGroups) {
       authorities.add(new SimpleGrantedAuthority(groupEntity.getName().toUpperCase()));
@@ -87,8 +87,8 @@ public class UserManager {
     return authorities;
   }
 
-  public UserList findAll(Account account) {
-    final UserEntityList entityList = userRepository.findAll(account.getId(), account.getSite().getId());
+  public SofiaUserList findAll(Account account) {
+    final SofiaUserEntityList entityList = sofiaUserRepository.findAll(account.getId(), account.getSite().getId());
     return entityToBusinessUserListMapper.map(account, entityList);
   }
 
@@ -97,20 +97,20 @@ public class UserManager {
     if (accountUserRelationEntity == null) {
       return null;
     }
-    final UserEntity userEntity = userRepository.findByAccount(accountId, userId);
-    return entityToBusinessUserMapper.map(userEntity);
+    final SofiaUserEntity sofiaUserEntity = sofiaUserRepository.findByAccount(accountId, userId);
+    return entityToBusinessUserMapper.map(sofiaUserEntity);
   }
 
   public SofiaUser findById(int accountId, String username) {
-    final UserEntity userEntity = userRepository.get(username);
-    if (userEntity == null) {
+    final SofiaUserEntity sofiaUserEntity = sofiaUserRepository.get(username);
+    if (sofiaUserEntity == null) {
       return null;
     }
-    AccountUserRelationEntity relation = accountRepository.getByAccountAndUser(accountId, userEntity.getId());
+    AccountUserRelationEntity relation = accountRepository.getByAccountAndUser(accountId, sofiaUserEntity.getId());
     if (relation == null) {
       return null;
     }
-    return entityToBusinessUserMapper.map(userEntity);
+    return entityToBusinessUserMapper.map(sofiaUserEntity);
   }
 
   @Transactional
@@ -125,18 +125,18 @@ public class UserManager {
 
     log.debug("Using email with id " + usernameToUse);
 
-    UserEntity userEntity = userRepository.create(usernameToUse, locale.toString(), enabled);
+    SofiaUserEntity sofiaUserEntity = sofiaUserRepository.create(usernameToUse, locale.toString(), enabled);
 
     AccountEntity accountEntity = accountRepository.create(site.getId(), usernameToUse.getEmail());
 
-    AccountUserRelationEntity accountUserRelationEntity = accountRepository.createAccountUserRelation(accountEntity.getId(), userEntity.getId(), true);
+    AccountUserRelationEntity accountUserRelationEntity = accountRepository.createAccountUserRelation(accountEntity.getId(), sofiaUserEntity.getId(), true);
 
     GroupsEntity groupsEntity = businessToEntityGroupsMapper.map(accountUserRelationEntity.getId(), groups);
     for (GroupEntity groupEntity : groupsEntity) {
-      groupsRepository.create(userEntity.getId(), groupEntity.getName());
+      groupsRepository.create(sofiaUserEntity.getId(), groupEntity.getName());
     }
 
-    return entityToBusinessUserMapper.map(userEntity);
+    return entityToBusinessUserMapper.map(sofiaUserEntity);
   }
 
   @Transactional
@@ -151,10 +151,10 @@ public class UserManager {
     }
     log.debug("Using email with id " + emailToUse);
 
-    UserEntity userToUse;
-    UserEntity userFromDatabase = userRepository.getByEMail(emailToUse.getId());
+    SofiaUserEntity userToUse;
+    SofiaUserEntity userFromDatabase = sofiaUserRepository.getByEMail(emailToUse.getId());
     if (userFromDatabase == null) {
-      userToUse = userRepository.create(emailToUse, locale.toString(), enabled);
+      userToUse = sofiaUserRepository.create(emailToUse, locale.toString(), enabled);
       accountRepository.getAccountByUserId(userToUse.getId());
       Site site = account.getSite();
       AccountEntity newAccountEntity = accountRepository.create(site.getId(), eMailAddress);
@@ -177,7 +177,7 @@ public class UserManager {
 
   @Transactional
   public SofiaUser update(int id, SofiaUser user) {
-    UserEntity userInDatabase = userRepository.get(id);
+    SofiaUserEntity userInDatabase = sofiaUserRepository.get(id);
 
     String eMail = user.getUsername();
 
@@ -189,9 +189,9 @@ public class UserManager {
       eMailToUse = userFromDatabase;
     }
     String locale = user.getLocale().toString();
-    UserEntity newEntity = new UserEntity(id, userInDatabase.getAccount(), eMailToUse, null, locale, user.isEnabled());
+    SofiaUserEntity newEntity = new SofiaUserEntity(id, userInDatabase.getAccount(), eMailToUse, null, locale, user.isEnabled());
 
-    final UserEntity updatedEntity = userRepository.update(newEntity);
+    final SofiaUserEntity updatedEntity = sofiaUserRepository.update(newEntity);
 
     AccountUserRelationEntity accountUserRelation = accountRepository.getByAccountAndUser(user.getAccount().getId(), user.getId());
 
@@ -211,7 +211,7 @@ public class UserManager {
   }
 
   public void delete(int accountId, int userId) {
-    UserEntity user = userRepository.get(userId);
+    SofiaUserEntity user = sofiaUserRepository.get(userId);
     userAccountPreferencesRepository.delete(userId);
     AccountUserRelationEntity accountUserRelationEntity = accountRepository.getByAccountAndUser(accountId, userId);
     groupsRepository.deleteGroupsFor(accountUserRelationEntity.getId());
@@ -220,7 +220,7 @@ public class UserManager {
 
     int eMailIdToDelete = user.getEMailEntity().getId();
     try {
-      userRepository.delete(userId);
+      sofiaUserRepository.delete(userId);
     } catch (DataAccessException e) {
       if (e.getCause() instanceof SQLIntegrityConstraintViolationException) {
         log.debug("I can't delete the user because is used in another account.");
@@ -246,9 +246,9 @@ public class UserManager {
     String rawPassword = PasswordGenerator.generate(18, true, true, false);
     PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     Password encodedPassword = new Password(encoder.encode(rawPassword));
-    userRepository.update(userId, encodedPassword);
-    UserEntity userEntity = userRepository.get(userId);
-    SofiaUser user = entityToBusinessUserMapper.map(userEntity);
+    sofiaUserRepository.update(userId, encodedPassword);
+    SofiaUserEntity sofiaUserEntity = sofiaUserRepository.get(userId);
+    SofiaUser user = entityToBusinessUserMapper.map(sofiaUserEntity);
     Person person = peopleManager.getByUser(user);
     Locale userLocale = user.getLocale();
     EMail to = new EMail(user.getUsername());

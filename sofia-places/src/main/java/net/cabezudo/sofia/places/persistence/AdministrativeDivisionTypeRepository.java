@@ -3,6 +3,7 @@ package net.cabezudo.sofia.places.persistence;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.persistence.DatabaseManager;
 import net.cabezudo.sofia.places.mappers.AdministrativeDivisionTypeRowMapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.security;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.service.AccountManager;
 import net.cabezudo.sofia.core.SofiaEnvironment;
@@ -9,6 +10,7 @@ import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.sites.service.SiteManager;
 import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.function.Supplier;
 
 @Service
@@ -56,7 +57,7 @@ public class SofiaAuthorizationManager implements AuthorizationManager<RequestAu
     if (sofiaEnvironment.isSecurityActive()) {
       SofiaUser user = sofiaSecurityManager.getLoggedUser();
       Account account = accountManager.getAccount(request);
-      log.debug("Check authorization permissions for " + requestURI + "  using " + (user == null ? "NOT LOGGED" : user.getUsername()) + " on " + site.getName() + (account == null ? null : account.getName() + " in the account " + "(" + account.getId() + ")"));
+      log.debug("Check authorization permissions for " + requestURI + "  using " + (user == null ? "NOT LOGGED" : user.getUsername()) + " on " + site.getName() + ", " + (account == null ? null : account.getName() + " in the account with id " + account.getId()));
       if (site != null && permissionManager.hasPermission(user, site, account, requestURI)) {
         return new AuthorizationDecision(true);
       }

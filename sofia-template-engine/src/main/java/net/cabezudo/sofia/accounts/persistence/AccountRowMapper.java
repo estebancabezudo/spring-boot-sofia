@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.accounts.persistence;
 
+
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

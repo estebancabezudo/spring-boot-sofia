@@ -2,6 +2,7 @@ package net.cabezudo.sofia.config.mail;
 
 import net.cabezudo.sofia.core.templates.MailTemplate;
 
+
 public class SofiaMailMessage {
   private final NamedEMail from;
   private final NamedEMail to;

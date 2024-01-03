@@ -2,6 +2,7 @@ package net.cabezudo.sofia.places.mappers;
 
 import net.cabezudo.sofia.places.AdministrativeDivisionType;
 import net.cabezudo.sofia.places.rest.RestAdministrativeDivisionType;
+
 import org.springframework.stereotype.Component;
 
 @Component

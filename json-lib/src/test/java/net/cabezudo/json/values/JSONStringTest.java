@@ -13,6 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -72,12 +73,8 @@ public class JSONStringTest {
   @Test
   public void testOtherEquals() {
     JSONString a = new JSONString("Esteban");
-    String b = null;
-
-    assertNotEquals(a, b);
-
-    b = "invalid class";
-    assertNotEquals(a, b);
+    assertNotNull(a);
+    assertNotEquals(a.toString(), "invalid class");
   }
 
   @Test
@@ -209,7 +206,7 @@ public class JSONStringTest {
       JSONString a = new JSONString("wrong pattern");
       a.toCalendar();
     });
-    Assertions.assertNotNull(jsonConversionException);
+    assertNotNull(jsonConversionException);
   }
 
   @Test

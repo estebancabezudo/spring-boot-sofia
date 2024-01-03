@@ -1,5 +1,10 @@
 package net.cabezudo.sofia.core;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
 import net.cabezudo.sofia.creator.ContentManager;
 import net.cabezudo.sofia.creator.SiteCreationException;
 import net.cabezudo.sofia.creator.SofiaFile;
@@ -12,7 +17,7 @@ import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.sites.SourceNotFoundException;
 import net.cabezudo.sofia.sites.service.PathManager;
 import net.cabezudo.sofia.sites.service.SiteManager;
-import org.jetbrains.annotations.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +26,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -45,7 +45,7 @@ public class StaticContentCreatorFilter extends OncePerRequestFilter {
   private @Autowired PermissionManager permissionManager;
 
   @Override
-  protected void doFilterInternal(@NotNull HttpServletRequest req, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
+  protected void doFilterInternal(HttpServletRequest req, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
     log.debug("Static content creator filter.");
     HttpServletRequest request = new HttpServletRequestWrapper(req) {
       @Override
@@ -89,16 +89,18 @@ public class StaticContentCreatorFilter extends OncePerRequestFilter {
           }
           log.debug("Search for " + sourcePath);
           synchronized (this) {
-            if (Files.exists(sourcePath) && (!Files.exists(targetPath) || sofiaEnvironment.isDevelopment()) && !Files.isDirectory(sourcePath)) {
-              log.debug("Copy " + sourcePath + " to " + targetPath);
-              Files.createDirectories(targetPath.getParent());
-              Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
-            } else {
-              // TODO Check this. Don't have any sense. If the file do not exist in source path, don't exist in target path either. And, why return a 404. It appears like an 500.
-              if (!Files.exists(targetPath)) {
-                response.sendError(404, "File not found: " + requestURI);
-                return;
+            if (Files.exists(sourcePath) && (!Files.exists(targetPath) || sofiaEnvironment.isDevelopment())) {
+              if (Files.isDirectory(sourcePath)) {
+                log.warn("The source " + sourcePath + " is a directory");
+              } else {
+                log.debug("Copy " + sourcePath + " to " + targetPath);
+                Files.createDirectories(targetPath.getParent());
+                Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
               }
+            } else {
+              log.debug("The source " + sourcePath + " do not exists.");
+              response.sendError(404, "File not found: " + requestURI);
+              return;
             }
           }
         }

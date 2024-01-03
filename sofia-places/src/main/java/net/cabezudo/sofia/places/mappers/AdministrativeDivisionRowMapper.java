@@ -1,6 +1,7 @@
 package net.cabezudo.sofia.places.mappers;
 
 import net.cabezudo.sofia.places.persistence.AdministrativeDivisionEntity;
+
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

@@ -2,6 +2,7 @@ package net.cabezudo.sofia.emails.persistence;
 
 import net.cabezudo.sofia.emails.mappers.EMailRowMapper;
 import net.cabezudo.sofia.persistence.DatabaseManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

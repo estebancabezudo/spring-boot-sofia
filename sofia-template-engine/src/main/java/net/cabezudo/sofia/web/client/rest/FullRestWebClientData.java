@@ -6,15 +6,16 @@ import net.cabezudo.sofia.accounts.mappers.BusinessToRestAccountMapper;
 import net.cabezudo.sofia.accounts.rest.RestAccount;
 import net.cabezudo.sofia.core.WebMessageManager;
 import net.cabezudo.sofia.users.mappers.BusinessToRestUserMapper;
-import net.cabezudo.sofia.users.rest.RestUser;
+import net.cabezudo.sofia.users.rest.RestSofiaUser;
 import net.cabezudo.sofia.web.client.Language;
 import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.user.WebUserData;
 
+
 public class FullRestWebClientData {
   private final String language;
   private final RestAccount account;
-  private final RestUser user;
+  private final RestSofiaUser user;
   @JsonIgnore
   private final BusinessToRestAccountMapper businessToRestAccountMapper = new BusinessToRestAccountMapper();
   @JsonIgnore
@@ -48,7 +49,7 @@ public class FullRestWebClientData {
     return account;
   }
 
-  public RestUser getUser() {
+  public RestSofiaUser getUser() {
     return user;
   }
 

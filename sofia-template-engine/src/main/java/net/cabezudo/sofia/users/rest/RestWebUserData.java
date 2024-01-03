@@ -6,12 +6,12 @@ import net.cabezudo.sofia.web.client.rest.RestLanguage;
 public class RestWebUserData {
   private final RestLanguage language;
   private final RestAccount account;
-  private final RestUser user;
+  private final RestSofiaUser user;
 
-  public RestWebUserData(RestLanguage restLanguage, RestAccount restAccount, RestUser restUser) {
+  public RestWebUserData(RestLanguage restLanguage, RestAccount restAccount, RestSofiaUser restSofiaUser) {
     this.language = restLanguage;
     this.account = restAccount;
-    this.user = restUser;
+    this.user = restSofiaUser;
 
   }
 
@@ -23,7 +23,7 @@ public class RestWebUserData {
     return account;
   }
 
-  public RestUser getUser() {
+  public RestSofiaUser getUser() {
     return user;
   }
 }

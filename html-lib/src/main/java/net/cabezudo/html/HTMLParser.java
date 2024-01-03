@@ -32,6 +32,7 @@ import net.cabezudo.html.tokens.DoctypeToken;
 import net.cabezudo.html.tokens.EndTagToken;
 import net.cabezudo.html.tokens.StartTagToken;
 import net.cabezudo.html.tokens.Token;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.accounts.rest;
 
+
 public class RestAccount {
   private final Integer id;
   private final String name;

@@ -1,16 +1,17 @@
 package net.cabezudo.sofia.web.client.rest;
 
 import net.cabezudo.sofia.accounts.service.Account;
-import net.cabezudo.sofia.users.rest.RestUser;
+import net.cabezudo.sofia.users.rest.RestSofiaUser;
+
 
 import java.util.Objects;
 
 public final class RestWebClientData {
   private final String language;
   private final Account account;
-  private final RestUser user;
+  private final RestSofiaUser user;
 
-  public RestWebClientData(String language, Account account, RestUser user) {
+  public RestWebClientData(String language, Account account, RestSofiaUser user) {
     this.language = language;
     this.account = account;
     this.user = user;
@@ -25,7 +26,7 @@ public final class RestWebClientData {
   }
 
 
-  public RestUser getUser() {
+  public RestSofiaUser getUser() {
     return user;
   }
 

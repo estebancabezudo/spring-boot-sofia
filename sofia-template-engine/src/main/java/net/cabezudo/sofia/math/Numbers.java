@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.math;
 
+
 public class Numbers {
   public static boolean isInteger(String s) {
     if (s == null) {

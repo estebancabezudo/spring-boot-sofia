@@ -1,10 +1,12 @@
 package net.cabezudo.sofia.security;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
 import net.cabezudo.sofia.web.user.WebUserData;
 import net.cabezudo.sofia.web.user.WebUserDataManager;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -16,13 +18,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 public class SofiaAuthenticationProvider implements AuthenticationProvider {
 
-  @Resource
-  CustomDetailsService customDetailsService;
+  private @Autowired CustomDetailsService customDetailsService;
   private PasswordEncoder passwordEncoder;
   private @Autowired WebClientDataManager webClientDataManager;
   private @Autowired WebUserDataManager webUserDataManager;

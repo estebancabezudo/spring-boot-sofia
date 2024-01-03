@@ -12,7 +12,7 @@ public enum NameType {
   @JSONProperty
   private final int index;
 
-  private NameType() {
+  NameType() {
     index = this.ordinal();
   }
 

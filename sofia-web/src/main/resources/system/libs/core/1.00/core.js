@@ -324,35 +324,37 @@ const Core = {
             fetchLanguage = languageCode.substring(0, 2);
         }
         const page = window.location.pathname;
-        if (fetchLanguage) {
-            fetch(`/v1/pages/actual/texts?language=${fetchLanguage}&page=${page}`, {
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-                .then(response => response.json())
-                .then(jsonData => {
-                    console.log(jsonData.data);
-                    texts = jsonData.data;
-                    console.log(jsonData);
-                    console.log(texts);
-                    Core.actualLanguage = fetchLanguage;
-                    Core.setTexts(texts);
-                })
-
-                ;
-        } else {
-            throw Error(`Invalid language: ${languageCode}`);
+        if (!fetchLanguage) {
+            console.warn(`Invalid language: ${languageCode}`);
+            fetchLanguage = "en";
         }
+        fetch(`/v1/pages/actual/texts?language=${fetchLanguage}&page=${page}`, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => response.json())
+            .then(jsonData => {
+                console.log(jsonData.data);
+                texts = jsonData.data;
+                console.log(jsonData);
+                console.log(texts);
+                Core.actualLanguage = fetchLanguage;
+                Core.setTexts(texts);
+            })
+
+            ;
     },
 
     publish: (topicsName, data) => {
         console.log(`Publish on ${topicsName}`, data);
         const functions = Core.topics[topicsName];
-        if (functions && Core.isArray(functions)) {
+        if (functions && Core.isArray(functions) && functions.length > 0) {
             functions.forEach(func => {
                 func(data);
             });
+        } else {
+            console.warn(`Data published in empty topic (${topicsName}): `, data);
         }
     },
 

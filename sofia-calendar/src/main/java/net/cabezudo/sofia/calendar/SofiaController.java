@@ -1,13 +1,14 @@
 package net.cabezudo.sofia.calendar;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;

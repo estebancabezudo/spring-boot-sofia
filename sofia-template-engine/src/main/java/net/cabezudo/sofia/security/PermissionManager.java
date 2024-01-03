@@ -1,8 +1,8 @@
 package net.cabezudo.sofia.security;
 
+import net.cabezudo.sofia.accounts.persistence.AccountUserRelationEntity;
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.service.AccountManager;
-import net.cabezudo.sofia.accounts.persistence.AccountUserRelationEntity;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.users.persistence.GroupEntity;
 import net.cabezudo.sofia.users.persistence.GroupsRepository;
@@ -37,11 +37,14 @@ public class PermissionManager {
     permissions.add(permission);
   }
 
-  public boolean hasPermission(Site site, Account account, SofiaUser user, String group, boolean isSecurityActive) {
-    List<GroupEntity> groups = groupsRepository.get(account.getId(), user.getId());
-    for (GroupEntity groupEntity : groups) {
-      if (group.equals(groupEntity.getName())) {
-        return true;
+  public boolean hasPermission(Site site, Account account, SofiaUser user, boolean isSecurityActive, String... groups) {
+    List<GroupEntity> databaseGroups = groupsRepository.get(account.getId(), user.getId());
+    // TODO Improve this
+    for (GroupEntity groupEntity : databaseGroups) {
+      for (String group : groups) {
+        if (group.equals(groupEntity.getName())) {
+          return true;
+        }
       }
     }
     AccountUserRelationEntity relation = accountManager.findRelation(site, account, user);
@@ -82,6 +85,7 @@ public class PermissionManager {
     for (Permission permission : permissions) {
       logger.debug("Try to pass a logged user ");
       if (user != null && permission.getGroupName().equals(Group.USER)) {
+        logger.debug("There is a user with the group " + permission.getGroupName());
         return true;
       }
       logger.debug("Try to deny with " + permission);
@@ -128,9 +132,11 @@ public class PermissionManager {
           logger.debug("Authorized because the user is all, the group match and is granted for " + requestURI + ".");
           return true;
         }
+        logger.debug("No permission for: " + grantPermission);
         return false;
       }
     }
+    logger.debug("No permission for: " + requestURI);
     return false;
   }
 

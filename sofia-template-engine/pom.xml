@@ -12,7 +12,7 @@
   <version>1.0.0</version>
   <packaging>jar</packaging>
   <properties>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
   </properties>
 
   <dependencies>
@@ -30,10 +30,12 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
+      <version>3.0.4</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
+      <version>3.1.2</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -79,7 +81,7 @@
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <version>8.0.31</version>
+      <version>8.0.33</version>
     </dependency>
     <dependency>
       <groupId>jakarta.persistence</groupId>
@@ -106,7 +108,7 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-core</artifactId>
-      <version>5.8.2</version>
+      <version>6.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
@@ -123,21 +125,22 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-oauth2-client</artifactId>
-      <version>5.8.2</version>
+      <version>6.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-jdbc</artifactId>
+      <version>2.4.6</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-core</artifactId>
-      <version>9.0.69</version>
+      <version>10.1.7</version>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-websocket</artifactId>
-      <version>9.0.69</version>
+      <version>10.1.7</version>
     </dependency>
     <dependency>
       <groupId>javax.mail</groupId>

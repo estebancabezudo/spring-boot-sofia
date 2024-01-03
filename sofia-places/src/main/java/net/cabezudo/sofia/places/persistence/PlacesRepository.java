@@ -1,8 +1,10 @@
 package net.cabezudo.sofia.places.persistence;
 
+import jakarta.transaction.Transactional;
 import net.cabezudo.sofia.core.persistence.EntityList;
 import net.cabezudo.sofia.persistence.DatabaseManager;
 import net.cabezudo.sofia.places.mappers.PlaceRowMapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +12,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
 import java.sql.PreparedStatement;
 import java.util.List;
 

@@ -2,7 +2,9 @@ package net.cabezudo.json.objects;
 
 import net.cabezudo.json.annotations.JSONProperty;
 
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,9 +29,7 @@ public class Person {
     this.name = name;
     this.lastName = lastName;
     this.age = age;
-    for (Person child : persons) {
-      childs.add(child);
-    }
+    Collections.addAll(childs, persons);
   }
 
   public String getName() {

@@ -1,7 +1,7 @@
 package net.cabezudo.sofia.users.service;
 
 import net.cabezudo.sofia.accounts.service.Account;
-import org.jetbrains.annotations.NotNull;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -17,7 +17,7 @@ public class SofiaUser implements UserDetails {
   private final Locale locale;
   private final Account account;
 
-  public SofiaUser(int id, @NotNull Account account, @NotNull String username, String password, @NotNull Groups groups, Locale locale, boolean enabled) {
+  public SofiaUser(int id, Account account, String username, String password, Groups groups, Locale locale, boolean enabled) {
     this.id = id;
     this.account = account;
     this.username = username;
@@ -28,7 +28,7 @@ public class SofiaUser implements UserDetails {
   }
 
 
-  public SofiaUser(int id, @NotNull Account account, @NotNull String username, String password, @NotNull Collection<GrantedAuthority> authorities, @NotNull Locale locale, boolean enabled) {
+  public SofiaUser(int id, Account account, String username, String password, Collection<GrantedAuthority> authorities, Locale locale, boolean enabled) {
     this.id = id;
     this.account = account;
     this.username = username;

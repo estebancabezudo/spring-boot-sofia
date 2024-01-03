@@ -3,7 +3,7 @@ package net.cabezudo.sofia.users.rest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.cabezudo.sofia.accounts.service.Account;
 
-public class RestUser {
+public class RestSofiaUser {
   private final int id;
   private final String username;
   private final RestGroups groups;
@@ -14,7 +14,7 @@ public class RestUser {
   @JsonIgnore
   private String password;
 
-  public RestUser(int id, Account account, String username, String password, RestGroups groups, String locale, boolean enabled) {
+  public RestSofiaUser(int id, Account account, String username, String password, RestGroups groups, String locale, boolean enabled) {
     this.id = id;
     this.account = account;
     this.username = username;

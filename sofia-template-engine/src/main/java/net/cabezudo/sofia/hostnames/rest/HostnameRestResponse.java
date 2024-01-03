@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.hostnames.rest;
 
+
 import java.util.Objects;
 
 public final class HostnameRestResponse {

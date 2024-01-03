@@ -2,6 +2,7 @@ package net.cabezudo.sofia.users.rest;
 
 import net.cabezudo.sofia.accounts.rest.RestAccounts;
 
+
 public class RestProfile {
   private String username;
   private String accountName;

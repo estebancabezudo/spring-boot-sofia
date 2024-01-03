@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.emails.persistence;
 
+
 import java.util.Objects;
 
 public final class EMailEntity {

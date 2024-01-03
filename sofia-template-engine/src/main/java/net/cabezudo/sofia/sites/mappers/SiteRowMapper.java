@@ -1,6 +1,7 @@
 package net.cabezudo.sofia.sites.mappers;
 
 import net.cabezudo.sofia.sites.SiteEntity;
+
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

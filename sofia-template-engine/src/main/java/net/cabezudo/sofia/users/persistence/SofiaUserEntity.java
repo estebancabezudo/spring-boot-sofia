@@ -2,9 +2,9 @@ package net.cabezudo.sofia.users.persistence;
 
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.emails.persistence.EMailEntity;
-import org.jetbrains.annotations.NotNull;
 
-public class UserEntity {
+
+public class SofiaUserEntity {
   private final int id;
   private final EMailEntity eMailEntity;
   private final String password;
@@ -13,7 +13,7 @@ public class UserEntity {
   private GroupsEntity groupsEntity = new GroupsEntity();
   private AccountEntity account;
 
-  public UserEntity(int id, int accountId, int accountSiteId, String accountName, @NotNull EMailEntity eMailEntity, String password, @NotNull String locale, boolean enabled) {
+  public SofiaUserEntity(int id, int accountId, int accountSiteId, String accountName, EMailEntity eMailEntity, String password, String locale, boolean enabled) {
     this.id = id;
     this.account = new AccountEntity(accountId, accountSiteId, accountName);
     this.eMailEntity = eMailEntity;
@@ -22,7 +22,7 @@ public class UserEntity {
     this.enabled = enabled;
   }
 
-  public UserEntity(int id, AccountEntity account, EMailEntity eMailEntity, String password, String locale, boolean enabled) {
+  public SofiaUserEntity(int id, AccountEntity account, EMailEntity eMailEntity, String password, String locale, boolean enabled) {
     this.id = id;
     this.account = account;
     this.eMailEntity = eMailEntity;

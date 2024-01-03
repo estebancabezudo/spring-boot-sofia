@@ -25,6 +25,7 @@ package net.cabezudo.html.tokens;
 
 import net.cabezudo.html.nodes.FilePosition;
 
+
 /**
  * @author <a href="http://cabezudo.net">Esteban Cabezudo</a>
  * @version 0.01.00, 2022.03.02

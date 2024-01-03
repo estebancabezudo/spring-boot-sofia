@@ -4,6 +4,7 @@ import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.web.client.Language;
 
+
 public class WebUserData {
   private Language language;
   private Account account;

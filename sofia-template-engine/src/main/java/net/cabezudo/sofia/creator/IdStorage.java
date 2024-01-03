@@ -6,6 +6,7 @@ import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SourceNotFoundException;
 import net.cabezudo.sofia.sites.service.PathManager;
+
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

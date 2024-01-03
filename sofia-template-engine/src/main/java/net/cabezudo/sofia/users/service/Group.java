@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.users.service;
 
+
 import java.util.Objects;
 
 public final class Group implements Comparable<Group> {

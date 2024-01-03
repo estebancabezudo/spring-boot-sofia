@@ -1,5 +1,7 @@
 package net.cabezudo.sofia.texts;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.core.rest.SofiaController;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
@@ -28,8 +30,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -89,15 +89,15 @@ public class TextsController extends SofiaController {
       if (languageFromClient == null || !languageFromClient.getCode().equals(requestedLanguageCode)) {
         Language requestedLanguage = new Language(requestedLanguageCode);
         WebUserData webUserData = webUserDataManager.getFromSession(request);
-        SofiaUser user = webUserData == null ? null : webUserData.getUser();
-        if (user == null) {
+        SofiaUser sofiaUser = webUserData == null ? null : webUserData.getUser();
+        if (sofiaUser == null) {
           WebClientData newWebClientData = new WebClientData(webClientData.getId(), requestedLanguage, webClientData.getAccount(), webClientData.getLastUpdate());
           webClientDataManager.update(webClientData.getId(), newWebClientData);
           webClientDataManager.setCookie(response, newWebClientData);
         } else {
           webUserData.setLanguage(requestedLanguage);
           webUserDataManager.set(request, webUserData);
-          userPreferencesManager.setLanguage(user, requestedLanguage);
+          userPreferencesManager.setLanguage(sofiaUser, requestedLanguage);
         }
       }
       return ResponseEntity.ok(new TextsRestResponse(textFromFile));

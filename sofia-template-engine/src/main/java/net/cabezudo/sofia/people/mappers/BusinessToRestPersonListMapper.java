@@ -4,6 +4,7 @@ import net.cabezudo.sofia.people.PeopleList;
 import net.cabezudo.sofia.people.Person;
 import net.cabezudo.sofia.people.rest.RestPersonList;
 
+
 public class BusinessToRestPersonListMapper {
 
   public RestPersonList map(PeopleList list) {

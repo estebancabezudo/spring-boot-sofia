@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.accounts.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.cabezudo.sofia.accounts.mappers.EntityToBusinessAccountListMapper;
 import net.cabezudo.sofia.accounts.mappers.EntityToBusinessAccountMapper;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
@@ -13,19 +14,17 @@ import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
 import net.cabezudo.sofia.web.user.WebUserData;
 import net.cabezudo.sofia.web.user.WebUserDataManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 @Service
 public class AccountManager {
   private static final Logger log = LoggerFactory.getLogger(AccountManager.class);
-  private @Resource AccountRepository accountRepository;
+  private @Autowired AccountRepository accountRepository;
   private @Autowired EntityToBusinessAccountMapper entityToBusinessAccountMapper;
   private @Autowired UserPreferencesManager userPreferencesManager;
   private @Autowired EntityToBusinessAccountListMapper entityToBusinessAccountListMapper;

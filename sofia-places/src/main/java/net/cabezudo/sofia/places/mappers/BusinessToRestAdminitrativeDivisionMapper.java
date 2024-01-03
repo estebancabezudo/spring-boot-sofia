@@ -3,6 +3,7 @@ package net.cabezudo.sofia.places.mappers;
 import net.cabezudo.sofia.places.AdministrativeDivision;
 import net.cabezudo.sofia.places.rest.RestAdministrativeDivision;
 import net.cabezudo.sofia.places.rest.RestAdministrativeDivisionType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

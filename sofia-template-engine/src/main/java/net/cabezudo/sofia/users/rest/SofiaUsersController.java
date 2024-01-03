@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.users.rest;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.cabezudo.sofia.accounts.mappers.BusinessToRestAccountListMapper;
 import net.cabezudo.sofia.accounts.mappers.RestToBusinessAccountsMapper;
 import net.cabezudo.sofia.accounts.rest.RestAccount;
@@ -24,9 +25,10 @@ import net.cabezudo.sofia.users.mappers.BusinessToRestUserMapper;
 import net.cabezudo.sofia.users.mappers.RestToBusinessUserMapper;
 import net.cabezudo.sofia.users.service.Group;
 import net.cabezudo.sofia.users.service.SofiaUser;
-import net.cabezudo.sofia.users.service.UserList;
-import net.cabezudo.sofia.users.service.UserManager;
+import net.cabezudo.sofia.users.service.SofiaUserList;
+import net.cabezudo.sofia.users.service.SofiaUserManager;
 import net.cabezudo.sofia.web.user.WebUserDataManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,20 +43,19 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @Controller
 @ResponseBody
-public class UsersController extends SofiaAuthorizedController {
+public class SofiaUsersController extends SofiaAuthorizedController {
 
-  private static final Logger log = LoggerFactory.getLogger(UsersController.class);
+  private static final Logger log = LoggerFactory.getLogger(SofiaUsersController.class);
   private @Autowired RestToBusinessUserMapper restToBusinessUserMapper;
   private @Autowired BusinessToRestUserListMapper businessToRestUserListMapper;
   private @Autowired RestToBusinessAccountsMapper restToBusinessAccountsMapper;
   private @Autowired BusinessToRestUserMapper businessToRestUserMapper;
-  private @Autowired UserManager userManager;
+  private @Autowired SofiaUserManager sofiaUserManager;
   private @Autowired EMailManager eMailManager;
   private @Autowired SofiaSecurityManager sofiaSecurityManager;
   private @Autowired PeopleManager peopleManager;
@@ -66,31 +67,31 @@ public class UsersController extends SofiaAuthorizedController {
   @PostMapping("/v1/login")
   public ResponseEntity<?> login() {
     log.debug("Run /v1/login");
-    UserRestResponse userRestResponse;
+    SofiaUserRestResponse sofiaUserRestResponse;
     SofiaUser user = sofiaSecurityManager.getLoggedUser();
     if (user != null) {
       // TODO implement request cache for redirection
       String referer = "";
-      userRestResponse = new UserRestResponse(SofiaRestResponse.OK, referer, "User found", user.getUsername(), user.getAuthorities());
+      sofiaUserRestResponse = new SofiaUserRestResponse(SofiaRestResponse.OK, referer, "User found", user.getUsername(), user.getAuthorities());
     } else {
-      userRestResponse = new UserRestResponse(SofiaRestResponse.ERROR, null, "Invalid credentials", null, null);
+      sofiaUserRestResponse = new SofiaUserRestResponse(SofiaRestResponse.ERROR, null, "Invalid credentials", null, null);
     }
-    return ResponseEntity.ok(userRestResponse);
+    return ResponseEntity.ok(sofiaUserRestResponse);
   }
 
   @GetMapping("/v1/users/actual/status")
   public ResponseEntity<?> status() {
     log.debug("Run /v1/users/actual/status");
-    UserRestResponse userRestResponse;
+    SofiaUserRestResponse sofiaUserRestResponse;
     SofiaUser user = sofiaSecurityManager.getLoggedUser();
     if (user != null) {
       // TODO implement request cache for redirection
       String referer = "";
-      userRestResponse = new UserRestResponse(SofiaRestResponse.OK, referer, "User found", user.getUsername(), user.getAuthorities());
+      sofiaUserRestResponse = new SofiaUserRestResponse(SofiaRestResponse.OK, referer, "User found", user.getUsername(), user.getAuthorities());
     } else {
-      userRestResponse = new UserRestResponse(SofiaRestResponse.ERROR, null, "Invalid credentials", null, null);
+      sofiaUserRestResponse = new SofiaUserRestResponse(SofiaRestResponse.ERROR, null, "Invalid credentials", null, null);
     }
-    return ResponseEntity.ok(userRestResponse);
+    return ResponseEntity.ok(sofiaUserRestResponse);
   }
 
   @GetMapping("/v1/users/actual/profile")
@@ -135,18 +136,18 @@ public class UsersController extends SofiaAuthorizedController {
       return result;
     }
 
-    UserRestResponse userRestResponse;
+    SofiaUserRestResponse sofiaUserRestResponse;
 
-    SofiaUser user = userManager.findById(account.getId(), id);
+    SofiaUser user = sofiaUserManager.findById(account.getId(), id);
 
-    RestUser restUser;
+    RestSofiaUser restSofiaUser;
     if (user == null) {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-    restUser = businessToRestUserMapper.map(user);
-    restUser.setAccount(account);
-    userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Retrieve user " + id, restUser);
-    return ResponseEntity.ok(userRestResponse);
+    restSofiaUser = businessToRestUserMapper.map(user);
+    restSofiaUser.setAccount(account);
+    sofiaUserRestResponse = new SofiaUserRestResponse(SofiaRestResponse.OK, "Retrieve user " + id, restSofiaUser);
+    return ResponseEntity.ok(sofiaUserRestResponse);
   }
 
   @GetMapping("/v1/users/{id}/exists")
@@ -160,18 +161,18 @@ public class UsersController extends SofiaAuthorizedController {
       return result;
     }
 
-    UserRestResponse userRestResponse;
-    SofiaUser user = userManager.findById(account.getId(), id);
+    SofiaUserRestResponse sofiaUserRestResponse;
+    SofiaUser user = sofiaUserManager.findById(account.getId(), id);
 
-    RestUser restUser;
+    RestSofiaUser restSofiaUser;
     if (user == null) {
-      restUser = null;
+      restSofiaUser = null;
     } else {
-      restUser = businessToRestUserMapper.map(user);
-      restUser.setAccount(account);
+      restSofiaUser = businessToRestUserMapper.map(user);
+      restSofiaUser.setAccount(account);
     }
-    userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Retrieve user " + id, restUser);
-    return ResponseEntity.ok(userRestResponse);
+    sofiaUserRestResponse = new SofiaUserRestResponse(SofiaRestResponse.OK, "Retrieve user " + id, restSofiaUser);
+    return ResponseEntity.ok(sofiaUserRestResponse);
   }
 
   @GetMapping("/v1/users/usernames/{username}/info")
@@ -192,7 +193,7 @@ public class UsersController extends SofiaAuthorizedController {
     }
 
     SofiaUser user;
-    user = userManager.findById(account.getId(), username);
+    user = sofiaUserManager.findById(account.getId(), username);
 
     if (user == null) {
       return ResponseEntity.ok(new SofiaRestResponse<>(SofiaRestResponse.OK, "validUsername"));
@@ -212,7 +213,7 @@ public class UsersController extends SofiaAuthorizedController {
     }
 
 
-    SofiaUser user = userManager.findById(account.getId(), id);
+    SofiaUser user = sofiaUserManager.findById(account.getId(), id);
     if (user == null) {
       return ResponseEntity.notFound().build();
     }
@@ -224,7 +225,7 @@ public class UsersController extends SofiaAuthorizedController {
     }
 
     SofiaUser userWithTheNewUsername;
-    userWithTheNewUsername = userManager.findById(account.getId(), username);
+    userWithTheNewUsername = sofiaUserManager.findById(account.getId(), username);
 
     if (userWithTheNewUsername == null || userWithTheNewUsername.getId() == id) {
       return ResponseEntity.ok(new SofiaRestResponse<>(SofiaRestResponse.OK, "validUsername"));
@@ -243,37 +244,37 @@ public class UsersController extends SofiaAuthorizedController {
     }
 
     SofiaRestResponse<?> userRestResponse;
-    UserList userList = userManager.findAll(account);
-    RestUserList restList = businessToRestUserListMapper.map(userList);
+    SofiaUserList sofiaUserList = sofiaUserManager.findAll(account);
+    RestSofiaUserList restList = businessToRestUserListMapper.map(sofiaUserList);
     userRestResponse = new ListRestResponse<>(SofiaRestResponse.OK, "List retrieved", restList);
     return ResponseEntity.ok(userRestResponse);
   }
 
   @PostMapping("/v1/users")
-  public ResponseEntity<?> create(HttpServletRequest request, @RequestBody RestUser restUserToSave) throws IOException {
+  public ResponseEntity<?> create(HttpServletRequest request, @RequestBody RestSofiaUser restSofiaUserToSave) throws IOException {
     log.debug("Create a new user");
 
     Account account = accountManager.getAccount(request);
 
-    restUserToSave.setAccount(account);
+    restSofiaUserToSave.setAccount(account);
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
       return result;
     }
 
-    SofiaUser newUser = restToBusinessUserMapper.map(restUserToSave);
+    SofiaUser newUser = restToBusinessUserMapper.map(restSofiaUserToSave);
 
-    SofiaUser user = userManager.create(account, newUser.getUsername(), newUser.getGroups(), newUser.getLocale(), newUser.isEnabled()
+    SofiaUser user = sofiaUserManager.create(account, newUser.getUsername(), newUser.getGroups(), newUser.getLocale(), newUser.isEnabled()
     );
-    RestUser restUser = businessToRestUserMapper.map(user);
+    RestSofiaUser restSofiaUser = businessToRestUserMapper.map(user);
 
-    UserRestResponse userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Retrieve user " + restUser.getId(), restUser);
-    return ResponseEntity.ok(userRestResponse);
+    SofiaUserRestResponse sofiaUserRestResponse = new SofiaUserRestResponse(SofiaRestResponse.OK, "Retrieve user " + restSofiaUser.getId(), restSofiaUser);
+    return ResponseEntity.ok(sofiaUserRestResponse);
   }
 
   @PutMapping("/v1/users/{id}")
-  public ResponseEntity<?> update(HttpServletRequest request, @PathVariable Integer id, @RequestBody RestUser restUserToUpdate) throws IOException {
+  public ResponseEntity<?> update(HttpServletRequest request, @PathVariable Integer id, @RequestBody RestSofiaUser restSofiaUserToUpdate) throws IOException {
     log.debug("Update an existing user");
 
     Account account = accountManager.getAccount(request);
@@ -283,14 +284,14 @@ public class UsersController extends SofiaAuthorizedController {
       return result;
     }
 
-    restUserToUpdate.setAccount(account);
+    restSofiaUserToUpdate.setAccount(account);
 
-    SofiaUser userToUpdate = restToBusinessUserMapper.map(restUserToUpdate);
-    SofiaUser updatedUser = userManager.update(id, userToUpdate);
-    RestUser restUser = businessToRestUserMapper.map(updatedUser);
-    restUser.setAccount(account);
-    UserRestResponse userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Retrieve user " + id, restUser);
-    return ResponseEntity.ok(userRestResponse);
+    SofiaUser userToUpdate = restToBusinessUserMapper.map(restSofiaUserToUpdate);
+    SofiaUser updatedUser = sofiaUserManager.update(id, userToUpdate);
+    RestSofiaUser restSofiaUser = businessToRestUserMapper.map(updatedUser);
+    restSofiaUser.setAccount(account);
+    SofiaUserRestResponse sofiaUserRestResponse = new SofiaUserRestResponse(SofiaRestResponse.OK, "Retrieve user " + id, restSofiaUser);
+    return ResponseEntity.ok(sofiaUserRestResponse);
   }
 
   @DeleteMapping("/v1/users/{id}")
@@ -304,9 +305,9 @@ public class UsersController extends SofiaAuthorizedController {
       return result;
     }
 
-    userManager.delete(account.getId(), id);
-    UserRestResponse userRestResponse = new UserRestResponse(SofiaRestResponse.OK, "Delete user " + id, null);
-    return ResponseEntity.ok(userRestResponse);
+    sofiaUserManager.delete(account.getId(), id);
+    SofiaUserRestResponse sofiaUserRestResponse = new SofiaUserRestResponse(SofiaRestResponse.OK, "Delete user " + id, null);
+    return ResponseEntity.ok(sofiaUserRestResponse);
   }
 
   @PutMapping("/v1/users/{id}/password")
@@ -322,7 +323,7 @@ public class UsersController extends SofiaAuthorizedController {
     }
 
     try {
-      userManager.updatePassword(site, account, id);
+      sofiaUserManager.updatePassword(site, account, id);
     } catch (SendEMailException e) {
       return ResponseEntity.ok(new SofiaRestResponse<>(SofiaRestResponse.ERROR, e.getMessage(), null));
     } catch (FileNotFoundException e) {

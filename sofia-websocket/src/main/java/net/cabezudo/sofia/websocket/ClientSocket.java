@@ -2,6 +2,7 @@ package net.cabezudo.sofia.websocket;
 
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.sites.Site;
+
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -26,8 +27,7 @@ public class ClientSocket implements Comparable<ClientSocket> {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof ClientSocket)) return false;
-    ClientSocket that = (ClientSocket) o;
+    if (!(o instanceof ClientSocket that)) return false;
     return session.getId().equals(that.session.getId());
   }
 

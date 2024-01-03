@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.places;
 
+
 import java.util.Objects;
 
 public final class AdministrativeDivision {

@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.accounts.persistence;
 
+
 import java.util.Objects;
 
 public final class AccountUserRelationEntity {

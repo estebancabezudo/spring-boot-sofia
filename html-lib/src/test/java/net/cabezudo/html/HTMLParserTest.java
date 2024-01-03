@@ -30,6 +30,7 @@ import net.cabezudo.html.nodes.Element;
 import net.cabezudo.html.nodes.Node;
 import net.cabezudo.html.nodes.Nodes;
 import net.cabezudo.html.nodes.TextNode;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -31,6 +31,7 @@ import net.cabezudo.html.tokens.StartTagToken;
 import net.cabezudo.html.tokens.Token;
 import net.cabezudo.html.tokens.TokenAttribute;
 
+
 /**
  * @author <a href="http://cabezudo.net">Esteban Cabezudo</a>
  * @version 0.01.00, 2022.03.05
@@ -50,20 +51,17 @@ public class NodeFactory {
   }
 
   public static Node get(Token currentToken, Node parent) {
-    if (currentToken instanceof BogusCommentToken) {
-      BogusCommentToken token = (BogusCommentToken) currentToken;
+    if (currentToken instanceof BogusCommentToken token) {
       Comment comment = new Comment(token.getData(), currentToken.getPosition());
       comment.setParent(parent);
       return comment;
     }
-    if (currentToken instanceof CommentToken) {
-      CommentToken token = (CommentToken) currentToken;
+    if (currentToken instanceof CommentToken token) {
       Comment comment = new Comment("!--" + token.getData() + "--", currentToken.getPosition());
       comment.setParent(parent);
       return comment;
     }
-    if (currentToken instanceof DoctypeToken) {
-      DoctypeToken token = (DoctypeToken) currentToken;
+    if (currentToken instanceof DoctypeToken token) {
       DoctypeNode doctype = new DoctypeNode(token.getRootElement(), token.getDTDType(), token.getIdentifiers(), currentToken.getPosition());
       doctype.setParent(parent);
       return doctype;

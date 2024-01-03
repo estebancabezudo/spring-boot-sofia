@@ -3,6 +3,7 @@ package net.cabezudo.sofia.places.mappers;
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.places.Place;
 import net.cabezudo.sofia.places.persistence.PlaceEntity;
+
 import org.springframework.stereotype.Component;
 
 @Component

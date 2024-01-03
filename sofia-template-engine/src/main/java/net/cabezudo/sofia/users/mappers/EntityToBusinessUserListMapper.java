@@ -3,8 +3,9 @@ package net.cabezudo.sofia.users.mappers;
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.core.persistence.EntityList;
-import net.cabezudo.sofia.users.persistence.UserEntity;
-import net.cabezudo.sofia.users.service.UserList;
+import net.cabezudo.sofia.users.persistence.SofiaUserEntity;
+import net.cabezudo.sofia.users.service.SofiaUserList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,26 +14,26 @@ public class EntityToBusinessUserListMapper {
 
   private @Autowired EntityToBusinessUserMapper entityToBusinessUserMapper;
 
-  public UserList map(AccountEntity accountEntity, EntityList<UserEntity> entityList) {
+  public SofiaUserList map(AccountEntity accountEntity, EntityList<SofiaUserEntity> entityList) {
     int total = entityList.getTotal();
     int start = entityList.getStart();
     int size = entityList.size();
-    UserList list = new UserList(total, start, size);
+    SofiaUserList list = new SofiaUserList(total, start, size);
 
-    for (UserEntity userEntity : entityList) {
-      list.add(entityToBusinessUserMapper.map(userEntity));
+    for (SofiaUserEntity sofiaUserEntity : entityList) {
+      list.add(entityToBusinessUserMapper.map(sofiaUserEntity));
     }
     return list;
   }
 
-  public UserList map(Account account, EntityList<UserEntity> entityList) {
+  public SofiaUserList map(Account account, EntityList<SofiaUserEntity> entityList) {
     int total = entityList.getTotal();
     int start = entityList.getStart();
     int size = entityList.size();
-    UserList list = new UserList(total, start, size);
+    SofiaUserList list = new SofiaUserList(total, start, size);
 
-    for (UserEntity userEntity : entityList) {
-      list.add(entityToBusinessUserMapper.map(userEntity));
+    for (SofiaUserEntity sofiaUserEntity : entityList) {
+      list.add(entityToBusinessUserMapper.map(sofiaUserEntity));
     }
     return list;
   }

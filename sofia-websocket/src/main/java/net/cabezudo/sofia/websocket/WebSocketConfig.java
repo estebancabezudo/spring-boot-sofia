@@ -2,6 +2,7 @@ package net.cabezudo.sofia.websocket;
 
 import net.cabezudo.sofia.accounts.service.AccountManager;
 import net.cabezudo.sofia.sites.service.SiteManager;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

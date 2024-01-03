@@ -5,6 +5,7 @@ import net.cabezudo.sofia.countries.CountryManager;
 import net.cabezudo.sofia.places.AdministrativeDivisionList;
 import net.cabezudo.sofia.places.Place;
 import net.cabezudo.sofia.places.rest.RestPlace;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

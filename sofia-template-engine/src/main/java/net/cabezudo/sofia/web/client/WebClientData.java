@@ -2,6 +2,7 @@ package net.cabezudo.sofia.web.client;
 
 import net.cabezudo.sofia.accounts.service.Account;
 
+
 import java.sql.Date;
 
 public class WebClientData {

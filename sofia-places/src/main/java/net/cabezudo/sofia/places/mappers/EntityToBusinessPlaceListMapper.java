@@ -5,6 +5,7 @@ import net.cabezudo.sofia.places.PlaceList;
 import net.cabezudo.sofia.places.persistence.AdministrativeDivisionEntity;
 import net.cabezudo.sofia.places.persistence.AdministrativeDivisionEntityList;
 import net.cabezudo.sofia.places.persistence.PlaceEntity;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

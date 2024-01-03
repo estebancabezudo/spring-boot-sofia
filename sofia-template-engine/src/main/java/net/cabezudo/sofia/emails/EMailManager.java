@@ -10,7 +10,7 @@ import net.cabezudo.sofia.core.templates.MailTemplate;
 import net.cabezudo.sofia.hostnames.DomainNameValidationException;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.users.service.Password;
-import org.jetbrains.annotations.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +74,7 @@ public class EMailManager {
     return "passwordUpdatedTemplate.html";
   }
 
-  public void sendPasswordUpdated(String fromName, EMail eMailFrom, String userName, EMail eMail, @NotNull Locale locale, Password password, Site site) throws SendEMailException {
+  public void sendPasswordUpdated(String fromName, EMail eMailFrom, String userName, EMail eMail, Locale locale, Password password, Site site) throws SendEMailException {
     File passwordUpdatedTemplateFileName = sofiaEnvironment.getSystemTemplatesPath().resolve("passwordUpdated-" + locale + ".txt").toFile();
     MailTemplate mailTemplate;
     try {

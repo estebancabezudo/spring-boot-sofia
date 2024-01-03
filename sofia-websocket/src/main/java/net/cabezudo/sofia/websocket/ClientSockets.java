@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.websocket;
 
+
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.Iterator;

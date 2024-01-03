@@ -20,17 +20,16 @@ public abstract class SofiaAuthorizedController extends SofiaController {
 
   private @Autowired SofiaEnvironment sofiaEnvironment;
 
-  protected ResponseEntity<SofiaRestResponse<?>> checkPermissionFor(Account account, String group) {
+  protected ResponseEntity<SofiaRestResponse<?>> checkPermissionFor(Account account, String... groups) {
     SofiaUser user = sofiaSecurityManager.getLoggedUser();
     if (user == null) {
       log.debug("The user is null");
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new SofiaRestResponse<>(SofiaRestResponse.ERROR, "Not logged"));
     }
-    if (permissionManager.hasPermission(account.getSite(), account, user, group, sofiaEnvironment.isSecurityActive())) {
+    if (permissionManager.hasPermission(account.getSite(), account, user, sofiaEnvironment.isSecurityActive(), groups)) {
       return null;
     }
-    log.debug("The user(" + user.getUsername() + ") HAS NOT not permission(group=" + group + ") for th account (" + account.getName() + "(" + account.getId() + "))");
-    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new SofiaRestResponse<>(SofiaRestResponse.ERROR, "The user(" + user + ") has not permission(group=" + group + ") for th account (" + account + ")"));
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new SofiaRestResponse<>(SofiaRestResponse.ERROR, "The user(" + user + ") has not permission(" + groups + ") for th account (" + account + ")"));
   }
 
   protected ResponseEntity<SofiaRestResponse<?>> isLogged() {

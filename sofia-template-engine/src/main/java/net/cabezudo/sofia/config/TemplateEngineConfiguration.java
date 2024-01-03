@@ -4,6 +4,7 @@ import net.cabezudo.sofia.core.SofiaEnvironment;
 import net.cabezudo.sofia.core.SofiaResourceResolver;
 import net.cabezudo.sofia.sites.service.PathManager;
 import net.cabezudo.sofia.sites.service.SiteManager;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;

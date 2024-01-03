@@ -1,6 +1,6 @@
 package net.cabezudo.sofia.users.service;
 
-import org.jetbrains.annotations.NotNull;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -46,7 +46,6 @@ public class Groups implements Iterable<Group> {
     return list.size();
   }
 
-  @NotNull
   @Override
   public Iterator<Group> iterator() {
     return list.iterator();

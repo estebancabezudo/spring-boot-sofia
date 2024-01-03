@@ -1,7 +1,7 @@
 package net.cabezudo.sofia.accounts.service;
 
 import net.cabezudo.sofia.sites.Site;
-import org.jetbrains.annotations.NotNull;
+
 
 import java.util.Objects;
 
@@ -10,7 +10,7 @@ public class Account implements Comparable<Account> {
   private final Site site;
   private final String name;
 
-  public Account(Integer id, @NotNull Site site, @NotNull String name) {
+  public Account(Integer id, Site site, String name) {
     this.id = id;
     this.site = site;
     this.name = name;
@@ -34,8 +34,7 @@ public class Account implements Comparable<Account> {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof Account)) return false;
-    Account account = (Account) o;
+    if (!(o instanceof Account account)) return false;
     return getId().equals(account.getId());
   }
 
@@ -49,7 +48,7 @@ public class Account implements Comparable<Account> {
   }
 
   @Override
-  public int compareTo(@NotNull Account o) {
+  public int compareTo(Account o) {
     return Integer.compare(this.id, o.id);
   }
 }

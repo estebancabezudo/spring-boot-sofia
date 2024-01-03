@@ -4,13 +4,14 @@ import net.cabezudo.sofia.core.SofiaEnvironment;
 import net.cabezudo.sofia.security.oauth2.SofiaOAuth2AuthenticationFailureHandler;
 import net.cabezudo.sofia.security.oauth2.SofiaOAuth2AuthenticationSuccessHandler;
 import net.cabezudo.sofia.sites.service.SiteManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -25,7 +26,7 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
  */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
+@EnableMethodSecurity(securedEnabled = true)
 @ComponentScan
 public class SecurityConfiguration {
   private static final Logger log = LoggerFactory.getLogger(SecurityConfiguration.class);
@@ -33,7 +34,6 @@ public class SecurityConfiguration {
   private @Autowired UrlAuthenticationFilter urlAuthenticationFilter;
   private @Autowired SofiaEnvironment sofiaEnvironment;
   private @Autowired SiteManager siteManager;
-  private @Autowired CustomDetailsService customDetailsService;
   private @Autowired SofiaAuthorizationManager sofiaAuthorizationManager;
 
   @Bean

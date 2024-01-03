@@ -14,8 +14,7 @@ public class GroupEntity {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof GroupEntity)) return false;
-    GroupEntity that = (GroupEntity) o;
+    if (!(o instanceof GroupEntity that)) return false;
     return accountUserId == that.accountUserId && getName().equals(that.getName());
   }
 

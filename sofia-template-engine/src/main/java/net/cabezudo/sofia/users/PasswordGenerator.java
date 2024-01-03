@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.users;
 
+
 import java.security.SecureRandom;
 
 public class PasswordGenerator {

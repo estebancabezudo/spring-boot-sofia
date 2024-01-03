@@ -9,18 +9,18 @@ import net.cabezudo.sofia.people.mappers.EntityToBusinessPersonMapper;
 import net.cabezudo.sofia.people.persistence.PeopleRepository;
 import net.cabezudo.sofia.people.persistence.PersonEntity;
 import net.cabezudo.sofia.users.service.SofiaUser;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
 import java.sql.Date;
 
 @Service
 @Transactional
 public class PeopleManager {
-  private @Resource PeopleRepository peopleRepository;
+  private @Autowired PeopleRepository peopleRepository;
 
   private @Autowired EntityToBusinessPersonMapper entityToBusinessPersonMapper;
 

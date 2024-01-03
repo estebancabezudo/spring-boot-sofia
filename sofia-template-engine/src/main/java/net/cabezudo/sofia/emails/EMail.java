@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.emails;
 
+
 public class EMail {
   public static final int MAX_LENGTH = 200;
 

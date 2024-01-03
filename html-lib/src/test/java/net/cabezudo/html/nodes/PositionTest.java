@@ -1,18 +1,18 @@
 /**
  * MIT License
- *
+ * <p>
  * Copyright (c) 2016 - 2022 Esteban Cabezudo
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -41,12 +41,11 @@ public class PositionTest {
     Position line = new Position(0, 4);
     Position row = new Position(1, 0);
 
-    Assertions.assertTrue(position.equals(position));
-    Assertions.assertFalse(position.equals((Object) null));
-    Assertions.assertFalse(position.equals("string"));
-    Assertions.assertFalse(position.equals(andOther));
-    Assertions.assertFalse(position.equals(andOtherMore));
-    Assertions.assertTrue(position.equals(other));
+    Assertions.assertEquals(position, position);
+    Assertions.assertNotEquals(null, position);
+    Assertions.assertNotEquals(position, andOther);
+    Assertions.assertNotEquals(position, andOtherMore);
+    Assertions.assertEquals(position, other);
     Assertions.assertEquals(position.hashCode(), other.hashCode());
     Assertions.assertEquals("1:3", position.toString());
     Assertions.assertEquals(":4", line.toString());

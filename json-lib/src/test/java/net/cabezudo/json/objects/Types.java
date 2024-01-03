@@ -3,6 +3,7 @@ package net.cabezudo.json.objects;
 import net.cabezudo.json.annotations.JSONProperty;
 import net.cabezudo.json.values.JSONNumber;
 
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
@@ -55,7 +56,7 @@ public class Types {
   private final Integer oInteger = 6;
 
   @JSONProperty // 13
-  private final Long oLong = 8l;
+  private final Long oLong = 8L;
 
   @JSONProperty // 14
   private final Short oShort = 4;

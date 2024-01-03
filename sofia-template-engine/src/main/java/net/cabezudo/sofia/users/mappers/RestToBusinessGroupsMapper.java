@@ -4,6 +4,7 @@ import net.cabezudo.sofia.users.service.Group;
 import net.cabezudo.sofia.users.service.Groups;
 import net.cabezudo.sofia.users.rest.RestGroup;
 import net.cabezudo.sofia.users.rest.RestGroups;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

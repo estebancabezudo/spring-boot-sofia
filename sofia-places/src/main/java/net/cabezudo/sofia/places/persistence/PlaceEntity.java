@@ -1,6 +1,7 @@
 package net.cabezudo.sofia.places.persistence;
 
-import javax.persistence.Column;
+import jakarta.persistence.Column;
+
 
 public class PlaceEntity {
 

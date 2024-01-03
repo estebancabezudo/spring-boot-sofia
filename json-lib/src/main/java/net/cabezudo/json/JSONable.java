@@ -49,14 +49,13 @@ public interface JSONable {
 
   /**
    * Return a indent string representation for this object.
-   *
    */
   String toFormatedString();
 
   /**
    * Return a string representation for this object with the indent the specified in the parameter.
    *
-   * @param sb An object {@code StringBuilder} to put the string.
+   * @param sb      An object {@code StringBuilder} to put the string.
    * @param indent, boolean includeFirst a {@code int} with the indent number for this block of code
    */
   void toFormattedString(StringBuilder sb, int indent, boolean includeFirst);

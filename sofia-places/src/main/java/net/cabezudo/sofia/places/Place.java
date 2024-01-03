@@ -2,6 +2,7 @@ package net.cabezudo.sofia.places;
 
 import net.cabezudo.sofia.countries.Country;
 
+
 import java.util.Objects;
 
 public final class Place {

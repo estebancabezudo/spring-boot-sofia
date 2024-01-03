@@ -18,7 +18,7 @@ public class EntityToBusinessAdministrativeDivisionListMapper {
     for (AdministrativeDivisionEntity administrativeDivisionEntity : administrativeDivisionEntityList) {
       int id = administrativeDivisionEntity.getId();
       int administrativeDivisionTypeEntityId = administrativeDivisionEntity.getAdministrativeDivisionTypeEntityId();
-      String administrativeDivisionTypeEntityName = administrativeDivisionEntity.getAdministrativeDivisiónTypeEntityName();
+      String administrativeDivisionTypeEntityName = administrativeDivisionEntity.getAdministrativeDivisionTypeEntityName();
       AdministrativeDivisionType type = new AdministrativeDivisionType(administrativeDivisionTypeEntityId, administrativeDivisionTypeEntityName);
       String name = administrativeDivisionEntity.getName();
       AdministrativeDivision administrativeDivision = new AdministrativeDivision(id, type, name);

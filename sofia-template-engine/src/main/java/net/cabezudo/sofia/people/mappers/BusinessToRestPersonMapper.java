@@ -3,6 +3,7 @@ package net.cabezudo.sofia.people.mappers;
 import net.cabezudo.sofia.people.Person;
 import net.cabezudo.sofia.people.rest.RestPerson;
 
+
 import java.util.Date;
 
 public class BusinessToRestPersonMapper {

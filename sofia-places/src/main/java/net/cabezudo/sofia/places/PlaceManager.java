@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.places;
 
+import jakarta.transaction.Transactional;
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.core.persistence.EntityList;
 import net.cabezudo.sofia.places.mappers.BusinessToEntityPlaceMapper;
@@ -14,11 +15,10 @@ import net.cabezudo.sofia.places.persistence.AdministrativeDivisionTypeEntity;
 import net.cabezudo.sofia.places.persistence.AdministrativeDivisionTypeRepository;
 import net.cabezudo.sofia.places.persistence.PlaceEntity;
 import net.cabezudo.sofia.places.persistence.PlacesRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,12 +27,12 @@ import java.util.List;
 public class PlaceManager {
   private @Autowired BusinessToEntityPlaceMapper businessToEntityPlaceMapper;
   private @Autowired EntityToBusinessPlaceMapper entityToBusinessPlaceMapper;
-  private @Resource AdministrativeDivisionRepository administrativeDivisionRepository;
+  private @Autowired AdministrativeDivisionRepository administrativeDivisionRepository;
   private @Autowired EntityToBusinessPlaceListMapper entityToBusinessPlaceListMapper;
 
-  private @Resource PlacesRepository placesRepository;
-  private @Resource AdministrativeDivisionNameRepository administrativeDivisionNameRepository;
-  private @Resource AdministrativeDivisionTypeRepository administrativeDivisionTypeRepository;
+  private @Autowired PlacesRepository placesRepository;
+  private @Autowired AdministrativeDivisionNameRepository administrativeDivisionNameRepository;
+  private @Autowired AdministrativeDivisionTypeRepository administrativeDivisionTypeRepository;
 
   public PlaceList findAll(Account account, boolean includeAdministrativeDivisions) {
     final EntityList<PlaceEntity> entityList = placesRepository.findAll(account.getId());

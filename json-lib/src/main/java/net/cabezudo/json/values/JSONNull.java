@@ -25,6 +25,7 @@ package net.cabezudo.json.values;
 
 import net.cabezudo.json.Position;
 
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

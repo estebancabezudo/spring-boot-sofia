@@ -41,7 +41,7 @@ public class UserPreferencesRepository {
   public void update(int userId, String name, String value) {
     PreparedStatementCreator preparedStatementCreator = connection -> {
       log.debug("Set values for preferences: value = " + value + " WHERE user_id = " + userId + " AND name = " + name);
-      String query = "INSERT INTO user_preferences (name, user_id, value) VALUES (?, ? ,?) ON DUPLICATE KEY UPDATE name = VALUES(name), user_id = VALUES(user_id), value = VALUES(value)";
+      String query = "INSERT INTO user_preferences (name, user_id, value) VALUES (?, ? ,?) AS result ON DUPLICATE KEY UPDATE name = VALUES(name), user_id = VALUES(user_id), value = VALUES(value)";
       PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
       ps.setString(1, name);
       ps.setInt(2, userId);

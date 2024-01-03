@@ -1,7 +1,7 @@
 package net.cabezudo.sofia.security;
 
 import net.cabezudo.html.InvalidParameterException;
-import org.jetbrains.annotations.NotNull;
+
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
@@ -59,7 +59,7 @@ public class Permission implements Comparable<Permission> {
   }
 
   @Override
-  public int compareTo(@NotNull Permission permission) {
+  public int compareTo(Permission permission) {
     return this.data.compareTo(permission.getData());
   }
 

@@ -1,6 +1,7 @@
 package net.cabezudo.sofia.emails.mappers;
 
 import net.cabezudo.sofia.emails.persistence.EMailEntity;
+
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

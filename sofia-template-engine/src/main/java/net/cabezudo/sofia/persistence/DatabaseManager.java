@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.persistence;
 
+
 import org.jspecify.nullness.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;

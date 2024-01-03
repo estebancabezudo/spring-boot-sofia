@@ -1,5 +1,7 @@
 package net.cabezudo.sofia.websocket;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.service.AccountManager;
 import net.cabezudo.sofia.sites.Site;
@@ -10,8 +12,6 @@ import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 public class SofiaWebServiceHandshakeInterceptor extends HttpSessionHandshakeInterceptor {
@@ -26,8 +26,7 @@ public class SofiaWebServiceHandshakeInterceptor extends HttpSessionHandshakeInt
 
   @Override
   public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-    if (request instanceof ServletServerHttpRequest) {
-      ServletServerHttpRequest servletServerHttpRequest = (ServletServerHttpRequest) request;
+    if (request instanceof ServletServerHttpRequest servletServerHttpRequest) {
       HttpServletRequest servletRequest = servletServerHttpRequest.getServletRequest();
       HttpSession session = servletRequest.getSession();
 

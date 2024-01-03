@@ -1,9 +1,9 @@
 package net.cabezudo.sofia.web;
 
-import org.springframework.stereotype.Component;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Component;
 
 @Component
 public class CookieManager {

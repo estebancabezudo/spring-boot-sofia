@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.countries;
 
+
 import java.util.Objects;
 
 public final class Country {

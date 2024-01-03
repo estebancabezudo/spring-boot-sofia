@@ -9,7 +9,6 @@
     <version>1.0.0</version>
   </parent>
 
-  <groupId>net.cabezudo.sofia</groupId>
   <artifactId>sofia-items</artifactId>
   <version>1.0.0</version>
   <packaging>jar</packaging>

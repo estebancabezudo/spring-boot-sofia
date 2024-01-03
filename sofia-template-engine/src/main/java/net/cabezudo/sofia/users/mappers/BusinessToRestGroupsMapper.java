@@ -5,6 +5,7 @@ import net.cabezudo.sofia.users.service.Groups;
 import net.cabezudo.sofia.users.rest.RestGroup;
 import net.cabezudo.sofia.users.rest.RestGroups;
 
+
 public class BusinessToRestGroupsMapper {
   public RestGroups map(Groups gs) {
     RestGroups groups = new RestGroups();

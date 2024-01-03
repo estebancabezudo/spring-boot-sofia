@@ -2,6 +2,7 @@ package net.cabezudo.sofia.web.client.persistence;
 
 import net.cabezudo.sofia.core.Stopwatch;
 import net.cabezudo.sofia.persistence.DatabaseManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

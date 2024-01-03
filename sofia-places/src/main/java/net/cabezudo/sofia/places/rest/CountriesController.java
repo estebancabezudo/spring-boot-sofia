@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.places.rest;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.service.AccountManager;
 import net.cabezudo.sofia.core.rest.ListRestResponse;
@@ -7,7 +8,7 @@ import net.cabezudo.sofia.core.rest.RestList;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.users.service.Group;
-import org.jetbrains.annotations.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-
 @Controller
 @ResponseBody
 public class CountriesController extends SofiaAuthorizedController {
@@ -26,7 +25,7 @@ public class CountriesController extends SofiaAuthorizedController {
   private @Autowired AccountManager accountManager;
 
   @GetMapping("/v1/countries/codes/{countryCode}/codes")
-  public ResponseEntity<?> listAll(HttpServletRequest request, @PathVariable @NotNull String countryCode) {
+  public ResponseEntity<?> listAll(HttpServletRequest request, @PathVariable String countryCode) {
     log.debug("Get list of codes for " + countryCode);
     ListRestResponse<String> listRestResponse;
 

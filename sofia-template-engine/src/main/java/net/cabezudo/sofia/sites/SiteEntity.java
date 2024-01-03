@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.sites;
 
+
 import java.util.Objects;
 
 public final class SiteEntity {

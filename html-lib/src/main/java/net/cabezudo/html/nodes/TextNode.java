@@ -25,6 +25,7 @@ package net.cabezudo.html.nodes;
 
 import net.cabezudo.html.InvalidOperationException;
 
+
 /**
  * @author <a href="http://cabezudo.net">Esteban Cabezudo</a>
  * @version 0.01.00, 2022.02.26

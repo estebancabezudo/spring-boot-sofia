@@ -25,6 +25,7 @@ package net.cabezudo.json.values;
 
 import net.cabezudo.json.Position;
 
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -270,6 +271,6 @@ public class JSONBoolean extends JSONValue<JSONBoolean> {
 
   @Override
   public void toFormattedString(StringBuilder sb, int indent, boolean includeFirst) {
-    sb.append(value.toString());
+    sb.append(value);
   }
 }

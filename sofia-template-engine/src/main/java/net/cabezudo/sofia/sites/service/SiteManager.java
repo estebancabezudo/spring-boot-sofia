@@ -1,5 +1,6 @@
 package net.cabezudo.sofia.sites.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.cabezudo.sofia.config.ConfigurationFileYAMLLoginData;
 import net.cabezudo.sofia.config.ConfigurationFileYAMLMailData;
 import net.cabezudo.sofia.config.ConfigurationFileYAMLSiteData;
@@ -10,13 +11,12 @@ import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteEntity;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.sites.persistence.SiteRepository;
-import org.jetbrains.annotations.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -33,7 +33,7 @@ public class SiteManager {
   private final Map<Integer, Site> siteById = new TreeMap<>();
   private @Autowired SiteRepository siteRepository;
 
-  public void add(ConfigurationFileYAMLSiteData configurationFileYAMLSiteData, @NotNull Host host, boolean toDatabase) {
+  public void add(ConfigurationFileYAMLSiteData configurationFileYAMLSiteData, Host host, boolean toDatabase) {
     String siteName = configurationFileYAMLSiteData.getName();
     ConfigurationFileYAMLMailData mail = configurationFileYAMLSiteData.getMail();
     ConfigurationFileYAMLLoginData login = configurationFileYAMLSiteData.getLogin();

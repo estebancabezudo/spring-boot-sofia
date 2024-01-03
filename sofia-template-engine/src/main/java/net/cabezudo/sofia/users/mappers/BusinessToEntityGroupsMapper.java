@@ -4,6 +4,7 @@ import net.cabezudo.sofia.users.service.Group;
 import net.cabezudo.sofia.users.service.Groups;
 import net.cabezudo.sofia.users.persistence.GroupEntity;
 import net.cabezudo.sofia.users.persistence.GroupsEntity;
+
 import org.springframework.stereotype.Component;
 
 @Component

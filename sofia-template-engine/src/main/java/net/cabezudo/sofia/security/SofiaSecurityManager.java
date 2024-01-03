@@ -1,5 +1,7 @@
 package net.cabezudo.sofia.security;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
 import net.cabezudo.sofia.accounts.persistence.AccountUserRelationEntity;
@@ -16,14 +18,15 @@ import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.sites.service.SiteManager;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
 import net.cabezudo.sofia.users.mappers.EntityToBusinessUserMapper;
-import net.cabezudo.sofia.users.persistence.UserEntity;
-import net.cabezudo.sofia.users.persistence.UserRepository;
+import net.cabezudo.sofia.users.persistence.SofiaUserEntity;
+import net.cabezudo.sofia.users.persistence.SofiaUserRepository;
 import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.web.client.Language;
 import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
 import net.cabezudo.sofia.web.user.WebUserData;
 import net.cabezudo.sofia.web.user.WebUserDataManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +38,6 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 import java.util.Locale;
 
 @Service
@@ -44,7 +45,7 @@ public class SofiaSecurityManager {
 
   private static final Logger log = LoggerFactory.getLogger(SofiaSecurityManager.class);
   private @Autowired AccountRepository accountRepository;
-  private @Autowired UserRepository userRepository;
+  private @Autowired SofiaUserRepository sofiaUserRepository;
   private @Autowired EntityToBusinessUserMapper entityToBusinessUserMapper;
   private @Autowired EMailRepository emailRepository;
   private @Autowired HttpServletRequest request;
@@ -69,15 +70,13 @@ public class SofiaSecurityManager {
       return userFromSession;
     }
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication instanceof UsernamePasswordAuthenticationToken) {
-      UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = (UsernamePasswordAuthenticationToken) authentication;
+    if (authentication instanceof UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) {
       SofiaUser user = (SofiaUser) usernamePasswordAuthenticationToken.getPrincipal();
       setUserInWebUserData(webClientData, webUserData, user, user.getAccount());
       return user;
     }
 
-    if (authentication instanceof OAuth2AuthenticationToken) {
-      OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
+    if (authentication instanceof OAuth2AuthenticationToken oAuth2AuthenticationToken) {
       OAuth2User principal = oAuth2AuthenticationToken.getPrincipal();
 
       Site site;
@@ -117,20 +116,20 @@ public class SofiaSecurityManager {
         setUserInWebUserData(webClientData, webUserData, newUser, account);
         user = newUser;
       } else {
-        final UserEntity userEntity = userRepository.findByEmailAndAccount(accountEntity.getId(), email);
-        if (userEntity == null) {
+        final SofiaUserEntity sofiaUserEntity = sofiaUserRepository.findByEmailAndAccount(accountEntity.getId(), email);
+        if (sofiaUserEntity == null) {
           throw new UsernameNotFoundException(email);
         }
 
         Account accountFromWebClientData = webClientData.getAccount();
         if (accountFromWebClientData != null) {
-          AccountUserRelationEntity accountUserRelation = accountRepository.getByAccountAndUser(accountFromWebClientData.getId(), userEntity.getId());
+          AccountUserRelationEntity accountUserRelation = accountRepository.getByAccountAndUser(accountFromWebClientData.getId(), sofiaUserEntity.getId());
           if (accountUserRelation == null) {
-            accountRepository.createAccountUserRelation(accountFromWebClientData.getId(), userEntity.getId(), false);
+            accountRepository.createAccountUserRelation(accountFromWebClientData.getId(), sofiaUserEntity.getId(), false);
           }
         }
 
-        user = entityToBusinessUserMapper.map(userEntity);
+        user = entityToBusinessUserMapper.map(sofiaUserEntity);
 
         Account accountToSetInUserData;
         if (accountFromWebClientData == null) {
@@ -197,10 +196,10 @@ public class SofiaSecurityManager {
     }
 
     int userEntityId;
-    Integer userEntityIdFromDatabase = userRepository.getIdByEMail(emailForAccount.getId());
+    Integer userEntityIdFromDatabase = sofiaUserRepository.getIdByEMail(emailForAccount.getId());
     if (userEntityIdFromDatabase == null) {
-      UserEntity userEntity = userRepository.create(emailForAccount, locale.toString(), true);
-      userEntityId = userEntity.getId();
+      SofiaUserEntity sofiaUserEntity = sofiaUserRepository.create(emailForAccount, locale.toString(), true);
+      userEntityId = sofiaUserEntity.getId();
     } else {
       userEntityId = userEntityIdFromDatabase;
     }
@@ -217,8 +216,7 @@ public class SofiaSecurityManager {
     }
     accountRepository.createAccountUserRelation(userAccountEntity.getId(), userEntityId, true);
 
-    UserEntity newUser = userRepository.get(userEntityId);
-    SofiaUser user = entityToBusinessUserMapper.map(newUser);
-    return user;
+    SofiaUserEntity newUser = sofiaUserRepository.get(userEntityId);
+    return entityToBusinessUserMapper.map(newUser);
   }
 }

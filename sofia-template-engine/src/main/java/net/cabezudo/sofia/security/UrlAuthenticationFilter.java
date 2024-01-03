@@ -1,5 +1,9 @@
 package net.cabezudo.sofia.security;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
 import net.cabezudo.sofia.core.SofiaEnvironment;
@@ -8,7 +12,8 @@ import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.sites.service.SiteManager;
 import net.cabezudo.sofia.users.service.SofiaUser;
-import net.cabezudo.sofia.users.service.UserManager;
+import net.cabezudo.sofia.users.service.SofiaUserManager;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,10 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 
@@ -29,7 +30,7 @@ public class UrlAuthenticationFilter extends OncePerRequestFilter {
   private static final String ACCOUNT_PARAMETER = "account";
   private static final String USER_PARAMETER = "user";
 
-  private @Autowired UserManager userManager;
+  private @Autowired SofiaUserManager sofiaUserManager;
   private @Autowired AccountRepository accountRepository;
   private @Autowired SiteManager siteManager;
   private @Autowired SofiaEnvironment sofiaEnvironment;
@@ -44,7 +45,7 @@ public class UrlAuthenticationFilter extends OncePerRequestFilter {
       SofiaUser user;
       if (Numbers.isInteger(accountParameter)) {
         int accountId = Integer.parseInt(accountParameter);
-        user = userManager.findById(accountId, email);
+        user = sofiaUserManager.findById(accountId, email);
       } else {
         Site site = null;
         try {
@@ -54,7 +55,7 @@ public class UrlAuthenticationFilter extends OncePerRequestFilter {
         }
         // TODO create a find by email for user without search first the account for the email
         AccountEntity accountEntity = accountRepository.getAccountOwnedByEMail(site.getId(), email);
-        user = userManager.findById(accountEntity.getId(), email);
+        user = sofiaUserManager.findById(accountEntity.getId(), email);
       }
 
       Authentication auth = new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());

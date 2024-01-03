@@ -1,6 +1,5 @@
 package net.cabezudo.sofia.core.rest;
 
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,7 +45,6 @@ public class RestList<R> implements Iterable<R> {
     return list.add(o);
   }
 
-  @NotNull
   @Override
   public Iterator<R> iterator() {
     return list.iterator();

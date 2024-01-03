@@ -5,6 +5,7 @@ import net.cabezudo.sofia.users.service.Groups;
 import net.cabezudo.sofia.users.persistence.GroupEntity;
 import net.cabezudo.sofia.users.persistence.GroupsEntity;
 
+
 public class EntityToBusinessGroupsMapper {
   public Groups map(GroupsEntity groupsEntity) {
     Groups groups = new Groups();

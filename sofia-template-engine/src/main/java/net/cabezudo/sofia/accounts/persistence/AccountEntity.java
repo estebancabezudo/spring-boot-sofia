@@ -1,6 +1,5 @@
 package net.cabezudo.sofia.accounts.persistence;
 
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -9,7 +8,7 @@ public final class AccountEntity {
   private final int siteId;
   private final String name;
 
-  public AccountEntity(int id, int siteId, @NotNull String name) {
+  public AccountEntity(int id, int siteId, String name) {
     this.id = id;
     this.siteId = siteId;
     this.name = name;
