@@ -5,12 +5,14 @@ import net.cabezudo.sofia.config.mail.NamedEMail;
 import net.cabezudo.sofia.config.mail.SendEMailException;
 import net.cabezudo.sofia.config.mail.SofiaMailMessage;
 import net.cabezudo.sofia.core.SofiaEnvironment;
-import net.cabezudo.sofia.core.hostname.HostnameManager;
 import net.cabezudo.sofia.core.templates.MailTemplate;
+import net.cabezudo.sofia.emails.mappers.EntityToBusinessEMailMapper;
+import net.cabezudo.sofia.emails.persistence.EMailEntity;
+import net.cabezudo.sofia.emails.persistence.EMailRepository;
 import net.cabezudo.sofia.hostnames.DomainNameValidationException;
+import net.cabezudo.sofia.hostnames.HostnameManager;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.users.service.Password;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +30,13 @@ public class EMailManager {
   private static final Logger log = LoggerFactory.getLogger(EMailManager.class);
 
   private @Autowired HostnameManager hostnameManager;
+  private @Autowired EMailRepository eMailRepository;
 
   @Autowired
   @Qualifier("eMailClient")
   private EMailClient eMailClient;
   private @Autowired SofiaEnvironment sofiaEnvironment;
+  private @Autowired EntityToBusinessEMailMapper entityToBusinessEMailMapper;
 
   public void info(String address) throws EMailAddressValidationException {
     if (address.isEmpty()) {
@@ -95,5 +99,10 @@ public class EMailManager {
     NamedEMail to = new NamedEMail(name, eMailTo);
     SofiaMailMessage sofiaMailMessage = new SofiaMailMessage.Builder().load(mailTemplate).from(from).to(to).build();
     eMailClient.send(sofiaMailMessage);
+  }
+
+  public EMail get(String eMail) {
+    EMailEntity eMailEntity = eMailRepository.get(eMail);
+    return entityToBusinessEMailMapper.map(eMailEntity);
   }
 }

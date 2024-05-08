@@ -17,9 +17,9 @@ class PlaceList {
                 text += hasData(city) ? text.length > 0 ? `, ${city}` : city : ''
                 return `<div>${text}</div>`;
             };
-            data.list.forEach(element => {
+            data.list.forEach(place => {
                 const getAdministrativeDivision = typeName => {
-                    for (let administrativeDivision of element.administrativeDivisions) {
+                    for (let administrativeDivision of place.administrativeDivisions) {
                         if (administrativeDivision.administrativeDivisionType.name === typeName) {
                             return administrativeDivision.name;
                         }
@@ -28,10 +28,20 @@ class PlaceList {
                 const placeElement = document.createElement('DIV');
                 placeElement.className = 'cell dataCell';
 
-                const name = `<div class="name">${element.name}</div>`;
-                const address = `<div>${element.street} ${element.number} ${element.interiorNumber}</div>`;
-                const references = hasData(element.references) ? `<div>${element.references}</div>` : '';
-                const postalCode = hasData(element.postalCode) ? `<div>${element.postalCode}</div>` : '';
+                const streetName = place.street ? place.street.name : '';
+                const name = `<div class="name">${place.name}</div>`;
+                const address = `<div>${streetName} #${place.number} ${place.interiorNumber}</div>`;
+                const cornerStreet = place.cornerStreet ? `<div>esquina ${place.cornerStreet.name}</div>` : '';
+                const firstStreet = place.betweenStreets.firstStreet ? place.betweenStreets.firstStreet.name : null;
+                const secondStreet = place.betweenStreets.secondStreet ? place.betweenStreets.secondStreet.name : null;
+                let betweenStreets;
+                if (firstStreet !== null && secondStreet !== null) {
+                    betweenStreets = `<div>entre ${firstStreet} y ${secondStreet}</div>`;
+                } else {
+                    betweenStreets = '';
+                }
+                const references = hasData(place.references) ? `<div>${place.references}</div>` : '';
+                const postalCode = hasData(place.postalCode) ? `<div>${place.postalCode}</div>` : '';
                 const administrativeDivisions = getGroupElement(getAdministrativeDivision('colony'), getAdministrativeDivision('delegation'), getAdministrativeDivision('city'));
                 const municipality = getElement(getAdministrativeDivision('municipality'));
                 const stateCode = getAdministrativeDivision('state');
@@ -40,13 +50,18 @@ class PlaceList {
                 Core.setText(stateElement, stateCode);
 
                 const countryElement = document.createElement('DIV');
-                Core.setText(countryElement, element.countryCode);
+                Core.setText(countryElement, place.countryCode);
 
                 const cellMenuDataElement = document.createElement('DIV');
                 cellMenuDataElement.className = 'callData';
-                cellMenuDataElement.innerHTML = `${name}${address}${references}${postalCode}${administrativeDivisions}${municipality}`;
+                cellMenuDataElement.innerHTML = `${name}${address}${cornerStreet}${betweenStreets}${references}${postalCode}${administrativeDivisions}${municipality}`;
                 cellMenuDataElement.appendChild(stateElement);
                 cellMenuDataElement.appendChild(countryElement);
+                new LinkTo({
+                    element: cellMenuDataElement,
+                    onclick: `/admin/places/place.html?id=${place.id}`
+                });
+
 
                 placeElement.appendChild(cellMenuDataElement);
 
@@ -58,7 +73,7 @@ class PlaceList {
                 Core.setText(cellMenuItemEditElement, 'edit');
                 new LinkTo({
                     element: cellMenuItemEditElement,
-                    onclick: `/admin/places/place.html?id=${element.id}`
+                    onclick: `/admin/places/place.html?id=${place.id}`
                 });
                 cellMenuElement.appendChild(cellMenuItemEditElement);
 
@@ -72,7 +87,7 @@ class PlaceList {
                 new LinkTo({
                     element: cellMenuItemDeleteElement,
                     onclick: () => {
-                        fetch(`/v1/places/${element.id}`, { method: 'DELETE' })
+                        fetch(`/v1/places/${place.id}`, { method: 'DELETE' })
                             .then(response => {
                                 if (response.status === 200) {
                                     Core.showMessage('placeDeleted');

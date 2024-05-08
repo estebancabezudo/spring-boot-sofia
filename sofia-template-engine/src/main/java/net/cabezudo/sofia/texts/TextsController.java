@@ -1,11 +1,11 @@
 package net.cabezudo.sofia.texts;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.core.rest.SofiaController;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
 import net.cabezudo.sofia.files.FileHelper;
+import net.cabezudo.sofia.language.Language;
 import net.cabezudo.sofia.sites.Host;
 import net.cabezudo.sofia.sites.HostNotFoundException;
 import net.cabezudo.sofia.sites.Site;
@@ -14,7 +14,6 @@ import net.cabezudo.sofia.sites.service.PathManager;
 import net.cabezudo.sofia.sites.service.SiteManager;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
 import net.cabezudo.sofia.users.service.SofiaUser;
-import net.cabezudo.sofia.web.client.Language;
 import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
 import net.cabezudo.sofia.web.user.WebUserData;
@@ -50,7 +49,7 @@ public class TextsController extends SofiaController {
       method = RequestMethod.GET,
       produces = "application/json"
   )
-  public ResponseEntity<? extends SofiaRestResponse> texts(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "language") String requestedLanguageCode, @RequestParam String page) {
+  public ResponseEntity<? extends SofiaRestResponse> texts(HttpServletResponse response, @RequestParam(value = "language") String requestedLanguageCode, @RequestParam String page) {
     log.debug("Run /v1/pages/actual/texts, language=" + requestedLanguageCode + ", page=" + page);
     Site site = siteManager.getSite(request);
     Host host = super.getHost();

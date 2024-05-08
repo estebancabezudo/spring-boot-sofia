@@ -1,9 +1,7 @@
 package net.cabezudo.sofia.accounts.service;
 
-public class AccountNotFoundException extends Exception {
-  private final String accountName;
-
+public class AccountNotFoundException extends InvalidAccountException {
   public AccountNotFoundException(String accountName) {
-    this.accountName = accountName;
+    super(accountName);
   }
 }

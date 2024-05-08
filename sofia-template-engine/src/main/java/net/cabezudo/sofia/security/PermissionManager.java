@@ -38,6 +38,9 @@ public class PermissionManager {
   }
 
   public boolean hasPermission(Site site, Account account, SofiaUser user, boolean isSecurityActive, String... groups) {
+    if (!isSecurityActive || site == null || account == null || user == null || groups == null || groups.length == 0) {
+      return false;
+    }
     List<GroupEntity> databaseGroups = groupsRepository.get(account.getId(), user.getId());
     // TODO Improve this
     for (GroupEntity groupEntity : databaseGroups) {
@@ -69,7 +72,7 @@ public class PermissionManager {
     List<String> groups;
     if (account != null && user != null) {
       List<GroupEntity> groupsEntity = groupsRepository.get(account.getId(), user.getId());
-      groups = groupsEntity.stream().map(groupEntity -> groupEntity.getName()).collect(Collectors.toList());
+      groups = groupsEntity.stream().map(GroupEntity::getName).collect(Collectors.toList());
     } else {
       groups = new ArrayList<>();
     }
@@ -140,9 +143,9 @@ public class PermissionManager {
     return false;
   }
 
-  private boolean contains(Collection<String> groupsNames, String Names) {
+  private boolean contains(Collection<String> groupsNames, String name) {
     for (String groupName : groupsNames) {
-      if (groupName.equals(groupName)) {
+      if (groupName.equals(name)) {
         return true;
       }
     }

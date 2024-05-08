@@ -24,19 +24,21 @@ DROP TABLE IF EXISTS `phone_formats`;
 DROP TABLE IF EXISTS `phones`;
 DROP TABLE IF EXISTS `person_phones`;
 DROP TABLE IF EXISTS `users_people`;
+DROP TABLE IF EXISTS `names`;
+DROP TABLE IF EXISTS `last_names`;
 
 CREATE TABLE `sites` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(60) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `emails` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `email` VARCHAR(100) NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `address` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ix_email` (`email`)
+  UNIQUE KEY `ix_address` (`address`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `accounts` (
@@ -51,15 +53,15 @@ CREATE TABLE `accounts` (
 CREATE TABLE `web_client_data` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `language` VARCHAR(2),
-  `account_id` INT(11),
+  `account_id` INT,
   `last_update` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_web_client_data_account` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `users` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `email_id` INT(11) NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `email_id` INT NOT NULL,
   `password` VARCHAR(100),
   `locale` VARCHAR(7) NOT NULL,
   `enabled` tinyint(1) NOT NULL,
@@ -70,8 +72,8 @@ CREATE TABLE `users` (
 
 CREATE TABLE `accounts_users` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `account_id` INT(11) NOT NULL,
-  `user_id` INT(11) NOT NULL,
+  `account_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
   `owner` BOOLEAN NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_account_user` (`account_id`, `user_id`),
@@ -80,7 +82,7 @@ CREATE TABLE `accounts_users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `user_account_preferences` (
-  `account_user_id` INT(11) NOT NULL,
+  `account_user_id` INT NOT NULL,
   `name` VARCHAR(50) NOT NULL,
   `value` VARCHAR(50) NOT NULL,
   UNIQUE KEY `ix_name` (`name`),
@@ -88,7 +90,7 @@ CREATE TABLE `user_account_preferences` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `user_preferences` (
-  `user_id` INT(11) NOT NULL,
+  `user_id` INT NOT NULL,
   `name` VARCHAR(50) NOT NULL,
   `value` VARCHAR(50) NOT NULL,
   UNIQUE KEY `ix_user_name` (`user_id`, `name`),
@@ -96,36 +98,59 @@ CREATE TABLE `user_preferences` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `authorities` (
-  `account_user_id` INT(11) NOT NULL,
+  `account_user_id` INT NOT NULL,
   `authority` VARCHAR(50) NOT NULL,
   UNIQUE KEY `ix_auth_username` (`account_user_id`, `authority`),
   CONSTRAINT `fk_authorities_accounts_users` FOREIGN KEY (`account_user_id`) REFERENCES `accounts_users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `countries` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(20) NOT NULL,
   `code` CHAR(2) NOT NULL,
-  `language_id` INT(11) NOT NULL,
+  `language_id` INT NOT NULL,
   `phone_country_code` INT(3),
-  `phone_format_id` INT(11),
+  `phone_format_id` INT,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `streets` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(80) NOT NULL,
+  `verified` BOOLEAN DEFAULT FALSE,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `postal_codes` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `code` VARCHAR(16) NOT NULL,
+  `verified` BOOLEAN DEFAULT FALSE,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_name` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `places` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `account_id` INT NOT NULL,
   `name` VARCHAR(60) NOT NULL,
-  `street` VARCHAR(120) NOT NULL,
-  `number` VARCHAR(6) NOT NULL,
-  `interior_number` VARCHAR(6) NOT NULL,
-  `references` VARCHAR(250) NOT NULL,
-  `postal_code` VARCHAR(10) NOT NULL,
+  `street_id` INT,
+  `number` VARCHAR(6),
+  `interior_number` VARCHAR(20),
+  `corner_street_id` INT,
+  `first_street_id` INT,
+  `second_street_id` INT,
+  `references` VARCHAR(250),
+  `postal_code_id` INT,
   `country_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_places_account` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`),
-  CONSTRAINT `fk_places_country` FOREIGN KEY (`country_id`) REFERENCES `countries` (`id`)
+  CONSTRAINT `fk_account` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`),
+  CONSTRAINT `fk_street` FOREIGN KEY (`street_id`) REFERENCES `streets` (`id`),
+  CONSTRAINT `fk_first_street` FOREIGN KEY (`first_street_id`) REFERENCES `streets` (`id`),
+  CONSTRAINT `fk_second_street` FOREIGN KEY (`second_street_id`) REFERENCES `streets` (`id`),
+  CONSTRAINT `fk_postal_code` FOREIGN KEY (`postal_code_id`) REFERENCES `postal_codes` (`id`),
+  CONSTRAINT `fk_country` FOREIGN KEY (`country_id`) REFERENCES `countries` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `administrative_division_types` (
@@ -150,13 +175,14 @@ CREATE TABLE `administrative_divisions` (
   `enabled` BOOLEAN DEFAULT TRUE,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_place_type` (`place_id`,`type_id`),
-  CONSTRAINT `fk_administrative_divisions_place` FOREIGN KEY (`place_id`) REFERENCES `places` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_administrative_divisions_type` FOREIGN KEY (`type_id`) REFERENCES `administrative_division_types` (`id`),
-  CONSTRAINT `fk_administrative_divisions_name` FOREIGN KEY (`name_id`) REFERENCES `administrative_division_names` (`id`)
+  CONSTRAINT `fk_place` FOREIGN KEY (`place_id`) REFERENCES `places` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_type` FOREIGN KEY (`type_id`) REFERENCES `administrative_division_types` (`id`),
+  CONSTRAINT `fk_name` FOREIGN KEY (`name_id`) REFERENCES `administrative_division_names` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `people` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `account_id` INT NOT NULL,
   `name` VARCHAR(100) NOT NULL,
   `second_name` VARCHAR(100) DEFAULT NULL,
   `last_name` VARCHAR(100) NOT NULL,
@@ -166,56 +192,351 @@ CREATE TABLE `people` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `users_people` (
-  `user_id` INT(11) NOT NULL,
-  `person_id` INT(11) NOT NULL,
+  `user_id` INT NOT NULL,
+  `person_id` INT NOT NULL,
   PRIMARY KEY (`user_id`, `person_id`),
   CONSTRAINT `fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `fk_person_id` FOREIGN KEY (`person_id`) REFERENCES `people` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `languages` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `code` CHAR(2) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `phone_formats` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `format` VARCHAR(16) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_format` (`format`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `phones` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `number` VARCHAR(20) NOT NULL,
-  `country_id` INT(11) NOT NULL,
-  PRIMARY KEY (`id`)
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `country_code` INT(5) NOT NULL,
+  `number` BIGINT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_country_code_number` (`country_code`, `number`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `person_phones` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `person_id` INT(11) NOT NULL,
-  `phone_id` INT(11) NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `person_id` INT NOT NULL,
+  `phone_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ix_person_phone` (`person_id`, `phone_id`)
+  UNIQUE KEY `ix_person_phone` (`person_id`, `phone_id`),
+  CONSTRAINT `fk_person` FOREIGN KEY (`person_id`) REFERENCES `people` (`id`),
+  CONSTRAINT `fk_phone` FOREIGN KEY (`phone_id`) REFERENCES `phones` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `names` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(60) NOT NULL,
+  `verified` BOOLEAN NOT NULL DEFAULT FALSE,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_name_verified` (`name`, `verified`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `last_names` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `last_name` VARCHAR(60) NOT NULL,
+  `verified` BOOLEAN NOT NULL DEFAULT FALSE,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_last_name_verified` (`last_name`, `verified`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `primary_works` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(60) NOT NULL,
+  `verified` BOOLEAN NOT NULL DEFAULT FALSE,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_name_verified` (`name`, `verified`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `doctors` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `information_quality` INT DEFAULT 0,
+  `stars` INT DEFAULT 0,
+  `number_of_reviews` INT DEFAULT 0,
+  `image_id` INT,
+  `sex` CHAR(1),
+  `title` VARCHAR(10),
+  `name_id` INT NOT NULL,
+  `second_name_id` INT,
+  `last_name_id` INT,
+  `mother_last_name_id` INT,
+  `personal_phone_id` INT,
+  `email_id` INT,
+  `about` VARCHAR(300),
+  `doctoralia_url` VARCHAR(200),
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_doctors_name` FOREIGN KEY (`name_id`) REFERENCES `names` (`id`),
+  CONSTRAINT `fk_doctors_second_name` FOREIGN KEY (`second_name_id`) REFERENCES `names` (`id`),
+  CONSTRAINT `fk_doctors_last_name` FOREIGN KEY (`last_name_id`) REFERENCES `last_names` (`id`),
+  CONSTRAINT `fk_doctors_mother_last_name` FOREIGN KEY (`mother_last_name_id`) REFERENCES `last_names` (`id`),
+  CONSTRAINT `fk_doctors_personal_phone` FOREIGN KEY (`personal_phone_id`) REFERENCES `phones` (`id`),
+  CONSTRAINT `fk_doctors_email` FOREIGN KEY (`email_id`) REFERENCES `emails` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `images` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `account_id` INT NOT NULL,
+  `path` VARCHAR(200),
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_images_account` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `medical_consultations` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `doctor_id` INT NOT NULL,
+  `name` VARCHAR(60) NOT NULL,
+  `place_id` INT,
+  `verified` BOOLEAN NOT NULL DEFAULT FALSE,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_name` (`doctor_id`, `name`, `place_id`),
+  CONSTRAINT `fk_medical_consultations_doctor` FOREIGN KEY (`doctor_id`) REFERENCES `doctors` (`id`),
+  CONSTRAINT `fk_medical_consultations_place` FOREIGN KEY (`place_id`) REFERENCES `places` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `target_names` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(30) NOT NULL,
+  `verified` BOOLEAN NOT NULL DEFAULT FALSE,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_name_verified` (`name`, `verified`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `medical_consultations_targets` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `medical_consultation_id` INT NOT NULL,
+  `target_name_id` INT NOT NULL,
+  `age` INT(3) NOT NULL,
+  `modifiers` VARCHAR(10) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_medical_consultation_target` (`medical_consultation_id`, `target_name_id`),
+  CONSTRAINT `fk_medical_consultation` FOREIGN KEY (`medical_consultation_id`) REFERENCES `medical_consultations` (`id`),
+  CONSTRAINT `fk_target` FOREIGN KEY (`target_name_id`) REFERENCES `target_names` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `payment_methods` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(30) NOT NULL,
+  `verified` BOOLEAN NOT NULL DEFAULT FALSE,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_name_verified` (`name`, `verified`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `medical_consultations_payment_methods` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `medical_consultation_id` INT NOT NULL,
+  `payment_method_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_medical_consultation_payment_method` (`medical_consultation_id`, `payment_method_id`),
+  CONSTRAINT `fk_medical_consultations_payment_method_medical_consultation` FOREIGN KEY (`medical_consultation_id`) REFERENCES `medical_consultations` (`id`),
+  CONSTRAINT `fk_medical_consultations_payment_method_payment_method` FOREIGN KEY (`payment_method_id`) REFERENCES `payment_methods` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `insurance_companies` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `verified` BOOLEAN NOT NULL DEFAULT FALSE,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `medical_consultations_insurance_companies` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `medical_consultation_id` INT NOT NULL,
+  `insurance_company_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_medical_consultation_insurance_company` (`medical_consultation_id`, `insurance_company_id`),
+  CONSTRAINT `fk_medical_consultations_insurance_company_medical_consultation` FOREIGN KEY (`medical_consultation_id`) REFERENCES `medical_consultations` (`id`),
+  CONSTRAINT `fk_medical_consultations_insurance_company_insurance_company` FOREIGN KEY (`insurance_company_id`) REFERENCES `insurance_companies` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `service_names` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `verified` BOOLEAN NOT NULL DEFAULT FALSE,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_name_verified` (`name`, `verified`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `services` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `service_name_id` INT NOT NULL,
+  `modifiers` VARCHAR(5),
+  `description` VARCHAR(2000),
+  `currency` VARCHAR(3),
+  `cost` DECIMAL(10,2),
+  `days` VARCHAR(7),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_name_id` (`service_name_id`),
+  CONSTRAINT `fk_service` FOREIGN KEY (`service_name_id`) REFERENCES `service_names` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `medical_consultations_services` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `medical_consultation_id` INT NOT NULL,
+  `service_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_medical_consultation_service` (`medical_consultation_id`, `service_id`),
+  CONSTRAINT `fk_medical_consultation_services` FOREIGN KEY (`medical_consultation_id`) REFERENCES `medical_consultations` (`id`),
+  CONSTRAINT `fk_medical_consultations_services_service` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `medical_consultations_phones` (
+  `medical_consultation_id` INT NOT NULL,
+  `phone_id` INT NOT NULL,
+  PRIMARY KEY (`medical_consultation_id`, `phone_id`),
+  CONSTRAINT `fk_medical_consultation_phone` FOREIGN KEY (`medical_consultation_id`) REFERENCES `medical_consultations` (`id`),
+  CONSTRAINT `fk_medical_consultations_phone_phones` FOREIGN KEY (`phone_id`) REFERENCES `phones` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `conditions_treated` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `verified` BOOLEAN NOT NULL DEFAULT FALSE,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_name_verified` (`name`, `verified`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `accolades` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `doctor_id` INT NOT NULL,
+  `description` VARCHAR(1500) NOT NULL,
+  `year` int(4),
+  `verified` BOOLEAN NOT NULL DEFAULT FALSE,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_doctor` FOREIGN KEY (`doctor_id`) REFERENCES `doctors` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `doctor_primary_works` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `doctor_id` INT NOT NULL,
+  `primary_work_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_doctor_primary_work` (`doctor_id`, `primary_work_id`),
+  CONSTRAINT `fk_doctor_primary_works_doctor` FOREIGN KEY (`doctor_id`) REFERENCES `doctors` (`id`),
+  CONSTRAINT `fk_primary_work` FOREIGN KEY (`primary_work_id`) REFERENCES `primary_works` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `specialities` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(60) NOT NULL,
+  `verified` BOOLEAN NOT NULL DEFAULT FALSE,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_name_verified` (`name`, `verified`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `doctor_specialities` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `doctor_id` INT NOT NULL,
+  `speciality_id` INT NOT NULL,
+  `verified` BOOLEAN NOT NULL DEFAULT FALSE,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_doctor_speciality` (`doctor_id`, `speciality_id`),
+  CONSTRAINT `fk_specialities_doctor` FOREIGN KEY (`doctor_id`) REFERENCES `doctors` (`id`),
+  CONSTRAINT `fk_speciality` FOREIGN KEY (`speciality_id`) REFERENCES `specialities` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `doctors_conditions_treated` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `doctor_id` INT NOT NULL,
+  `condition_treated_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_doctor_condition_treated` (`doctor_id`, `condition_treated_id`),
+  CONSTRAINT `fk_doctors_conditions_treated_doctor` FOREIGN KEY (`doctor_id`) REFERENCES `doctors` (`id`),
+  CONSTRAINT `fk_condition_treated` FOREIGN KEY (`condition_treated_id`) REFERENCES `conditions_treated` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `educations` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `doctor_id` INT NOT NULL,
+  `description` VARCHAR(1500) NOT NULL,
+  `year` INT(4),
+  PRIMARY KEY (`id`),
+  `verified` BOOLEAN NOT NULL DEFAULT FALSE,
+  CONSTRAINT `fk_doctors_educations_doctor` FOREIGN KEY (`doctor_id`) REFERENCES `doctors` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `doctors_languages` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `doctor_id` INT NOT NULL,
+  `language_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_doctor_language` (`doctor_id`, `language_id`),
+  CONSTRAINT `fk_doctors_language_doctor` FOREIGN KEY (`doctor_id`) REFERENCES `doctors` (`id`),
+  CONSTRAINT `fk_language` FOREIGN KEY (`language_id`) REFERENCES `languages` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `licenses` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `doctor_id` INT NOT NULL,
+  `license` VARCHAR(20) NOT NULL,
+  `verified` BOOLEAN NOT NULL DEFAULT FALSE,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_doctor_license` (`doctor_id`, `license`),
+  CONSTRAINT `fk_licenses_doctor` FOREIGN KEY (`doctor_id`) REFERENCES `doctors` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `doctoralia` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `doctor_id` INT NOT NULL,
+  `url` VARCHAR(300) NOT NULL,
+  `verified` BOOLEAN NOT NULL DEFAULT FALSE,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_doctor` (`doctor_id`),
+  CONSTRAINT `fk_doctor_doctoralia` FOREIGN KEY (`doctor_id`) REFERENCES `doctors` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 INSERT INTO `sofia`.`sites` (name) VALUES ('localhost');
 INSERT INTO `sofia`.`sites` (name) VALUES ('cabezudo.net');
 INSERT INTO `sofia`.`sites` (name) VALUES ('otorrinos.condesa.info');
 INSERT INTO `sofia`.`sites` (name) VALUES ('datosinutilesparaimpresionarenlasfiestas.com');
+INSERT INTO `sofia`.`sites` (name) VALUES ('medicina.digital');
 
 INSERT INTO `accounts` (site_id, name) VALUES(1, 'localhost');
 INSERT INTO `accounts` (site_id, name) VALUES(1, 'sofia');
 INSERT INTO `accounts` (site_id, name) VALUES(1, 'sofiaexample');
 INSERT INTO `accounts` (site_id, name) VALUES(2, 'estebanexample');
 
-INSERT INTO `sofia`.`emails` (email) VALUES ('esteban@cabezudo.net');
-INSERT INTO `sofia`.`emails` (email) VALUES ('sofia@cabezudo.net');
-INSERT INTO `sofia`.`emails` (email) VALUES ('sofia@example.com');
-INSERT INTO `sofia`.`emails` (email) VALUES ('esteban@example.com');
+INSERT INTO `sofia`.`emails` (address) VALUES ('esteban@cabezudo.net');
+INSERT INTO `sofia`.`emails` (address) VALUES ('sofia@cabezudo.net');
+INSERT INTO `sofia`.`emails` (address) VALUES ('sofia@example.com');
+INSERT INTO `sofia`.`emails` (address) VALUES ('esteban@example.com');
 
 INSERT INTO `users` (email_id, password, locale, enabled) VALUES (1, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 'es',1);
 INSERT INTO `users` (email_id, password, locale, enabled) VALUES (2, '{bcrypt}$2a$10$KalncANBJR3NRyYy/i/Cr.iebrNyXUvSSJ//6Wm.JsFJqKueNaIJa', 'es',1);
@@ -239,6 +560,7 @@ INSERT INTO `administrative_division_types` (name) VALUES ('municipality');
 INSERT INTO `administrative_division_types` (name) VALUES ('city');
 INSERT INTO `administrative_division_types` (name) VALUES ('colony');
 INSERT INTO `administrative_division_types` (name) VALUES ('delegation');
+INSERT INTO `administrative_division_types` (name) VALUES ('residentialDevelopment');
 
 INSERT INTO `administrative_division_names` (name) VALUES ('MX-CMX');
 INSERT INTO `administrative_division_names` (name) VALUES ('MX-AGU');
@@ -272,75 +594,14 @@ INSERT INTO `administrative_division_names` (name) VALUES ('MX-TLA');
 INSERT INTO `administrative_division_names` (name) VALUES ('MX-VER'); # 30
 INSERT INTO `administrative_division_names` (name) VALUES ('MX-YUC');
 INSERT INTO `administrative_division_names` (name) VALUES ('MX-ZAC');
-INSERT INTO `administrative_division_names` (name) VALUES ('Cozumel'); # 33
-INSERT INTO `administrative_division_names` (name) VALUES ('Independencia');
-INSERT INTO `administrative_division_names` (name) VALUES ('CDMX'); # 35
-INSERT INTO `administrative_division_names` (name) VALUES ('Miguel Hidalgo');
-INSERT INTO `administrative_division_names` (name) VALUES ('Popotla');
-INSERT INTO `administrative_division_names` (name) VALUES ('Cumbres 1er Sector');
-INSERT INTO `administrative_division_names` (name) VALUES ('Monterrey');
 
-INSERT INTO `countries` (name, code, language_id, phone_country_code, phone_format_id) VALUES ('mexico', 'mx', 1, 52, 1);
-
-INSERT INTO `places`
-    (account_id, name, street, number, interior_number, `references`, postal_code, country_id)
-    VALUES (1, 'Casa', 'Xel-Ha', '864', '', 'Entre 40 y 40 bis', '77664', 1);
-
-INSERT INTO `administrative_divisions` (place_id, type_id, name_id) VALUES (1, 1, 23);
-INSERT INTO `administrative_divisions` (place_id, type_id, name_id) VALUES (1, 2, 33);
-INSERT INTO `administrative_divisions` (place_id, type_id, name_id) VALUES (1, 3, 33);
-INSERT INTO `administrative_divisions` (place_id, type_id, name_id) VALUES (1, 4, 34);
-
-INSERT INTO `places`
-    (account_id, name, street, number, interior_number, `references`, postal_code, country_id)
-    VALUES (1, 'Departamento', 'Felipe Carrillo puerto', '181', 'D504', '', '11400', 1);
-
-INSERT INTO `administrative_divisions` (place_id, type_id, name_id) VALUES (2, 1, 1);
-INSERT INTO `administrative_divisions` (place_id, type_id, name_id) VALUES (2, 3, 35);
-INSERT INTO `administrative_divisions` (place_id, type_id, name_id) VALUES (2, 5, 36);
-INSERT INTO `administrative_divisions` (place_id, type_id, name_id) VALUES (2, 4, 37);
-
-INSERT INTO `places`
-    (account_id, name, street, number, interior_number, `references`, postal_code, country_id)
-    VALUES (2, 'Casa vieja', '11va Av', '113A', '', '', '64610', 1);
-
-INSERT INTO `administrative_divisions` (place_id, type_id, name_id) VALUES (3, 4, 38);
-INSERT INTO `administrative_divisions` (place_id, type_id, name_id) VALUES (3, 3, 39);
-INSERT INTO `administrative_divisions` (place_id, type_id, name_id) VALUES (3, 1, 19);
-INSERT INTO `administrative_divisions` (place_id, type_id, name_id) VALUES (3, 2, 39);
-
+INSERT INTO `languages` (code) VALUES ('de');
+INSERT INTO `languages` (code) VALUES ('en');
 INSERT INTO `languages` (code) VALUES ('es');
+INSERT INTO `languages` (code) VALUES ('fr');
+INSERT INTO `languages` (code) VALUES ('it');
+INSERT INTO `languages` (code) VALUES ('pt');
 
 INSERT INTO `phone_formats` (format) VALUES ('## #### ####');
 
-INSERT INTO `phones` (number, country_id) VALUES (5541268778, 1);
-INSERT INTO `phones` (number, country_id) VALUES (9873435456, 1);
-INSERT INTO `phones` (number, country_id) VALUES (5510267856, 1);
-
-INSERT INTO `person_phones` (person_id, phone_id) VALUES (1, 1);
-INSERT INTO `person_phones` (person_id, phone_id) VALUES (1, 2);
-INSERT INTO `person_phones` (person_id, phone_id) VALUES (2, 3);
-
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Esteban', 'Ismael', 'Cabezudo', 'Trabanco', '1974-1-30');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Elba', 'Alicia', 'Araujo', 'Cieza', '1997-3-31');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Yadira', 'Vanessa', 'Bustos', 'Silca', '1985-5-6');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Isidro', 'Juan Pablo', 'Maradona', 'Crispín', '1996-7-18');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Covadonga', 'Remigio', 'Garza', 'Rodea', '1989-10-27');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Telesforo', 'Mauricio', 'Macías', 'Zuluaga', '1983-3-6');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Begoña', 'Noelia', 'Suero', 'Guerrero', '1986-12-22');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Cayetano', 'Moisés', 'De la Fuente', 'Espinoza', '1991-6-23');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Esmeralda', 'Rosaura', 'Fernández', 'Tancarin', '1999-10-17');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Héctor', 'Bonifacio', 'Ibáñez', 'Cruz', '1992-6-30');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Herminio', 'Amarant0', 'Jiménez', 'Aquino', '1999-9-24');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Paco', 'Sandr0', 'García', 'Gómez', '1990-12-4');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Clara', 'Melania', 'Amador', 'Valencia', '1981-3-23');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Bernardita', 'Ximena', 'Gallardo', 'Cordoba', '1992-9-24');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Haroldo', 'Atanasio', 'Bolívar', 'Alvarez', '1991-2-23');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Demetrio', 'Nataniel', 'Silva', 'Fuentes', '1989-2-13');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Nerea', 'Yaiza', 'Abascal', 'Vera', '1988-12-17');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Laurentino', 'Antonio', 'Arias', 'Calderon', '1988-1-18');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('María', 'Mercedes', 'Ybarra', 'LAgos', '1982-7-25');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Elisabet', 'Noelia', 'Otero', 'Martinez', '1992-6-21');
-INSERT INTO `people` (name, second_name, last_name, second_last_name, date_of_birth) VALUES ('Esther', 'Paloma', 'Amador', 'Mercado', '1994-5-22');
-
-INSERT INTO `users_people` (user_id, person_id) VALUES (1, 1);
+INSERT INTO `countries` (name, code, language_id, phone_country_code, phone_format_id) VALUES ('mexico', 'mx', 1, 52, 1);

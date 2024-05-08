@@ -18,7 +18,7 @@ public final class AdministrativeDivision {
     return id;
   }
 
-  public AdministrativeDivisionType getAdministrativeDivisionType() {
+  public AdministrativeDivisionType getType() {
     return administrativeDivisionType;
   }
 

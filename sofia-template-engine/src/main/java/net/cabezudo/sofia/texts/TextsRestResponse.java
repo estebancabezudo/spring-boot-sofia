@@ -8,7 +8,7 @@ public class TextsRestResponse extends SofiaRestResponse {
   private final String data;
 
   public TextsRestResponse(String data) {
-    super(SofiaRestResponse.OK, "Texts found");
+    super(OK, "Texts found");
     this.data = data;
   }
 

@@ -17,7 +17,7 @@ public class Host {
     // TODO validate hostname format y values
     int i = hostname.indexOf(":");
     if (i == 0) {
-      throw new InvalidParameterException("Invalid hostname format: " + hostname);
+      throw new InvalidParameterException("Invalid hostname format: ", hostname);
     }
     if (i > 0) {
       this.name = hostname.substring(0, i);

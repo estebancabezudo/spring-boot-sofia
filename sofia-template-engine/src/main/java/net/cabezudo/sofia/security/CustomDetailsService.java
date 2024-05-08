@@ -7,6 +7,7 @@ import net.cabezudo.sofia.accounts.persistence.AccountRepository;
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.service.AccountManager;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
+import net.cabezudo.sofia.language.Language;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.sites.service.SiteManager;
@@ -18,10 +19,8 @@ import net.cabezudo.sofia.users.persistence.GroupsEntity;
 import net.cabezudo.sofia.users.persistence.SofiaUserEntity;
 import net.cabezudo.sofia.users.persistence.SofiaUserRepository;
 import net.cabezudo.sofia.users.service.SofiaUser;
-import net.cabezudo.sofia.web.client.Language;
 import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

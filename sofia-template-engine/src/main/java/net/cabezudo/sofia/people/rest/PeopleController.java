@@ -1,8 +1,7 @@
 package net.cabezudo.sofia.people.rest;
 
-import jakarta.servlet.http.HttpServletRequest;
 import net.cabezudo.sofia.accounts.service.Account;
-import net.cabezudo.sofia.accounts.service.AccountManager;
+import net.cabezudo.sofia.core.rest.BadRequestException;
 import net.cabezudo.sofia.core.rest.ListRestResponse;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
 import net.cabezudo.sofia.people.PeopleList;
@@ -12,7 +11,6 @@ import net.cabezudo.sofia.people.mappers.BusinessToRestPersonMapper;
 import net.cabezudo.sofia.people.service.PeopleManager;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.users.service.Group;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +26,13 @@ public class PeopleController extends SofiaAuthorizedController {
   private static final Logger log = LoggerFactory.getLogger(PeopleController.class);
 
   private @Autowired PeopleManager peopleManager;
-  private @Autowired AccountManager accountManager;
 
   @GetMapping("/v1/people")
-  public ResponseEntity<?> listAll(HttpServletRequest request) {
+  public ResponseEntity<?> listAll() throws BadRequestException {
     log.debug("Get list of people");
     ListRestResponse<RestPerson> listRestResponse;
 
-    Account account = accountManager.getAccount(request);
+    Account account = super.getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -50,11 +47,11 @@ public class PeopleController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/people/{id}")
-  public ResponseEntity<?> login(HttpServletRequest request, @PathVariable Integer id) {
+  public ResponseEntity<?> login(@PathVariable Integer id) throws BadRequestException {
     log.debug("/v1/people/{id}");
     PeopleRestResponse peopleRestResponse;
 
-    Account account = accountManager.getAccount(request);
+    Account account = super.getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {

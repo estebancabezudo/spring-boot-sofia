@@ -2,7 +2,6 @@ package net.cabezudo.sofia.accounts.service;
 
 import net.cabezudo.sofia.sites.Site;
 
-
 import java.util.Objects;
 
 public class Account implements Comparable<Account> {
@@ -28,7 +27,8 @@ public class Account implements Comparable<Account> {
   public String toString() {
     return "Account[" +
         "id=" + id + ", " +
-        "siteId=" + site + ']';
+        "siteId=" + site + ", " +
+        "name=" + name + ']';
   }
 
   @Override

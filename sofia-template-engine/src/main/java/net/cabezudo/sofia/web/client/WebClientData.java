@@ -1,7 +1,7 @@
 package net.cabezudo.sofia.web.client;
 
 import net.cabezudo.sofia.accounts.service.Account;
-
+import net.cabezudo.sofia.language.Language;
 
 import java.sql.Date;
 

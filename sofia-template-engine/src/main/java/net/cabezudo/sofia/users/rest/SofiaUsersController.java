@@ -10,6 +10,7 @@ import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.service.AccountManager;
 import net.cabezudo.sofia.accounts.service.Accounts;
 import net.cabezudo.sofia.config.mail.SendEMailException;
+import net.cabezudo.sofia.core.rest.BadRequestException;
 import net.cabezudo.sofia.core.rest.ListRestResponse;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
 import net.cabezudo.sofia.emails.EMailAddressValidationException;
@@ -28,7 +29,6 @@ import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.users.service.SofiaUserList;
 import net.cabezudo.sofia.users.service.SofiaUserManager;
 import net.cabezudo.sofia.web.user.WebUserDataManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,10 +126,10 @@ public class SofiaUsersController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/users/{id}")
-  public ResponseEntity<?> getUser(HttpServletRequest request, @PathVariable Integer id) {
+  public ResponseEntity<?> getUser(@PathVariable Integer id) throws BadRequestException {
     log.debug("Run /v1/users/{id}");
 
-    Account account = accountManager.getAccount(request);
+    Account account = super.getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -151,10 +151,10 @@ public class SofiaUsersController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/users/{id}/exists")
-  public ResponseEntity<?> exists(HttpServletRequest request, @PathVariable Integer id) {
+  public ResponseEntity<?> exists(@PathVariable Integer id) throws BadRequestException {
     log.debug("Run /v1/users/{id}");
 
-    Account account = accountManager.getAccount(request);
+    Account account = super.getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -176,10 +176,10 @@ public class SofiaUsersController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/users/usernames/{username}/info")
-  public ResponseEntity<?> validateUsername(HttpServletRequest request, @PathVariable String username) {
+  public ResponseEntity<?> validateUsername(@PathVariable String username) throws BadRequestException {
     log.debug("Run /v1/users/usernames/{value}/info for validate username");
 
-    Account account = accountManager.getAccount(request);
+    Account account = super.getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -202,10 +202,10 @@ public class SofiaUsersController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/users/{id}/usernames/{username}/info")
-  public ResponseEntity<?> validateUsernameForEdit(HttpServletRequest request, @PathVariable Integer id, @PathVariable String username) {
+  public ResponseEntity<?> validateUsernameForEdit(@PathVariable Integer id, @PathVariable String username) throws BadRequestException {
     log.debug("Run /v1/users/{id}/usernames/{username}/info for validate username");
 
-    Account account = accountManager.getAccount(request);
+    Account account = super.getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -234,10 +234,11 @@ public class SofiaUsersController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/users")
-  public ResponseEntity<?> getUsers(HttpServletRequest request) {
+  public ResponseEntity<?> getUsers() throws BadRequestException {
     log.debug("Get list of users");
 
-    Account account = accountManager.getAccount(request);
+    Account account = super.getAccount();
+
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
       return result;
@@ -251,10 +252,10 @@ public class SofiaUsersController extends SofiaAuthorizedController {
   }
 
   @PostMapping("/v1/users")
-  public ResponseEntity<?> create(HttpServletRequest request, @RequestBody RestSofiaUser restSofiaUserToSave) throws IOException {
+  public ResponseEntity<?> create(@RequestBody RestSofiaUser restSofiaUserToSave) throws IOException, BadRequestException {
     log.debug("Create a new user");
 
-    Account account = accountManager.getAccount(request);
+    Account account = super.getAccount();
 
     restSofiaUserToSave.setAccount(account);
 
@@ -274,10 +275,10 @@ public class SofiaUsersController extends SofiaAuthorizedController {
   }
 
   @PutMapping("/v1/users/{id}")
-  public ResponseEntity<?> update(HttpServletRequest request, @PathVariable Integer id, @RequestBody RestSofiaUser restSofiaUserToUpdate) throws IOException {
+  public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody RestSofiaUser restSofiaUserToUpdate) throws IOException, BadRequestException {
     log.debug("Update an existing user");
 
-    Account account = accountManager.getAccount(request);
+    Account account = super.getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -295,10 +296,10 @@ public class SofiaUsersController extends SofiaAuthorizedController {
   }
 
   @DeleteMapping("/v1/users/{id}")
-  public ResponseEntity<?> delete(HttpServletRequest request, @PathVariable Integer id) throws IOException {
+  public ResponseEntity<?> delete(@PathVariable Integer id) throws IOException, BadRequestException {
     log.debug("Delete a user");
 
-    Account account = accountManager.getAccount(request);
+    Account account = super.getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {
@@ -311,10 +312,11 @@ public class SofiaUsersController extends SofiaAuthorizedController {
   }
 
   @PutMapping("/v1/users/{id}/password")
-  public ResponseEntity<SofiaRestResponse<?>> info(HttpServletRequest request, @PathVariable Integer id) {
+  public ResponseEntity<SofiaRestResponse<?>> info(@PathVariable Integer id) throws BadRequestException {
     log.debug("/v1/users/" + id);
 
-    Account account = accountManager.getAccount(request);
+    Account account = super.getAccount();
+
     Site site = siteManager.getSite(request);
 
     ResponseEntity<SofiaRestResponse<?>> result;
@@ -338,16 +340,17 @@ public class SofiaUsersController extends SofiaAuthorizedController {
   }
 
   @GetMapping("/v1/users/actual/accounts")
-  public ResponseEntity<?> listAccountsForTheActualUser(HttpServletRequest request) {
+  public ResponseEntity<?> listAccountsForTheActualUser() throws BadRequestException {
     log.debug("Get list of accounts for the actual user");
     ListRestResponse<RestAccount> listRestResponse;
 
-    Account account = accountManager.getAccount(request);
+    Account account = super.getAccount();
+
     SofiaUser user = sofiaSecurityManager.getLoggedUser();
 
     ResponseEntity<?> result;
-    if ((result = super.isLogged()) != null) {
-      return result;
+    if (super.getLoggedUser() == null) {
+      return super.notLoggedResponse();
     }
 
     Accounts accounts = accountManager.findAll(account.getSite(), user);

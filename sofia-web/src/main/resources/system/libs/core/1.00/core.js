@@ -337,8 +337,6 @@ const Core = {
             .then(jsonData => {
                 console.log(jsonData.data);
                 texts = jsonData.data;
-                console.log(jsonData);
-                console.log(texts);
                 Core.actualLanguage = fetchLanguage;
                 Core.setTexts(texts);
             })
@@ -359,6 +357,9 @@ const Core = {
     },
 
     reportSystemError: error => {
+        if (environment && environment.name !== 'prod') {
+            throw error;
+        }
         if (Core.isFunction(Core.reportSystemErrorFunction)) {
             Core.reportSystemErrorFunction(error);
         }
@@ -423,8 +424,15 @@ const Core = {
     setTextsById: () => {
         console.log(`Core::setTextsById: Set text by id`);
         for (const [key, value] of Object.entries(Core.texts)) {
-            const element = document.getElementById(key);
-            Core.setTextToElement(element, value);
+            try {
+                const element = document.getElementById(key);
+                Core.setTextToElement(element, value);
+            } catch (e) {
+                console.log(`Core::setTextsById: Error for: ${key}: ${e}`);
+                if (environment.name !== 'prod') {
+                    throw e;
+                }
+            }
         }
     },
     setTextToElement: (element, text, options) => {
@@ -432,7 +440,7 @@ const Core = {
             do {
                 if (
                     element instanceof HTMLSpanElement || element instanceof HTMLDivElement || element instanceof HTMLButtonElement || element instanceof HTMLOptionElement || element instanceof HTMLAnchorElement ||
-                    element instanceof HTMLTitleElement || element instanceof HTMLParagraphElement || element instanceof HTMLHeadingElement) {
+                    element instanceof HTMLTitleElement || element instanceof HTMLParagraphElement || element instanceof HTMLHeadingElement || element instanceof HTMLLabelElement) {
                     const childNodes = element.childNodes;
                     const write = childNodes.length === 0 || (childNodes.length === 1 && childNodes[0].nodeType === Node.TEXT_NODE && element.textContent !== text);
                     element.innerHTML = text;
@@ -446,6 +454,9 @@ const Core = {
                         case 'submit':
                             element.value = text;
                             break;
+                        case 'label':
+                            element.innerHTML = text;
+                            break;
                         case 'text':
                             if (options === undefined || options === null || options & Core.PLACEHOLDER === Core.PLACEHOLDER) {
                                 element.placeholder = text;
@@ -458,7 +469,7 @@ const Core = {
                             element.placeholder = text;
                             break;
                         default:
-                            console.log(`Core::setTextsById: WARNING. Can't manage the type for the input element ${key}.`, element);
+                            console.log(`Core::setTextsById: WARNING. Can't manage the type for the input element id='${element.id}' type='${element.type}'.`, element);
                     }
                     break;
                 }
@@ -487,7 +498,6 @@ const Core = {
 const pageLoaded = async () => {
     console.log(`Core::pageLoaded::templateVariables: `, templateVariables);
     Core.initSocket();
-    Core.getActualWebClientDetails();
     Core.subscribeTo('core:setTexts', data => {
         const message = Core.queryParameters.get('message');
         if (message) {
@@ -502,6 +512,7 @@ const pageLoaded = async () => {
             Core.loadLanguage(data.language);
         }
     })
+    Core.getActualWebClientDetails();
 }
 
 window.addEventListener('load', pageLoaded, false);

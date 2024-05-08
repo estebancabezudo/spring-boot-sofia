@@ -1,20 +1,6 @@
 package net.cabezudo.sofia.web.client;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.cabezudo.sofia.language.LanguageList;
 
-public class CountryLanguages {
-  private final List<Language> languages;
-
-  public CountryLanguages(List languages) {
-    this.languages = languages;
-  }
-
-  public CountryLanguages() {
-    languages = new ArrayList();
-  }
-
-  public List<Language> getLanguages() {
-    return languages;
-  }
+public class CountryLanguages extends LanguageList {
 }

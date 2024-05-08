@@ -5,8 +5,9 @@ import net.cabezudo.sofia.places.PlaceList;
 import net.cabezudo.sofia.places.persistence.AdministrativeDivisionEntity;
 import net.cabezudo.sofia.places.persistence.AdministrativeDivisionEntityList;
 import net.cabezudo.sofia.places.persistence.PlaceEntity;
-
+import net.cabezudo.sofia.places.persistence.StreetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -15,6 +16,7 @@ import java.util.TreeMap;
 @Component
 public class EntityToBusinessPlaceListMapper {
   private @Autowired EntityToBusinessPlaceMapper entityToBusinessPlaceMapper;
+  private @Autowired StreetRepository streetRepository;
 
   public PlaceList map(EntityList<PlaceEntity> entityList, AdministrativeDivisionEntityList administrativeDivisionEntityList) {
     int total = entityList.getTotal();
@@ -30,6 +32,8 @@ public class EntityToBusinessPlaceListMapper {
       map = null;
     }
 
+    JdbcTemplate jdbcTemplate = streetRepository.getJDBCTemplate();
+
     for (PlaceEntity entityPlace : entityList) {
       AdministrativeDivisionEntityList administrativeDivisionEntityListFromMap;
       if (administrativeDivisionEntityList != null) {
@@ -37,7 +41,7 @@ public class EntityToBusinessPlaceListMapper {
       } else {
         administrativeDivisionEntityListFromMap = null;
       }
-      list.add(entityToBusinessPlaceMapper.map(entityPlace, administrativeDivisionEntityListFromMap));
+      list.add(entityToBusinessPlaceMapper.map(jdbcTemplate, entityPlace, administrativeDivisionEntityListFromMap));
     }
     return list;
   }

@@ -1,64 +1,48 @@
 package net.cabezudo.sofia.places;
 
+import lombok.Getter;
 import net.cabezudo.sofia.countries.Country;
-
 
 import java.util.Objects;
 
 public final class Place {
-  private final int id;
+  @Getter
+  private final Integer id;
+  @Getter
   private final String name;
-  private final String street;
+  @Getter
+  private final Street street;
+  @Getter
   private final String number;
+  @Getter
   private final String interiorNumber;
+  @Getter
+  private final Street cornerStreet;
+  @Getter
+  private final BetweenStreets betweenStreets;
+  @Getter
   private final String references;
-  private final String postalCode;
+  @Getter
+  private final PostalCode postalCode;
+  @Getter
   private final Country country;
+  @Getter
   private final AdministrativeDivisionList administrativeDivisionList;
 
   public Place(
-      int id, String name, String street, String number, String interiorNumber, String references, String postalCode, Country country, AdministrativeDivisionList administrativeDivisionList) {
+      Integer id, String name, Street street, String number, String interiorNumber, Street cornerStreet, BetweenStreets betweenStreets,
+      String references, PostalCode postalCode, Country country, AdministrativeDivisionList administrativeDivisionList) {
     this.id = id;
     this.name = name;
     this.street = street;
     this.number = number;
     this.interiorNumber = interiorNumber;
+    this.betweenStreets = betweenStreets;
+    this.cornerStreet = cornerStreet;
     this.references = references;
     this.postalCode = postalCode;
     this.country = country;
     this.administrativeDivisionList = administrativeDivisionList;
-  }
-
-  public int getId() {
-    return id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getStreet() {
-    return street;
-  }
-
-  public String getNumber() {
-    return number;
-  }
-
-  public String getInteriorNumber() {
-    return interiorNumber;
-  }
-
-  public String getReferences() {
-    return references;
-  }
-
-  public String getPostalCode() {
-    return postalCode;
-  }
-
-  public Country getCountry() {
-    return country;
   }
 
   public AdministrativeDivisionList getAdministrativeDivisionList() {

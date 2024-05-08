@@ -1,20 +1,19 @@
 package net.cabezudo.sofia.web.client.rest;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.service.AccountManager;
 import net.cabezudo.sofia.core.WebMessageManager;
+import net.cabezudo.sofia.core.rest.BadRequestException;
+import net.cabezudo.sofia.language.Language;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
 import net.cabezudo.sofia.users.service.SofiaUser;
-import net.cabezudo.sofia.web.client.Language;
 import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
 import net.cabezudo.sofia.web.client.mappers.BusinessToRestWebClientMapper;
 import net.cabezudo.sofia.web.user.WebUserData;
 import net.cabezudo.sofia.web.user.WebUserDataManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +39,13 @@ public class WebClientController extends SofiaAuthorizedController {
   private @Autowired AccountManager accountManager;
 
   @RequestMapping(value = "/v1/web/clients/actual/details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<FullRestWebClientData> clientDetails(HttpServletRequest request) {
+  public ResponseEntity<FullRestWebClientData> clientDetails() throws BadRequestException {
     log.debug("Run /v1/web/clients/actual/details");
     WebClientData webClientData = webClientDataManager.getFromCookie(request);
     WebUserData webUserData = webUserDataManager.getFromSession(request);
 
-    Account account = accountManager.getAccount(request);
+    Account account = super.getAccount();
+
     FullRestWebClientData fullRestWebClientData = new FullRestWebClientData(account, webMessageManager, webClientData, webUserData);
     log.debug("Full web client data: " + fullRestWebClientData);
     return ResponseEntity.ok(fullRestWebClientData);
@@ -53,13 +53,14 @@ public class WebClientController extends SofiaAuthorizedController {
 
   // Cambia el lenguaje por defecto del sitio
   @PutMapping("/v1/web/clients/actual/languages/default")
-  public ResponseEntity<FullRestWebClientData> setLanguage(HttpServletRequest request, HttpServletResponse response, @RequestBody RestLanguage restLanguage) {
+  public ResponseEntity<FullRestWebClientData> setLanguage(HttpServletResponse response, @RequestBody RestLanguage restLanguage) throws BadRequestException {
     log.debug("Run /v1/web/clients/actual/languages/default");
 
     FullRestWebClientData fullRestWebClientData;
 
     WebUserData webUserData = webUserDataManager.getFromSession(request);
     WebClientData webClientDataFromCookie = webClientDataManager.getFromCookie(request);
+
     if (webUserData.getUser() == null) {
       if (restLanguage != null && !restLanguage.getCode().equals(webClientDataFromCookie.getLanguage().getCode())) {
         int id = webClientDataFromCookie.getId();
@@ -67,9 +68,10 @@ public class WebClientController extends SofiaAuthorizedController {
         Account account = webClientDataFromCookie.getAccount();
         WebClientData webClientData = new WebClientData(id, language, account, null);
         webClientDataManager.setCookie(response, webClientData);
-        fullRestWebClientData = new FullRestWebClientData(accountManager.getAccount(request), webMessageManager, webClientData, webUserData);
+        fullRestWebClientData = new FullRestWebClientData(super.getAccount(), webMessageManager, webClientData, webUserData);
       } else {
-        fullRestWebClientData = new FullRestWebClientData(accountManager.getAccount(request), webMessageManager, webClientDataFromCookie, webUserData);
+        Account account = super.getAccount();
+        fullRestWebClientData = new FullRestWebClientData(super.getAccount(), webMessageManager, webClientDataFromCookie, webUserData);
       }
     } else {
       if (restLanguage != null && !restLanguage.getCode().equals(webUserData.getLanguage().getCode())) {
@@ -79,7 +81,7 @@ public class WebClientController extends SofiaAuthorizedController {
         SofiaUser user = webUserData.getUser();
         userPreferencesManager.setLanguage(user, language);
       }
-      fullRestWebClientData = new FullRestWebClientData(accountManager.getAccount(request), webMessageManager, webClientDataFromCookie, webUserData);
+      fullRestWebClientData = new FullRestWebClientData(super.getAccount(), webMessageManager, webClientDataFromCookie, webUserData);
     }
     return ResponseEntity.ok(fullRestWebClientData);
   }

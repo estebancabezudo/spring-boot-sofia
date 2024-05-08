@@ -1,9 +1,9 @@
 package net.cabezudo.sofia.persistence;
 
-
-import org.jspecify.nullness.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 
@@ -24,5 +24,10 @@ public class DatabaseManager {
   public JdbcTemplate getJDBCTemplate() {
     DriverManagerDataSource dataSource = new DriverManagerDataSource(url, username, password);
     return new JdbcTemplate(dataSource);
+  }
+
+  public NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
+    DriverManagerDataSource dataSource = new DriverManagerDataSource(url, username, password);
+    return new NamedParameterJdbcTemplate(dataSource);
   }
 }

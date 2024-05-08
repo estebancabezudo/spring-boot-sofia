@@ -1,41 +1,19 @@
 package net.cabezudo.sofia.places.rest;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 public class RestAdministrativeDivision {
 
   private int id;
-  private RestAdministrativeDivisionType restAdministrativeDivisionType;
+  private String type;
   private String name;
 
-  public RestAdministrativeDivision(int id, RestAdministrativeDivisionType restAdministrativeDivisionType, String name) {
+  public RestAdministrativeDivision(int id, String type, String name) {
     this.id = id;
-    this.restAdministrativeDivisionType = restAdministrativeDivisionType;
+    this.type = type;
     this.name = name;
-  }
-
-  public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
-  }
-
-  public void setRestAdministrativeDivisionType(RestAdministrativeDivisionType restAdministrativeDivisionType) {
-    this.restAdministrativeDivisionType = restAdministrativeDivisionType;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  @JsonProperty("administrativeDivisionType")
-  public RestAdministrativeDivisionType restAdministrativeDivisionType() {
-    return restAdministrativeDivisionType;
   }
 }

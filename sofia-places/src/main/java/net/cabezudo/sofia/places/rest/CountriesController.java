@@ -1,14 +1,13 @@
 package net.cabezudo.sofia.places.rest;
 
-import jakarta.servlet.http.HttpServletRequest;
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.service.AccountManager;
+import net.cabezudo.sofia.core.rest.BadRequestException;
 import net.cabezudo.sofia.core.rest.ListRestResponse;
 import net.cabezudo.sofia.core.rest.RestList;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.users.service.Group;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +24,11 @@ public class CountriesController extends SofiaAuthorizedController {
   private @Autowired AccountManager accountManager;
 
   @GetMapping("/v1/countries/codes/{countryCode}/codes")
-  public ResponseEntity<?> listAll(HttpServletRequest request, @PathVariable String countryCode) {
+  public ResponseEntity<?> listAll(@PathVariable String countryCode) throws BadRequestException {
     log.debug("Get list of codes for " + countryCode);
     ListRestResponse<String> listRestResponse;
 
-    Account account = accountManager.getAccount(request);
+    Account account = super.getAccount();
 
     ResponseEntity result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {

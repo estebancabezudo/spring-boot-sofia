@@ -3,7 +3,6 @@ package net.cabezudo.sofia.users.persistence;
 import net.cabezudo.sofia.emails.persistence.EMailEntity;
 import net.cabezudo.sofia.persistence.DatabaseManager;
 import net.cabezudo.sofia.users.service.Password;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,24 +27,24 @@ public class SofiaUserRepository {
   private @Autowired DatabaseManager databaseManager;
 
   @Transactional
-  public SofiaUserEntity findByEmailAndAccount(int account_id, String email) {
-    log.debug("Search users for account " + account_id + " and " + email);
+  public SofiaUserEntity findByEmailAndAccount(int account_id, String address) {
+    log.debug("Search users for account " + account_id + " and " + address);
 
     List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate().queryForList(
-        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
+        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.address AS address, u.password, u.locale AS locale, u.enabled, authority " +
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON u.id = au.user_id " +
             "LEFT JOIN emails AS e ON u.email_id = e.id " +
             "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
-            "WHERE u.email_id = e.id AND a.id = ? AND e.email = ?", account_id, email));
+            "WHERE u.email_id = e.id AND a.id = ? AND e.email = ?", account_id, address));
 
     if (list.size() == 0) {
       return null;
     }
 
     Map<String, Object> firstRecord = list.get(0);
-    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
+    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("address"));
     SofiaUserEntity sofiaUserEntity = newUserEntity(firstRecord, eMailEntity);
     for (Map<String, Object> rs : list) {
       String groupName = (String) rs.get("authority");
@@ -76,14 +75,14 @@ public class SofiaUserRepository {
     Map<Integer, SofiaUserEntity> map = new TreeMap<>();
     SofiaUserEntityList list = new SofiaUserEntityList();
     databaseManager.getJDBCTemplate().queryForList(
-        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
+        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.address AS address, u.password, u.locale AS locale, u.enabled, authority " +
             "FROM users AS u " +
             "LEFT JOIN accounts_users AS au ON u.id = au.user_id " +
             "LEFT JOIN accounts AS a ON au.account_id = a.id " +
             "LEFT JOIN emails AS e ON u.email_id = e.id " +
             "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
             "WHERE a.id = ? AND a.site_id = ? " +
-            "ORDER BY email"
+            "ORDER BY address"
         , accountId, siteId
     ).forEach(rs -> {
       int id = (Integer) rs.get("id");
@@ -91,7 +90,7 @@ public class SofiaUserRepository {
       SofiaUserEntity newSofiaUserEntity;
       if (sofiaUserEntityFromMap == null) {
         // TODO user a row mapper
-        EMailEntity eMailEntity = new EMailEntity((int) rs.get("eMailId"), (String) rs.get("email"));
+        EMailEntity eMailEntity = new EMailEntity((int) rs.get("eMailId"), (String) rs.get("address"));
         newSofiaUserEntity = newUserEntity(rs, eMailEntity);
         map.put(id, newSofiaUserEntity);
         list.add(newSofiaUserEntity);
@@ -114,7 +113,7 @@ public class SofiaUserRepository {
     log.debug("Search user for with id " + id);
 
     List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate().queryForList(
-        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
+        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.address AS address, u.password, u.locale AS locale, u.enabled, authority " +
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON au.user_id = u.id " +
@@ -128,7 +127,7 @@ public class SofiaUserRepository {
 
     Map<String, Object> firstRecord = list.get(0);
 
-    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
+    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("address"));
     SofiaUserEntity sofiaUserEntity = newUserEntity(firstRecord, eMailEntity);
     for (Map<String, Object> rs : list) {
       String authority = (String) rs.get("authority");
@@ -143,7 +142,7 @@ public class SofiaUserRepository {
     log.debug("Search user for with id " + id);
 
     List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate().queryForList(
-        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
+        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.address AS address, u.password, u.locale AS locale, u.enabled, authority " +
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON au.user_id = u.id " +
@@ -157,7 +156,7 @@ public class SofiaUserRepository {
 
     Map<String, Object> firstRecord = list.get(0);
 
-    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
+    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("address"));
     SofiaUserEntity sofiaUserEntity = newUserEntity(firstRecord, eMailEntity);
     for (Map<String, Object> rs : list) {
       String authority = (String) rs.get("authority");
@@ -172,7 +171,7 @@ public class SofiaUserRepository {
     log.debug("Search user for account " + accountId + " with id " + userId);
 
     List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate().queryForList(
-        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
+        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.address AS address, u.password, u.locale AS locale, u.enabled, authority " +
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON au.user_id = u.id " +
@@ -186,7 +185,7 @@ public class SofiaUserRepository {
 
     Map<String, Object> firstRecord = list.get(0);
 
-    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
+    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("address"));
     SofiaUserEntity sofiaUserEntity = newUserEntity(firstRecord, eMailEntity);
     for (Map<String, Object> rs : list) {
       String authority = (String) rs.get("authority");
@@ -201,13 +200,13 @@ public class SofiaUserRepository {
     log.debug("Search user for account with e-mail " + eMail);
 
     List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate().queryForList(
-        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
+        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.address AS address, u.password, u.locale AS locale, u.enabled, authority " +
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON au.user_id = u.id " +
             "LEFT JOIN emails AS e ON u.email_id = e.id " +
             "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
-            "WHERE au.owner = true AND email = ?", eMail));
+            "WHERE au.owner = true AND address = ?", eMail));
 
     if (list.size() == 0) {
       return null;
@@ -215,7 +214,7 @@ public class SofiaUserRepository {
 
     Map<String, Object> firstRecord = list.get(0);
 
-    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
+    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("address"));
     SofiaUserEntity sofiaUserEntity = newUserEntity(firstRecord, eMailEntity);
     for (Map<String, Object> rs : list) {
       String authority = (String) rs.get("authority");
@@ -281,24 +280,24 @@ public class SofiaUserRepository {
     databaseManager.getJDBCTemplate().update(preparedStatementCreator);
   }
 
-  public SofiaUserEntity findByEmail(String email) {
-    log.debug("Search user for email " + email);
+  public SofiaUserEntity findByEmail(String emailAddress) {
+    log.debug("Search user for email address " + emailAddress);
 
     List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate().queryForList(
-        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
+        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.address AS address, u.password, u.locale AS locale, u.enabled, authority " +
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON u.id = au.user_id " +
             "LEFT JOIN emails AS e ON u.email_id = e.id " +
             "LEFT JOIN authorities AS t ON au.id = t.account_user_id " +
-            "WHERE u.email_id = e.id AND au.owner = true AND e.email = ?", email));
+            "WHERE u.email_id = e.id AND au.owner = true AND e.address = ?", emailAddress));
 
     if (list.size() == 0) {
       return null;
     }
 
     Map<String, Object> firstRecord = list.get(0);
-    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
+    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("address"));
     SofiaUserEntity sofiaUserEntity = newUserEntity(firstRecord, eMailEntity);
     for (Map<String, Object> rs : list) {
       String groupName = (String) rs.get("authority");
@@ -313,7 +312,7 @@ public class SofiaUserRepository {
     log.debug("Search user for email " + id);
 
     List<Map<String, Object>> list = new ArrayList<>(databaseManager.getJDBCTemplate().queryForList(
-        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.email AS email, u.password, u.locale AS locale, u.enabled, authority " +
+        "SELECT u.id AS id, a.id AS accountId, a.site_id AS accountSiteId, a.name AS accountName, e.id AS eMailId, e.address AS address, u.password, u.locale AS locale, u.enabled, authority " +
             "FROM accounts AS a " +
             "LEFT JOIN accounts_users AS au ON a.id = au.account_id " +
             "LEFT JOIN users AS u ON u.id = au.user_id " +
@@ -326,7 +325,7 @@ public class SofiaUserRepository {
     }
 
     Map<String, Object> firstRecord = list.get(0);
-    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("email"));
+    EMailEntity eMailEntity = new EMailEntity((int) firstRecord.get("eMailId"), (String) firstRecord.get("address"));
     SofiaUserEntity sofiaUserEntity = newUserEntity(firstRecord, eMailEntity);
     for (Map<String, Object> rs : list) {
       String groupName = (String) rs.get("authority");

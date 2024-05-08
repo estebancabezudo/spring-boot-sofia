@@ -4,10 +4,10 @@ import jakarta.transaction.Transactional;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.persistence.DatabaseManager;
 import net.cabezudo.sofia.places.mappers.AdministrativeDivisionRowMapper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
@@ -24,15 +24,15 @@ public class AdministrativeDivisionRepository {
 
   @Transactional
   public AdministrativeDivisionEntityList findAll(int placeIdToSearch) {
-    AdministrativeDivisionEntityList list = new AdministrativeDivisionEntityList();
-
     log.debug("Search administrative division for place " + placeIdToSearch);
+
+    AdministrativeDivisionEntityList list = new AdministrativeDivisionEntityList();
     databaseManager.getJDBCTemplate().queryForList(
         "SELECT a.id AS id, place_id, t.id AS type_id, t.id AS type_name_id, t.name AS type_name, n.name AS name, enabled " +
             "FROM administrative_divisions AS a " +
             "LEFT JOIN administrative_division_types as t ON a.type_id=t.id " +
             "LEFT JOIN administrative_division_names as n ON a.name_id=n.id " +
-            "WHERE place_id=?",
+            "WHERE place_id = ?",
         new Object[]{placeIdToSearch}).forEach(rs -> {
       Integer id = (Integer) rs.get("id");
       Integer placeId = (Integer) rs.get("place_id");
@@ -48,10 +48,14 @@ public class AdministrativeDivisionRepository {
   }
 
   public AdministrativeDivisionEntity create(PlaceEntity place, AdministrativeDivisionTypeEntity type, AdministrativeDivisionNameEntity name) {
+    return create(databaseManager.getJDBCTemplate(), place, type, name);
+  }
+
+  public AdministrativeDivisionEntity create(JdbcTemplate jdbcTemplate, PlaceEntity place, AdministrativeDivisionTypeEntity type, AdministrativeDivisionNameEntity name) {
 
     String sqlQuery = "INSERT INTO administrative_divisions (place_id, type_id, name_id) VALUES (?, ?, ?)";
     KeyHolder keyHolder = new GeneratedKeyHolder();
-    databaseManager.getJDBCTemplate().update(connection -> {
+    jdbcTemplate.update(connection -> {
       PreparedStatement ps = connection.prepareStatement(sqlQuery, new String[]{"id"});
       ps.setInt(1, place.getId());
       ps.setInt(2, type.getId());
@@ -63,17 +67,21 @@ public class AdministrativeDivisionRepository {
     return new AdministrativeDivisionEntity(id, place, type, name);
   }
 
-  public AdministrativeDivisionEntity findByPlaceNameAndType(PlaceEntity place, String name, AdministrativeDivisionTypeEntity type) {
-    log.debug("Search administrative division with name " + name + " and type " + type + " for place " + place);
+  public AdministrativeDivisionEntity findByPlaceNameAndType(PlaceEntity place, AdministrativeDivisionTypeEntity type, AdministrativeDivisionNameEntity name) {
+    return findByPlaceNameAndType(databaseManager.getJDBCTemplate(), place, type, name);
+  }
 
-    List<AdministrativeDivisionEntity> list = databaseManager.getJDBCTemplate().query(
+  public AdministrativeDivisionEntity findByPlaceNameAndType(JdbcTemplate jdbcTemplate, PlaceEntity place, AdministrativeDivisionTypeEntity type, AdministrativeDivisionNameEntity name) {
+    log.debug("Search administrative division with name " + name.getValue() + " and type " + type.getName() + " for place " + place.getName());
+
+    List<AdministrativeDivisionEntity> list = jdbcTemplate.query(
         "SELECT a.id AS id, place_id, t.id AS type_id, t.name AS type_name, n.name AS name, enabled " +
             "FROM administrative_divisions AS a " +
             "LEFT JOIN administrative_division_types as t ON a.type_id=t.id " +
             "LEFT JOIN administrative_division_names as n ON a.name_id=n.id " +
-            "WHERE place_id=? AND n.name = ? AND t.id = ?",
+            "WHERE place_id = ? AND n.name = ? AND t.id = ?",
         new AdministrativeDivisionRowMapper(),
-        place.getId(), name, type.getId());
+        place.getId(), name.getValue(), type.getId());
 
     if (list.size() == 0) {
       return null;
@@ -103,7 +111,16 @@ public class AdministrativeDivisionRepository {
   }
 
   public void delete(int placeId) {
-    String deleteQuery = "DELETE FROM administrative_divisions WHERE place_id=?";
+    String deleteQuery = "DELETE FROM administrative_divisions WHERE place_id = ?";
     databaseManager.getJDBCTemplate().update(deleteQuery, placeId);
+  }
+
+  public AdministrativeDivisionEntity findByPlaceTypeAndNameOrCreate(JdbcTemplate jdbcTemplate, PlaceEntity place, AdministrativeDivisionTypeEntity type, AdministrativeDivisionNameEntity name) {
+    AdministrativeDivisionEntity administrativeDivisionTypeEntity = this.findByPlaceNameAndType(jdbcTemplate, place, type, name);
+    if (administrativeDivisionTypeEntity == null) {
+      return this.create(jdbcTemplate, place, type, name);
+    }
+    return administrativeDivisionTypeEntity;
+
   }
 }

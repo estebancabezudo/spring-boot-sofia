@@ -17,6 +17,12 @@ public class RestList<R> implements Iterable<R> {
     start = 0;
   }
 
+  public RestList(List<R> list) {
+    for (R r : list) {
+      this.add(r);
+    }
+  }
+
   public RestList(R[] values) {
     list.addAll(Arrays.asList(values));
     total = list.size();

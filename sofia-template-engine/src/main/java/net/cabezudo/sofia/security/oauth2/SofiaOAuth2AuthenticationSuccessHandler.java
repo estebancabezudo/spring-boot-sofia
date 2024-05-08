@@ -8,7 +8,6 @@ import net.cabezudo.sofia.security.LoginRestResponse;
 import net.cabezudo.sofia.security.SofiaSecurityConfig;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.service.SiteManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -37,7 +36,6 @@ public class SofiaOAuth2AuthenticationSuccessHandler extends SimpleUrlAuthentica
 
     log.debug("Running the handler for successful oauth2");
 
-    PrintWriter out = response.getWriter();
     if (!(authentication instanceof OAuth2AuthenticationToken)) {
       response.sendRedirect(SofiaSecurityConfig.DEFAULT_LOGIN_PAGE);
       return;

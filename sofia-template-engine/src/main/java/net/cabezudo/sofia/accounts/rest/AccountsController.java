@@ -7,13 +7,13 @@ import net.cabezudo.sofia.accounts.service.AccountManager;
 import net.cabezudo.sofia.accounts.service.AccountNotFoundException;
 import net.cabezudo.sofia.accounts.service.Accounts;
 import net.cabezudo.sofia.core.SofiaBadRequest;
+import net.cabezudo.sofia.core.rest.BadRequestException;
 import net.cabezudo.sofia.core.rest.ListRestResponse;
 import net.cabezudo.sofia.core.rest.SofiaRestResponse;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.service.SiteManager;
 import net.cabezudo.sofia.users.service.Group;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +37,11 @@ public class AccountsController extends SofiaAuthorizedController {
   private @Autowired SiteManager siteManager;
 
   @GetMapping("/v1/accounts")
-  public ResponseEntity<?> listAll() {
+  public ResponseEntity<?> listAll() throws BadRequestException {
     log.debug("Get list of accounts for all site");
     ListRestResponse<RestAccount> listRestResponse;
 
-    Account account = accountManager.getAccount(request);
+    Account account = super.getAccount();
 
     ResponseEntity<?> result;
     if ((result = super.checkPermissionFor(account, Group.ADMIN)) != null) {

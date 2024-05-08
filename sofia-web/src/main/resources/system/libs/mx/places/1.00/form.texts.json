@@ -35,9 +35,37 @@
         "es": "Número interior",
         "en": "Interior Number"
     },
+    "placeCornerStreetOptionLabel": {
+        "es": "esquina con",
+        "en": "corner with"
+    },
+    "placeBetweenStreetsOptionLabel": {
+        "es": "entre calles",
+        "en": "between streets"
+    },
+    "placesAnd": {
+        "es": "y",
+        "en": "and"
+    },
     "placeInteriorNumberInput": {
         "es": "Especifique si tiene un número interior",
         "en": "Specify if exist an interior number"
+    },
+    "placeIntersectionLabel": {
+        "es": "Intersección",
+        "en": "Intersection"
+    },
+    "cornerStreetInputLabel": {
+        "es": "Esquina con",
+        "en": "Corner with"
+    },
+    "firstStreetInputLabel": {
+        "es": "Primera calle",
+        "en": "First street"
+    },
+    "secondStreetInputLabel": {
+        "es": "Segunda calle",
+        "en": "Second street"
     },
     "placeReferencesLabel": {
         "es": "Referencias",
@@ -47,17 +75,25 @@
         "es": "",
         "en": ""
     },
-    "placeColonyLabel": {
-        "es": "Colonia",
-        "en": "Colony"
-    },
-    "placeColonyInput": {
-        "es": "",
-        "en": ""
-    },
     "placeMunicipalityLabel": {
         "es": "Municipalidad",
         "en": "Municipality"
+    },
+    "colony": {
+        "es": "Colonia",
+        "en": "Colony"
+    },
+    "neighborhood": {
+        "es": "Barrio",
+        "en": "Neighborhood"
+    },
+    "residentialDevelopment": {
+        "es": "Fraccionamiento",
+        "en": "Residential development"
+    },
+    "town": {
+        "es": "Pueblo",
+        "en": "Town"
     },
     "placeMunicipalityInput": {
         "es": "",

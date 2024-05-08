@@ -11,7 +11,6 @@ import net.cabezudo.sofia.places.persistence.AdministrativeDivisionTypeEntity;
 import net.cabezudo.sofia.places.persistence.AdministrativeDivisionTypeRepository;
 import net.cabezudo.sofia.places.persistence.PlaceEntity;
 import net.cabezudo.sofia.sites.Site;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +36,7 @@ public class AdministrativeDivisionManager {
       typeEntity = databaseTypeEntity;
     }
     AdministrativeDivisionEntity databaseEntity =
-        administrativeDivisionRepository.findByPlaceNameAndType(place, name.getValue(), typeEntity);
+        administrativeDivisionRepository.findByPlaceNameAndType(place, typeEntity, name);
     AdministrativeDivisionEntity entity;
     if (databaseEntity == null) {
       entity = administrativeDivisionRepository.create(place, typeEntity, name);

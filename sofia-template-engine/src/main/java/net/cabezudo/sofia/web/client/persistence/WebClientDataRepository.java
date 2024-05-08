@@ -2,7 +2,6 @@ package net.cabezudo.sofia.web.client.persistence;
 
 import net.cabezudo.sofia.core.Stopwatch;
 import net.cabezudo.sofia.persistence.DatabaseManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,16 +51,8 @@ public class WebClientDataRepository {
     KeyHolder keyHolder = new GeneratedKeyHolder();
     databaseManager.getJDBCTemplate().update(connection -> {
       PreparedStatement ps = connection.prepareStatement(sqlQuery, new String[]{"email"});
-      if (data.getAccount() == null) {
-        ps.setNull(1, Types.INTEGER);
-      } else {
-        ps.setString(1, data.getLanguage());
-      }
-      if (data.getAccount() == null) {
-        ps.setNull(2, Types.INTEGER);
-      } else {
-        ps.setInt(2, data.getAccount().getId());
-      }
+      ps.setObject(1, data.getAccount() == null ? null : data.getLanguage(), Types.VARCHAR);
+      ps.setObject(2, data.getAccount() == null ? null : data.getAccount().getId(), Types.INTEGER);
       return ps;
     }, keyHolder);
     Integer id = keyHolder.getKey() == null ? null : keyHolder.getKey().intValue();

@@ -29,8 +29,15 @@ package net.cabezudo.sofia.core;
  */
 public class InvalidParameterException extends RuntimeException {
 
-  public InvalidParameterException(String message) {
+  private final Object parameter;
+
+  public InvalidParameterException(String message, Object parameter) {
     super(message);
+    this.parameter = parameter;
   }
 
+  public InvalidParameterException(String message) {
+    super(message);
+    this.parameter = null;
+  }
 }

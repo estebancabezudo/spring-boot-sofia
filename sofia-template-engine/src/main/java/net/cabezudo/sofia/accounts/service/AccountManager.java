@@ -6,6 +6,7 @@ import net.cabezudo.sofia.accounts.mappers.EntityToBusinessAccountMapper;
 import net.cabezudo.sofia.accounts.persistence.AccountEntity;
 import net.cabezudo.sofia.accounts.persistence.AccountRepository;
 import net.cabezudo.sofia.accounts.persistence.AccountUserRelationEntity;
+import net.cabezudo.sofia.core.SofiaEnvironment;
 import net.cabezudo.sofia.core.persistence.EntityList;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.userpreferences.UserPreferencesManager;
@@ -14,7 +15,6 @@ import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
 import net.cabezudo.sofia.web.user.WebUserData;
 import net.cabezudo.sofia.web.user.WebUserDataManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AccountManager {
   private static final Logger log = LoggerFactory.getLogger(AccountManager.class);
+  private @Autowired SofiaEnvironment sofiaEnvironment;
   private @Autowired AccountRepository accountRepository;
   private @Autowired EntityToBusinessAccountMapper entityToBusinessAccountMapper;
   private @Autowired UserPreferencesManager userPreferencesManager;
@@ -118,7 +119,20 @@ public class AccountManager {
     }
   }
 
-  public Account getAccount(HttpServletRequest request) {
+  public Account getAccount(HttpServletRequest request) throws InvalidAccountException {
+    if (sofiaEnvironment.isDevelopment()) {
+      String accountIdParameter = request.getParameter("account");
+      try {
+        int accountId = Integer.parseInt(accountIdParameter);
+        Account account = get(accountId);
+        if (account == null) {
+          throw new InvalidAccountException("Account not found: " + accountId);
+        }
+        return account;
+      } catch (NumberFormatException e) {
+        throw new InvalidAccountException("Invalid account id: " + accountIdParameter, e);
+      }
+    }
     WebUserData webUserData = webUserDataManager.getFromSession(request);
     WebClientData webClientData = webClientDataManager.getFromCookie(request);
 

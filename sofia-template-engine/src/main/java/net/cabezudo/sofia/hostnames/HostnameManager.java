@@ -1,6 +1,4 @@
-package net.cabezudo.sofia.core.hostname;
-
-import net.cabezudo.sofia.hostnames.DomainNameValidationException;
+package net.cabezudo.sofia.hostnames;
 
 import org.springframework.stereotype.Service;
 

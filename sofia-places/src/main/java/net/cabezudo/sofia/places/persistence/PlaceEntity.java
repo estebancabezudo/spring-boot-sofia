@@ -1,85 +1,39 @@
 package net.cabezudo.sofia.places.persistence;
 
-import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import lombok.Getter;
 
 
+@Getter
+@Entity
 public class PlaceEntity {
 
-  @Column(name = "account_id")
+  private final Integer id;
   private final int accountId;
   private final String name;
-  private final String street;
+  private final Integer streetId;
   private final String number;
-  @Column(name = "interior_number")
   private final String interiorNumber;
+  private final Integer cornerStreetId;
+  private final Integer firstStreetId;
+  private final Integer secondStreetId;
   private final String references;
-  @Column(name = "postal_code")
-  private final String postalCode;
-  @Column(name = "country_id")
+  private final Integer postalCodeId;
   private final int countryId;
-  private int id;
 
-  public PlaceEntity(int id, int accountId, String name, String street, String number, String interiorNumber, String references, String postalCode, int countryId) {
+  public PlaceEntity(Integer id, int accountId, String name, Integer streetId, String number, String interiorNumber, Integer cornerStreetId, Integer firstStreetId,
+                     Integer secondStreetId, String references, Integer postalCodeId, int countryId) {
     this.id = id;
     this.accountId = accountId;
     this.name = name;
-    this.street = street;
+    this.streetId = streetId;
     this.number = number;
     this.interiorNumber = interiorNumber;
+    this.cornerStreetId = cornerStreetId;
+    this.firstStreetId = firstStreetId;
+    this.secondStreetId = secondStreetId;
     this.references = references;
-    this.postalCode = postalCode;
+    this.postalCodeId = postalCodeId;
     this.countryId = countryId;
-  }
-
-  public PlaceEntity(PlaceEntity entity) {
-    this.id = entity.getId();
-    this.accountId = entity.getAccountId();
-    this.name = entity.getName();
-    this.street = entity.getStreet();
-    this.number = entity.getNumber();
-    this.interiorNumber = entity.getInteriorNumber();
-    this.references = entity.getReferences();
-    this.postalCode = entity.getPostalCode();
-    this.countryId = entity.getCountryId();
-  }
-
-  public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
-  }
-
-  public int getAccountId() {
-    return accountId;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getStreet() {
-    return street;
-  }
-
-  public String getNumber() {
-    return number;
-  }
-
-  public String getInteriorNumber() {
-    return interiorNumber;
-  }
-
-  public String getReferences() {
-    return references;
-  }
-
-  public String getPostalCode() {
-    return postalCode;
-  }
-
-  public int getCountryId() {
-    return countryId;
   }
 }

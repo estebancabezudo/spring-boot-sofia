@@ -32,7 +32,6 @@ import net.cabezudo.sofia.sites.service.PathManager;
 import net.cabezudo.sofia.sites.service.SiteManager;
 import net.cabezudo.sofia.users.service.Group;
 import net.cabezudo.sofia.users.service.Groups;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +77,9 @@ public class SofiaFile {
   private Document document;
   private Element head;
 
-  public SofiaFile(HttpServletRequest request, SofiaEnvironment sofiaEnvironment, SiteManager siteManager, PathManager pathManager, TemplateVariables templateVariables, PermissionManager permissionManager) throws SiteNotFoundException, HostNotFoundException {
+  public SofiaFile(
+      HttpServletRequest request, SofiaEnvironment sofiaEnvironment, SiteManager siteManager, PathManager pathManager, TemplateVariables templateVariables, PermissionManager permissionManager)
+      throws SiteNotFoundException, HostNotFoundException {
     this.sofiaEnvironment = sofiaEnvironment;
     this.pathManager = pathManager;
     this.idStorage = new IdStorage(pathManager);
@@ -92,6 +93,7 @@ public class SofiaFile {
     this.version = host.getVersion();
     String requestURI = request.getRequestURI().substring(1);
     requestFilePath = Paths.get(requestURI);
+    log.debug("Request file path: " + requestFilePath);
     voidRootFilePath = FileHelper.removeExtension(requestURI);
   }
 
@@ -180,13 +182,13 @@ public class SofiaFile {
 
   private void readHTMLFile() throws SiteCreationException, IOException {
     Path fullFilePath = pathManager.getVersionedSourcesPath(site, version).resolve(requestFilePath);
+    log.debug("Read HTML file: " + fullFilePath);
     if (!Files.exists(fullFilePath)) {
       log.debug("File not found " + fullFilePath);
       throw new FileNotFoundException(requestFilePath + " do not exists");
     }
 
     byte[] data;
-    log.info("Read file " + getSourcePathRelative(fullFilePath));
     data = Files.readAllBytes(fullFilePath);
     String htmlCode = new String(data, sofiaEnvironment.getCharset());
     StringBuilder sb = new StringBuilder(htmlCode.length());
@@ -317,7 +319,7 @@ public class SofiaFile {
 
     head.appendChild(new TextNode("\n", null));
 
-    scriptNode.appendChild(new TextNode("\nconst templateVariables = " + templateVariables.toJSON() + ";\n", null));
+    scriptNode.appendChild(new TextNode("\nconst environment = { name: '" + sofiaEnvironment.getName() + "' };\nconst templateVariables = " + templateVariables.toJSON() + ";\n", null));
 
     scriptNode.appendChild(new TextNode(jsCode.toCode(), null));
     head.appendChild(scriptNode);
@@ -345,8 +347,10 @@ public class SofiaFile {
 
   private void processElement(Path requestFilePath, Node node, Caller caller) throws SiteCreationException, HostNotFoundException {
     if (node instanceof Element element) {
+      String nodeTagName = node.getTagName();
+      log.debug("The node is an element. Tab name: " + nodeTagName);
       try {
-        switch (node.getTagName()) {
+        switch (nodeTagName) {
           case TagName.TITLE:
             break;
           case TagName.HEAD:
@@ -373,8 +377,8 @@ public class SofiaFile {
         }
       } catch (
         // TODO check if some of the exceptions are programming error to throw SofiaRuntimeException
-          IOException | JSONParseException | SourceAlreadyAdded | SofiaFileNotFoundException | ParseException |
-          FilePathOutsideSourcePath | UndefinedLiteralException | DuplicateKeyException | SiteNotFoundException e) {
+          IOException | JSONParseException | SourceAlreadyAdded | SofiaFileNotFoundException | ParseException | FilePathOutsideSourcePath | UndefinedLiteralException | DuplicateKeyException |
+          SiteNotFoundException e) {
         throw new SiteCreationException(e);
       }
       if (TagName.BODY.equals(element.getTagName())) {
@@ -403,7 +407,7 @@ public class SofiaFile {
         }
       }
     } else {
-      log.debug("No groups tag found");
+      log.debug("No groups attribute found in body tag. No permission added");
     }
   }
 
@@ -420,8 +424,7 @@ public class SofiaFile {
     Path fullLibraryFilePath = getLibraryPath(libraryName, position);
     log.debug("Effective library path: " + fullLibraryFilePath);
     try (Stream<Path> stream = Files.walk(Paths.get(fullLibraryFilePath.toUri()))) {
-      stream.filter(Files::isRegularFile)
-          .forEach(files::add);
+      stream.filter(Files::isRegularFile).forEach(files::add);
     }
     // TODO Try to avoid this bucle without use a RuntimeException for the SiteCreationException from processFile().
     for (Path filePath : files) {
@@ -545,7 +548,10 @@ public class SofiaFile {
     Attribute idAttribute = element.getAttribute(Attribute.ID);
     String id = idAttribute == null ? null : idAttribute.getValue();
 
+    log.debug("Processing a container element with id " + id);
+
     if ((attributeFile = element.getAttribute(Attribute.FILE)) != null) {
+      log.debug("The element " + id + " has an attribute " + Attribute.FILE);
       if (element.hasChilds()) {
         throw new SiteCreationException("A file container can't have children.");
       }
@@ -556,12 +562,13 @@ public class SofiaFile {
       element.removeAttribute(Attribute.FILE);
       return readHTMLFile(element, attributeFile, id, caller);
     }
+    log.debug("The container element doesnt have a '" + Attribute.FILE + "' attribute.");
     return null;
   }
 
-  private Nodes readHTMLFile(Element element, Attribute fileAttribute, String configurationPrefix, Caller caller)
-      throws SofiaFileNotFoundException, ParseException, IOException, SiteCreationException, DuplicateKeyException, HostNotFoundException {
+  private Nodes readHTMLFile(Element element, Attribute fileAttribute, String configurationPrefix, Caller caller) throws SofiaFileNotFoundException, ParseException, IOException, SiteCreationException, DuplicateKeyException, HostNotFoundException {
     String value = fileAttribute.getValue();
+    log.debug("Read the HTML file " + value + " from element " + element.getType());
     Path basePath;
     if (value.startsWith("/")) {
       basePath = pathManager.getVersionedSourcesPath(site, version);
@@ -577,8 +584,7 @@ public class SofiaFile {
     return body.getChilds();
   }
 
-  private Element readHTMLFile(Path basePath, Path filePath, String prefixForConfiguration, Caller caller)
-      throws ParseException, IOException, SiteCreationException, DuplicateKeyException, HostNotFoundException {
+  private Element readHTMLFile(Path basePath, Path filePath, String prefixForConfiguration, Caller caller) throws ParseException, IOException, SiteCreationException, DuplicateKeyException, HostNotFoundException {
     Path fullFilePath = basePath.resolve(filePath);
 
     Path fullConfigurationFilePath = Paths.get(FileHelper.removeExtension(fullFilePath) + ".json");
@@ -709,6 +715,8 @@ public class SofiaFile {
       readStyleFile(pathManager.getVersionedSourcesPath(site, version), voidRootFilePath, null, null);
       readScriptFile(pathManager.getVersionedSourcesPath(site, version), voidRootFilePath, null, null);
       readTextsFile(pathManager.getVersionedSourcesPath(site, version), voidRootFilePath);
+
+      // Read and parse the root document in document variable. The document variable is a Document object with the DOM.
       readHTMLFile();
 
       processDocumentNode(requestFilePath, document);

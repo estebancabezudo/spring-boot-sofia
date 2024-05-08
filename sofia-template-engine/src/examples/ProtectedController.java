@@ -1,9 +1,9 @@
 package net.cabezudo.sofia;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.service.AccountManager;
+import net.cabezudo.sofia.core.rest.BadRequestException;
 import net.cabezudo.sofia.security.SofiaAuthorizedController;
 import net.cabezudo.sofia.users.service.Group;
 import net.cabezudo.sofia.users.service.SofiaUser;
@@ -22,11 +22,11 @@ public class ProtectedController extends SofiaAuthorizedController {
   private @Autowired AccountManager accountManager;
 
   @GetMapping("/protected")
-  public ResponseEntity<?> protectedControllerExample(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public ResponseEntity<?> protectedControllerExample(HttpServletResponse response) throws IOException, BadRequestException {
     WebUserData webUserData = webUserDataManager.getFromSession(request);
     SofiaUser user = webUserData == null ? null : webUserData.getUser();
 
-    Account account = accountManager.getAccount(request);
+    Account account = super.getAccount();
     ResponseEntity<?> result;
 
     /**

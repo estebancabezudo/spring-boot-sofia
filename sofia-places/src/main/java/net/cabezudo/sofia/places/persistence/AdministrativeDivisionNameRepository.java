@@ -3,7 +3,6 @@ package net.cabezudo.sofia.places.persistence;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.persistence.DatabaseManager;
 import net.cabezudo.sofia.places.mappers.AdministrativeDivisionNameRowMapper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,5 +46,17 @@ public class AdministrativeDivisionNameRepository {
     // FIX Method invocation 'intValue' may produce 'NullPointerException'
     int id = keyHolder.getKey().intValue();
     return new AdministrativeDivisionNameEntity(id, name);
+  }
+
+  public AdministrativeDivisionNameEntity findByNameOrCreate(String name) {
+    if (name == null) {
+      return null;
+    }
+    AdministrativeDivisionNameEntity administrativeDivisionNameEntity = this.findByName(name);
+
+    if (administrativeDivisionNameEntity == null) {
+      return this.create(name);
+    }
+    return administrativeDivisionNameEntity;
   }
 }

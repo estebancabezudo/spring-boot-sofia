@@ -4,15 +4,20 @@ import net.cabezudo.sofia.places.AdministrativeDivision;
 import net.cabezudo.sofia.places.AdministrativeDivisionList;
 import net.cabezudo.sofia.places.rest.AdministrativeDivisionsRestList;
 import net.cabezudo.sofia.places.rest.RestAdministrativeDivision;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class RestToBusinessAdministrativeDivisionListMapper {
+  private @Autowired RestToBusinessAdministrativeDivisionMapper restToBusinessAdministrativeDivisionMapper;
+
   public AdministrativeDivisionList map(AdministrativeDivisionsRestList administrativeDivisionsRestList) {
     AdministrativeDivisionList administrativeDivisionList = new AdministrativeDivisionList();
-    for (RestAdministrativeDivision restAdministrativeDivision : administrativeDivisionsRestList) {
-      RestToBusinessAdministrativeDivisionMapper restToBusinessAdministrativeDivisionMapper = new RestToBusinessAdministrativeDivisionMapper();
-      AdministrativeDivision administrativeDivision = restToBusinessAdministrativeDivisionMapper.map(restAdministrativeDivision);
-      administrativeDivisionList.add(administrativeDivision);
+    if (administrativeDivisionsRestList != null) {
+      for (RestAdministrativeDivision restAdministrativeDivision : administrativeDivisionsRestList) {
+        AdministrativeDivision administrativeDivision = restToBusinessAdministrativeDivisionMapper.map(restAdministrativeDivision);
+        administrativeDivisionList.add(administrativeDivision);
+      }
     }
     return administrativeDivisionList;
   }

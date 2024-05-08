@@ -14,7 +14,6 @@ sites:
       - /login/oauth2/code
       - /oauth2
       - /v1
-      - /for
     permissions:
       - all:all:grant:/login.html
       - all:all:grant:/index.html
@@ -22,13 +21,13 @@ sites:
       - all:all:grant:/images/**
       - all:all:grant:/fonts/**
     login:
-      successURL: /redirect
+      successURL: /index.html
 
   - name: cabezudo.net
     mail:
       replyAddress: noreply@cabezudo.net
     hosts:
-      - local.cabezudo.net:1
+      - cabezudo.net:1
     permissions:
       - all:all:grant:/**
     api:
@@ -42,22 +41,32 @@ sites:
       - all:all:grant:/**
     api:
       - /v1
-
-  - name: datosinutilesparaimpresionarenlasfiestas.com
-    mail:
-      replyAddress: noreply@datosinutilesparaimpresionarenlasfiestas.com
-    hosts:
-      - local.datosinutilesparaimpresionarenlasfiestas.com:1
-    api:
-      - /v1
-    permissions:
-      - all:all:grant:/**
-
   - name: medicina.digital
     mail:
       relpyAddress: noreply@medicina.digital
     hosts:
       - medicina.digital:1
+    api:
+      - /logout
+      - /login/oauth2/code
+      - /oauth2
+      - /v1
+      - /for
+      - /users/selectInitPage
+    permissions:
+      - all:all:grant:/login.html
+      - all:all:grant:/index.html
+      - all:all:grant:/users/**
+      - all:all:grant:/texts/**
+      - all:all:grant:/images/**
+      - all:all:grant:/fonts/**
+    login:
+      successURL: /users/selectInitPage
+  - name: datosinutilesparaimpresionarenlasfiestas.com
+    mail:
+      replyAddress: noreply@datosinutilesparaimpresionarenlasfiestas.com
+    hosts:
+      - local.datosinutilesparaimpresionarenlasfiestas.com:1
     api:
       - /v1
     permissions:

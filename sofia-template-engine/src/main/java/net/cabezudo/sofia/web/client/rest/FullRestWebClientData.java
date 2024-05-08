@@ -1,13 +1,13 @@
 package net.cabezudo.sofia.web.client.rest;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.mappers.BusinessToRestAccountMapper;
 import net.cabezudo.sofia.accounts.rest.RestAccount;
+import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.core.WebMessageManager;
+import net.cabezudo.sofia.language.Language;
 import net.cabezudo.sofia.users.mappers.BusinessToRestUserMapper;
 import net.cabezudo.sofia.users.rest.RestSofiaUser;
-import net.cabezudo.sofia.web.client.Language;
 import net.cabezudo.sofia.web.client.WebClientData;
 import net.cabezudo.sofia.web.user.WebUserData;
 

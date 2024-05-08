@@ -3,6 +3,7 @@ package net.cabezudo.sofia.security;
 import jakarta.servlet.http.HttpServletRequest;
 import net.cabezudo.sofia.accounts.service.Account;
 import net.cabezudo.sofia.accounts.service.AccountManager;
+import net.cabezudo.sofia.accounts.service.InvalidAccountException;
 import net.cabezudo.sofia.core.SofiaEnvironment;
 import net.cabezudo.sofia.core.SofiaRuntimeException;
 import net.cabezudo.sofia.sites.Site;
@@ -10,7 +11,6 @@ import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.sites.service.SiteManager;
 import net.cabezudo.sofia.users.service.SofiaUser;
 import net.cabezudo.sofia.web.client.WebClientDataManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +56,13 @@ public class SofiaAuthorizationManager implements AuthorizationManager<RequestAu
 
     if (sofiaEnvironment.isSecurityActive()) {
       SofiaUser user = sofiaSecurityManager.getLoggedUser();
-      Account account = accountManager.getAccount(request);
+      Account account;
+      try {
+        account = accountManager.getAccount(request);
+      } catch (InvalidAccountException e) {
+        return new AuthorizationDecision(false);
+      }
+
       log.debug("Check authorization permissions for " + requestURI + "  using " + (user == null ? "NOT LOGGED" : user.getUsername()) + " on " + site.getName() + ", " + (account == null ? null : account.getName() + " in the account with id " + account.getId()));
       if (site != null && permissionManager.hasPermission(user, site, account, requestURI)) {
         return new AuthorizationDecision(true);

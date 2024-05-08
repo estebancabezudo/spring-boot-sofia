@@ -1,7 +1,6 @@
-package net.cabezudo.sofia.web.client;
+package net.cabezudo.sofia.language;
 
 import net.cabezudo.sofia.core.InvalidParameterException;
-
 
 import java.util.Locale;
 import java.util.Objects;
