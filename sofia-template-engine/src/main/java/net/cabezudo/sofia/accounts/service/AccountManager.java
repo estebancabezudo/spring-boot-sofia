@@ -122,15 +122,17 @@ public class AccountManager {
   public Account getAccount(HttpServletRequest request) throws InvalidAccountException {
     if (sofiaEnvironment.isDevelopment()) {
       String accountIdParameter = request.getParameter("account");
-      try {
-        int accountId = Integer.parseInt(accountIdParameter);
-        Account account = get(accountId);
-        if (account == null) {
-          throw new InvalidAccountException("Account not found: " + accountId);
+      if (accountIdParameter != null) {
+        try {
+          int accountId = Integer.parseInt(accountIdParameter);
+          Account account = get(accountId);
+          if (account == null) {
+            throw new InvalidAccountException("Account not found: " + accountId);
+          }
+          return account;
+        } catch (NumberFormatException e) {
+          throw new InvalidAccountException("Invalid account id: " + accountIdParameter, e);
         }
-        return account;
-      } catch (NumberFormatException e) {
-        throw new InvalidAccountException("Invalid account id: " + accountIdParameter, e);
       }
     }
     WebUserData webUserData = webUserDataManager.getFromSession(request);

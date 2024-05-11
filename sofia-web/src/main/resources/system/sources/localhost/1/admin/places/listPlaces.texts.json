@@ -1,0 +1,10 @@
+{
+    "responseErrorWhenDeleting": {
+        "es": "Error al borrar el lugar ({0})",
+        "en": "Error to delete the place ({0})"
+    },
+    "mx": {
+        "es": "México",
+        "en": "Mexico"
+    }
+}

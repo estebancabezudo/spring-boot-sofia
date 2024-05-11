@@ -39,6 +39,7 @@ public class TemplateEngineConfiguration implements WebMvcConfigurer {
   private @Autowired PathManager pathManager;
   private @Autowired PermissionManager permissionManager;
   private @Autowired ContentManager contentManager;
+  private ConfigurationFileYAMLData configurationFileYAMLData;
 
 
   @EventListener(ApplicationReadyEvent.class)
@@ -68,10 +69,9 @@ public class TemplateEngineConfiguration implements WebMvcConfigurer {
     }
     setSystemBasePath();
     log.debug("Sites path: " + sofiaEnvironment.getSitesPath());
-    setSourcesPaths();
     sofiaEnvironment.setSystemLibraryPath(sofiaEnvironment.getBasePath().resolve(SofiaEnvironment.LIBS_DIRECTORY_NAME));
     if (Files.exists(sofiaEnvironment.getSystemLibraryPath()) && !Files.isDirectory(sofiaEnvironment.getSystemLibraryPath())) {
-      throw new ConfigurationException("The system library path is is not a directory: " + sofiaEnvironment.getSourcePaths());
+      throw new ConfigurationException("The system library path is is not a directory: " + sofiaEnvironment.getSourcePath());
     }
     log.debug("System library path: " + sofiaEnvironment.getSystemLibraryPath());
     sofiaEnvironment.setSystemDataPath(sofiaEnvironment.getBasePath().resolve(SofiaEnvironment.DATA_DIRECTORY_NAME));
@@ -79,25 +79,46 @@ public class TemplateEngineConfiguration implements WebMvcConfigurer {
     sofiaEnvironment.setSitesDataPath(sofiaEnvironment.getSystemDataPath().resolve(SofiaEnvironment.SITES_DIRECTORY_NAME));
   }
 
-  private void loadDataFromYAMLFile() throws SiteNotFoundException {
+  private void loadDataFromYAMLFile() throws SiteNotFoundException, ConfigurationException {
     log.debug("Load data from configuration file sofia.yml.");
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     ClassLoader classLoader = this.getClass().getClassLoader();
     URL sofiaConfigurationURL = classLoader.getResource(SofiaEnvironment.SOFIA_CONFIGURATION_FILENAME);
+
     if (sofiaConfigurationURL == null) {
       log.debug("Configuration file sofia.yml NOT FOUND in resources path.");
-      sofiaEnvironment.setConfigurationFileYAMLData(new ConfigurationFileYAMLData());
+      configurationFileYAMLData = new ConfigurationFileYAMLData();
     } else {
       File sofiaConfigurationFile = new File(sofiaConfigurationURL.getFile());
       try {
-        sofiaEnvironment.setConfigurationFileYAMLData(mapper.readValue(sofiaConfigurationFile, ConfigurationFileYAMLData.class));
-        sofiaEnvironment.createHostToSiteData();
-        addPermissions(sofiaEnvironment.getConfigurationFileYAMLData());
+        configurationFileYAMLData = mapper.readValue(sofiaConfigurationFile, ConfigurationFileYAMLData.class);
+        sofiaEnvironment.setSourcePath(Path.of(configurationFileYAMLData.getSourcePath()));
+        sofiaEnvironment.createHostToSiteData(configurationFileYAMLData);
+        addSourcesPaths(configurationFileYAMLData);
+        addPermissions(configurationFileYAMLData);
       } catch (IOException e) {
-        log.error("invalid configuration: " + e.getMessage());
+        throw new ConfigurationException("invalid configuration: " + e.getMessage());
       }
     }
   }
+
+  private void addSourcesPaths(ConfigurationFileYAMLData configurationFileYAMLData) throws ConfigurationException {
+    log.debug("Add sources path to sites");
+    List<ConfigurationFileYAMLSiteData> sites = configurationFileYAMLData.getSites();
+
+    for (ConfigurationFileYAMLSiteData siteData : sites) {
+      Site site;
+      try {
+        site = siteManager.getByName(siteData.getName());
+      } catch (SiteNotFoundException e) {
+        continue;
+      }
+      log.debug("Site: " + site.getName());
+
+      site.setSourcePath(siteData.getSourcePath(), sofiaEnvironment.getSourcePath());
+    }
+  }
+
 
   public void addPermissions(ConfigurationFileYAMLData configurationFileYAMLData) {
     log.debug("Create permissions with data in configuration file.");
@@ -131,7 +152,7 @@ public class TemplateEngineConfiguration implements WebMvcConfigurer {
 
 
   private void setSystemBasePath() throws ConfigurationException {
-    String stringBasePathFromConfigurationFile = sofiaEnvironment.getConfigurationFileYAMLData().getBasePath();
+    String stringBasePathFromConfigurationFile = configurationFileYAMLData.getBasePath();
     String stringBasePath;
     ClassLoader classLoader = this.getClass().getClassLoader();
     if (stringBasePathFromConfigurationFile == null) {
@@ -176,24 +197,4 @@ public class TemplateEngineConfiguration implements WebMvcConfigurer {
       throw new ConfigurationException("Base path is not a directory: " + sofiaEnvironment.getSitesPath());
     }
   }
-
-  private void setSourcesPaths() throws ConfigurationException {
-    String[] sourcesPathsFromData = sofiaEnvironment.getConfigurationFileYAMLData().getSourcePaths();
-    if (sourcesPathsFromData == null || sourcesPathsFromData.length == 0) {
-      sofiaEnvironment.getSourcePaths().add(sofiaEnvironment.getBasePath().resolve(SofiaEnvironment.SOURCES_DIRECTORY_NAME));
-    } else {
-      for (String sourcePath : sourcesPathsFromData) {
-        Path path = Paths.get(sourcePath);
-        if (!Files.exists(path)) {
-          throw new ConfigurationException("Sources path doesn't exist: " + path);
-        }
-        if (!Files.isDirectory(path)) {
-          throw new ConfigurationException("Sources path is not a directory: " + path);
-        }
-        log.debug("Found source path: " + path);
-        sofiaEnvironment.getSourcePaths().add(path);
-      }
-    }
-  }
-
 }

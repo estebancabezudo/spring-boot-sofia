@@ -5,11 +5,9 @@ import net.cabezudo.sofia.sites.HostNotFoundException;
 import net.cabezudo.sofia.sites.Site;
 import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.sites.SourceNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.TreeMap;
@@ -24,19 +22,11 @@ public class PathManager {
   private final Map<String, Path> sourcePaths = new TreeMap<>();
   private @Autowired SofiaEnvironment sofiaEnvironment;
 
-  public Path getSourcesPath(Site site) throws SourceNotFoundException {
+  public Path _getSourcesPath(Site site) throws SourceNotFoundException {
     Path sourcePath = sourcePaths.get(site.getName());
 
     if (sourcePath == null) {
-      for (Path path : sofiaEnvironment.getSourcePaths()) {
-        Path newSourcePath = path.resolve(site.getName());
-        if (Files.exists(newSourcePath)) {
-          sourcePaths.put(site.getName(), newSourcePath);
-          return newSourcePath;
-        } else {
-          throw new SourceNotFoundException("Source for " + site.getName() + " not found.");
-        }
-      }
+      throw new SourceNotFoundException("Source for " + site.getName() + " not found.");
     }
     return sourcePath;
   }
@@ -45,20 +35,12 @@ public class PathManager {
     return sofiaEnvironment.getSitesPath().resolve(site.getName()).resolve(version);
   }
 
-  public Path getVersionedSourcesPath(Site site, String version) {
-    return getSourcesPath(site).resolve(version);
-  }
-
   public Path getVersionedSiteTextsPath(Site site, String version) throws SiteNotFoundException, HostNotFoundException {
     return getVersionedSitePath(site, version).resolve(SofiaEnvironment.TEXTS_FOLDER_NAME);
   }
 
   public Path getVersionedSiteImagesPath(Site site, String version) throws SiteNotFoundException, HostNotFoundException {
     return getVersionedSitePath(site, version).resolve(SofiaEnvironment.IMAGES_FOLDER_NAME);
-  }
-
-  public Path getVersionedSourcesLibraryPath(Site site, String version) {
-    return getSourcesPath(site).resolve(version).resolve(SofiaEnvironment.LIBS_DIRECTORY_NAME);
   }
 
   public Path getProtectedPersonImagesPath(Site site) {

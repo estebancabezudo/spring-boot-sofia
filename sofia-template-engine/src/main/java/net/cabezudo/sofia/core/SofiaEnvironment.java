@@ -17,8 +17,6 @@ import org.springframework.context.annotation.Configuration;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author <a href="http://cabezudo.net">Esteban Cabezudo</a>
@@ -40,12 +38,9 @@ public class SofiaEnvironment {
   public static final String TEMPLATES_DIRECTORY_NAME = "templates";
   public static final String SOFIA_CONFIGURATION_FILENAME = "sofia.yml";
   private static final Logger log = LoggerFactory.getLogger(SofiaEnvironment.class);
-  private final List<Path> sourcePaths = new ArrayList<>();
+  private Path sourcePath;
   private @Autowired SiteManager siteManager;
   private String name;
-  @Getter
-  @Setter
-  private ConfigurationFileYAMLData configurationFileYAMLData;
   @Getter
   @Setter
   private Path basePath;
@@ -97,7 +92,7 @@ public class SofiaEnvironment {
     return PROD.equals(name);
   }
 
-  public void createHostToSiteData() {
+  public void createHostToSiteData(ConfigurationFileYAMLData configurationFileYAMLData) {
     log.debug("Create host to site data.");
     for (ConfigurationFileYAMLSiteData configurationFileYAMLSiteData : configurationFileYAMLData.getSites()) {
       log.debug("Found data for site: " + configurationFileYAMLSiteData.getName());
@@ -108,10 +103,13 @@ public class SofiaEnvironment {
     }
   }
 
-  public List<Path> getSourcePaths() {
-    return sourcePaths;
+  public Path getSourcePath() {
+    return sourcePath;
   }
 
+  public void setSourcePath(Path sourcePath) {
+    this.sourcePath = sourcePath;
+  }
 
   public boolean isSecurityActive() {
     return sofiaSecurityActive;

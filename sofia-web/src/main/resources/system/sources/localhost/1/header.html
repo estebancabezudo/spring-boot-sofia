@@ -1,0 +1,330 @@
+<link lib="burgerMenu:1.00" />
+<link lib="linkTo:1.00" />
+<link lib="twoLanguageFlag:1.00" />
+<style>
+    :root {
+        --headerHeight: #{header.height};
+        --primaryColor: #116223;
+    }
+
+    #headerContainer {
+        display: flex;
+        position: fixed;
+        box-sizing: border-box;
+        width: 100%;
+        height: var(--headerHeight);
+        background-color: var(--primaryColor);
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #headerLogoContainer {
+        display: flex;
+        position: fixed;
+        align-items: flex-end;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    #headerLogo {
+        width: 100px;
+        height: auto;
+        aspect-ratio: 399/124;
+        background-image: url(/images/logoSofia.png);
+        background-size: contain;
+        background-repeat: no-repeat;
+        margin-left: 20px;
+    }
+
+    .logoBackground {
+        background-color: var(--primaryColor);
+        width: 100%;
+        height: var(--headerHeight);
+        position: fixed;
+        right: 0;
+        top: 0;
+    }
+
+    #headerMenuContainer {
+        font-weight: bold;
+        color: white;
+        width: 100%;
+        background-color: var(--primaryColor);
+        right: 0;
+    }
+
+    .burguerMenuContainer {
+        top: -59px;
+        align-items: center;
+        justify-content: space-between;
+        transition: top .2s ease-out;
+        display: none;
+    }
+
+    .burguerMenuContainerActive {
+        display: flex;
+        top: var(--headerHeight);
+    }
+
+    .menuItems {
+        padding: 20px 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-weight: normal;
+        font-size: 24px;
+        z-index: 10;
+        position: fixed;
+        background: white;
+        color: black;
+        top: 0;
+    }
+
+    .menuItem {
+        margin: 20px 0;
+    }
+
+    .menuItem>span {
+        cursor: pointer;
+        margin: 0;
+    }
+
+    .headerIcon {
+        width: 28px;
+        height: 28px;
+        background-repeat: no-repeat;
+        background-position: center;
+        cursor: pointer;
+    }
+
+    .headerBurgerMenuActivator {
+        background-image: url(/images/burgerMenu/1.00/burger.svg);
+        margin-right: 20px;
+    }
+
+    .headerMenuClose {
+        background-image: url(/images/burgerMenu/1.00/close.svg);
+    }
+
+    #headerMenuUsername,
+    #headerMenuAccountName {
+        font-family: Gotham;
+        font-size: 10px;
+    }
+
+    #headerMenuUsername,
+    #headerMenuAccountName {
+        margin: 0 0 20px 0;
+        font-size: 14px;
+    }
+
+
+    .twoLanguageFlagContainer {
+        margin: 20px 0 0 0;
+    }
+
+    .messages {
+        display: flex;
+        color: white;
+        flex-wrap: nowrap;
+        padding: 5px;
+        overflow: hidden;
+        font-weight: bold;
+        pointer-events: none;
+        transition: background-color .2s ease-out;
+    }
+
+    .errorMessage {
+        background-color: rgb(177, 40, 40);
+    }
+
+    .message {
+        background-color: rgb(82, 89, 190);
+    }
+
+    @media all and (min-width: 750px) {
+
+        .burguerMenuContainer {
+            position: relative;
+            display: flex;
+            top: 0;
+            justify-content: flex-end;
+            transition: none;
+        }
+
+        #headerMenuUsername,
+        #headerMenuAccountName {
+            margin: 0 0 0 4px;
+        }
+
+        .menuItems {
+            width: auto;
+            height: auto;
+            position: relative;
+            top: auto;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            font-weight: normal;
+            font-size: 14px;
+            background-color: transparent;
+            color: white;
+        }
+
+        .logoBackground {
+            display: none;
+        }
+
+        #headerBurgerMenuActivator {
+            display: none;
+        }
+
+        #headerLogoContainer {
+            width: auto;
+        }
+
+        .menuItem>span {
+            cursor: pointer;
+            margin: 0 0 0 10px;
+        }
+
+        .twoLanguageFlagContainer {
+            margin: 0 0 0 14px;
+            cursor: pointer;
+        }
+    }
+</style>
+
+<script>
+    const initHeader = () => {
+        const burgerMenu = new BurgerMenu(
+            {
+                menuContainerId: 'headerMenuContainer',
+                openMenuElementId: 'headerBurgerMenuActivator',
+                closeMenuElementId: 'headerBurgerMenuActivator',
+                items: [
+                    {
+                        id: 'headerMenuUsername',
+                        hide: ['status:notLogged'],
+                        show: ['status:logged'],
+                    },
+                    {
+                        id: 'headerMenuItemUsers',
+                        hide: ['page:/admin/users/list.html'],
+                        onclick: '/admin/users/list.html'
+                    },
+                    {
+                        id: 'headerMenuItemPlaces',
+                        hide: ['page:/admin/places/list.html'],
+                        onclick: '/admin/places/list.html'
+                    },
+                    {
+                        id: 'headerMenuItemLogin',
+                        hide: ['status:logged', 'page:/login.html'],
+                        show: ['status:notLogged'],
+                        onclick: '/login.html'
+                    },
+                    {
+                        id: 'headerMenuItemLogout',
+                        hide: ['status:notLogged'],
+                        show: ['status:logged'],
+                        onclick: '/logout'
+                    }
+                ]
+            }
+        );
+        const headerMenuAccountNameElement = document.getElementById('headerMenuAccountName');
+        new LinkTo({
+            element: headerMenuAccountNameElement,
+            onclick: '/users/accounts.html',
+            show: ['page:/'],
+        });
+        new LinkTo({
+            id: 'headerLogo',
+            onclick: '/',
+            disableWhen: ['page:/'],
+        });
+        new TwoLanguageFlag({
+            id: 'twoLanguageFlag',
+            languages: [{ code: 'en' }, { code: 'es' }]
+        });
+        Core.subscribeTo('core:showErrorMessage', data => {
+            console.log(`header.html::initHeader::showErrorMessage::data: `, data);
+            const hideMessage = () => {
+                element.classList.remove('errorMessage');
+            };
+            const element = document.getElementById('messages');
+            element.innerHTML = data.errorMessage;
+            element.classList.add('errorMessage');
+            setTimeout(hideMessage, 3000);
+        });
+        Core.subscribeTo('core:showMessage', data => {
+            console.log(`header.html::initHeader::showMessage::data: `, data);
+            const hideMessage = () => {
+                element.classList.remove('message');
+            };
+            const element = document.getElementById('messages');
+            element.innerHTML = data.message;
+            element.classList.add('message');
+            setTimeout(hideMessage, 8000);
+        });
+        Core.subscribeTo('core:webClientDataChange', data => {
+            if (data !== null) {
+                if (data.user !== null) {
+                    username = data.user.username;
+                    document.getElementById('headerMenuUsername').innerHTML = `${username}`;
+                }
+                if (data.account != null) {
+                    accountName = data.account.name;
+                    headerMenuAccountNameElement.innerHTML = ` (${accountName})`;
+                }
+            }
+        });
+    }
+
+    window.addEventListener('load', initHeader);
+</script>
+
+<body>
+    <div id="headerContainer">
+        <div class="burguerMenuContainer" id="headerMenuContainer">
+            <div class="menuItems">
+                <div class="menuItem" id="headerMenuUsername"></div>
+                <div class="menuItem" id="headerMenuAccountName"></div>
+                <div class="menuItem" id="headerMenuItemUsers">
+                    <texts>
+                        <text language="es">usuarios</text>
+                        <text language="en">users</text>
+                    </texts>
+                </div>
+                <div class="menuItem" id="headerMenuItemPlaces">
+                    <texts>
+                        <text language="es">lugares</text>
+                        <text language="en">places</text>
+                    </texts>
+                </div>
+                <div class="menuItem" id="headerMenuItemLogin">
+                    <texts>
+                        <text language="es">acceder</text>
+                        <text language="en">login</text>
+                    </texts>
+                </div>
+                <div class="menuItem" id="headerMenuItemLogout">
+                    <texts>
+                        <text language="es">salir</text>
+                        <text language="en">logout</text>
+                    </texts>
+                </div>
+                <div class="menuItem" id="twoLanguageFlag"></div>
+            </div>
+        </div>
+        <div class="logoBackground"></div>
+        <div id="headerLogoContainer">
+            <div id="headerLogo"></div>
+            <div class="headerIcon headerBurgerMenuActivator" id="headerBurgerMenuActivator"></div>
+        </div>
+    </div>
+</body>

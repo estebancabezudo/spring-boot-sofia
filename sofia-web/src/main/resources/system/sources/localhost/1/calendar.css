@@ -1,0 +1,11 @@
+.applicationContainer {
+    display: flex;
+}
+
+.leftPanel {
+    flex: 0 0 200px;
+}
+
+.rightPanel {
+    flex-grow: 1;
+}

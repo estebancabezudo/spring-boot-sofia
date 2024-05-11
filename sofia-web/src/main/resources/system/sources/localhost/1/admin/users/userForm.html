@@ -1,0 +1,215 @@
+<link lib="inputs:input:1.00" />
+<link lib="inputs:email:1.00" />
+<style>
+    #userFormContainer {
+        display: grid;
+        grid-gap: 8px;
+        grid-template-columns: repeat(5, 1fr);
+        margin: 0 auto;
+        max-width: 750px;
+    }
+
+    #groupsContainer {
+        padding: 8px;
+        display: grid;
+        grid-gap: 8px;
+        grid-template-columns: repeat(1, 1fr);
+        grid-column: 1/6;
+    }
+
+    .groupContainer {
+        display: flex;
+        align-items: center;
+    }
+
+    .groupName {
+        font-size: 20px;
+    }
+
+    #usernameLabel {
+        grid-column: 1/6;
+    }
+
+    #usernameInput {
+        grid-column: 1/6;
+    }
+
+    #userGroupsLabel {
+        grid-column: 1/6;
+    }
+</style>
+
+<script>
+    const NEW_GROUP_ID = 'newGroup';
+
+    let id, groupsBaseData, usernameInput, languageInputElement, usernameBaseData, userSaveButton;
+    const createGroupContainer = (groupName, visible, newGroupId) => {
+        const groupContainer = document.createElement('DIV');
+        if (newGroupId && newGroupId.length > 0) {
+            groupContainer.id = newGroupId;
+        }
+        groupContainer.className = 'groupContainer';
+
+        const groupNameInput = document.createElement('INPUT');
+        groupNameInput.className = 'textInput';
+        groupNameInput.value = groupName;
+        groupNameInput.spellcheck = false;
+        groupNameInput.autocomplete = 'off';
+        groupContainer.appendChild(groupNameInput);
+
+        const deleteGropIconContainer = document.createElement('div');
+        deleteGropIconContainer.setAttribute('class', 'deleteGroupContainer');
+        groupContainer.appendChild(deleteGropIconContainer);
+
+        const deleteGropIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        deleteGropIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        deleteGropIcon.setAttribute('width', '20');
+        deleteGropIcon.setAttribute('height', '20');
+        deleteGropIcon.setAttribute('class', 'deleteGroup');
+        deleteGropIconContainer.appendChild(deleteGropIcon);
+
+        const linea1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        linea1.setAttribute('x1', '5');
+        linea1.setAttribute('y1', '5');
+        linea1.setAttribute('x2', '15');
+        linea1.setAttribute('y2', '15');
+        linea1.setAttribute('stroke', 'gray');
+        linea1.setAttribute('stroke-width', '2');
+        const linea2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        linea2.setAttribute('x1', '15');
+        linea2.setAttribute('y1', '5');
+        linea2.setAttribute('x2', '5');
+        linea2.setAttribute('y2', '15');
+        linea2.setAttribute('stroke', 'gray');
+        linea2.setAttribute('stroke-width', '2');
+        deleteGropIcon.appendChild(linea1);
+        deleteGropIcon.appendChild(linea2);
+
+        deleteGropIconContainer.addEventListener('click', () => {
+            deleteGropIconContainer.parentElement.remove();
+            setSaveButton();
+        })
+        if (!visible) {
+            deleteGropIcon.style.display = 'none';
+        }
+
+        groupNameInput.addEventListener('keyup', () => {
+            if (groupNameInput.value.length > 2) {
+                deleteGropIcon.style.display = 'block';
+                if (groupNameInput.parentElement.id === NEW_GROUP_ID) {
+                    groupNameInput.parentElement.id = '';
+                    const groupContainer = createGroupContainer(null, false, NEW_GROUP_ID);
+                    groupsContainer.appendChild(groupContainer);
+                }
+            } else {
+                deleteGropIcon.style.display = 'none';
+            }
+            setSaveButton();
+        });
+
+        groupNameInput.addEventListener('focusout', () => {
+            if (groupNameInput.value.length < 3 && groupNameInput.parentElement.id !== NEW_GROUP_ID) {
+                groupNameInput.parentElement.remove();
+            }
+            setSaveButton();
+        });
+
+        return groupContainer;
+    };
+    const setSaveButton = valueToSet => {
+        const theDataChangeAndIsValid = () => {
+            console.log('userForm.html::setSaveButton::theDataChange');
+            const inputValue = usernameInput.getElement().value;
+            if (usernameBaseData !== inputValue && usernameInput.isValid()) {
+                return true;
+            }
+            if (!groupsBaseData) {
+                throw new Error('You must define a base data for groups');
+            }
+            // I don't check the size of the groups before because the DOM groups can have +1 or +2 groups more than base data and I also need the bucle to check that.
+            let groupDOMSize = 0;
+            for (const groupInput of groupsContainer.getElementsByClassName('textInput')) {
+                if (groupInput.value.trim().length > 2) {
+                    groupDOMSize++;
+                    console.log('groupInput.value.trim(): ' + groupInput.value.trim());
+                    console.log('groupsBaseData.includes(groupInput.value.trim()): ' + groupsBaseData.includes(groupInput.value.trim()));
+                    if (!groupsBaseData.includes(groupInput.value.trim())) {
+                        return true;
+                    }
+                }
+            };
+            console.log('groupsBaseData.length' + groupsBaseData.length);
+            console.log('groupDOMSize' + groupDOMSize);
+            console.log('groupsBaseData.length !== groupDOMSize' + groupsBaseData.length !== groupDOMSize);
+            if (groupsBaseData.length !== groupDOMSize) {
+                return true;
+            }
+            return false;
+        };
+        const tooShortUserName = usernameInput.getElement().value.length < 3;
+        userSaveButton.disabled = valueToSet !== undefined ? !valueToSet : (tooShortUserName || !(theDataChangeAndIsValid()));
+    };
+    const formInit = () => {
+        Core.subscribeTo('core:showWait', () => {
+            console.log(`userForm.html::formInit::showWait`);
+            document.getElementById('waitingImage').classList.remove('hideWaitingImage');
+        })
+        Core.subscribeTo('core:hideWait', () => {
+            console.log(`userForm.html::formInit::hideWait`);
+            document.getElementById('waitingImage').classList.add('hideWaitingImage');
+        })
+
+        let params = new URLSearchParams(window.location.search);
+        id = params.get('id');
+
+        if (id === undefined || id === null) {
+            usernameInput = new EMailInput({
+                element: 'usernameInput',
+                url:
+                    username => {
+                        return `/v1/users/usernames/${username}/info`;
+                    },
+            });
+        } else {
+            usernameInput = new EMailInput({
+                element: 'usernameInput',
+                url:
+                    username => {
+                        return `/v1/users/${id}/usernames/${username}/info`;
+                    },
+            });
+        }
+        usernameInput.beforeValidation(() => {
+            console.log(`userForm.html::formInit::beforeValidation::valid: ${usernameInput.isValid()}`);
+            Core.publish('core:showWait');
+            setSaveButton(false);
+        })
+        usernameInput.afterValidation(value => {
+            console.log(`userForm.html::formInit::afterValidation::valid: ${usernameInput.isValid()}`);
+            Core.publish('core:hideWait');
+            setSaveButton();
+        });
+        usernameInput.getElement().focus();
+
+        languageInputElement = document.getElementById('languageInput');
+        Core.subscribeTo('core:setTexts', () => {
+            languageInputElement.value = Core.actualLanguage;
+        });
+
+
+    }
+</script>
+
+<body>
+    <div id="userFormContainer" class="formContainer">
+        <div id="usernameLabel" class="adminLabel">
+            <texts><text language="es">Nombre de usuario</text><text language="en">Username</text></texts>
+        </div>
+        <input id="usernameInput" spellcheck="false" autocomplete="off">
+        <input type="hidden" id="languageInput" spellcheck="false" autocomplete="off">
+        <div id="userGroupsLabel" class="adminLabel">
+            <texts><text language="es">Grupos</text><text language="en">Groups</text></texts>
+        </div>
+        <div id="groupsContainer" class="listContainer"></div>
+    </div>
+</body>

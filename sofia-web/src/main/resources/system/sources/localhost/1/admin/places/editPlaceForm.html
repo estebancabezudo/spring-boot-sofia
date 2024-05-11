@@ -1,0 +1,26 @@
+<link lib="mx:places:1.00" />
+<link lib="mx:states:1.00" />
+<script>
+    const loadPlacesList = () => {
+        let params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        fetch(`/v1/places/${id}`)
+            .then(response => {
+                return response.json();
+            })
+            .then(jsonResponse => {
+                const dataDriver = new Place(jsonResponse.data, 'sofia');
+                dataDriver.createGUIForModify();
+            })
+            .catch(error => {
+                Core.reportSystemError(error);
+            });
+    };
+    window.addEventListener('load', loadPlacesList, false);
+</script>
+<style file="../commons.css"></style>
+
+<body id="content">
+    <div id="placeFormContainer_sofia" class="placeFormContainer">
+    </div>
+</body>

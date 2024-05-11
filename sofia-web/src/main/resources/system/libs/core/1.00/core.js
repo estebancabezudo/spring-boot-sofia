@@ -35,6 +35,7 @@ const Core = {
     queryParameters: new URLSearchParams(location.search),
 
     initSocket: () => {
+        return;
         const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
         const host = window.location.host;
         const port = window.location.port ? `:${window.location.port}` : "";

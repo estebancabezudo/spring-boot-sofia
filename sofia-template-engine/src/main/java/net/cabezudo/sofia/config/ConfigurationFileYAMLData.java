@@ -13,20 +13,21 @@ import java.util.List;
 public class ConfigurationFileYAMLData {
 
   private String basePath;
-  private String[] sourcePaths;
+  private String sourcePath;
   private List<ConfigurationFileYAMLSiteData> sites;
 
   public ConfigurationFileYAMLData() {
     // Without a default constructor, Jackson will throw an exception
   }
 
-  public ConfigurationFileYAMLData(String basePath, List<ConfigurationFileYAMLSiteData> sites) {
+  public ConfigurationFileYAMLData(String basePath, String sourcePath, List<ConfigurationFileYAMLSiteData> sites) {
     this.basePath = basePath;
+    this.sourcePath = sourcePath;
     this.sites = sites;
   }
 
-  public String[] getSourcePaths() {
-    return sourcePaths;
+  public String getSourcePath() {
+    return sourcePath;
   }
 
   public String getBasePath() {

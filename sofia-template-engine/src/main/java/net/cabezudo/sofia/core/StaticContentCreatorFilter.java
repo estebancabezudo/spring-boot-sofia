@@ -17,7 +17,6 @@ import net.cabezudo.sofia.sites.SiteNotFoundException;
 import net.cabezudo.sofia.sites.SourceNotFoundException;
 import net.cabezudo.sofia.sites.service.PathManager;
 import net.cabezudo.sofia.sites.service.SiteManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +82,7 @@ public class StaticContentCreatorFilter extends OncePerRequestFilter {
         } else {
           Path sourcePath;
           try {
-            sourcePath = pathManager.getVersionedSourcesPath(site, host.getVersion()).resolve(partialPath);
+            sourcePath = site.getVersionedSourcesPath(host.getVersion()).resolve(partialPath);
           } catch (SourceNotFoundException e) {
             throw new RuntimeException(e);
           }

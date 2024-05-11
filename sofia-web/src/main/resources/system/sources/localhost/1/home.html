@@ -1,0 +1,109 @@
+<style>
+    .iconsContainer {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .icon {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 10px 20px;
+    }
+
+    .iconImage {
+        width: 50px;
+        height: 50px;
+        background-size: contain;
+    }
+
+    .iconText {
+        font-size: 10px;
+        margin: 5px 0 0 0;
+    }
+
+    .usersIcon {
+        background-image: url(/images/icons/users.png);
+    }
+
+    .placesIcon {
+        background-image: url(/images/icons/places.png);
+    }
+
+    .profileIcon {
+        background-image: url(/images/icons/profile.png);
+    }
+
+    .localhostIcon {
+        background-image: url(/images/icons/localhost.png);
+    }
+</style>
+
+<script>
+
+    const initHome = () => {
+        new LinkTo({
+            id: 'usersIcon',
+            onclick: '/admin/users/list.html',
+        });
+        new LinkTo({
+            id: 'placesIcon',
+            onclick: '/admin/places/list.html',
+        });
+        new LinkTo({
+            id: 'profileIcon',
+            onclick: '/users/profile.html',
+        });
+        new LinkTo({
+            id: 'localhostIcon',
+            onclick: () => {
+                const data = {
+                    name: 'localhost'
+                };
+                const headers = new Headers();
+                headers.append("Content-Type", "application/json");
+
+                var requestOptions = {
+                    method: 'PUT',
+                    headers: headers,
+                    body: JSON.stringify(data)
+                };
+                fetch(`/v1/site/account/set`, requestOptions)
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(jsonResponse => {
+                        location.reload();
+                    })
+                    .catch(error => {
+                        Core.reportSystemError(error);
+                    });
+            }
+        });
+    }
+    window.addEventListener('load', initHome);
+</script>
+
+<body id="content">
+    <div class="contentTitle">
+        <texts><text language="es">Inicio</text><text language="en">Home</text></texts>
+    </div>
+    <div class="iconsContainer">
+        <div class="icon" id="usersIcon">
+            <div class="iconImage usersIcon"></div>
+            <div class="iconText" id="userIconText"></div>
+        </div>
+        <div class="icon" id="placesIcon">
+            <div class="iconImage placesIcon"></div>
+            <div class="iconText" id="placesIconText"></div>
+        </div>
+        <div class="icon" id="profileIcon">
+            <div class="iconImage profileIcon"></div>
+            <div class="iconText" id="profileIconText"></div>
+        </div>
+        <div class="icon" id="localhostIcon">
+            <div class="iconImage localhostIcon"></div>
+            <div class="iconText" id="localhostIconText"></div>
+        </div>
+    </div>
+</body>

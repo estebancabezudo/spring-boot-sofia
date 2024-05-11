@@ -1,0 +1,98 @@
+#waitingImage {
+    background-image: url(/images/waiting.gif);
+    background-size: cover;
+    width: 30px;
+    height: 30px;
+}
+
+.hideWaitingImage {
+    display: none;
+}
+
+#listContainer {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: auto;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.adminLabel {
+    font-weight: bold;
+}
+
+.cell {
+    width: 100%;
+    background-color: white;
+    padding: 20px;
+    border-radius: 6px;
+    aspect-ratio: 1.2;
+    box-sizing: border-box;
+}
+
+.cellToAdd {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px #D5D9D9 dashed;
+}
+
+.dataCell {
+    border: 1px #D5D9D9 solid;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.deleteGroupContainer {
+    width: 20px;
+    height: 20px;
+}
+
+.deleteGroup {
+    cursor: pointer;
+}
+
+.listContainer {
+    border: 1px solid rgb(207, 207, 207);
+    border-radius: 5px;
+    padding: 8px;
+}
+
+@media all and (min-width: 554px) {
+    #content {
+        grid-template-columns: auto auto;
+    }
+}
+
+@media all and (min-width: 799px) {
+    #content {
+        width: 759px;
+    }
+
+    #listContainer {
+        grid-template-columns: auto auto auto;
+        justify-content: flex-start;
+    }
+}
+
+@media all and (min-width: 1056px) {
+    #content {
+        width: 1016px;
+    }
+
+    #listContainer {
+        grid-template-columns: auto auto auto auto;
+    }
+}
+
+@media all and (min-width: 1301px) {
+    #content {
+        width: 1261px;
+    }
+
+    #listContainer {
+        grid-template-columns: auto auto auto auto auto;
+    }
+}

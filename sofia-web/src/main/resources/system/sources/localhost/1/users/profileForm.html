@@ -1,0 +1,88 @@
+<style>
+    #profileFormContainer {
+        display: grid;
+        grid-gap: 8px;
+        grid-template-columns: repeat(5, 1fr);
+        margin: 0 auto;
+        max-width: 750px;
+    }
+
+    #profileUsernameLabel,
+    #username,
+    #profileAccountNameLabel,
+    #accountNameInput,
+    #profileNameLabel,
+    #nameInput,
+    #profileLastNameLabel,
+    #lastNameInput,
+    #profileAccountsLabel,
+    #accountsContainer {
+        grid-column: 1/6;
+    }
+
+    #username {
+        margin: 10px 14px;
+        font-family: Gotham;
+    }
+
+    .accountItem {
+        margin: 5px;
+    }
+</style>
+
+<script>
+    const setFormData = data => {
+        const username = document.getElementById('username');
+        const accountName = document.getElementById('accountNameInput');
+        const name = document.getElementById('nameInput');
+        const lastName = document.getElementById('lastNameInput');
+        const accountsContainer = document.getElementById('accountsContainer');
+
+        username.innerHTML = data.username;
+        accountName.value = data.accountName;
+        name.value = data.name === null ? '' : data.name;
+        lastName.value = data.lastName === null ? '' : data.lastName;
+        const accounts = data.accounts;
+        let accountsInnerHTML = '';
+        accounts.forEach(account => {
+            accountsInnerHTML += `<div class="accountItem">${account.name}</div>`;
+        })
+        accountsContainer.innerHTML = `${accountsInnerHTML}`;
+    };
+    const initProfileForm = () => {
+        fetch(`/v1/users/actual/profile`)
+            .then(response => {
+                return response.json();
+            })
+            .then(jsonResponse => {
+                setFormData(jsonResponse.data);
+            })
+            .catch(error => {
+                Core.reportSystemError(error);
+            });
+    };
+    window.addEventListener('load', initProfileForm);
+</script>
+
+<body id="profileFormContainer">
+    <div id="profileUsernameLabel" class="adminLabel">
+        <texts><text language="es">Nombre de usuario</text><text language="en">Username</text></texts>
+    </div>
+    <span id="username">&nbsp;</span>
+    <div id="profileAccountNameLabel" class="adminLabel">
+        <texts><text language="es">Nombre de cuenta</text><text language="en">Account name</text></texts>
+    </div>
+    <input id="accountNameInput" spellcheck="false" autocomplete="off" readonly />
+    <div id="profileNameLabel" class="adminLabel">
+        <texts><text language="es">Nombre</text><text language="en">Name</text></texts>
+    </div>
+    <input id="nameInput" spellcheck="false" autocomplete="off" readonly />
+    <div id="profileLastNameLabel" class="adminLabel">
+        <texts><text language="es">Apellido</text><text language="en">Last name</text></texts>
+    </div>
+    <input id="lastNameInput" spellcheck="false" autocomplete="off" readonly />
+    <div id="profileAccountsLabel" class="adminLabel">
+        <texts><text language="es">Cuentas</text><text language="en">Accounts</text></texts>
+    </div>
+    <div id="accountsContainer" class="listContainer"></div>
+</body>

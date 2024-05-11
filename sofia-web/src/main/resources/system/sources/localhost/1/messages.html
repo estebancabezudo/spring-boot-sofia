@@ -1,0 +1,30 @@
+<html>
+
+<head>
+    <script>
+        const sendMessage = () => {
+            const text = document.getElementById('text').value;
+            const message = {
+                type: 'NOTIFICATION',
+                message: text
+            }
+            Core.socket.send(JSON.stringify(message));
+        };
+
+    </script>
+</head>
+
+<body groups="all">
+    <div>
+        <div>
+            <button id="connect" onclick="connect();">Connect</button>
+            <input type="text" id="text" />
+            <button id="sendMessage" onclick="sendMessage();">Send</button>
+        </div>
+        <div id="messages"></div>
+
+    </div>
+
+</body>
+
+</html>

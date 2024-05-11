@@ -100,7 +100,7 @@ public class SofiaFile {
   private FilePosition getSourcePathRelativePosition(FilePosition position) {
     Path sourcesPath;
     try {
-      sourcesPath = pathManager.getSourcesPath(site);
+      sourcesPath = site.getSourcesPath();
     } catch (SourceNotFoundException e) {
       throw new SofiaRuntimeException(e);
     }
@@ -110,7 +110,7 @@ public class SofiaFile {
   private String getSourcePathRelative(Path fullPath) {
     Path sourcesPath;
     try {
-      sourcesPath = pathManager.getSourcesPath(site);
+      sourcesPath = site.getSourcesPath();
     } catch (SourceNotFoundException e) {
       throw new SofiaRuntimeException(e);
     }
@@ -131,7 +131,7 @@ public class SofiaFile {
 
   private void loadCommonsCSSFile() throws IOException, SourceAlreadyAdded, UndefinedLiteralException {
     try {
-      cssCode.add(pathManager.getVersionedSourcesPath(site, version), Paths.get(Site.COMMONS_CSS_FILE_NAME), null, templateVariables, null);
+      cssCode.add(site.getVersionedSourcesPath(version), Paths.get(Site.COMMONS_CSS_FILE_NAME), null, templateVariables, null);
     } catch (FileNotFoundException e) {
       log.info("File NOT FOUND " + Site.COMMONS_CSS_FILE_NAME);
     }
@@ -139,18 +139,18 @@ public class SofiaFile {
 
   private void loadCommonsScriptFile() throws SiteCreationException, IOException, SourceAlreadyAdded {
     try {
-      jsCode.add(pathManager.getVersionedSourcesPath(site, version), Paths.get(Site.COMMONS_SCRIPT_FILE_NAME), null, templateVariables, null);
+      jsCode.add(site.getVersionedSourcesPath(version), Paths.get(Site.COMMONS_SCRIPT_FILE_NAME), null, templateVariables, null);
     } catch (FileNotFoundException e) {
       log.info("File NOT FOUND " + Site.COMMONS_SCRIPT_FILE_NAME);
     }
   }
 
   private void loadCommonsConfigurationFile() throws IOException, JSONParseException, UndefinedLiteralException, DuplicateKeyException {
-    templateVariables.add(pathManager.getVersionedSourcesPath(site, version), Paths.get(Site.COMMONS_CONFIGURATION_FILE_NAME));
+    templateVariables.add(site.getVersionedSourcesPath(version), Paths.get(Site.COMMONS_CONFIGURATION_FILE_NAME));
   }
 
   private void loadCommonsTextFile() throws SiteCreationException {
-    Path commonsFileTextsPath = pathManager.getVersionedSourcesPath(site, version).resolve(Site.TEXTS_FILE_NAME);
+    Path commonsFileTextsPath = site.getVersionedSourcesPath(version).resolve(Site.TEXTS_FILE_NAME);
     loadTextFile(commonsFileTextsPath);
   }
 
@@ -169,7 +169,7 @@ public class SofiaFile {
   // Load the JSON configuration file for the file requested
   private void loadConfigurationFile() throws IOException, SiteCreationException, JSONParseException {
     Path configurationSourceFilePath = FileHelper.getConfigurationFile(requestFilePath);
-    Path fullConfigurationSourceFilePath = pathManager.getVersionedSourcesPath(site, version).resolve(configurationSourceFilePath);
+    Path fullConfigurationSourceFilePath = site.getVersionedSourcesPath(version).resolve(configurationSourceFilePath);
 
     // Search for a configuration file using the name of the page
     JSONConfigurationFile jsonSourceConfiguration = new JSONConfigurationFile();
@@ -181,7 +181,7 @@ public class SofiaFile {
   }
 
   private void readHTMLFile() throws SiteCreationException, IOException {
-    Path fullFilePath = pathManager.getVersionedSourcesPath(site, version).resolve(requestFilePath);
+    Path fullFilePath = site.getVersionedSourcesPath(version).resolve(requestFilePath);
     log.debug("Read HTML file: " + fullFilePath);
     if (!Files.exists(fullFilePath)) {
       log.debug("File not found " + fullFilePath);
@@ -479,7 +479,7 @@ public class SofiaFile {
   private Path getLibraryPath(String libraryName, FilePosition position) throws LibraryNotFoundException, InvalidAttributeValueException, SourceNotFoundException {
     String partialPath = getLibraryPartialPath(libraryName, position);
     // Check the site library path first and return if exists
-    Path libsPath = pathManager.getVersionedSourcesLibraryPath(site, version);
+    Path libsPath = site.getVersionedSourcesLibraryPath(version);
     Path siteLibBasePath = libsPath.resolve(partialPath);
     log.debug("Library path for site: " + siteLibBasePath);
     if (Files.exists(siteLibBasePath) && Files.isDirectory(siteLibBasePath)) {
@@ -499,7 +499,7 @@ public class SofiaFile {
     if ((attribute = script.getAttribute(Attribute.FILE)) != null) {
       String value = attribute.getValue();
       Path fullFilePath = getPath(script, value);
-      if (!fullFilePath.startsWith(pathManager.getVersionedSourcesPath(site, version))) {
+      if (!fullFilePath.startsWith(site.getVersionedSourcesPath(version))) {
         throw new FilePathOutsideSourcePath("The file " + value + " defined in the attribute file on the source file " + getSourcePathRelativePosition(attribute.getPosition()) + " is outside the source path.", attribute.getPosition());
       }
       if (!Files.exists(fullFilePath)) {
@@ -507,7 +507,7 @@ public class SofiaFile {
         throw new SofiaFileNotFoundException("The file " + value + " defined in the attribute file on the source file " + getSourcePathRelativePosition(attribute.getPosition()) + " do not exists.", attribute.getPosition());
       }
 
-      Path versionedSourcesBasePath = pathManager.getVersionedSourcesPath(site, version);
+      Path versionedSourcesBasePath = site.getVersionedSourcesPath(version);
       jsCode.add(versionedSourcesBasePath, Paths.get(value), null, templateVariables, new Caller("file attribute in " + script.getTagName() + " tag", filePath, new Position(script.getPosition()), caller));
       script.remove();
       return;
@@ -521,7 +521,7 @@ public class SofiaFile {
     if ((attribute = styleElement.getAttribute(Attribute.FILE)) != null) {
       String value = attribute.getValue();
       Path fullFilePath = getPath(styleElement, value);
-      if (!fullFilePath.startsWith(pathManager.getVersionedSourcesPath(site, version))) {
+      if (!fullFilePath.startsWith(site.getVersionedSourcesPath(version))) {
         throw new FilePathOutsideSourcePath("The file " + value + " defined in the attribute file on the source file " + getSourcePathRelativePosition(attribute.getPosition()) + " is outside the source path.", attribute.getPosition());
       }
       if (!Files.exists(fullFilePath)) {
@@ -529,7 +529,7 @@ public class SofiaFile {
         throw new SofiaFileNotFoundException("The file " + value + " defined in the attribute file on the source file " + getSourcePathRelativePosition(attribute.getPosition()) + " do not exists.", attribute.getPosition());
       }
 
-      Path versionedSourcesBasePath = pathManager.getVersionedSourcesPath(site, version);
+      Path versionedSourcesBasePath = site.getVersionedSourcesPath(version);
       Path fileBasePath = versionedSourcesBasePath.resolve(filePath).getParent();
       Path filePathFromAttribute = getCheckedFilePathFromAttribute(fileBasePath, value, styleElement.getPosition());
 
@@ -571,12 +571,12 @@ public class SofiaFile {
     log.debug("Read the HTML file " + value + " from element " + element.getType());
     Path basePath;
     if (value.startsWith("/")) {
-      basePath = pathManager.getVersionedSourcesPath(site, version);
+      basePath = site.getVersionedSourcesPath(version);
     } else {
       basePath = element.getPosition().getPath().getParent();
     }
     Path relativeFilePath = getCheckedFilePathFromAttribute(basePath, value, fileAttribute.getPosition());
-    Element body = readHTMLFile(pathManager.getVersionedSourcesPath(site, version), relativeFilePath, configurationPrefix, new Caller("file attribute on " + element.getTagName(), relativeFilePath, new Position(element.getPosition()), caller));
+    Element body = readHTMLFile(site.getVersionedSourcesPath(version), relativeFilePath, configurationPrefix, new Caller("file attribute on " + element.getTagName(), relativeFilePath, new Position(element.getPosition()), caller));
     Attributes attributes = body.getAttributes();
     for (Attribute attribute : attributes) {
       element.setAttribute(attribute.getName(), attribute.getValue());
@@ -674,32 +674,32 @@ public class SofiaFile {
   private Path getCheckedFilePathFromAttribute(Path baseFilePath, String value, FilePosition position) throws FilePathOutsideSourcePath, SofiaFileNotFoundException {
     Path fullHTMLFilePath;
     if (value.startsWith("/")) {
-      fullHTMLFilePath = pathManager.getVersionedSourcesPath(site, version).resolve(value.substring(1)).normalize();
+      fullHTMLFilePath = site.getVersionedSourcesPath(version).resolve(value.substring(1)).normalize();
     } else {
       fullHTMLFilePath = baseFilePath.resolve(value).normalize();
     }
-    if (!fullHTMLFilePath.startsWith(pathManager.getVersionedSourcesPath(site, version))) {
+    if (!fullHTMLFilePath.startsWith(site.getVersionedSourcesPath(version))) {
       throw new FilePathOutsideSourcePath("The file " + getSourcePathRelative(fullHTMLFilePath) + " defined in " + getSourcePathRelativePosition(position) + " is outside the source path.", position);
     }
     if (!Files.exists(fullHTMLFilePath)) {
       throw new SofiaFileNotFoundException("The file " + getSourcePathRelative(fullHTMLFilePath) + " defined in " + getSourcePathRelativePosition(position) + " do not exists.", position);
     }
-    return pathManager.getVersionedSourcesPath(site, version).relativize(fullHTMLFilePath);
+    return site.getVersionedSourcesPath(version).relativize(fullHTMLFilePath);
   }
 
   private void loadConfigurationFile(Attribute attribute) throws FilePathOutsideSourcePath, SofiaFileNotFoundException, IOException, JSONParseException, UndefinedLiteralException, DuplicateKeyException {
     String value = attribute.getValue();
-    Path templateVariablesBasePath = pathManager.getVersionedSourcesPath(site, version);
+    Path templateVariablesBasePath = site.getVersionedSourcesPath(version);
     Path filePath = getCheckedFilePathFromAttribute(templateVariablesBasePath, value, attribute.getPosition());
     templateVariables.add(templateVariablesBasePath, filePath);
   }
 
   private Path getPath(Node node, String value) {
     if (value.startsWith("/")) {
-      return pathManager.getVersionedSourcesPath(site, version).resolve(value.substring(1));
+      return site.getVersionedSourcesPath(version).resolve(value.substring(1));
     }
     Path parent = node.getPosition().getPath().getParent();
-    Path fullParent = pathManager.getVersionedSourcesPath(site, version).resolve(parent);
+    Path fullParent = site.getVersionedSourcesPath(version).resolve(parent);
     Path path = fullParent.resolve(value).normalize();
     log.debug("SofiaFile:getPath:path: " + path);
     return path;
@@ -712,9 +712,9 @@ public class SofiaFile {
       loadCommonsCSSFile();
 
       loadConfigurationFile();
-      readStyleFile(pathManager.getVersionedSourcesPath(site, version), voidRootFilePath, null, null);
-      readScriptFile(pathManager.getVersionedSourcesPath(site, version), voidRootFilePath, null, null);
-      readTextsFile(pathManager.getVersionedSourcesPath(site, version), voidRootFilePath);
+      readStyleFile(site.getVersionedSourcesPath(version), voidRootFilePath, null, null);
+      readScriptFile(site.getVersionedSourcesPath(version), voidRootFilePath, null, null);
+      readTextsFile(site.getVersionedSourcesPath(version), voidRootFilePath);
 
       // Read and parse the root document in document variable. The document variable is a Document object with the DOM.
       readHTMLFile();
@@ -753,7 +753,7 @@ public class SofiaFile {
   }
 
   private void loadCommonsLibrariesFile() throws SiteCreationException {
-    Path commonLibrariesPath = pathManager.getVersionedSourcesPath(site, version).resolve(Site.COMMONS_LIBRARIES_FILE_NAME);
+    Path commonLibrariesPath = site.getVersionedSourcesPath(version).resolve(Site.COMMONS_LIBRARIES_FILE_NAME);
 
     try (BufferedReader reader = new BufferedReader(new FileReader(commonLibrariesPath.toFile()))) {
       String line;

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link href="/images/favicon.png" rel="shortcut icon" type="image/png" />
+    <style file="/admin/commons.css"></style>
+</head>
+
+<script>
+    const initProfile = () => {
+    };
+    window.addEventListener('load', initProfile);
+</script>
+
+<body groups="user">
+    <header file="/header.html"></header>
+    <div id="contentContainer">
+        <div id="messages" class="messages">&nbsp;</div>
+        <div id="content">
+            <div class="contentTitle">
+                <texts><text language="es">Perfil</text><text language="en">Profile</text></texts>
+            </div>
+            <div file="profileForm.html"></div>
+        </div>
+    </div>
+    <footer file="/footer.html"></footer>
+</body>
+
+</html>

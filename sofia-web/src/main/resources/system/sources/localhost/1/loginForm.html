@@ -1,0 +1,105 @@
+<link lib="login:socialButtons:base:1.00" />
+<link lib="login:socialButtons:google:1.00" />
+<link lib="login:socialButtons:facebook:1.00" />
+
+<script>
+    const initLogin = async () => {
+        const loginForm = document.getElementById('loginForm');
+        const loginMessageContainer = document.getElementById('loginMessageContainer');
+        const loginUsernameInput = document.getElementById('loginUsernameInput');
+        const loginPasswordInput = document.getElementById('loginPasswordInput');
+        new GoogleSocialButton({ element: 'googleLoginButton' });
+        new FacebookSocialButton({ element: 'facebookLoginButton' });
+
+        loginForm.onsubmit = async (e) => {
+            e.preventDefault();
+
+            const response = fetch('/v1/login', {
+                method: 'POST',
+                body: new FormData(loginForm)
+            })
+                .then(response => response.json())
+                .then(jsonData => {
+                    console.log('loginForm.html::initLogin::jsonData', jsonData);
+                    if (jsonData.status === 'ok') {
+                        if (jsonData.redirection == null) {
+                            window.location.href = '/';
+                        } else {
+                            window.location.href = jsonData.redirection;
+                        }
+                        return;
+                    }
+                    if (jsonData.status === 'fail') {
+                        loginMessageContainer.innerHTML = Core.getText('invalidCredentials');
+                    }
+                });
+            ;
+        };
+        const deleteMessageContainer = () => {
+            loginMessageContainer.innerHTML = '';
+        };
+        loginUsernameInput.addEventListener('keydown', () => {
+            deleteMessageContainer();
+        });
+        loginPasswordInput.addEventListener('keydown', () => {
+            deleteMessageContainer();
+        });
+        loginUsernameInput.focus();
+
+        Core.subscribeTo('core:webClientDataChange', () => {
+            if (Core.isLogged()) {
+                window.location.href = '/';
+            }
+        });
+    }
+
+    window.addEventListener('load', initLogin);
+</script>
+
+<style>
+    .contentTitle {
+        text-align: center;
+    }
+
+    #loginContainer {
+        margin: 30px auto 60px auto;
+        max-width: 350px;
+    }
+
+    .inputContainer {
+        margin: 10px;
+    }
+
+    #loginMessageContainer {
+        text-align: center;
+        color: red;
+        font-weight: bold;
+    }
+</style>
+
+<body>
+    <div id="contentContainer">
+        <div id="messages" class="messages">&nbsp;</div>
+        <div id="content">
+            <div id="loginContainer">
+                <div class="contentTitle">
+                    <texts><text language="es">Acceso</text><text language="en">Login</text></texts>
+                </div>
+                <form id="loginForm">
+                    <div class="inputContainer">
+                        <input type="text" name="username" id="loginUsernameInput" />
+                    </div>
+                    <div class="inputContainer">
+                        <input type="password" name="password" id="loginPasswordInput" />
+                    </div>
+                    <div id="loginMessageContainer"></div>
+                    <div class="inputContainer">
+                        <input type="submit" id="loginButton" class="blueButton" value="Login" />
+                        <div id="googleLoginButton"></div>
+                        <div id="facebookLoginButton"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>

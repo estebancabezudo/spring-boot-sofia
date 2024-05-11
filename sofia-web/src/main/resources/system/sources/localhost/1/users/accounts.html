@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link href="/images/favicon.png" rel="shortcut icon" type="image/png" />
+    <style file="/admin/commons.css"></style>
+</head>
+
+<style>
+    .accountItem {
+        margin: 8px 0;
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    const setData = data => {
+        const accountListElement = document.getElementById('accountList');
+
+        const accounts = data.list;
+        accounts.forEach(account => {
+            const accountItemElement = document.createElement('div');
+            accountItemElement.className = 'accountItem';
+            accountItemElement.innerHTML = account.name;
+            accountItemElement.addEventListener('click', () => {
+                Core.showScreenBlocker();
+                const data = {
+                    id: account.id
+                };
+                const headers = new Headers();
+                headers.append("Content-Type", "application/json");
+
+                var requestOptions = {
+                    method: 'PUT',
+                    headers: headers,
+                    body: JSON.stringify(data)
+                };
+                fetch(`/v1/user/account/set`, requestOptions)
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(jsonResponse => {
+                        location.href = document.referrer;
+                    })
+                    .catch(error => {
+                        Core.reportSystemError(error);
+                    });
+            });
+            accountListElement.appendChild(accountItemElement);
+        })
+    };
+    const initAccounts = () => {
+        fetch(`/v1/users/actual/accounts`)
+            .then(response => {
+                return response.json();
+            })
+            .then(jsonResponse => {
+                setData(jsonResponse.data);
+            })
+            .catch(error => {
+                Core.reportSystemError(error);
+            });
+    };
+    window.addEventListener('load', initAccounts);
+</script>
+
+<body groups="user">
+    <header file="/header.html"></header>
+    <div id="contentContainer">
+        <div id="messages" class="messages">&nbsp;</div>
+        <div id="content">
+            <div class="contentTitle">
+                <texts><text language="es">Cambiar cuenta</text><text language="en">Change account</text></texts>
+            </div>
+            <div id="accountList"></div>
+        </div>
+    </div>
+    <footer file="/footer.html"></footer>
+</body>
+
+</html>

@@ -60,7 +60,7 @@ public class SofiaAuthorizationManager implements AuthorizationManager<RequestAu
       try {
         account = accountManager.getAccount(request);
       } catch (InvalidAccountException e) {
-        return new AuthorizationDecision(false);
+        throw new SofiaRuntimeException("Invalid account", e);
       }
 
       log.debug("Check authorization permissions for " + requestURI + "  using " + (user == null ? "NOT LOGGED" : user.getUsername()) + " on " + site.getName() + ", " + (account == null ? null : account.getName() + " in the account with id " + account.getId()));

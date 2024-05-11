@@ -1,0 +1,130 @@
+<style file="../commons.css"></style>
+
+<style>
+    #userDeleteButton {
+        grid-column: 1;
+    }
+
+    #waitingImageContainer {
+        grid-column: 4;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    #userSaveButton {
+        grid-column: 5;
+    }
+</style>
+
+<script>
+    const init = () => {
+        formInit();
+        createButtons();
+
+        fetch(`/v1/users/${id}`)
+            .then(response => {
+                return response.json();
+            })
+            .then(jsonResponse => {
+                createBaseData(jsonResponse.data);
+                showData(jsonResponse.data);
+            })
+            .catch(error => {
+                Core.reportSystemError(error);
+            });
+    };
+    const createBaseData = data => {
+        usernameBaseData = data.username;
+        const groups = data.groups;
+        groupsBaseData = [];
+        groups.forEach(group => {
+            groupsBaseData.push(group.name);
+        });
+    };
+    const showData = data => {
+        const username = data.username;
+        const groups = data.groups;
+        usernameInput.getElement().value = username;
+
+        const groupsContainer = document.getElementById('groupsContainer');
+        groupsContainer.innerHTML = '';
+        groups.forEach(group => {
+            const groupContainer = createGroupContainer(group.name, true);
+            groupsContainer.appendChild(groupContainer);
+        });
+        const groupContainer = createGroupContainer(null, false, NEW_GROUP_ID);
+        groupsContainer.appendChild(groupContainer);
+    }
+    const createButtons = () => {
+        const userFormContainer = document.getElementById('userFormContainer');
+        const userDeleteButton = document.createElement('button');
+        userDeleteButton.id = 'userDeleteButton';
+        userDeleteButton.className = 'button redButton';
+        userFormContainer.appendChild(userDeleteButton);
+
+        waitingImageContainer = document.createElement('div');
+        waitingImageContainer.id = 'waitingImageContainer';
+        userFormContainer.appendChild(waitingImageContainer);
+        waitingImage = document.createElement('div');
+        waitingImage.id = 'waitingImage';
+        waitingImage.className = 'hideWaitingImage';
+        waitingImageContainer.appendChild(waitingImage);
+
+        userSaveButton = document.createElement('button');
+        userSaveButton.id = 'userSaveButton';
+        userSaveButton.className = 'button greenButton';
+        userSaveButton.addEventListener('click', () => {
+            userSaveButton.disabled = true;
+            username = usernameInput.getElement().value;
+            const groups = [];
+            const groupElements = document.querySelectorAll("#groupsContainer > div > input");
+            groupElements.forEach(groupElement => {
+                const value = groupElement.value.trim();
+                if (value.length > 2) {
+                    groups.push({ name: value });
+                }
+            });
+
+            var data = {
+                id,
+                username,
+                locale: languageInputElement.value,
+                enabled: true,
+                groups
+            };
+
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json");
+
+            var requestOptions = {
+                method: 'PUT',
+                headers: headers,
+                body: JSON.stringify(data),
+                redirect: 'follow'
+            };
+            fetch(`/v1/users/${id}`, requestOptions)
+                .then(response => {
+                    return response.json();
+                })
+                .then(jsonResponse => {
+                    location.href = '/admin/users/list.html';
+                })
+                .catch(error => {
+                    throw error;
+                    Core.showErrorMessage(error.message);
+                    Core.reportSystemError(error.message);
+                });
+        });
+        userFormContainer.appendChild(userSaveButton);
+        userSaveButton.disabled = true;
+    };
+    window.addEventListener('load', init, false);
+</script>
+
+<body id="content">
+    <div class="contentTitle">
+        <texts><text language="es">Editar usuario</text><text language="en">Edit user</text></texts>
+    </div>
+    <div file="userForm.html"></div>
+</body>

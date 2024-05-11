@@ -407,10 +407,9 @@ permisos.
 Es la ruta completa donde se encuentran todos los archivos que va a utilizar Sofia. Entre estos se encuentran las
 librerías, los archivos origen y donde se ven a construir los archivos finales.
 
-### `sourcePaths`
+### `sourcePath`
 
-Una lista con las rutas completas que contienen los archivos de donde se van a tomar los archivos origen de donde se
-crea el contenido del sitio.
+La ruta completa que contienen los archivos fuente que se van a tomar para crear el contenido del sitio.
 
 ### `sites`
 
@@ -420,6 +419,11 @@ La definición de los sitios que contiene el servidor
 
 Una cadena con un nombre arbitrario para el sitio usado solo para identificar el sitio y crear las rutas necesarias para
 trabajar.
+
+#### `sourcePath`
+
+Se puede definir un origen diferente al definido en la sección principal para los archivos fuente de un sitio. Para esto
+se debe especificar la ruta completa para los archivos fuente dentro de la definición de los datos del sitio.
 
 #### `relpyAddress`
 

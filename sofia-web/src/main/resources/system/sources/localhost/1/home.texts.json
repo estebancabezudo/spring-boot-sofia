@@ -1,0 +1,18 @@
+{
+    "localhostIconText": {
+        "es": "localhost",
+        "en": "localhost"
+    },
+    "placesIconText": {
+        "es": "direcciones",
+        "en": "addreses"
+    },
+    "profileIconText": {
+        "es": "perfil",
+        "en": "profile"
+    },
+    "userIconText": {
+        "es": "usuarios",
+        "en": "users"
+    }
+}

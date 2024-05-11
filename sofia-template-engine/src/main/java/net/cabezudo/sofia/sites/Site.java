@@ -1,9 +1,14 @@
 package net.cabezudo.sofia.sites;
 
 
+import net.cabezudo.sofia.config.ConfigurationException;
+import net.cabezudo.sofia.core.SofiaEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -27,6 +32,7 @@ public class Site implements Comparable<Site> {
   private final String replyAddress;
   private final Locale locale = new Locale("en"); // TODO  Change to use the language of the constructor, the one defined for the site in the configuration, or English.
   private final String loginSuccessURL;
+  private Path sourcePath;
 
   public Site(int id, String name, String replyAddress, String loginSuccessURL) {
     this.id = id;
@@ -83,5 +89,34 @@ public class Site implements Comparable<Site> {
 
   public String getLoginSuccessURL() {
     return loginSuccessURL;
+  }
+
+  public void setSourcePath(String siteSourcesPathString, Path systemSourcePath) throws ConfigurationException {
+
+    Path siteSourcePath = siteSourcesPathString == null ? null : Paths.get(siteSourcesPathString).resolve(name);
+    if (siteSourcePath != null && Files.exists(siteSourcePath)) {
+      this.sourcePath = siteSourcePath;
+      log.debug("Using site sources path: " + this.sourcePath);
+    } else {
+      this.sourcePath = systemSourcePath.resolve(this.getName());
+      log.debug("Using system sources path: " + this.sourcePath);
+    }
+    if (!Files.exists(this.sourcePath)) {
+      throw new ConfigurationException("Path not found: " + this.sourcePath);
+    }
+    log.debug("Source path: " + this.sourcePath);
+
+  }
+
+  public Path getSourcesPath() {
+    return sourcePath;
+  }
+
+  public Path getVersionedSourcesPath(String version) {
+    return getSourcesPath().resolve(version);
+  }
+
+  public Path getVersionedSourcesLibraryPath(String version) {
+    return getSourcesPath().resolve(version).resolve(SofiaEnvironment.LIBS_DIRECTORY_NAME);
   }
 }

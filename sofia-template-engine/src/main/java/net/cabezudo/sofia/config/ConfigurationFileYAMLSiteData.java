@@ -2,7 +2,6 @@ package net.cabezudo.sofia.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +12,7 @@ public class ConfigurationFileYAMLSiteData {
   private ConfigurationFileYAMLMailData mail;
   private String domainName;
   private List<String> hosts;
+  private String sourcePath;
   private List<String> permissions;
   private List<String> api;
   private String root;
@@ -41,6 +41,10 @@ public class ConfigurationFileYAMLSiteData {
 
   public List<String> getHosts() {
     return hosts;
+  }
+
+  public String getSourcePath() {
+    return sourcePath;
   }
 
   public String getRoot() {
